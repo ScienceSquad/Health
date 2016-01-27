@@ -1,0 +1,75 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'me.tatarka:gradle-retrolambda:3.1.0'
+        classpath 'com.android.databinding:dataBinder:1.0-rc1'
+    }
+}
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+repositories {
+    jcenter()
+}
+
+def buildTime = new Date().format("yyyy-MM-dd'T'HH:mm'Z'", TimeZone.getTimeZone("UTC"))
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.sciencesquad.health.health"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // RxJava and RxAndroid
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.0'
+
+    // Java 8 Support
+    compile 'net.sourceforge.streamsupport:streamsupport:1.1.4'
+    compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
+
+    // Android Support Library
+    compile 'com.android.support:palette-v7:23+'
+    compile 'com.android.support:cardview-v7:23+'
+    compile 'com.android.support:recyclerview-v7:23+'
+    compile 'com.android.support:appcompat-v7:23+'
+    compile 'com.android.support:support-v4:23+'
+    compile 'com.android.support:support-v13:23+'
+    compile 'com.android.support:design:23+'
+}
