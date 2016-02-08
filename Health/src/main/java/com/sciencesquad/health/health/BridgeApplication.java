@@ -3,6 +3,7 @@ package com.sciencesquad.health.health;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import java8.util.Optional;
 
 public class BridgeApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -45,6 +46,12 @@ public class BridgeApplication extends Application implements SharedPreferences.
 		}
 	}
 
+	private static BridgeApplication _application = null;
+
+	public static Optional<BridgeApplication> application() {
+		return Optional.ofNullable(_application);
+	}
+
 	/**
 	 * The private application-wide instance of the EventBus.
 	 */
@@ -61,6 +68,7 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		_application = this;
 		this.eventBus().publish(new ApplicationCreateEvent());
 	}
 
