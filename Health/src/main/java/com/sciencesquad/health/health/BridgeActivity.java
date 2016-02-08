@@ -14,7 +14,12 @@ public class BridgeActivity extends AppCompatActivity {
 	}
 
 	public final class ActivityCreateEvent implements ActivityEvent {
-
+		Bundle savedInstanceState;
+		PersistableBundle persistentState;
+		public ActivityCreateEvent(Bundle savedInstanceState, PersistableBundle persistentState) {
+			this.savedInstanceState = savedInstanceState;
+			this.persistentState = persistentState;
+		}
 	}
 
 	public final class ActivityDestroyEvent implements ActivityEvent {
@@ -53,7 +58,7 @@ public class BridgeActivity extends AppCompatActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
 		super.onCreate(savedInstanceState, persistentState);
-		this.eventBus().publish(new ActivityCreateEvent());
+		this.eventBus().publish(new ActivityCreateEvent(savedInstanceState, persistentState));
 	}
 
 	@Override
