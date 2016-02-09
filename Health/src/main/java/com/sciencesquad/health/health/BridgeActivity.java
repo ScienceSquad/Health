@@ -9,44 +9,33 @@ public class BridgeActivity extends AppCompatActivity {
 
 	private static final String TAG = "BridgeActivity";
 
-	public interface ActivityEvent extends EventBus.Event {
-		// intentionally empty
+	public static final class CreateEvent extends Event {
+		public Bundle savedInstanceState; // FIXME: Probably should not be broadcasting this...
+		public PersistableBundle persistentState; // FIXME: Probably should not be broadcasting this...
 	}
 
-	public final class ActivityCreateEvent implements ActivityEvent {
-		Bundle savedInstanceState;
-		PersistableBundle persistentState;
-		public ActivityCreateEvent(Bundle savedInstanceState, PersistableBundle persistentState) {
-			this.savedInstanceState = savedInstanceState;
-			this.persistentState = persistentState;
-		}
+	public static final class DestroyEvent extends Event {
+		// EMPTY
 	}
 
-	public final class ActivityDestroyEvent implements ActivityEvent {
-
+	public static final class PauseEvent extends Event {
+		// EMPTY
 	}
 
-	public final class ActivityPauseEvent implements ActivityEvent {
-
+	public static final class ResumeEvent extends Event {
+		// EMPTY
 	}
 
-	public final class ActivityResumeEvent implements ActivityEvent {
-
+	public static final class StartEvent extends Event {
+		// EMPTY
 	}
 
-	public final class ActivityStartEvent implements ActivityEvent {
-
+	public static final class StopEvent extends Event {
+		// EMPTY
 	}
 
-	public final class ActivityStopEvent implements ActivityEvent {
-
-	}
-
-	public final class ActivityVisibilityEvent implements ActivityEvent {
-		private boolean isVisible = false;
-		public ActivityVisibilityEvent(boolean isVisible) {
-			this.isVisible = isVisible;
-		}
+	public static final class VisibilityEvent extends Event {
+		public boolean isVisible = false;
 	}
 
 	private boolean _isVisible = false;
@@ -58,43 +47,61 @@ public class BridgeActivity extends AppCompatActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
 		super.onCreate(savedInstanceState, persistentState);
-		this.eventBus().publish(new ActivityCreateEvent(savedInstanceState, persistentState));
+		this.eventBus().publish(BridgeActivity.CreateEvent
+				.from(this)
+				.assign("savedInstanceState", savedInstanceState)
+				.assign("persistentState", persistentState)
+				.create());
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		this.eventBus().publish(new ActivityStartEvent());
+		this.eventBus().publish(BridgeActivity.StartEvent
+				.from(this).create());
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		_isVisible = true;
-		this.eventBus().publish(new ActivityVisibilityEvent(_isVisible));
-		this.eventBus().publish(new ActivityResumeEvent());
+		this.eventBus().publish(BridgeActivity.VisibilityEvent
+				.from(this)
+				.assign("isVisible", _isVisible)
+				.create());
+		this.eventBus().publish(BridgeActivity.ResumeEvent
+				.from(this).create());
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		_isVisible = false;
-		this.eventBus().publish(new ActivityVisibilityEvent(_isVisible));
-		this.eventBus().publish(new ActivityPauseEvent());
+		this.eventBus().publish(BridgeActivity.VisibilityEvent
+				.from(this)
+				.assign("isVisible", _isVisible)
+				.create());
+		this.eventBus().publish(BridgeActivity.PauseEvent
+				.from(this).create());
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		this.eventBus().publish(new ActivityStopEvent());
+		this.eventBus().publish(BridgeActivity.StopEvent
+				.from(this).create());
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		_isVisible = false;
-		this.eventBus().publish(new ActivityVisibilityEvent(_isVisible));
-		this.eventBus().publish(new ActivityDestroyEvent());
+		this.eventBus().publish(BridgeActivity.VisibilityEvent
+				.from(this)
+				.assign("isVisible", _isVisible)
+				.create());
+		this.eventBus().publish(BridgeActivity.DestroyEvent
+				.from(this).create());
 	}
 
 	// Helper

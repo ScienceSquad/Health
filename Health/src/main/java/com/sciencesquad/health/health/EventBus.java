@@ -12,12 +12,13 @@ import rx.subjects.Subject;
  */
 public class EventBus {
 
-	/**
-	 * The Event.
-	 */
-	public interface Event {
-		// nothing here intentionally
+	/*
+	// In case we switch away from RxJava:
+	public interface Subscription {
+		void unsubscribe();
+		boolean isUnsubscribed();
 	}
+	*/
 
 	/**
 	 * The internal RxJava PublishSubject representation of the EventBus.
@@ -48,6 +49,15 @@ public class EventBus {
 				.filter(event -> event.getClass().equals(eventClass))
 				.map(obj -> (E)obj)
 				.subscribe(handler);
+	}
+
+	/**
+	 * Unsubscribe from the Event originally being listened to.
+	 *
+	 * @param subscription the subscription to cancel
+	 */
+	public void unsubscribe(Subscription subscription) {
+		subscription.unsubscribe();
 	}
 
 	/**

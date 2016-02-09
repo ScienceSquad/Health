@@ -9,41 +9,28 @@ public class BridgeApplication extends Application implements SharedPreferences.
 
 	private static final String TAG = "BridgeApplication";
 
-	public interface ApplicationEvent extends EventBus.Event {
-		// intentionally empty
+	public static final class CreateEvent extends Event {
+		// EMPTY
 	}
 
-	public final class ApplicationCreateEvent implements ApplicationEvent {
-		// intentionally empty
+	public static final class DestroyEvent extends Event {
+		// EMPTY
 	}
 
-	public final class ApplicationDestroyEvent implements ApplicationEvent {
-		// intentionally empty
+	public static final class LowMemoryEvent extends Event {
+		// EMPTY
 	}
 
-	public final class ApplicationLowMemoryEvent implements ApplicationEvent {
-		// intentionally empty
+	public static final class TrimMemoryEvent extends Event {
+		public int level = 0;
 	}
 
-	public final class ApplicationTrimMemoryEvent implements ApplicationEvent {
-		int level = 0;
-		public ApplicationTrimMemoryEvent(int level) {
-			this.level = level;
-		}
+	public static final class ConfigurationChangedEvent extends Event {
+		public Configuration configuration = null;
 	}
 
-	public final class ApplicationConfigurationChangedEvent implements ApplicationEvent {
-		Configuration configuration = null;
-		public ApplicationConfigurationChangedEvent(Configuration configuration) {
-			this.configuration = configuration;
-		}
-	}
-
-	public final class ApplicationPreferencesChangedEvent implements ApplicationEvent {
-		String key = null;
-		public ApplicationPreferencesChangedEvent(String key) {
-			this.key = key;
-		}
+	public static final class PreferencesChangedEvent extends Event {
+		public String key = null;
 	}
 
 	private static BridgeApplication _application = null;
@@ -69,35 +56,47 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	public void onCreate() {
 		super.onCreate();
 		_application = this;
-		this.eventBus().publish(new ApplicationCreateEvent());
+		this.eventBus().publish(BridgeApplication.CreateEvent
+				.from(this).create());
 	}
 
 	@Override
 	public void onTerminate() {
 		super.onTerminate();
-		this.eventBus().publish(new ApplicationDestroyEvent());
+		this.eventBus().publish(BridgeApplication.DestroyEvent
+				.from(this).create());
 	}
 
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
-		this.eventBus().publish(new ApplicationLowMemoryEvent());
+		this.eventBus().publish(BridgeApplication.LowMemoryEvent
+				.from(this).create());
 	}
 
 	@Override
 	public void onTrimMemory(int level) {
 		super.onTrimMemory(level);
-		this.eventBus().publish(new ApplicationTrimMemoryEvent(level));
+		this.eventBus().publish(BridgeApplication.TrimMemoryEvent
+				.from(this)
+				.assign("level", level)
+				.create());
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		this.eventBus().publish(new ApplicationConfigurationChangedEvent(newConfig));
+		this.eventBus().publish(BridgeApplication.ConfigurationChangedEvent
+				.from(this)
+				.assign("configuration", newConfig)
+				.create());
 	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		this.eventBus().publish(new ApplicationPreferencesChangedEvent(key));
+		this.eventBus().publish(BridgeApplication.PreferencesChangedEvent
+				.from(this)
+				.assign("key", key)
+				.create());
 	}
 }

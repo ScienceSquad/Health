@@ -31,7 +31,7 @@ public abstract class Module {
 	 * @param event the event to publish
 	 * @param <E> the type of Event being published
 	 */
-	public <E extends EventBus.Event> void publish(E event) {
+	public <E extends Event> void publish(E event) {
 		BridgeApplication.application().ifPresent(app -> {
 			app.eventBus().publish(event);
 		});
@@ -47,7 +47,7 @@ public abstract class Module {
 	 * @param handler the action to perform upon notification
 	 * @param <E> the type of Event being subscribed to
 	 */
-	public <E extends EventBus.Event> void subscribe(final Class<E> eventClass, Action1<E> handler) {
+	public <E extends Event> void subscribe(final Class<E> eventClass, Action1<E> handler) {
 		BridgeApplication.application().ifPresent(app -> {
 			Subscription sub = app.eventBus().subscribe(eventClass, handler);
 			this._subscriptions.add(sub);
