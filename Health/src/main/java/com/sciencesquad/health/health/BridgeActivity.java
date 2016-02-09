@@ -46,8 +46,7 @@ public class BridgeActivity extends AppCompatActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
 		super.onCreate(savedInstanceState, persistentState);
-		this.eventBus().publish(BridgeActivity.CreateEvent
-				.from(this)
+		this.eventBus().publish(Event.build(CreateEvent.class, this)
 				.assign("savedInstanceState", savedInstanceState)
 				.assign("persistentState", persistentState)
 				.create());
@@ -56,51 +55,48 @@ public class BridgeActivity extends AppCompatActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		this.eventBus().publish(BridgeActivity.StartEvent
-				.from(this).create());
+		this.eventBus().publish(Event.build(StartEvent.class, this)
+				.create());
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		_isVisible = true;
-		this.eventBus().publish(BridgeActivity.VisibilityEvent
-				.from(this)
+		this.eventBus().publish(Event.build(VisibilityEvent.class, this)
 				.assign("isVisible", _isVisible)
 				.create());
-		this.eventBus().publish(BridgeActivity.ResumeEvent
-				.from(this).create());
+		this.eventBus().publish(Event.build(ResumeEvent.class, this)
+				.create());
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		_isVisible = false;
-		this.eventBus().publish(BridgeActivity.VisibilityEvent
-				.from(this)
+		this.eventBus().publish(Event.build(VisibilityEvent.class, this)
 				.assign("isVisible", _isVisible)
 				.create());
-		this.eventBus().publish(BridgeActivity.PauseEvent
-				.from(this).create());
+		this.eventBus().publish(Event.build(PauseEvent.class, this)
+				.create());
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		this.eventBus().publish(BridgeActivity.StopEvent
-				.from(this).create());
+		this.eventBus().publish(Event.build(StopEvent.class, this)
+				.create());
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		_isVisible = false;
-		this.eventBus().publish(BridgeActivity.VisibilityEvent
-				.from(this)
+		this.eventBus().publish(Event.build(VisibilityEvent.class, this)
 				.assign("isVisible", _isVisible)
 				.create());
-		this.eventBus().publish(BridgeActivity.DestroyEvent
-				.from(this).create());
+		this.eventBus().publish(Event.build(DestroyEvent.class, this)
+				.create());
 	}
 
 	// Helper

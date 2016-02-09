@@ -15,20 +15,20 @@ import java.lang.reflect.Modifier;
 public abstract class Event implements Serializable {
 	private static final String TAG = "Event";
 
-	@NonNull public transient Object source;
-
 	public Event() {}
 
+	@NonNull public transient Object source;
+	@NonNull
 	public Object getSource() {
 		return this.source;
 	}
 
-	public static Event.Builder from(@NonNull Object source) {
-		Class currentClass = new Object(){}.getClass().getEnclosingClass();
-		return Event.Builder.from(currentClass, source);
+	@NonNull
+	public static <T extends Event> Event.Builder build(@NonNull final Class<T> eventClass, @NonNull final Object source) {
+		return new Event.Builder(eventClass, source);
 	}
 
-	@Override
+	@Override @NonNull
 	public String toString() {
 		return StreamSupport.of(this.getClass().getFields())
 				.filter(f -> !Modifier.isStatic(f.getModifiers()))
@@ -40,28 +40,26 @@ public abstract class Event implements Serializable {
 					}
 				})
 				.filter(f -> f != null)
-				.collect(Collectors.joining("\t\n", "[" + this.getClass().getSimpleName(), "]"));
+				.collect(Collectors.joining(";\n\t", this.getClass().getSimpleName() + " {\n\t", "\n}"));
 	}
 
 	public static class Builder {
 		private Event _event;
-		private Builder() {}
 
-		public static <T extends Event> Builder from(@NonNull Class<T> eventClass, @NonNull Object source) {
-			if (!eventClass.isInstance(eventClass))
-				throw new AssertionError("eventClass must inherit from Event.");
+		public <T extends Event> Builder(@NonNull final Class<T> eventClass, @NonNull final Object source) {
+			//if (!eventClass.isInstance(eventClass))
+			//	throw new AssertionError("eventClass must inherit from Event.");
 
 			try {
-				Builder builder = new Builder();
-				builder._event = eventClass.newInstance();
-				builder._event.source = source;
-				return builder;
+				this._event = eventClass.newInstance();
+				this._event.source = source;
 			} catch (Exception e) {
-				return null;
+				throw new RuntimeException(e);
 			}
 		}
 
-		public Builder assign(String property, Object value) {
+		@NonNull
+		public Builder assign(@NonNull final String property, @NonNull final Object value) {
 			try {
 				Field field = _event.getClass().getDeclaredField(property);
 				if (!field.getType().isInstance(value))
@@ -71,6 +69,7 @@ public abstract class Event implements Serializable {
 			return this;
 		}
 
+		@NonNull
 		public Event create() {
 			return _event;
 		}
