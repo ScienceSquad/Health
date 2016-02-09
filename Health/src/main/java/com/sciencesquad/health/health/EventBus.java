@@ -1,7 +1,6 @@
 package com.sciencesquad.health.health;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -36,7 +35,6 @@ public class EventBus {
 	 * @param <E> the event class conforming to the Event interface
 	 */
 	public <E extends Event> void publish(@NonNull E event) {
-		Log.d(TAG, "Got " + event);
 		_bus.onNext(event);
 	}
 
@@ -51,7 +49,6 @@ public class EventBus {
 	 */
 	@NonNull
 	public <E extends Event> Subscription subscribe(@NonNull final Class<E> eventClass, @NonNull Action1<E> handler) {
-		Log.d(TAG, "Subbing " + eventClass);
 		return _bus
 				.filter(event -> event.getClass().equals(eventClass))
 				.map(obj -> (E)obj)
