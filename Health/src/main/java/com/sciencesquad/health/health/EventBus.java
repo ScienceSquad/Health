@@ -10,7 +10,8 @@ import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
 
 /**
- * The EventBus.
+ * The EventBus that publishes all Events and notifies any subscribers
+ * of the Event types they wish to listen to.
  */
 public class EventBus {
 	private static final String TAG = "EventBus";
@@ -29,7 +30,7 @@ public class EventBus {
 	private final Subject<Event, Event> _bus = new SerializedSubject<>(PublishSubject.create());
 
 	/**
-	 * Publishes an Event to all subscribers interested in listening for it.
+	 * Publishes an Event to all subscribers interested that are listening.
 	 *
 	 * @param event the event to be published
 	 * @param <E> the event class conforming to the Event interface
@@ -60,6 +61,7 @@ public class EventBus {
 	/**
 	 * Unsubscribe from the Event originally being listened to.
 	 *
+	 * @implNote equivalent to calling `subscription.unsubscribe()`
 	 * @param subscription the subscription to cancel
 	 */
 	public void unsubscribe(@NonNull Subscription subscription) {
@@ -67,7 +69,9 @@ public class EventBus {
 	}
 
 	/**
-	 * Convert the EventBus to a raw Rx Observable.
+	 * Convert the EventBus to a raw RxJava Observable.
+	 * This may be desired in cases the EventBus class's simplicity hinders
+	 * the user from attaining a desired subscriber or publisher effect.
 	 *
 	 * @return an Observable representation of this EventBus.
 	 */
