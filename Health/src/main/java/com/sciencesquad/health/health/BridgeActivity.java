@@ -1,48 +1,93 @@
 package com.sciencesquad.health.health;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 
 public class BridgeActivity extends AppCompatActivity {
 	private static final String TAG = "BridgeActivity";
 
+	/**
+	 * The Activity was created.
+	 */
 	public static final class CreateEvent extends Event {
-		public Bundle savedInstanceState; // FIXME: Probably should not be broadcasting this...
-		public PersistableBundle persistentState; // FIXME: Probably should not be broadcasting this...
+
+		/**
+		 * The saved instance state of this Activity.
+		 */
+		// FIXME: Probably should not be broadcasting this...
+		public Bundle savedInstanceState;
+
+		/**
+		 * The persistent state of this Activity.
+		 */
+		// FIXME: Probably should not be broadcasting this...
+		public PersistableBundle persistentState;
 	}
 
+	/**
+	 * The Activity was destroyed.
+	 */
 	public static final class DestroyEvent extends Event {
 		// EMPTY
 	}
 
+	/**
+	 * The Activity was paused.
+	 */
 	public static final class PauseEvent extends Event {
 		// EMPTY
 	}
 
+	/**
+	 * The Activity was resumed.
+	 */
 	public static final class ResumeEvent extends Event {
 		// EMPTY
 	}
 
+	/**
+	 * The Activity was started.
+	 */
 	public static final class StartEvent extends Event {
 		// EMPTY
 	}
 
+	/**
+	 * The Activity was stopped.
+	 */
 	public static final class StopEvent extends Event {
 		// EMPTY
 	}
 
+	/**
+	 * The Activity visibility state changed.
+	 */
 	public static final class VisibilityEvent extends Event {
+
+		/**
+		 * The new visibility state of the Activity.
+		 */
 		public boolean isVisible = false;
 	}
 
+	/**
+	 * Indicates the visibility state of this Activity.
+	 */
 	private boolean _isVisible = false;
 
+	/**
+	 * Indicates the visibility state of this Activity.
+	 *
+	 * @return true if the Activity is visible on screen, false otherwise.
+	 */
 	public boolean isVisible() {
 		return _isVisible;
 	}
 
+	/**
+	 * Overridden to provide Activity lifecycle Events to the EventBus.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
 		super.onCreate(savedInstanceState, persistentState);
@@ -52,6 +97,9 @@ public class BridgeActivity extends AppCompatActivity {
 				.create());
 	}
 
+	/**
+	 * Overridden to provide Activity lifecycle Events to the EventBus.
+	 */
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -59,6 +107,9 @@ public class BridgeActivity extends AppCompatActivity {
 				.create());
 	}
 
+	/**
+	 * Overridden to provide Activity lifecycle Events to the EventBus.
+	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -70,6 +121,9 @@ public class BridgeActivity extends AppCompatActivity {
 				.create());
 	}
 
+	/**
+	 * Overridden to provide Activity lifecycle Events to the EventBus.
+	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -81,6 +135,9 @@ public class BridgeActivity extends AppCompatActivity {
 				.create());
 	}
 
+	/**
+	 * Overridden to provide Activity lifecycle Events to the EventBus.
+	 */
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -88,6 +145,9 @@ public class BridgeActivity extends AppCompatActivity {
 				.create());
 	}
 
+	/**
+	 * Overridden to provide Activity lifecycle Events to the EventBus.
+	 */
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -99,13 +159,14 @@ public class BridgeActivity extends AppCompatActivity {
 				.create());
 	}
 
-	// Helper
+	/**
+	 * Returns the application-wide instance of the EventBus.
+	 *
+	 * @implNote this method is equivalent to `this.getApplication().eventBus()`.
+	 *
+	 * @return the EventBus globally available to the application.
+	 */
 	public EventBus eventBus() {
 		return ((BridgeApplication)this.getApplication()).eventBus();
-	}
-
-	// Helper
-	public void runOnUiThreadDelayed(Runnable action, long delay) {
-		new Handler(getMainLooper()).postDelayed(action, delay);
 	}
 }

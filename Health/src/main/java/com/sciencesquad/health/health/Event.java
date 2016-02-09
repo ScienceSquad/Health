@@ -34,13 +34,13 @@ public abstract class Event implements Serializable {
 				.filter(f -> !Modifier.isStatic(f.getModifiers()))
 				.map(f -> {
 					try {
-						return f.getName() + " = " + f.get(this);
+						return f.getName() + " = " + f.get(this).toString() + ";\n";
 					} catch (IllegalAccessException e) {
 						return null;
 					}
 				})
 				.filter(f -> f != null)
-				.collect(Collectors.joining(";\n\t", this.getClass().getSimpleName() + " {\n\t", "\n}"));
+				.collect(Collectors.joining("\t", this.getClass().getSimpleName() + " {\n\t", "}"));
 	}
 
 	public static class Builder {
