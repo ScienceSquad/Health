@@ -47,8 +47,8 @@ public abstract class Event implements Serializable {
 		private Event _event;
 
 		public <T extends Event> Builder(@NonNull final Class<T> eventClass, @NonNull final Object source) {
-			//if (!eventClass.isInstance(eventClass))
-			//	throw new AssertionError("eventClass must inherit from Event.");
+			if (!Event.class.isAssignableFrom(eventClass))
+				throw new AssertionError("eventClass must inherit from Event.");
 
 			try {
 				this._event = eventClass.newInstance();
@@ -62,10 +62,15 @@ public abstract class Event implements Serializable {
 		public Builder assign(@NonNull final String property, @NonNull final Object value) {
 			try {
 				Field field = _event.getClass().getDeclaredField(property);
-				if (!field.getType().isInstance(value))
-					throw new AssertionError("value must be of the same type as property.");
 				field.set(_event, value);
-			} catch (Exception e) { }
+
+				// FIXME: Always assert the field is assignable!
+				// Use Apache Commons's ClassUtils for this.
+				//if (!field.getType().isAssignableFrom(value.getClass()))
+				//	throw new AssertionError("value must be of the same type as property.");
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 			return this;
 		}
 
