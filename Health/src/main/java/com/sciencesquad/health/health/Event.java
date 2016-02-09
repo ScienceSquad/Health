@@ -1,14 +1,21 @@
 package com.sciencesquad.health.health;
 
 import android.support.annotation.NonNull;
+import java8.util.stream.Collectors;
+import java8.util.stream.StreamSupport;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * The Event.
  */
-public abstract class Event {
-	@NonNull public Object source;
+// TODO: Support Auto-Parcellable
+public abstract class Event implements Serializable {
+	private static final String TAG = "Event";
+
+	@NonNull public transient Object source;
 
 	public Event() {}
 
@@ -19,6 +26,21 @@ public abstract class Event {
 	public static Event.Builder from(@NonNull Object source) {
 		Class currentClass = new Object(){}.getClass().getEnclosingClass();
 		return Event.Builder.from(currentClass, source);
+	}
+
+	@Override
+	public String toString() {
+		return StreamSupport.of(this.getClass().getFields())
+				.filter(f -> !Modifier.isStatic(f.getModifiers()))
+				.map(f -> {
+					try {
+						return f.getName() + " = " + f.get(this);
+					} catch (IllegalAccessException e) {
+						return null;
+					}
+				})
+				.filter(f -> f != null)
+				.collect(Collectors.joining("\t\n", "[" + this.getClass().getSimpleName(), "]"));
 	}
 
 	public static class Builder {

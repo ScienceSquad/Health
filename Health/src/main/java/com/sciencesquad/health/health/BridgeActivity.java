@@ -6,7 +6,6 @@ import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 
 public class BridgeActivity extends AppCompatActivity {
-
 	private static final String TAG = "BridgeActivity";
 
 	public static final class CreateEvent extends Event {

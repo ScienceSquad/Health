@@ -1,5 +1,6 @@
 package com.sciencesquad.health.health;
 
+import android.util.Log;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -11,6 +12,7 @@ import rx.subjects.Subject;
  * The EventBus.
  */
 public class EventBus {
+	private static final String TAG = "EventBus";
 
 	/*
 	// In case we switch away from RxJava:
@@ -32,6 +34,7 @@ public class EventBus {
 	 * @param <E> the event class conforming to the Event interface
 	 */
 	public <E extends Event> void publish(E event) {
+		Log.d(TAG, "Got " + event);
 		_bus.onNext(event);
 	}
 
@@ -45,6 +48,7 @@ public class EventBus {
 	 * @return a Subscription that may be cancelled later.
 	 */
 	public <E extends Event> Subscription subscribe(final Class<E> eventClass, Action1<E> handler) {
+		Log.d(TAG, "Subbing " + eventClass);
 		return _bus
 				.filter(event -> event.getClass().equals(eventClass))
 				.map(obj -> (E)obj)

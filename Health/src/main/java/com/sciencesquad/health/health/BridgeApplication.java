@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import java8.util.Optional;
 
 public class BridgeApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
-
 	private static final String TAG = "BridgeApplication";
 
 	public static final class CreateEvent extends Event {
