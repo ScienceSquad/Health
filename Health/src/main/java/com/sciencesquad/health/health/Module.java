@@ -7,25 +7,15 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 import java.util.HashSet;
-import java.util.concurrent.ForkJoinPool;
 
 // TODO: NEEDS TO BE FLESHED OUT!!
 public abstract class Module {
 	private static final String TAG = "Module";
 
-	private static int PROCESSORS = Runtime.getRuntime().availableProcessors() * 2;
-	private static ForkJoinPool POOL = new ForkJoinPool(PROCESSORS);
-
-	private HashSet<Subscription> _subscriptions = new HashSet<>();
-
 	/**
-	 * Returns the concurrent execution service for this Module.
-	 *
-	 * @return a ForkJoinPool to be used for computationally intensive tasks.
+	 * The internal set of Subscriptions to auto-unsubscribe from.
 	 */
-	protected ForkJoinPool executor() {
-		return Module.POOL;
-	}
+	private HashSet<Subscription> _subscriptions = new HashSet<>();
 
 	/**
 	 * Publishes any Events to the shared application EventBus.
