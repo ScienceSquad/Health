@@ -1,0 +1,26 @@
+language: android
+android:
+  components:
+
+# Defaults  
+    - platform-tools
+    - build-tools-23.0.1
+    - android-23
+    
+# Extras
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - addon-google_apis-google-19
+
+# Default Gradle Test
+script:
+   - ./gradlew build connectedCheck
+
+# Fix Cache
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
