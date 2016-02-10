@@ -1,12 +1,15 @@
 package com.sciencesquad.health.health;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
+
+import java.lang.ref.WeakReference;
 
 /**
  * The EventBus that publishes all Events and notifies any subscribers
@@ -42,15 +45,27 @@ public class EventBus {
 	 * Subscribe to notifications of a given Event type, and execute a handler upon
 	 * a publisher publishing a notification.
 	 *
+	 * @implNote if the source is null, all events of eventClass's type will be
+	 * subscribed to; this holds true if source eventually becomes null.
+	 * @implNote the `source` object is weakly referenced during the subscription
+	 *
+	 * @apiNote if `this` is strongly referred to within the handler, it runs the
+	 * risk of the object not properly being deallocated.
+	 *
 	 * @param eventClass the class of Event to listen for
+	 * @param source the object source to specifically listen to events from
 	 * @param handler the action handler to be executed
 	 * @param <E> the event class conforming to the Event interface
 	 * @return a Subscription that may be cancelled later.
 	 */
 	@NonNull
-	public <E extends Event> Subscription subscribe(@NonNull final Class<E> eventClass, @NonNull Action1<E> handler) {
+	@SuppressWarnings("unchecked")
+	public <E extends Event> Subscription subscribe(@NonNull final Class<E> eventClass,
+						@Nullable final Object source, @NonNull final Action1<E> handler) {
+		final WeakReference<Object> ref = new WeakReference<>(source);
 		return _bus
 				.filter(event -> event.getClass().equals(eventClass))
+				.filter(event -> (ref.get() == null) || (event.source.equals(ref.get())))
 				.map(obj -> (E)obj)
 				.subscribe(handler);
 	}

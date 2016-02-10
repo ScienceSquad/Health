@@ -28,6 +28,7 @@ public abstract class Event implements Cloneable, Serializable {
 	 * @return a deep-copy clone of the current Event
 	 * @throws CloneNotSupportedException if the clone failed
 	 */
+	@NonNull
 	protected Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
