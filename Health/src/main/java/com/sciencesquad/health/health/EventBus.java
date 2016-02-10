@@ -53,7 +53,7 @@ public class EventBus {
 	 * risk of the object not properly being deallocated.
 	 *
 	 * @param eventClass the class of Event to listen for
-	 * @param source the object source to specifically listen to events from
+	 * @param source the object source to specifically listen to events from, or null
 	 * @param handler the action handler to be executed
 	 * @param <E> the event class conforming to the Event interface
 	 * @return a Subscription that may be cancelled later.

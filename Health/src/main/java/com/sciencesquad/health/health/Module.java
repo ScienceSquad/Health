@@ -1,5 +1,7 @@
 package com.sciencesquad.health.health;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import java8.util.stream.StreamSupport;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -7,8 +9,8 @@ import rx.functions.Action1;
 import java.util.HashSet;
 import java.util.concurrent.ForkJoinPool;
 
+// TODO: NEEDS TO BE FLESHED OUT!!
 public abstract class Module {
-
 	private static final String TAG = "Module";
 
 	private static int PROCESSORS = Runtime.getRuntime().availableProcessors() * 2;
@@ -19,7 +21,7 @@ public abstract class Module {
 	/**
 	 * Returns the concurrent execution service for this Module.
 	 *
-	 * @return a ForkJoinPool shared by all Modules.
+	 * @return a ForkJoinPool to be used for computationally intensive tasks.
 	 */
 	protected ForkJoinPool executor() {
 		return Module.POOL;
@@ -31,7 +33,7 @@ public abstract class Module {
 	 * @param event the event to publish
 	 * @param <E> the type of Event being published
 	 */
-	public <E extends Event> void publish(E event) {
+	public <E extends Event> void publish(@NonNull E event) {
 		BridgeApplication.application().ifPresent(app -> {
 			app.eventBus().publish(event);
 		});
@@ -47,9 +49,10 @@ public abstract class Module {
 	 * @param handler the action to perform upon notification
 	 * @param <E> the type of Event being subscribed to
 	 */
-	public <E extends Event> void subscribe(final Class<E> eventClass, Action1<E> handler) {
+	public <E extends Event> void subscribe(@NonNull final Class<E> eventClass,
+						@Nullable final Object source, @NonNull final Action1<E> handler) {
 		BridgeApplication.application().ifPresent(app -> {
-			Subscription sub = app.eventBus().subscribe(eventClass, handler);
+			Subscription sub = app.eventBus().subscribe(eventClass, source, handler);
 			this._subscriptions.add(sub);
 		});
 	}
