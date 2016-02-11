@@ -3,6 +3,7 @@ package com.sciencesquad.health.health;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.sciencesquad.health.health.events.Event;
+import java8.util.Optional;
 import java8.util.stream.StreamSupport;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -25,7 +26,7 @@ public abstract class Module {
 	 * @param <E> the type of Event being published
 	 */
 	public <E extends Event> void publish(@NonNull E event) {
-		BridgeApplication.application().ifPresent(app -> {
+		this.app().ifPresent(app -> {
 			app.eventBus().publish(event);
 		});
 	}
@@ -42,7 +43,7 @@ public abstract class Module {
 	 */
 	public <E extends Event> void subscribe(@NonNull final Class<E> eventClass,
 											@Nullable final Object source, @NonNull final Action1<E> handler) {
-		BridgeApplication.application().ifPresent(app -> {
+		this.app().ifPresent(app -> {
 			Subscription sub = app.eventBus().subscribe(eventClass, source, handler);
 			this._subscriptions.add(sub);
 		});
@@ -60,5 +61,15 @@ public abstract class Module {
 		super.finalize();
 		StreamSupport.stream(this._subscriptions).forEach(Subscription::unsubscribe);
 		this._subscriptions.clear();
+	}
+
+	/**
+	 * Helper to wrap the Application as an Optional type.
+	 *
+	 * @return the Application as a nullable Optional
+	 */
+	@NonNull
+	protected Optional<BridgeApplication> app() {
+		return Optional.ofNullable(BridgeApplication.application());
 	}
 }

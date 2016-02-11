@@ -3,10 +3,10 @@ package com.sciencesquad.health.health;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.support.annotation.Nullable;
 import com.sciencesquad.health.health.events.Event;
 import com.sciencesquad.health.health.events.Event.EventType;
 import com.sciencesquad.health.health.events.EventBus;
-import java8.util.Optional;
 import org.immutables.value.Value.Immutable;
 
 /**
@@ -98,8 +98,9 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	 *
 	 * @return an Optional containing the BridgeApplication singleton.
 	 */
-	public static Optional<BridgeApplication> application() {
-		return Optional.ofNullable(_application);
+	@Nullable
+	public static BridgeApplication application() {
+		return _application;
 	}
 
 	/**
