@@ -66,6 +66,10 @@ dependencies {
     compile 'net.sourceforge.streamsupport:streamsupport:1.1.4'
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
 
+    apt "org.immutables:value:2.1.10"
+    provided "org.immutables:value:2.1.10"
+    provided "org.immutables:builder:2.1.10"
+
     // Android Support Library
     compile 'com.android.support:palette-v7:23+'
     compile 'com.android.support:cardview-v7:23+'
