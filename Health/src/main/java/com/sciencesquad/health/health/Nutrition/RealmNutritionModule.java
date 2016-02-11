@@ -12,7 +12,7 @@ import com.sciencesquad.health.health.database.*;
  */
 
 @RealmModule(classes = {RealmNutritionModel.class})
-public class RealmNutritionModule extends RealmDataBaseContext{
+public class RealmNutritionModule extends RealmDataContext{
 
     @Override
     public void init(){
