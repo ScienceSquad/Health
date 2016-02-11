@@ -2,6 +2,7 @@ package com.sciencesquad.health.health;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.sciencesquad.health.health.events.Event;
 import java8.util.stream.StreamSupport;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -40,7 +41,7 @@ public abstract class Module {
 	 * @param <E> the type of Event being subscribed to
 	 */
 	public <E extends Event> void subscribe(@NonNull final Class<E> eventClass,
-						@Nullable final Object source, @NonNull final Action1<E> handler) {
+											@Nullable final Object source, @NonNull final Action1<E> handler) {
 		BridgeApplication.application().ifPresent(app -> {
 			Subscription sub = app.eventBus().subscribe(eventClass, source, handler);
 			this._subscriptions.add(sub);

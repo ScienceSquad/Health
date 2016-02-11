@@ -1,4 +1,4 @@
-package com.sciencesquad.health.health;
+package com.sciencesquad.health.health.events;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -62,10 +62,11 @@ public class EventBus {
 	@SuppressWarnings("unchecked")
 	public <E extends Event> Subscription subscribe(@NonNull final Class<E> eventClass,
 						@Nullable final Object source, @NonNull final Action1<E> handler) {
+		/* TODO: Ensure all object references in Events are weak! */
 		final WeakReference<Object> ref = new WeakReference<>(source);
 		return _bus
 				.filter(event -> event.getClass().equals(eventClass))
-				.filter(event -> (ref.get() == null) || (event.source.equals(ref.get())))
+				.filter(event -> (ref.get() == null) || (event.source().equals(ref.get())))
 				.map(obj -> (E)obj)
 				.subscribe(handler);
 	}

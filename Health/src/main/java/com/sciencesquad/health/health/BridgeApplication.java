@@ -3,7 +3,11 @@ package com.sciencesquad.health.health;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import com.sciencesquad.health.health.events.Event;
+import com.sciencesquad.health.health.events.Event.EventType;
+import com.sciencesquad.health.health.events.EventBus;
 import java8.util.Optional;
+import org.immutables.value.Value.Immutable;
 
 /**
  * The BridgeApplication connects the monolithic Android Application
@@ -17,57 +21,63 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	/**
 	 * The Application was created.
 	 */
-	public static final class CreateEvent extends Event {
+	@Immutable @EventType
+	public interface AppCreate extends Event {
 		// EMPTY
 	}
 
 	/**
 	 * The Application was destroyed.
 	 */
-	public static final class DestroyEvent extends Event {
+	@Immutable @EventType
+	public interface AppDestroy extends Event {
 		// EMPTY
 	}
 
 	/**
 	 * The Application was given a low-memory warning.
 	 */
-	public static final class LowMemoryEvent extends Event {
+	@Immutable @EventType
+	public interface AppLowMemory extends Event {
 		// EMPTY
 	}
 
 	/**
 	 * The Application's memory level was trimmed.
 	 */
-	public static final class TrimMemoryEvent extends Event {
+	@Immutable @EventType
+	public interface AppTrimMemory extends Event {
 
 		/**
 		 * The memory level to which the Application was trimmed.
 		 */
-		public int level = 0;
+		int level();
 	}
 
 	/**
 	 * The Application configuration changed.
 	 */
-	public static final class ConfigurationChangedEvent extends Event {
+	@Immutable @EventType
+	public interface AppConfigurationChanged extends Event {
 
 		/**
 		 * The new configuration for which the Application was updated.
 		 */
-		public Configuration configuration = null;
+		Configuration configuration();
 	}
 
 	/**
 	 * The Application preferences were updated.
 	 */
-	public static final class PreferencesChangedEvent extends Event {
+	@Immutable @EventType
+	public interface AppPreferencesChanged extends Event {
 
 		/**
 		 * The key of the preference entry that was changed.
 		 * @implNote this should be used when accessing the preference entry
 		 * from SharedPreferences.
 		 */
-		public String key = null;
+		String key();
 	}
 
 	/**
@@ -108,7 +118,7 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	public void onCreate() {
 		super.onCreate();
 		_application = this;
-		this.eventBus().publish(Event.build(CreateEvent.class, this)
+		this.eventBus().publish(AppCreateEvent.from(this)
 				.create());
 	}
 
@@ -118,7 +128,7 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	@Override
 	public void onTerminate() {
 		super.onTerminate();
-		this.eventBus().publish(Event.build(DestroyEvent.class, this)
+		this.eventBus().publish(AppDestroyEvent.from(this)
 				.create());
 	}
 
@@ -128,7 +138,7 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
-		this.eventBus().publish(Event.build(LowMemoryEvent.class, this)
+		this.eventBus().publish(AppLowMemoryEvent.from(this)
 				.create());
 	}
 
@@ -138,8 +148,8 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	@Override
 	public void onTrimMemory(int level) {
 		super.onTrimMemory(level);
-		this.eventBus().publish(Event.build(TrimMemoryEvent.class, this)
-				.assign("level", level)
+		this.eventBus().publish(AppTrimMemoryEvent.from(this)
+				.level(level)
 				.create());
 	}
 
@@ -149,8 +159,8 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		this.eventBus().publish(Event.build(ConfigurationChangedEvent.class, this)
-				.assign("configuration", newConfig)
+		this.eventBus().publish(AppConfigurationChangedEvent.from(this)
+				.configuration(newConfig)
 				.create());
 	}
 
@@ -159,8 +169,8 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	 */
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		this.eventBus().publish(Event.build(PreferencesChangedEvent.class, this)
-				.assign("key", key)
+		this.eventBus().publish(AppPreferencesChangedEvent.from(this)
+				.key(key)
 				.create());
 	}
 }
