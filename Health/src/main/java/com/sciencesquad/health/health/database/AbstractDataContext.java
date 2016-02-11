@@ -1,6 +1,8 @@
 package com.sciencesquad.health.health.database;
 
 
+import android.content.Context;
+
 /**
  * Created by danielmiller on 2/11/16.
  *
@@ -9,7 +11,7 @@ package com.sciencesquad.health.health.database;
  *  - Update the database
  *  - Query the database
  */
-public abstract class AbstractDataBaseContext {
+public abstract class AbstractDataContext {
 
     private static final String TAG = "Abstract Database Context";
 

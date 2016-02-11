@@ -12,6 +12,8 @@ import io.realm.RealmObject;
 public class RealmNutritionModel extends RealmObject {
     private int calorieIntake;
 
+    public int getCalorieIntake(){ return calorieIntake; }
+
     public void setCalorieIntake(int calorieIntake){
         this.calorieIntake = calorieIntake;
     }
