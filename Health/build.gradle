@@ -66,6 +66,7 @@ dependencies {
     compile 'net.sourceforge.streamsupport:streamsupport:1.1.4'
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
 
+	// Immutable Value Class support.
     apt "org.immutables:value:2.1.10"
     provided "org.immutables:value:2.1.10"
     provided "org.immutables:builder:2.1.10"

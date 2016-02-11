@@ -1,22 +1,22 @@
-package com.sciencesquad.health.health;
+package com.sciencesquad.health;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.health.events.Event;
-import com.sciencesquad.health.health.events.Event.EventType;
-import com.sciencesquad.health.health.events.EventBus;
+import com.sciencesquad.health.events.Event;
+import com.sciencesquad.health.events.Event.EventType;
+import com.sciencesquad.health.events.EventBus;
 import org.immutables.value.Value.Immutable;
 
 /**
- * The BridgeApplication connects the monolithic Android Application
+ * The BaseApplication connects the monolithic Android Application
  * to the EventBus mechanism by broadcasting its lifecycle as Events.
  * It also connects to the SharedPreferences singleton and broadcasts
  * any preference key changes as an Event as well.
  */
-public class BridgeApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
-	private static final String TAG = "BridgeApplication";
+public class BaseApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
+	private static final String TAG = "BaseApplication";
 
 	/**
 	 * The Application was created.
@@ -81,9 +81,9 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	}
 
 	/**
-	 * The private application-wide BridgeApplication singleton instance.
+	 * The private application-wide BaseApplication singleton instance.
 	 */
-	private static BridgeApplication _application = null;
+	private static BaseApplication _application = null;
 
 	/**
 	 * The private application-wide instance of the EventBus.
@@ -91,15 +91,15 @@ public class BridgeApplication extends Application implements SharedPreferences.
 	private final EventBus _eventBus = new EventBus();
 
 	/**
-	 * Returns the global shared BridgeApplication.
+	 * Returns the global shared BaseApplication.
 	 *
 	 * @apiNote if called from within a Service not attached to this Application,
 	 * this method will return null.
 	 *
-	 * @return an Optional containing the BridgeApplication singleton.
+	 * @return an Optional containing the BaseApplication singleton.
 	 */
 	@Nullable
-	public static BridgeApplication application() {
+	public static BaseApplication application() {
 		return _application;
 	}
 

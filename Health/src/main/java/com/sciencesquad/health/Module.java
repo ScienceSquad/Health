@@ -1,8 +1,8 @@
-package com.sciencesquad.health.health;
+package com.sciencesquad.health;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.health.events.Event;
+import com.sciencesquad.health.events.Event;
 import java8.util.Optional;
 import java8.util.stream.StreamSupport;
 import rx.Subscription;
@@ -69,7 +69,7 @@ public abstract class Module {
 	 * @return the Application as a nullable Optional
 	 */
 	@NonNull
-	protected Optional<BridgeApplication> app() {
-		return Optional.ofNullable(BridgeApplication.application());
+	protected Optional<BaseApplication> app() {
+		return Optional.ofNullable(BaseApplication.application());
 	}
 }

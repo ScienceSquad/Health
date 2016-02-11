@@ -1,4 +1,4 @@
-package com.sciencesquad.health.health;
+package com.sciencesquad.health;
 
 import java.util.concurrent.ForkJoinPool;
 

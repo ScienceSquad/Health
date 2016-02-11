@@ -1,4 +1,4 @@
-package com.sciencesquad.health.health.events;
+package com.sciencesquad.health.events;
 
 import org.immutables.builder.Builder;
 import org.immutables.value.Value;
