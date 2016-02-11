@@ -1,6 +1,10 @@
 package com.sciencesquad.health.health.Nutrition;
 
 
+import android.content.Context;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.annotations.RealmModule;
 import com.sciencesquad.health.health.database.*;
 
@@ -14,14 +18,29 @@ import com.sciencesquad.health.health.database.*;
 @RealmModule(classes = {RealmNutritionModel.class})
 public class RealmNutritionModule extends RealmDataContext{
 
-    @Override
-    public void init(){
+    private RealmConfiguration configNutritionRealm;
+    private Realm realm;
 
+    public RealmNutritionModule(){
+        setRealmName("nutrition.realm");
     }
+
+    @Override
+    public void init(Context context){
+        RealmNutritionModule nutritionModule = new RealmNutritionModule();
+        configNutritionRealm = new RealmConfiguration.Builder(context)
+                .name(getRealmName())
+                .setModules(nutritionModule)
+                .build();
+
+        realm = Realm.getInstance(configNutritionRealm);
+    }
+
     @Override
     public void update(){
 
     }
+
     @Override
     public void query(){
 

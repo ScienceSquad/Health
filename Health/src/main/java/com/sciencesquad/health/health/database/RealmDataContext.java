@@ -3,6 +3,7 @@ package com.sciencesquad.health.health.database;
 import android.content.Context;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by danielmiller on 2/11/16.
