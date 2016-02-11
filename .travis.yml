@@ -1,21 +1,35 @@
 language: android
+jdk:
+  - oraclejdk7
+  - oraclejdk8
 android:
   components:
 
 # Defaults  
+    - tools
     - platform-tools
-    - build-tools-23.0.1
+    - build-tools-23.0.2
     - android-23
     
 # Extras
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
-    - addon-google_apis-google-19
+    - addon-google_apis-google-23
+
+  licenses:
+    - '.+'
+
+# Setup JAVA env for components
+before_install:
+  - export JAVA7_HOME=/usr/lib/jvm/java-7-oracle
+  - export JAVA8_HOME=/usr/lib/jvm/java-8-oracle
+  - export JAVA_HOME=$JAVA7_HOME
 
 # Default Gradle Test
 script:
-   - ./gradlew build connectedCheck
+  - ./gradlew clean assemble || ./gradlew clean assemble
+#   - ./gradlew build connectedCheck
 
 # Fix Cache
 before_cache:
