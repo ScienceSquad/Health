@@ -1,4 +1,4 @@
-package com.sciencesquad.health.health;
+package com.sciencesquad.health;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends BridgeActivity
+public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
 	@Override

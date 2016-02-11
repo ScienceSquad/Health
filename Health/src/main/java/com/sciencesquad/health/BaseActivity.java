@@ -1,15 +1,15 @@
-package com.sciencesquad.health.health;
+package com.sciencesquad.health;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import com.sciencesquad.health.health.events.Event;
-import com.sciencesquad.health.health.events.Event.EventType;
-import com.sciencesquad.health.health.events.EventBus;
+import com.sciencesquad.health.events.Event;
+import com.sciencesquad.health.events.Event.EventType;
+import com.sciencesquad.health.events.EventBus;
 import org.immutables.value.Value.Immutable;
 
-public class BridgeActivity extends AppCompatActivity {
-	private static final String TAG = "BridgeActivity";
+public class BaseActivity extends AppCompatActivity {
+	private static final String TAG = "BaseActivity";
 
 	/**
 	 * The Activity was created.
@@ -178,6 +178,6 @@ public class BridgeActivity extends AppCompatActivity {
 	 * @return the EventBus globally available to the application.
 	 */
 	public EventBus eventBus() {
-		return ((BridgeApplication)this.getApplication()).eventBus();
+		return ((BaseApplication)this.getApplication()).eventBus();
 	}
 }
