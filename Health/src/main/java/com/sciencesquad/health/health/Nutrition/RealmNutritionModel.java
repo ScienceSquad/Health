@@ -10,6 +10,9 @@ import io.realm.RealmObject;
  * Things that are relevant to store for Nutrition go here.
  */
 public class RealmNutritionModel extends RealmObject {
+
+    private static final String TAG = "Nutrition Realm Object";
+
     private int calorieIntake;
 
     public int getCalorieIntake(){ return calorieIntake; }

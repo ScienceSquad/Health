@@ -15,7 +15,7 @@ public abstract class AbstractDataContext {
 
     private static final String TAG = "Abstract Database Context";
 
-    public abstract void init(Context context);
+    public abstract void init();
     public abstract void update();
     public abstract void query();
 }

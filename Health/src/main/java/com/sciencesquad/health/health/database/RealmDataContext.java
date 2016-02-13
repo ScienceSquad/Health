@@ -16,9 +16,19 @@ public abstract class RealmDataContext extends AbstractDataContext {
     private static final String TAG = "Realm Database Context";
 
     private String realmName;
+    private Context realmContext;
+
     public void setRealmName(String filename){
         this.realmName = filename;
     }
     public String getRealmName(){ return this.realmName; }
+
+    public void setRealmContext(Context context){
+        this.realmContext = context;
+    }
+
+    public Context getRealmContext(){
+        return this.realmContext;
+    }
 
 }

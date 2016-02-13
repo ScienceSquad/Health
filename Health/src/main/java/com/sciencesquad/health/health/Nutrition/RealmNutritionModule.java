@@ -18,19 +18,22 @@ import com.sciencesquad.health.health.database.*;
 @RealmModule(classes = {RealmNutritionModel.class})
 public class RealmNutritionModule extends RealmDataContext{
 
+    private static final String TAG = "Realm Nutrition Module";
+
     private RealmConfiguration configNutritionRealm;
     private Realm realm;
 
-    public RealmNutritionModule(){
+    public RealmNutritionModule(Context context){
         setRealmName("nutrition.realm");
+        setRealmContext(context);
+        init();
     }
 
     @Override
-    public void init(Context context){
-        RealmNutritionModule nutritionModule = new RealmNutritionModule();
-        configNutritionRealm = new RealmConfiguration.Builder(context)
+    public void init(){
+        configNutritionRealm = new RealmConfiguration.Builder(getRealmContext())
                 .name(getRealmName())
-                .setModules(nutritionModule)
+                .setModules(this)
                 .build();
 
         realm = Realm.getInstance(configNutritionRealm);
