@@ -3,7 +3,7 @@ package com.sciencesquad.health.events;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
+import android.hardware.SensorEventListener2;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -61,8 +61,21 @@ public class SensorContext {
 		int accuracy();
 	}
 
+	/**
+	 *
+	 */
+	@Immutable @EventType
+	public interface SensorFlush extends Event {
+
+		/**
+		 *
+		 * @return
+		 */
+		Sensor sensor();
+	}
+
 	private SensorManager _sensorManager;
-	private HashMap<Integer, SensorEventListener> _sensorListeners = new HashMap<>();
+	private HashMap<Integer, SensorEventListener2> _sensorListeners = new HashMap<>();
 
 	/**
 	 *
@@ -84,7 +97,7 @@ public class SensorContext {
 			throw new SensorNotAvailableException("Sensor " + sensorType + " is not available on this device!");
 		}
 
-		final SensorEventListener listener = new SensorEventListener() {
+		final SensorEventListener2 listener = new SensorEventListener2() {
 			@Override public void onSensorChanged(SensorEvent sensorEvent) {
 				Optional.ofNullable(BaseApplication.application())
 						.map(BaseApplication::eventBus)
@@ -102,6 +115,16 @@ public class SensorContext {
 							e.publish(SensorAccuracyEvent.from(this)
 									.sensor(sensor)
 									.accuracy(accuracy)
+									.create());
+						});
+			}
+
+			@Override public void onFlushCompleted(Sensor sensor) {
+				Optional.ofNullable(BaseApplication.application())
+						.map(BaseApplication::eventBus)
+						.ifPresent(e -> {
+							e.publish(SensorFlushEvent.from(this)
+									.sensor(sensor)
 									.create());
 						});
 			}
