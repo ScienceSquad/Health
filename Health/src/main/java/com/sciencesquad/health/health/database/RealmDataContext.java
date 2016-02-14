@@ -4,6 +4,7 @@ import android.content.Context;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 
 /**
  * Created by danielmiller on 2/11/16.
@@ -18,6 +19,8 @@ public abstract class RealmDataContext extends AbstractDataContext {
     private String realmName;
     private Context realmContext;
 
+
+    // GETTERS AND SETTERS
     public void setRealmName(String filename){
         this.realmName = filename;
     }
@@ -30,5 +33,6 @@ public abstract class RealmDataContext extends AbstractDataContext {
     public Context getRealmContext(){
         return this.realmContext;
     }
+
 
 }
