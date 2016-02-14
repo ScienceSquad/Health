@@ -93,9 +93,16 @@ public class SensorContext {
 	 */
 	public void requestSensorEvents(int sensorType, int samplePeriod) throws SensorNotAvailableException {
 		final Sensor sensor = this._sensorManager.getDefaultSensor(sensorType);
-		if (sensor == null || this._sensorListeners.containsKey(sensorType)) {
+
+		// Ensure the sensor is available, and is not a trigger-mode event.
+		if (sensor == null)
 			throw new SensorNotAvailableException("Sensor " + sensorType + " is not available on this device!");
-		}
+		if (sensorType == Sensor.TYPE_SIGNIFICANT_MOTION)
+			throw new SensorNotAvailableException("Significant Motion Triggers not supported!");
+
+		// Pass-through case, since multiple requests will be automatically satisfied.
+		if (this._sensorListeners.containsKey(sensorType))
+			return;
 
 		final SensorEventListener2 listener = new SensorEventListener2() {
 			@Override public void onSensorChanged(SensorEvent sensorEvent) {
@@ -130,6 +137,7 @@ public class SensorContext {
 			}
 		};
 
+		// FIXME: Events should be paused when there is no activity on-screen.
 		this._sensorListeners.put(sensorType, listener);
 		this._sensorManager.registerListener(listener, sensor, samplePeriod);
 	}
