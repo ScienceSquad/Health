@@ -12,7 +12,7 @@ import io.realm.annotations.PrimaryKey;
  */
 public class RealmNutritionModel extends RealmObject {
 
-    private static final String TAG = "Nutrition Realm Object";
+    private static final String TAG = "Realm Nutrition Model";
 
     // we can set up the primary key to something else if need be.
     @PrimaryKey
