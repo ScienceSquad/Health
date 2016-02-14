@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener2;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import com.sciencesquad.health.BaseApplication;
 import java8.util.Optional;
 import org.immutables.value.Value.Immutable;
@@ -18,6 +19,8 @@ import static com.sciencesquad.health.events.Event.EventType;
 /**
  *
  */
+// FIXME: Events should be paused when there is no activity on-screen.
+// FIXME: Should be implemented in a Service container.
 public class SensorContext {
 
 	/**
@@ -74,7 +77,14 @@ public class SensorContext {
 		Sensor sensor();
 	}
 
+	/**
+	 *
+	 */
 	private SensorManager _sensorManager;
+
+	/**
+	 *
+	 */
 	private HashMap<Integer, SensorEventListener2> _sensorListeners = new HashMap<>();
 
 	/**
@@ -88,11 +98,21 @@ public class SensorContext {
 	/**
 	 *
 	 * @param sensorType
+	 * @return
+	 */
+	@Nullable
+	public Sensor sensorForType(int sensorType) {
+		return this._sensorManager.getDefaultSensor(sensorType);
+	}
+
+	/**
+	 *
+	 * @param sensorType
 	 * @param samplePeriod
 	 * @throws SensorNotAvailableException
 	 */
-	public void requestSensorEvents(int sensorType, int samplePeriod) throws SensorNotAvailableException {
-		final Sensor sensor = this._sensorManager.getDefaultSensor(sensorType);
+	public void requestSensorEvents(int sensorType, int samplePeriod, int maxLatency) throws SensorNotAvailableException {
+		final Sensor sensor = this.sensorForType(sensorType);
 
 		// Ensure the sensor is available, and is not a trigger-mode event.
 		if (sensor == null)
@@ -137,9 +157,8 @@ public class SensorContext {
 			}
 		};
 
-		// FIXME: Events should be paused when there is no activity on-screen.
 		this._sensorListeners.put(sensorType, listener);
-		this._sensorManager.registerListener(listener, sensor, samplePeriod);
+		this._sensorManager.registerListener(listener, sensor, samplePeriod, maxLatency);
 	}
 
 	/**
