@@ -11,8 +11,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.sciencesquad.health.health.Nutrition.*;
+import com.sciencesquad.health.health.database.*;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
+
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
+
+	public static NutritionModule nutritionModule;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +33,7 @@ public class MainActivity extends BaseActivity
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setOnClickListener(view ->
 				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-				.setAction("Action", null).show());
+						.setAction("Action", null).show());
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -34,6 +43,13 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+
+		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(this)
+				.name("default.health.realm")
+				.build();
+		Realm.setDefaultConfiguration(defaultConfig);
+
+		nutritionModule = new NutritionModule(this);
 	}
 
 	@Override

@@ -5,9 +5,12 @@ import android.content.Context;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.annotations.RealmModule;
 import com.sciencesquad.health.health.database.*;
+
+import java.util.List;
 
 /**
  * Created by danielmiller on 2/11/16.
@@ -23,7 +26,7 @@ public class RealmNutritionModule extends RealmDataContext{
 
     private RealmConfiguration configNutritionRealm;
     private Realm realm;
-    private RealmNutritionModel nutritionModel;
+    private RealmList<RealmNutritionModel> nutritionModels;
     private RealmQuery<RealmNutritionModel> queryNutrition;
 
     public RealmNutritionModule(Context context){
@@ -50,10 +53,11 @@ public class RealmNutritionModule extends RealmDataContext{
                 .build();
 
         realm = Realm.getInstance(configNutritionRealm);
+        nutritionModels = new RealmList<>();
 
         // set up initial model.
         realm.beginTransaction();
-        nutritionModel = realm.createObject(RealmNutritionModel.class);
+        nutritionModels.add(new RealmNutritionModel());
         realm.commitTransaction();
     }
 
@@ -67,9 +71,13 @@ public class RealmNutritionModule extends RealmDataContext{
          * This can later be modified to write to a list of Realm Objects
          * which could be useful for a history.
          */
-        realm.executeTransaction(realm1 -> {
-           // copy or update the object.
-            realm1.copyToRealmOrUpdate(nutritionModel);
+        realm.executeTransaction(new Realm.Transaction() {
+            // because Lambda's are too hard for me apparently.
+            @Override
+            public void execute(Realm realm1) {
+                // copy or update the object.
+                realm1.copyToRealmOrUpdate(nutritionModels);
+            }
         }, new Realm.Transaction.Callback() {
             @Override
             public void onSuccess() {
@@ -97,6 +105,14 @@ public class RealmNutritionModule extends RealmDataContext{
          */
 
         queryNutrition = realm.where(RealmNutritionModel.class);
+
     }
 
+
+    public RealmList<RealmNutritionModel> getNutritionModelList() {
+        return nutritionModels;
+    }
+    public RealmQuery<RealmNutritionModel> getQueryNutrition(){
+        return queryNutrition;
+    }
 }
