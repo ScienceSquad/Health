@@ -19,6 +19,8 @@ public abstract class RealmDataContext extends AbstractDataContext {
     private String realmName;
     private Context realmContext;
 
+    public abstract void clearRealm();
+    public abstract void updateRealmNutritionModel(int index, int newKey);
 
     // GETTERS AND SETTERS
     public void setRealmName(String filename){
@@ -33,6 +35,9 @@ public abstract class RealmDataContext extends AbstractDataContext {
     public Context getRealmContext(){
         return this.realmContext;
     }
+
+
+
 
 
 }

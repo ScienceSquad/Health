@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.sciencesquad.health.Module;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 
@@ -29,25 +30,45 @@ public class NutritionModule extends Module {
     }
 
     protected void testNutritionModule(){
-        RealmList<RealmNutritionModel> testModelList = nutritionRealm.getNutritionModelList();
-        testModelList.get(0).setCalorieIntake(50);
+        nutritionRealm.clearRealm();
+        nutritionRealm.getNutritionModelList().clear();
+        RealmNutritionModel testModel = new RealmNutritionModel();
+        testModel.setCalorieIntake(50);
+        nutritionRealm.getNutritionModelList().add(testModel);
         nutritionRealm.update();
         nutritionRealm.query();
         RealmQuery<RealmNutritionModel> testQuery = nutritionRealm.getQueryNutrition();
 
         Log.d(TAG, "Checking initial value");
-        System.out.println("testQuery length: " + testQuery.findAll().size());
-        System.out.println("testQuery first value:" + testQuery.findAll().first().getCalorieIntake());
+        Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
+        Log.d(TAG, "testQuery first value:" + testQuery.findAll().first().getCalorieIntake());
 
-        for (int i = 1 ; i < 11; i++){
-            testModelList.add(new RealmNutritionModel());
-            testModelList.get(i).setCalorieIntake(i);
+        Log.d(TAG, "Adding mass values");
+        for (int i = 1 ; i < 12; i++){
+            RealmNutritionModel testModelI = new RealmNutritionModel();
+            testModelI.setCalorieIntake(i);
+            nutritionRealm.getNutritionModelList().add(testModelI);
+            nutritionRealm.update();
         }
+        Log.d(TAG, "Done adding");
+        Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
+        Log.d(TAG, "Grabbing random value: " + testQuery.findAll().get(4).getCalorieIntake());
 
+        Log.d(TAG, "Setting random value to something different");
+        Log.d(TAG, "Length: " + testQuery.findAll().size());
+        nutritionRealm.updateRealmNutritionModel(4, 500);
+        Log.d(TAG, "Length: " + testQuery.findAll().size());
+
+        Log.d(TAG, "Sanity checks");
+        Log.d(TAG, "testQuery length where it's equal to 500: " + testQuery.equalTo("calorieIntake", 500).findAll().size());
+        Log.d(TAG, "Grabbing changed value: " + testQuery.equalTo("calorieIntake", 500).findAll().get(0).getCalorieIntake());
+        
+        Log.d(TAG, "Clearing database");
+        nutritionRealm.clearRealm();
+        nutritionRealm.getNutritionModelList().clear();
         nutritionRealm.update();
+        Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
 
-        Log.d(TAG, "Adding a lot of values.");
-        System.out.println("testQuery length: " + testQuery.findAll().size());
 
     }
 }

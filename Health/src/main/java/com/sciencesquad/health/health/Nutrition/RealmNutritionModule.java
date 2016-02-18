@@ -6,6 +6,7 @@ import android.content.Context;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
+import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.annotations.RealmModule;
 import com.sciencesquad.health.health.database.*;
@@ -55,10 +56,11 @@ public class RealmNutritionModule extends RealmDataContext{
         realm = Realm.getInstance(configNutritionRealm);
         nutritionModels = new RealmList<>();
 
+        /*
         // set up initial model.
         realm.beginTransaction();
         nutritionModels.add(new RealmNutritionModel());
-        realm.commitTransaction();
+        realm.commitTransaction();*/
     }
 
     @Override
@@ -71,7 +73,15 @@ public class RealmNutritionModule extends RealmDataContext{
          * This can later be modified to write to a list of Realm Objects
          * which could be useful for a history.
          */
-        realm.executeTransaction(new Realm.Transaction() {
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(nutritionModels);
+        realm.commitTransaction();
+
+        /**
+         * Kept for psuedocode purposes.
+         *
+         *
+         * realm.executeTransaction(new Realm.Transaction() {
             // because Lambda's are too hard for me apparently.
             @Override
             public void execute(Realm realm1) {
@@ -90,6 +100,8 @@ public class RealmNutritionModule extends RealmDataContext{
                 // publish write failed and other clean up duties.
             }
         });
+         *
+         */
     }
 
     @Override
@@ -108,6 +120,13 @@ public class RealmNutritionModule extends RealmDataContext{
 
     }
 
+    @Override
+    public void clearRealm(){
+        realm.beginTransaction();
+        realm.clear(RealmNutritionModel.class);
+        realm.commitTransaction();
+    }
+
 
     public RealmList<RealmNutritionModel> getNutritionModelList() {
         return nutritionModels;
@@ -115,4 +134,13 @@ public class RealmNutritionModule extends RealmDataContext{
     public RealmQuery<RealmNutritionModel> getQueryNutrition(){
         return queryNutrition;
     }
+
+    @Override
+    public void updateRealmNutritionModel(int index, int newKey){
+        realm.beginTransaction();
+        RealmNutritionModel updateModel = queryNutrition.findAll().get(index);
+        updateModel.setCalorieIntake(newKey);
+        realm.commitTransaction();
+    }
+
 }
