@@ -56,7 +56,7 @@ public class NutritionModule extends Module {
 
         Log.d(TAG, "Setting random value to something different");
         Log.d(TAG, "Length: " + testQuery.findAll().size());
-        nutritionRealm.updateRealmNutritionModel(4, 500);
+        nutritionRealm.updateRealmModel(4, 500);
         Log.d(TAG, "Length: " + testQuery.findAll().size());
 
         Log.d(TAG, "Sanity checks");
