@@ -55,12 +55,6 @@ public class RealmNutritionModule extends RealmDataContext{
 
         realm = Realm.getInstance(configNutritionRealm);
         nutritionModels = new RealmList<>();
-
-        /*
-        // set up initial model.
-        realm.beginTransaction();
-        nutritionModels.add(new RealmNutritionModel());
-        realm.commitTransaction();*/
     }
 
     @Override
