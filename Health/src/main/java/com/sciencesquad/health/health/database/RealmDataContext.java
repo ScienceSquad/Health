@@ -20,7 +20,7 @@ public abstract class RealmDataContext extends AbstractDataContext {
     private Context realmContext;
 
     public abstract void clearRealm();
-    public abstract void updateRealmNutritionModel(int index, int newKey);
+    public abstract void updateRealmModel(int index, int newKey);
 
     // GETTERS AND SETTERS
     public void setRealmName(String filename){

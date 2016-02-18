@@ -130,7 +130,7 @@ public class RealmNutritionModule extends RealmDataContext{
     }
 
     @Override
-    public void updateRealmNutritionModel(int index, int newKey){
+    public void updateRealmModel(int index, int newKey){
         realm.beginTransaction();
         RealmNutritionModel updateModel = queryNutrition.findAll().get(index);
         updateModel.setCalorieIntake(newKey);
