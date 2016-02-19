@@ -5,8 +5,6 @@ import android.util.Log;
 
 import com.sciencesquad.health.Module;
 
-import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmQuery;
 
 /**
@@ -69,6 +67,6 @@ public class NutritionModule extends Module {
         nutritionRealm.update();
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
 
-
+        nutritionRealm.closeRealm();
     }
 }

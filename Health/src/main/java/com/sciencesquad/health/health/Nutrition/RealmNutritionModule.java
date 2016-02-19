@@ -6,12 +6,10 @@ import android.content.Context;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
-import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.annotations.RealmModule;
 import com.sciencesquad.health.health.database.*;
 
-import java.util.List;
 
 /**
  * Created by danielmiller on 2/11/16.
@@ -71,31 +69,6 @@ public class RealmNutritionModule extends RealmDataContext{
         realm.copyToRealmOrUpdate(nutritionModels);
         realm.commitTransaction();
 
-        /**
-         * Kept for psuedocode purposes.
-         *
-         *
-         * realm.executeTransaction(new Realm.Transaction() {
-            // because Lambda's are too hard for me apparently.
-            @Override
-            public void execute(Realm realm1) {
-                // copy or update the object.
-                realm1.copyToRealmOrUpdate(nutritionModels);
-            }
-        }, new Realm.Transaction.Callback() {
-            @Override
-            public void onSuccess() {
-                // publish write was successful.
-            }
-
-            @Override
-            public void onError(Exception e) {
-                // realm transaction is automatically cancelled.
-                // publish write failed and other clean up duties.
-            }
-        });
-         *
-         */
     }
 
     @Override
@@ -121,6 +94,10 @@ public class RealmNutritionModule extends RealmDataContext{
         realm.commitTransaction();
     }
 
+    @Override
+    public void closeRealm() {
+        realm.close();
+    }
 
     public RealmList<RealmNutritionModel> getNutritionModelList() {
         return nutritionModels;
