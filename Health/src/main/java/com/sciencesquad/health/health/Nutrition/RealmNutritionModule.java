@@ -99,19 +99,19 @@ public class RealmNutritionModule extends RealmDataContext{
         realm.close();
     }
 
-    public RealmList<RealmNutritionModel> getNutritionModelList() {
-        return nutritionModels;
-    }
-    public RealmQuery<RealmNutritionModel> getQueryNutrition(){
-        return queryNutrition;
-    }
-
     @Override
     public void updateRealmModel(int index, int newKey){
         realm.beginTransaction();
         RealmNutritionModel updateModel = queryNutrition.findAll().get(index);
         updateModel.setCalorieIntake(newKey);
         realm.commitTransaction();
+    }
+
+    public RealmList<RealmNutritionModel> getNutritionModelList() {
+        return nutritionModels;
+    }
+    public RealmQuery<RealmNutritionModel> getQueryNutrition(){
+        return queryNutrition;
     }
 
 }

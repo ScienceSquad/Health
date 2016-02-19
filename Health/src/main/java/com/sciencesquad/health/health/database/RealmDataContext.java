@@ -37,8 +37,4 @@ public abstract class RealmDataContext extends AbstractDataContext {
         return this.realmContext;
     }
 
-
-
-
-
 }
