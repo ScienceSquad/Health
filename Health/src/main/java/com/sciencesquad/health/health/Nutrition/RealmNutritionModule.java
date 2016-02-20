@@ -1,7 +1,5 @@
 package com.sciencesquad.health.health.Nutrition;
 
-import android.content.Context;
-
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
@@ -10,7 +8,7 @@ import io.realm.annotations.RealmModule;
 
 import com.sciencesquad.health.BaseApplication;
 import com.sciencesquad.health.health.database.*;
-import com.sciencesquad.health.health.database.events.RealmModelUpdateEvent;
+import com.sciencesquad.health.health.database.events.*;
 
 
 /**
@@ -68,6 +66,7 @@ public class RealmNutritionModule extends RealmDataContext{
         /**
          * This will update the realm asynchronously from the UI thread
          * and will update the model given that something has changed.
+         * This will generate an event to all subscribers on the Event Bus.
          *
          * This can later be modified to write to a list of Realm Objects
          * which could be useful for a history.
@@ -76,7 +75,7 @@ public class RealmNutritionModule extends RealmDataContext{
         realm.copyToRealmOrUpdate(nutritionModels);
         realm.commitTransaction();
 
-
+        BaseApplication.application().eventBus().publish(RealmUpdateEvent.from(this).key(returnRealmKey()).create());
     }
 
     @Override
@@ -100,12 +99,15 @@ public class RealmNutritionModule extends RealmDataContext{
         /**
          *
          * This will clear all the relevant models from the realm.
+         * This will generate an event to all subscribers on the Event Bus.
          * Use this with caution.
          */
 
         realm.beginTransaction();
         realm.clear(RealmNutritionModel.class);
         realm.commitTransaction();
+
+        BaseApplication.application().eventBus().publish(RealmEmptyEvent.from(this).RealmName(getRealmName()).create());
     }
 
     @Override
@@ -124,7 +126,7 @@ public class RealmNutritionModule extends RealmDataContext{
         /**
          * This will take a model that is stored in the realm
          * via a query then update the key to it.
-         *
+         * This will generate an event to all subscribers on the Event Bus.
          * This can be also used to update other certain values one at a time.
          */
 
@@ -132,7 +134,7 @@ public class RealmNutritionModule extends RealmDataContext{
         RealmNutritionModel updateModel = queryNutrition.findAll().get(index);
         updateModel.setCalorieIntake(newKey);
         realm.commitTransaction();
-        BaseApplication.application().eventBus().publish(RealmModelUpdateEvent.from(this).key(returnRealmKey()).create());
+        BaseApplication.application().eventBus().publish(RealmUpdateEvent.from(this).key(returnRealmKey()).create());
     }
 
     @Override

@@ -10,6 +10,6 @@ import org.immutables.value.Value;
  * Event for updating a current existing Model in a Realm.
  */
 @Event.EventType @Value.Immutable
-public interface RealmModelUpdate extends Event {
+public interface RealmUpdate extends Event {
     String key();
 }
