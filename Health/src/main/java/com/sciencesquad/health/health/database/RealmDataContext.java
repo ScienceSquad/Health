@@ -4,7 +4,9 @@ import android.content.Context;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 
 /**
  * Created by danielmiller on 2/11/16.
@@ -31,6 +33,8 @@ public abstract class RealmDataContext extends AbstractDataContext {
     public abstract void updateRealmModel(int index, int newKey);
     public abstract void closeRealm();
     public abstract String returnRealmKey();
+    public abstract RealmList getRealmList();
+    public abstract RealmQuery getQueryNutrition();
 
     // GETTERS AND SETTERS
     public void setRealmName(String filename){

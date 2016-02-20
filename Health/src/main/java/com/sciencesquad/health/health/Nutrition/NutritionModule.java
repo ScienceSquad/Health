@@ -19,7 +19,7 @@ public class NutritionModule extends Module {
 
     private static final String TAG = "Nutrition Module";
 
-    RealmNutritionModule nutritionRealm ;
+    private RealmNutritionModule nutritionRealm;
 
     public NutritionModule(){
         /**
@@ -38,10 +38,10 @@ public class NutritionModule extends Module {
 
 
         nutritionRealm.clearRealm();
-        nutritionRealm.getNutritionModelList().clear();
+        nutritionRealm.getRealmList().clear();
         RealmNutritionModel testModel = new RealmNutritionModel();
         testModel.setCalorieIntake(50);
-        nutritionRealm.getNutritionModelList().add(testModel);
+        nutritionRealm.getRealmList().add(testModel);
         nutritionRealm.update();
         nutritionRealm.query();
         RealmQuery<RealmNutritionModel> testQuery = nutritionRealm.getQueryNutrition();
@@ -54,7 +54,7 @@ public class NutritionModule extends Module {
         for (int i = 1 ; i < 12; i++){
             RealmNutritionModel testModelI = new RealmNutritionModel();
             testModelI.setCalorieIntake(i);
-            nutritionRealm.getNutritionModelList().add(testModelI);
+            nutritionRealm.getRealmList().add(testModelI);
             nutritionRealm.update();
         }
         Log.d(TAG, "Done adding");
@@ -72,7 +72,7 @@ public class NutritionModule extends Module {
         
         Log.d(TAG, "Clearing database");
         nutritionRealm.clearRealm();
-        nutritionRealm.getNutritionModelList().clear();
+        nutritionRealm.getRealmList().clear();
         nutritionRealm.update();
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
 

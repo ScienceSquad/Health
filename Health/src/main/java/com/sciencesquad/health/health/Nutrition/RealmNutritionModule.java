@@ -45,15 +45,20 @@ public class RealmNutritionModule extends RealmDataContext{
         /**
          * This sets up the Realm for the module.
          *
-         * For now, this will only create one Realm Object
-         * and write it to the Module's realm.
-         * Making it so that it can create and write multiple Realm Objects
-         * could be useful when doing a look at the user's history.
+         * Notes:
+         *      - sets up a RealmConfiguration to establish the realm.
+         *      - uses RealmConfiguration to build the Realm for this module.
+         *      - Sets up a Realmlist to hold all the RealmModels in a list for history purposes.
+         *      - configNutritionRealm is set to delete the Realm if there are changes in the model,
+         *      which in the early stages of development is okay.
+         *      HOWEVER, once this is released, we need to make a separate Migration, which is will
+         *      support multiple versions of the application.
          */
 
         configNutritionRealm = new RealmConfiguration.Builder(getRealmContext())
                 .name(getRealmName())
                 .setModules(this)
+                .deleteRealmIfMigrationNeeded()
                 .build();
 
         realm = Realm.getInstance(configNutritionRealm);
@@ -146,14 +151,16 @@ public class RealmNutritionModule extends RealmDataContext{
 
         return "calorieIntake";
     }
-
-    public RealmList<RealmNutritionModel> getNutritionModelList() {
+    @Override
+    public RealmList<RealmNutritionModel> getRealmList() {
         /**
          * Returns a list of Models stored in a realm.
          */
 
         return nutritionModels;
     }
+
+    @Override
     public RealmQuery<RealmNutritionModel> getQueryNutrition(){
         /**
          * Returns the most recent query format that was created query().
