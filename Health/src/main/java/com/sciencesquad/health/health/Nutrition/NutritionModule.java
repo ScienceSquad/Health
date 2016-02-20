@@ -21,13 +21,22 @@ public class NutritionModule extends Module {
 
     RealmNutritionModule nutritionRealm ;
 
-    public NutritionModule(Context context){
-        this.nutritionRealm = new RealmNutritionModule(context);
+    public NutritionModule(){
+        /**
+         * Constructs the module itself.
+         */
+        this.nutritionRealm = new RealmNutritionModule();
         testNutritionModule();
 
     }
 
     protected void testNutritionModule(){
+        /**
+         * Unit testing method for this module.
+         * Also used to test Realm capabilities/ integration is correct.
+         */
+
+
         nutritionRealm.clearRealm();
         nutritionRealm.getNutritionModelList().clear();
         RealmNutritionModel testModel = new RealmNutritionModel();

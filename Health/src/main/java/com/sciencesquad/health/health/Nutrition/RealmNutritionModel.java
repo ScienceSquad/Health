@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by danielmiller on 2/11/16.
  *
  * Realm Model for Nutrition database.
- * Things that are relevant to store for Nutrition go here.
+ * Things that are relevant to store for the Nutrition Module go here.
  */
 public class RealmNutritionModel extends RealmObject {
 

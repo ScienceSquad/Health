@@ -1,6 +1,5 @@
 package com.sciencesquad.health.health.Nutrition;
 
-
 import android.content.Context;
 
 import io.realm.Realm;
@@ -8,7 +7,10 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.annotations.RealmModule;
+
+import com.sciencesquad.health.BaseApplication;
 import com.sciencesquad.health.health.database.*;
+import com.sciencesquad.health.health.database.events.RealmModelUpdateEvent;
 
 
 /**
@@ -20,7 +22,6 @@ import com.sciencesquad.health.health.database.*;
 
 @RealmModule(classes = {RealmNutritionModel.class})
 public class RealmNutritionModule extends RealmDataContext{
-
     private static final String TAG = "Realm Nutrition Module";
 
     private RealmConfiguration configNutritionRealm;
@@ -28,9 +29,15 @@ public class RealmNutritionModule extends RealmDataContext{
     private RealmList<RealmNutritionModel> nutritionModels;
     private RealmQuery<RealmNutritionModel> queryNutrition;
 
-    public RealmNutritionModule(Context context){
+    public RealmNutritionModule(){
+        /**
+         * The Base application will supply the context.
+         * Which is nice in setting up any context needed by this module
+         * :)
+         */
+
         setRealmName("nutrition.realm");
-        setRealmContext(context);
+        setRealmContext(BaseApplication.application().getApplicationContext());
         init();
     }
 
@@ -69,6 +76,7 @@ public class RealmNutritionModule extends RealmDataContext{
         realm.copyToRealmOrUpdate(nutritionModels);
         realm.commitTransaction();
 
+
     }
 
     @Override
@@ -89,6 +97,12 @@ public class RealmNutritionModule extends RealmDataContext{
 
     @Override
     public void clearRealm(){
+        /**
+         *
+         * This will clear all the relevant models from the realm.
+         * Use this with caution.
+         */
+
         realm.beginTransaction();
         realm.clear(RealmNutritionModel.class);
         realm.commitTransaction();
@@ -96,21 +110,53 @@ public class RealmNutritionModule extends RealmDataContext{
 
     @Override
     public void closeRealm() {
+
+        /**
+         * This function should be called everytime the module is done being used.
+         * Because closing files is the right thing to do preserve data.
+         */
+
         realm.close();
     }
 
     @Override
     public void updateRealmModel(int index, int newKey){
+        /**
+         * This will take a model that is stored in the realm
+         * via a query then update the key to it.
+         *
+         * This can be also used to update other certain values one at a time.
+         */
+
         realm.beginTransaction();
         RealmNutritionModel updateModel = queryNutrition.findAll().get(index);
         updateModel.setCalorieIntake(newKey);
         realm.commitTransaction();
+        BaseApplication.application().eventBus().publish(RealmModelUpdateEvent.from(this).key(returnRealmKey()).create());
+    }
+
+    @Override
+    public String returnRealmKey(){
+        /**
+         * Returns a string representation of the primary key
+         * stored in a particular realm.
+         */
+
+        return "calorieIntake";
     }
 
     public RealmList<RealmNutritionModel> getNutritionModelList() {
+        /**
+         * Returns a list of Models stored in a realm.
+         */
+
         return nutritionModels;
     }
     public RealmQuery<RealmNutritionModel> getQueryNutrition(){
+        /**
+         * Returns the most recent query format that was created query().
+         */
+
         return queryNutrition;
     }
 

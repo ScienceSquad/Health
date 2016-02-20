@@ -49,7 +49,7 @@ public class MainActivity extends BaseActivity
 				.build();
 		Realm.setDefaultConfiguration(defaultConfig);
 
-		nutritionModule = new NutritionModule(this);
+		nutritionModule = new NutritionModule();
 	}
 
 	@Override

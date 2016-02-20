@@ -11,6 +11,14 @@ import io.realm.RealmObject;
  *
  * This is an abstract database context specifically for a Realm database.
  * Everything a Realm Database must do goes here.
+ *
+ * Things must be implemented.
+ * - Everything from AbstractDataContext
+ * - Clearing a realm.
+ * - Updating a single Realm model.
+ * - Closing a realm.
+ * - Returning a String representation of the Primary key in a Realm.
+ *
  */
 public abstract class RealmDataContext extends AbstractDataContext {
 
@@ -22,6 +30,7 @@ public abstract class RealmDataContext extends AbstractDataContext {
     public abstract void clearRealm();
     public abstract void updateRealmModel(int index, int newKey);
     public abstract void closeRealm();
+    public abstract String returnRealmKey();
 
     // GETTERS AND SETTERS
     public void setRealmName(String filename){
