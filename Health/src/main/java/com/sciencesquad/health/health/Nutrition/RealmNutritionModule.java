@@ -48,7 +48,7 @@ public class RealmNutritionModule extends RealmDataContext{
          * Notes:
          *      - sets up a RealmConfiguration to establish the realm.
          *      - uses RealmConfiguration to build the Realm for this module.
-         *      - Sets up a Realmlist to hold all the RealmModels in a list for history purposes.
+         *      - Sets up a RealmList to hold all the RealmModels in a list for history purposes.
          *      - configNutritionRealm is set to delete the Realm if there are changes in the model,
          *      which in the early stages of development is okay.
          *      HOWEVER, once this is released, we need to make a separate Migration, which is will

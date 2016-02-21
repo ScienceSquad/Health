@@ -9,7 +9,6 @@ import org.immutables.value.Value;
  *
  * Event for clearing a realm.
  * This means the database has been wiped.
- *
  */
 @Value.Immutable @Event.EventType
 public interface RealmEmpty extends Event {
