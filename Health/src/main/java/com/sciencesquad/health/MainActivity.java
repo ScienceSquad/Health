@@ -19,7 +19,13 @@ import io.realm.RealmConfiguration;
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
-	public static NutritionModule nutritionModule;
+	{ // TODO: VERY UNSAFE!
+		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(this)
+				.name("default.health.realm")
+				.build();
+		Realm.setDefaultConfiguration(defaultConfig);
+		NutritionModule nutritionModule = new NutritionModule();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +47,6 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
-
-		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(this)
-				.name("default.health.realm")
-				.build();
-		Realm.setDefaultConfiguration(defaultConfig);
-
-		nutritionModule = new NutritionModule();
 	}
 
 	@Override
