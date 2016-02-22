@@ -11,14 +11,13 @@ import org.immutables.value.Value;
  * Everything a Realm Database must do goes here.
  *
  * Things must be implemented.
- * - Everything from AbstractDataContext
+ * - Everything from DataContext
  * - Clearing a realm.
  * - Updating a single Realm model.
  * - Closing a realm.
  * - Returning a String representation of the Primary key in a Realm.
- *
  */
-public abstract class RealmDataContext extends AbstractDataContext {
+public abstract class RealmDataContext implements DataContext {
     private static final String TAG = RealmDataContext.class.getSimpleName();
 
     /**
@@ -48,17 +47,23 @@ public abstract class RealmDataContext extends AbstractDataContext {
     public abstract RealmList getRealmList();
     public abstract RealmQuery getQueryNutrition();
 
+	//
     // GETTERS AND SETTERS
+	//
+
     public void setRealmName(String filename){
         this.realmName = filename;
     }
-    public String getRealmName(){ return this.realmName; }
 
-    public void setRealmContext(Context context){
+    public String getRealmName() {
+		return this.realmName;
+	}
+
+    public void setRealmContext(Context context) {
         this.realmContext = context;
     }
 
-    public Context getRealmContext(){
+    public Context getRealmContext() {
         return this.realmContext;
     }
 }

@@ -14,10 +14,9 @@ public class RealmBackupAgent extends BackupAgentHelper {
     private final String realmList = Realm.getDefaultInstance().getPath() + ", nutrition.realm";
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
         BackupHelper helper = new FileBackupHelper(this, realmList);
-
         addHelper("realms", helper);
     }
 }

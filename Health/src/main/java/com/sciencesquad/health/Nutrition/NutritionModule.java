@@ -30,12 +30,12 @@ public class NutritionModule extends Module {
     protected void testNutritionModule() {
         nutritionRealm.clearRealm();
         nutritionRealm.getRealmList().clear();
-        RealmNutritionModel testModel = new RealmNutritionModel();
+        NutritionModel testModel = new NutritionModel();
         testModel.setCalorieIntake(50);
         nutritionRealm.getRealmList().add(testModel);
         nutritionRealm.update();
         nutritionRealm.query();
-        RealmQuery<RealmNutritionModel> testQuery = nutritionRealm.getQueryNutrition();
+        RealmQuery<NutritionModel> testQuery = nutritionRealm.getQueryNutrition();
 
         Log.d(TAG, "Checking initial value");
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
@@ -43,7 +43,7 @@ public class NutritionModule extends Module {
 
         Log.d(TAG, "Adding mass values");
         for (int i = 1 ; i < 12; i++){
-            RealmNutritionModel testModelI = new RealmNutritionModel();
+            NutritionModel testModelI = new NutritionModel();
             testModelI.setCalorieIntake(i);
             nutritionRealm.getRealmList().add(testModelI);
             nutritionRealm.update();
