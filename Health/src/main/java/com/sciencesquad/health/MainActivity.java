@@ -10,6 +10,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.content.Intent;
+
+import com.sciencesquad.health.ui.Clock;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,6 +37,14 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+
+		Clock clock = new Clock(10, 23, 53, 18);
+		clock.printClock();
+		clock.setHours(18);
+		clock.setMinutes(37);
+		clock.setSeconds(24);
+		clock.setMilliseconds(900);
+		clock.printClock();
 	}
 
 	@Override
@@ -86,6 +97,10 @@ public class MainActivity extends BaseActivity
 
 		} else if (id == R.id.nav_send) {
 
+		} else if (id == R.id.nav_clock) {
+			System.out.println("Pressed the clock");
+			Intent intent = new Intent(this, ClockActivity.class);
+			startActivity(intent);
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
