@@ -1,4 +1,4 @@
-package com.sciencesquad.health.Nutrition;
+package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
 import com.sciencesquad.health.core.Module;
@@ -15,23 +15,21 @@ public class NutritionModule extends Module {
 
     private RealmNutritionModule nutritionRealm;
 
-    /**
-     * Constructs the module itself.
-     */
-
     public NutritionModule(){
+        /**
+         * Constructs the module itself.
+         */
         this.nutritionRealm = new RealmNutritionModule();
         testNutritionModule();
 
     }
 
-    /**
-     * Unit testing method for this module.
-     * Also used to test Realm capabilities/ integration is correct.
-     */
-
-
     protected void testNutritionModule(){
+        /**
+         * Unit testing method for this module.
+         * Also used to test Realm capabilities/ integration is correct.
+         */
+
 
         nutritionRealm.clearRealm();
         nutritionRealm.getRealmList().clear();

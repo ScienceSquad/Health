@@ -27,7 +27,7 @@ public abstract class RealmDataContext extends AbstractDataContext {
      */
     @Value.Immutable @Event.EventType
     public interface RealmEmpty extends Event {
-        String realmName();
+        String RealmName();
     }
 
     /**
