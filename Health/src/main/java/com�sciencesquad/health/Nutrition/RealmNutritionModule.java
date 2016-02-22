@@ -1,26 +1,23 @@
-package com.sciencesquad.health.health.Nutrition;
+package com.sciencesquad.health.nutrition;
 
+import com.sciencesquad.health.data.RealmDataContext;
+import com.sciencesquad.health.data.RealmEmptyEvent;
+import com.sciencesquad.health.data.RealmUpdateEvent;
+import com.sciencesquad.health.events.BaseApplication;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.annotations.RealmModule;
 
-import com.sciencesquad.health.BaseApplication;
-import com.sciencesquad.health.health.database.*;
-import com.sciencesquad.health.health.database.events.*;
-
-
 /**
- * Created by danielmiller on 2/11/16.
- *
  * Realm module for the Nutrition module.
  * This will be the first example of Realm Integration.
  */
 
 @RealmModule(classes = {RealmNutritionModel.class})
-public class RealmNutritionModule extends RealmDataContext{
-    private static final String TAG = "Realm Nutrition Module";
+public class RealmNutritionModule extends RealmDataContext {
+    private static final String TAG = RealmNutritionModule.class.getSimpleName();
 
     private RealmConfiguration configNutritionRealm;
     private Realm realm;
@@ -31,7 +28,7 @@ public class RealmNutritionModule extends RealmDataContext{
         /**
          * The Base application will supply the context.
          * Which is nice in setting up any context needed by this module
-         * :)
+         * :) :)
          */
 
         setRealmName("nutrition.realm");

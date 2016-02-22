@@ -1,16 +1,12 @@
-package com.sciencesquad.health.health.database;
+package com.sciencesquad.health.data;
 
 import android.content.Context;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+import com.sciencesquad.health.events.Event;
 import io.realm.RealmList;
-import io.realm.RealmObject;
 import io.realm.RealmQuery;
+import org.immutables.value.Value;
 
 /**
- * Created by danielmiller on 2/11/16.
- *
  * This is an abstract database context specifically for a Realm database.
  * Everything a Realm Database must do goes here.
  *
@@ -23,8 +19,24 @@ import io.realm.RealmQuery;
  *
  */
 public abstract class RealmDataContext extends AbstractDataContext {
+    private static final String TAG = RealmDataContext.class.getSimpleName();
 
-    private static final String TAG = "Realm Database Context";
+    /**
+     * Event for clearing a realm.
+     * This means the database has been wiped.
+     */
+    @Value.Immutable @Event.EventType
+    public interface RealmEmpty extends Event {
+        String RealmName();
+    }
+
+    /**
+     * Event for updating a Realm in any abstract way.
+     */
+    @Event.EventType @Value.Immutable
+    public interface RealmUpdate extends Event {
+        String key();
+    }
 
     private String realmName;
     private Context realmContext;
@@ -49,5 +61,4 @@ public abstract class RealmDataContext extends AbstractDataContext {
     public Context getRealmContext(){
         return this.realmContext;
     }
-
 }

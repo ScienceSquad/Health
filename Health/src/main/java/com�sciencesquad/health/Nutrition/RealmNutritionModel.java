@@ -1,24 +1,18 @@
-package com.sciencesquad.health.health.Nutrition;
-
+package com.sciencesquad.health.nutrition;
 
 import android.support.annotation.NonNull;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
- * Created by danielmiller on 2/11/16.
- *
  * Realm Model for Nutrition database.
  * Things that are relevant to store for the Nutrition Module go here.
  */
 public class RealmNutritionModel extends RealmObject {
-
-    private static final String TAG = "Realm Nutrition Model";
+    private static final String TAG = RealmNutritionModel.class.getSimpleName();
 
     /**
      * Nutrition Model data summary.

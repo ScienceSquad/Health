@@ -1,19 +1,13 @@
-package com.sciencesquad.health.health.database;
-
-
-import android.content.Context;
+package com.sciencesquad.health.data;
 
 /**
- * Created by danielmiller on 2/11/16.
- *
  * An abstract class for databases. They must do the following
  *  - Initialize the database
  *  - Update the database
  *  - Query the database
  */
 public abstract class AbstractDataContext {
-
-    private static final String TAG = "Abstract Database Context";
+    private static final String TAG = AbstractDataContext.class.getSimpleName();
 
     public abstract void init();
     public abstract void update();

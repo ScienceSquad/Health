@@ -1,17 +1,15 @@
-package com.sciencesquad.health.health.database;
+package com.sciencesquad.health.data;
 
 import android.app.backup.BackupAgentHelper;
 import android.app.backup.BackupHelper;
 import android.app.backup.FileBackupHelper;
-
 import io.realm.Realm;
 
 /**
- * Created by danielmiller on 2/18/16.
- *
  * Backup agent to back up all the realm files.
  */
 public class RealmBackupAgent extends BackupAgentHelper {
+    private static final String TAG = RealmBackupAgent.class.getSimpleName();
 
     private final String realmList = Realm.getDefaultInstance().getPath() + ", nutrition.realm";
 

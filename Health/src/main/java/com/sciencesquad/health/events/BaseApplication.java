@@ -1,12 +1,10 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.events;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.events.Event;
 import com.sciencesquad.health.events.Event.EventType;
-import com.sciencesquad.health.events.EventBus;
 import org.immutables.value.Value.Immutable;
 
 /**
@@ -16,7 +14,7 @@ import org.immutables.value.Value.Immutable;
  * any preference key changes as an Event as well.
  */
 public class BaseApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
-	private static final String TAG = "BaseApplication";
+	private static final String TAG = BaseApplication.class.getSimpleName();
 
 	/**
 	 * The Application was created.

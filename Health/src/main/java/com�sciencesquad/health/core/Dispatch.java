@@ -1,9 +1,9 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.core;
 
 import java.util.concurrent.ForkJoinPool;
 
 public class Dispatch {
-	// multithreading madness goes here
+	private static final String TAG = Dispatch.class.getSimpleName();
 
 	private static int PROCESSORS = Runtime.getRuntime().availableProcessors() * 2;
 	private static ForkJoinPool POOL = new ForkJoinPool(PROCESSORS);

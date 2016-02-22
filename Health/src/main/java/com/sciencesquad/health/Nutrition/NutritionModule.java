@@ -1,23 +1,17 @@
-package com.sciencesquad.health.health.Nutrition;
+package com.sciencesquad.health.nutrition;
 
-import android.content.Context;
 import android.util.Log;
-
-import com.sciencesquad.health.Module;
-
+import com.sciencesquad.health.core.Module;
 import io.realm.RealmQuery;
 
 /**
- * Created by danielmiller on 2/13/16.
- *
  * Nutrition Module itself.
  *
  * Note:
  * It must be expanded upon from this current baby state
  */
 public class NutritionModule extends Module {
-
-    private static final String TAG = "Nutrition Module";
+    private static final String TAG = NutritionModule.class.getSimpleName();
 
     private RealmNutritionModule nutritionRealm;
 
