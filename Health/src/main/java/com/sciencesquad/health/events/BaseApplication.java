@@ -7,6 +7,9 @@ import android.support.annotation.Nullable;
 import com.sciencesquad.health.events.Event.EventType;
 import org.immutables.value.Value.Immutable;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 /**
  * The BaseApplication connects the monolithic Android Application
  * to the EventBus mechanism by broadcasting its lifecycle as Events.
@@ -112,10 +115,19 @@ public class BaseApplication extends Application implements SharedPreferences.On
 
 	/**
 	 * Overridden to provide Application lifecycle Events to the EventBus.
+	 * "Setting a default configuration in your custom Application class,
+	 * will ensure that it is available in the rest of your code."
+	 * - Realm Library 0.87.4
 	 */
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(getBaseContext())
+				.name("default.health.realm")
+				.build();
+		Realm.setDefaultConfiguration(defaultConfig);
+
 		_application = this;
 		this.eventBus().publish(AppCreateEvent.from(this)
 				.create());

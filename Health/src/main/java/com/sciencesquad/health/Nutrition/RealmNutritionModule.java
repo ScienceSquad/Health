@@ -1,9 +1,10 @@
-package com.sciencesquad.health.nutrition;
+package com.sciencesquad.health.Nutrition;
 
 import com.sciencesquad.health.data.RealmDataContext;
+import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.data.RealmEmptyEvent;
 import com.sciencesquad.health.data.RealmUpdateEvent;
-import com.sciencesquad.health.events.BaseApplication;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
@@ -59,8 +60,7 @@ public class RealmNutritionModule extends RealmDataContext {
     }
 
     /**
-     * This will update the realm asynchronously from the UI thread
-     * and will update the model given that something has changed.
+     * This will update the realm and will update the model given that something has changed.
      * This will generate an event to all subscribers on the Event Bus.
      *
      * This can later be modified to write to a list of Realm Objects
@@ -101,11 +101,11 @@ public class RealmNutritionModule extends RealmDataContext {
         realm.clear(NutritionModel.class);
         realm.commitTransaction();
 
-        BaseApplication.application().eventBus().publish(RealmEmptyEvent.from(this).RealmName(getRealmName()).create());
+        BaseApplication.application().eventBus().publish(RealmEmptyEvent.from(this).realmName(getRealmName()).create());
     }
 
     /**
-     * This function should be called everytime the module is done being used.
+     * This function should be called every time the module is done being used.
      * Because closing files is the right thing to do preserve data.
      */
     @Override
@@ -125,6 +125,7 @@ public class RealmNutritionModule extends RealmDataContext {
         NutritionModel updateModel = queryNutrition.findAll().get(index);
         updateModel.setCalorieIntake(newKey);
         realm.commitTransaction();
+
         BaseApplication.application().eventBus().publish(RealmUpdateEvent.from(this).key(returnRealmKey()).create());
     }
 

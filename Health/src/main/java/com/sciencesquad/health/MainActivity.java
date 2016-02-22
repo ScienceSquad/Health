@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.events.BaseActivity;
-import com.sciencesquad.health.nutrition.NutritionModule;
+import com.sciencesquad.health.Nutrition.NutritionModule;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -19,13 +19,6 @@ import io.realm.RealmConfiguration;
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
-	{ // TODO: VERY UNSAFE!
-		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(this)
-				.name("default.health.realm")
-				.build();
-		Realm.setDefaultConfiguration(defaultConfig);
-		NutritionModule nutritionModule = new NutritionModule();
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

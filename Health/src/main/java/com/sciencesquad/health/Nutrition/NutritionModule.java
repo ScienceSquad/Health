@@ -1,4 +1,4 @@
-package com.sciencesquad.health.nutrition;
+package com.sciencesquad.health.Nutrition;
 
 import android.util.Log;
 import com.sciencesquad.health.core.Module;

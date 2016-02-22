@@ -1,4 +1,4 @@
-package com.sciencesquad.health.nutrition;
+package com.sciencesquad.health.Nutrition;
 
 import android.support.annotation.NonNull;
 import io.realm.RealmObject;
@@ -17,7 +17,7 @@ public class NutritionModel extends RealmObject {
 	 * calories taken in on a certain day.
 	 */
     // we can set up the primary key to something else if need be.
-    @PrimaryKey @Required
+    @PrimaryKey
     private int calorieIntake;
 
 	/**
