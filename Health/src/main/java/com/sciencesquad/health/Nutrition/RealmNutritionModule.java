@@ -101,7 +101,7 @@ public class RealmNutritionModule extends RealmDataContext {
         realm.clear(NutritionModel.class);
         realm.commitTransaction();
 
-        BaseApplication.application().eventBus().publish(RealmEmptyEvent.from(this).RealmName(getRealmName()).create());
+        BaseApplication.application().eventBus().publish(RealmEmptyEvent.from(this).realmName(getRealmName()).create());
     }
 
     /**

@@ -17,7 +17,7 @@ public class NutritionModel extends RealmObject {
 	 * calories taken in on a certain day.
 	 */
     // we can set up the primary key to something else if need be.
-    @PrimaryKey @Required
+    @PrimaryKey
     private int calorieIntake;
 
 	/**
