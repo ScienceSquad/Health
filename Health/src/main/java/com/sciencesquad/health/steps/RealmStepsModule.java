@@ -15,7 +15,7 @@ import io.realm.annotations.RealmModule;
  */
 
 /**
- * Realm module for the Nutrition module. (RealmNutritionModule)
+ * Realm module for the Steps module.
  * This will be the first example of Realm Integration.
  */
 @RealmModule(classes = {StepsModel.class})
