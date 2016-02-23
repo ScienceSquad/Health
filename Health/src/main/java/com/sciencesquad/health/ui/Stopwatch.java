@@ -2,6 +2,8 @@ package com.sciencesquad.health.ui;
 
 
 import org.threeten.bp.*;
+
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -12,6 +14,12 @@ public class Stopwatch {
     private Duration remaining;
     private Duration elapsed;
     private long prevTime;
+    private ArrayList<Duration> laps;
+
+    private int mode;
+    private final int DOWN = 0;
+    private final int UP = 1;
+    private final int ALARM = 2;
 
 
     public Stopwatch() {
@@ -79,14 +87,22 @@ public class Stopwatch {
 
 
     public void resume() {
-
-    }
-
-    public void start() {
         this.prevTime = System.currentTimeMillis();
     }
 
-    public void pause() {
+    public void start() {
+        this.resume();
+    }
 
+    public void pause() {
+        this.prevTime = 0;
+    }
+
+    public Duration getElapsedDuration() {
+        return elapsed;
+    }
+
+    public Duration getRemainingDuration() {
+        return remaining;
     }
 }
