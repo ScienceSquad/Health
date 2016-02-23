@@ -44,7 +44,7 @@ public abstract class RealmDataContext implements DataContext {
     public abstract void closeRealm();
     public abstract String returnRealmKey();
     public abstract RealmList getRealmList();
-    public abstract RealmQuery getQueryNutrition();
+    public abstract RealmQuery getQueryNotation();
 
 	//
     // GETTERS AND SETTERS

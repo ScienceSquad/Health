@@ -41,7 +41,7 @@ public class NutritionModule extends Module {
         nutritionRealm.getRealmList().add(testModel);
         nutritionRealm.update();
         nutritionRealm.query();
-        RealmQuery<NutritionModel> testQuery = nutritionRealm.getQueryNutrition();
+        RealmQuery<NutritionModel> testQuery = nutritionRealm.getQueryNotation();
 
         Log.d(TAG, "Checking initial value");
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());

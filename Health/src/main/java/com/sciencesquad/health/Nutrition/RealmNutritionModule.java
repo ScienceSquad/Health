@@ -150,7 +150,7 @@ public class RealmNutritionModule extends RealmDataContext {
      * Returns the most recent query format that was created query().
      */
     @Override
-    public RealmQuery<NutritionModel> getQueryNutrition() {
+    public RealmQuery<NutritionModel> getQueryNotation() {
         return queryNutrition;
     }
 
