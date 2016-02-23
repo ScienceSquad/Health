@@ -2,6 +2,7 @@ package com.sciencesquad.health.data;
 
 import android.content.Context;
 import com.sciencesquad.health.events.Event;
+
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import org.immutables.value.Value;
@@ -58,11 +59,8 @@ public abstract class RealmDataContext implements DataContext {
 		return this.realmName;
 	}
 
-    public void setRealmContext(Context context) {
+    public void setRealmDataContext(Context context) {
         this.realmContext = context;
     }
 
-    public Context getRealmContext() {
-        return this.realmContext;
-    }
 }

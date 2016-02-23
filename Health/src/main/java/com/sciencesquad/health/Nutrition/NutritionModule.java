@@ -1,12 +1,6 @@
-package com.sciencesquad.health.nutrition;
+package com.sciencesquad.health.Nutrition;
 
-import android.util.Log;
 import com.sciencesquad.health.core.Module;
-
-import java.util.Calendar;
-
-
-import io.realm.RealmQuery;
 
 /**
  * Nutrition Module itself.
@@ -17,11 +11,11 @@ import io.realm.RealmQuery;
 public class NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
 
-    private RealmNutritionModule nutritionRealm;
+    /*private RealmNutritionModule nutritionRealm;
 
     /**
      * Constructs the module itself.
-     */
+
     public NutritionModule() {
         this.nutritionRealm = new RealmNutritionModule();
         testNutritionModule();
@@ -30,7 +24,7 @@ public class NutritionModule extends Module {
     /**
      * Unit testing method for this module.
      * Also used to test Realm capabilities/ integration is correct.
-     */
+
     protected void testNutritionModule() {
         nutritionRealm.clearRealm();
         nutritionRealm.getRealmList().clear();
@@ -75,5 +69,5 @@ public class NutritionModule extends Module {
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
 
         nutritionRealm.closeRealm();
-    }
+    }*/
 }

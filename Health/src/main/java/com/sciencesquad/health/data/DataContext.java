@@ -1,5 +1,7 @@
 package com.sciencesquad.health.data;
 
+import android.content.Context;
+
 /**
  * An abstract class for databases. They must do the following
  *  - Initialize the database
@@ -7,7 +9,7 @@ package com.sciencesquad.health.data;
  *  - Query the database
  */
 public interface DataContext {
-    void init();
+    void init(Context context, String identifier);
     void update();
     void query();
 }
