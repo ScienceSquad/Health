@@ -41,7 +41,6 @@ public abstract class RealmDataContext implements DataContext {
     private Context realmContext;
 
     public abstract void clearRealm();
-    public abstract void updateRealmModel(int index, int newKey);
     public abstract void closeRealm();
     public abstract String returnRealmKey();
     public abstract RealmList getRealmList();

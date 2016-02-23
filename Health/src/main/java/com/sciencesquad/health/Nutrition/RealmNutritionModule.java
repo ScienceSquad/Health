@@ -119,7 +119,7 @@ public class RealmNutritionModule extends RealmDataContext {
      * This will generate an event to all subscribers on the Event Bus.
      * This can be also used to update other certain values one at a time.
      */
-    @Override
+
     public void updateRealmModel(int index, int newKey) {
         realm.beginTransaction();
         NutritionModel updateModel = queryNutrition.findAll().get(index);
