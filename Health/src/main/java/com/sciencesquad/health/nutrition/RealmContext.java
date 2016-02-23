@@ -1,4 +1,4 @@
-package com.sciencesquad.health.Nutrition;
+package com.sciencesquad.health.nutrition;
 
 import android.content.Context;
 

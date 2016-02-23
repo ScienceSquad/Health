@@ -1,4 +1,4 @@
-package com.sciencesquad.health.Nutrition;
+package com.sciencesquad.health.nutrition;
 
 import com.sciencesquad.health.core.Module;
 
