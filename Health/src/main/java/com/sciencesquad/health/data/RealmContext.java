@@ -1,42 +1,21 @@
-package com.sciencesquad.health.nutrition;
+package com.sciencesquad.health.data;
 
 import android.content.Context;
-
-import com.sciencesquad.health.data.DataContext;
 import com.sciencesquad.health.events.BaseApplication;
-import com.sciencesquad.health.data.RealmEmptyEvent;
-import com.sciencesquad.health.data.RealmUpdateEvent;
 import com.sciencesquad.health.events.Event;
-
+import com.sciencesquad.health.nutrition.NutritionModel;
+import io.realm.*;
+import java8.util.function.Consumer;
 import org.immutables.value.Value;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmList;
-import io.realm.RealmQuery;
+import java.util.List;
 
 /**
  * Realm module for the Nutrition module.
  * This will be the first example of Realm Integration.
  */
-
-public class RealmContext implements DataContext {
+public final class RealmContext<M extends RealmObject> implements DataContext {
     private static final String TAG = RealmContext.class.getSimpleName();
-
-    private RealmConfiguration configRealm;
-    private Realm realm;
-    private RealmList listOfModels;
-    private RealmQuery queryNotation;
-    private String realmName;
-
-    private static RealmContext _realmContext;
-
-
-
-
-    public static RealmContext getRealmContext(){
-        return _realmContext;
-    }
 
     /**
      * Event for clearing a realm.
@@ -55,6 +34,13 @@ public class RealmContext implements DataContext {
         String key();
     }
 
+	private Realm realm;
+	private String realmName;
+
+	private Class<M> clazz;
+    private RealmList<M> listOfModels;
+    private RealmQuery<M> queryNotation;
+
     /**
      * This sets up the Realm for the module.
      *
@@ -68,16 +54,15 @@ public class RealmContext implements DataContext {
      *      support multiple versions of the application.
      */
     @Override
-    public void init(Context context, String identifier) {
-        configRealm = new RealmConfiguration.Builder(context)
-                .name(identifier)
-                .setModules(this)
-                .deleteRealmIfMigrationNeeded()
-                .build();
+    public void init(Context context, Class clazz, String identifier) {
+		RealmConfiguration config = new RealmConfiguration.Builder(context)
+				.name(identifier)
+				.deleteRealmIfMigrationNeeded() // DEBUG ONLY
+				.build();
 
         this.realmName = identifier;
-        realm = Realm.getInstance(configRealm);
-        _realmContext = this;
+		this.clazz = clazz;
+        realm = Realm.getInstance(config);
         listOfModels = new RealmList<>();
     }
 
@@ -102,13 +87,14 @@ public class RealmContext implements DataContext {
      * This will set up a Realm Query object
      * based off of the Realm Object associated with the module
      *
-     * From there, one can do SQL-esq queries which returns a
+     * From there, one can do SQL-esque queries which returns a
      * RealmList<RealmObjectClass> results,
      * which is pertinent to that query.
      */
     @Override
+	@SuppressWarnings("unchecked") // forgive me for these sins
     public void query() {
-        queryNotation = realm.where(NutritionModel.class);
+        queryNotation = realm.where(this.clazz);
     }
 
     /**
@@ -141,10 +127,9 @@ public class RealmContext implements DataContext {
      * This can be also used to update other certain values one at a time.
      */
 
-    public void updateRealmModel(int index, int newKey) {
+    public void updateRealmModel(int index, Consumer<M> handler) {
         realm.beginTransaction();
-        //NutritionModel updateModel = queryNotation.findAll().get(index);
-        //updateModel.setCalorieIntake(newKey);
+		handler.accept(queryNotation.findAll().get(index));
         realm.commitTransaction();
 
         BaseApplication.application().eventBus().publish(RealmUpdateEvent.from(this).key(returnRealmKey()).create());
@@ -163,7 +148,7 @@ public class RealmContext implements DataContext {
      * Returns a list of Models stored in a realm.
      */
 
-    public RealmList<NutritionModel> getRealmList() {
+    public List<M> getList() {
         return listOfModels;
     }
 
@@ -171,8 +156,7 @@ public class RealmContext implements DataContext {
      * Returns the most recent query format that was created query().
      */
 
-    public RealmQuery<NutritionModel> getQueryNotation() {
+    public RealmQuery<M> getQueryNotation() {
         return queryNotation;
     }
-
 }

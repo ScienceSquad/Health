@@ -1,6 +1,12 @@
 package com.sciencesquad.health.nutrition;
 
+import android.util.Log;
 import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.data.RealmContext;
+import com.sciencesquad.health.events.BaseApplication;
+import io.realm.RealmQuery;
+
+import java.util.Calendar;
 
 /**
  * Nutrition Module itself.
@@ -11,28 +17,29 @@ import com.sciencesquad.health.core.Module;
 public class NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
 
-    /*private RealmNutritionModule nutritionRealm;
+    private RealmContext<NutritionModel> nutritionRealm;
 
     /**
      * Constructs the module itself.
-
+    */
     public NutritionModule() {
-        this.nutritionRealm = new RealmNutritionModule();
+        this.nutritionRealm = new RealmContext<>();
+		this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
         testNutritionModule();
     }
 
     /**
      * Unit testing method for this module.
      * Also used to test Realm capabilities/ integration is correct.
-
+    */
     protected void testNutritionModule() {
         nutritionRealm.clearRealm();
-        nutritionRealm.getRealmList().clear();
+        nutritionRealm.getList().clear();
         NutritionModel testModel = new NutritionModel();
         testModel.setCalorieIntake(50);
         Calendar rightNow = Calendar.getInstance();
         testModel.setDate(rightNow.getTime());
-        nutritionRealm.getRealmList().add(testModel);
+        nutritionRealm.getList().add(testModel);
         nutritionRealm.update();
         nutritionRealm.query();
         RealmQuery<NutritionModel> testQuery = nutritionRealm.getQueryNotation();
@@ -46,7 +53,7 @@ public class NutritionModule extends Module {
             NutritionModel testModelI = new NutritionModel();
             testModelI.setCalorieIntake(i);
             testModelI.setDate(rightNow.getTime());
-            nutritionRealm.getRealmList().add(testModelI);
+            nutritionRealm.getList().add(testModelI);
             nutritionRealm.update();
         }
         Log.d(TAG, "Done adding");
@@ -55,7 +62,7 @@ public class NutritionModule extends Module {
 
         Log.d(TAG, "Setting random value to something different");
         Log.d(TAG, "Length: " + testQuery.findAll().size());
-        nutritionRealm.updateRealmModel(4, 500);
+        nutritionRealm.updateRealmModel(4, d -> d.setCalorieIntake(500));
         Log.d(TAG, "Length: " + testQuery.findAll().size());
 
         Log.d(TAG, "Sanity checks");
@@ -64,10 +71,10 @@ public class NutritionModule extends Module {
         
         Log.d(TAG, "Clearing database");
         nutritionRealm.clearRealm();
-        nutritionRealm.getRealmList().clear();
+        nutritionRealm.getList().clear();
         nutritionRealm.update();
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
 
         nutritionRealm.closeRealm();
-    }*/
+    }
 }

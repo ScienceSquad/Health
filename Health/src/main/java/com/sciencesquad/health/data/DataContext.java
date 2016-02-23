@@ -9,7 +9,7 @@ import android.content.Context;
  *  - Query the database
  */
 public interface DataContext {
-    void init(Context context, String identifier);
+    void init(Context context, Class clazz, String identifier);
     void update();
     void query();
 }
