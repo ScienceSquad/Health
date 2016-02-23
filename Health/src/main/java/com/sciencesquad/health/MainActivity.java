@@ -11,9 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.events.BaseActivity;
-import com.sciencesquad.health.Nutrition.NutritionModule;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 
 public class MainActivity extends BaseActivity
@@ -40,6 +37,7 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+
 	}
 
 	@Override

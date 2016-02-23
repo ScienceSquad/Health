@@ -1,7 +1,11 @@
-package com.sciencesquad.health.Nutrition;
+package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
 import com.sciencesquad.health.core.Module;
+
+import java.util.Calendar;
+
+
 import io.realm.RealmQuery;
 
 /**
@@ -32,6 +36,8 @@ public class NutritionModule extends Module {
         nutritionRealm.getRealmList().clear();
         NutritionModel testModel = new NutritionModel();
         testModel.setCalorieIntake(50);
+        Calendar rightNow = Calendar.getInstance();
+        testModel.setDate(rightNow.getTime());
         nutritionRealm.getRealmList().add(testModel);
         nutritionRealm.update();
         nutritionRealm.query();
@@ -45,6 +51,7 @@ public class NutritionModule extends Module {
         for (int i = 1 ; i < 12; i++){
             NutritionModel testModelI = new NutritionModel();
             testModelI.setCalorieIntake(i);
+            testModelI.setDate(rightNow.getTime());
             nutritionRealm.getRealmList().add(testModelI);
             nutritionRealm.update();
         }
