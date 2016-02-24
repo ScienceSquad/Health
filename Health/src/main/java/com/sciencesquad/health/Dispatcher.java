@@ -130,6 +130,7 @@ public enum Dispatcher {
 	}
 
 	// Private Executor for non-MAIN priorities.
+	// TODO: Support SynchronousQueue and PriorityBlockingQueue.
 	private static int PROCESSORS = Runtime.getRuntime().availableProcessors() * 2;
 	private static PriorityBlockingQueue<Runnable> QUEUE = new PriorityBlockingQueue<>();
 	private static Handler UITHREAD = new Handler(Looper.getMainLooper());
