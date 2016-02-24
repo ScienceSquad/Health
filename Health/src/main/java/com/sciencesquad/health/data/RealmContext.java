@@ -143,6 +143,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext {
     public String returnRealmKey() {
         if (realmName.equals("nutrition.realm"))
             return "calorieIntake";
+        else if (realmName.equals("steps.realm"))
+            return "stepCount";
         else
             return "";
     }
