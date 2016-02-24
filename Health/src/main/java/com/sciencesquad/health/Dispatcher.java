@@ -125,6 +125,8 @@ public enum Dispatcher {
 	/**
 	 * Pauses the Dispatcher's execution of any current blocks.
 	 * Unsupported for Dispatcher.UI (the main thread).
+	 *
+	 * This is a dangerous call! Only perform on a Dispatcher you own.
 	 */
 	public void pause() {
 		switch (this) {
@@ -141,6 +143,8 @@ public enum Dispatcher {
 	/**
 	 * Resumes the Dispatcher's execution of any current blocks.
 	 * Unsupported for Dispatcher.UI (the main thread).
+	 *
+	 * This is a dangerous call! Only perform on a Dispatcher you own.
 	 */
 	public void resume() {
 		switch (this) {
