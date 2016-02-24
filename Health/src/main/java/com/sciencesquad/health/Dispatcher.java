@@ -6,10 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java8.util.concurrent.CompletableFuture;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayDeque;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -110,13 +108,13 @@ public enum Dispatcher {
 		// TODO: Currently does not support SERIAL/CONCURRENT setting.
 		switch (this) {
 			case UI:
-				UITHREAD.postDelayed(func, time);
+				MAINTHREAD.postDelayed(func, time);
 				break;
 			case USER:
 			case DEFAULT:
 			case UTILITY:
 			case BACKGROUND:
-				EXEC.schedule(func, time, TimeUnit.MILLISECONDS);
+				CONCURRENT.schedule(func, time, TimeUnit.MILLISECONDS);
 				break;
 		}
 		return future;
@@ -135,7 +133,7 @@ public enum Dispatcher {
 			case DEFAULT:
 			case UTILITY:
 			case BACKGROUND:
-				EXEC.pause();
+				CONCURRENT.pause();
 				break;
 		}
 	}
@@ -153,7 +151,7 @@ public enum Dispatcher {
 			case DEFAULT:
 			case UTILITY:
 			case BACKGROUND:
-				EXEC.resume();
+				CONCURRENT.resume();
 				break;
 		}
 	}
@@ -162,12 +160,12 @@ public enum Dispatcher {
 	 * Internal container for ScheduledThreadPoolExecutor that supports all
 	 * the Dispatcher-required features (i.e. pause/resume, priorities).
 	 */
-	private static class PausableScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
+	private static class PausableExecutor extends ScheduledThreadPoolExecutor {
 		private boolean isPaused;
 		private ReentrantLock pauseLock = new ReentrantLock();
 		private Condition unpaused = pauseLock.newCondition();
 
-		public PausableScheduledThreadPoolExecutor(int corePoolSize) {
+		public PausableExecutor(int corePoolSize) {
 			super(corePoolSize);
 		}
 
@@ -203,10 +201,43 @@ public enum Dispatcher {
 		}
 	}
 
+	/**
+	 * Internal container for ScheduledThreadPoolExecutor that supports all
+	 * the Dispatcher-required features (i.e. SERIAL execution mode).
+	 */
+	// TODO: Use this.
+	private static class SerialExecutor implements Executor {
+		final ArrayDeque<Runnable> tasks = new ArrayDeque<>();
+		final ThreadPoolExecutor internal;
+		Runnable active;
+
+		public SerialExecutor(ThreadPoolExecutor internal) {
+			this.internal = internal;
+		}
+
+		public synchronized void execute(@NonNull final Runnable r) {
+			tasks.offer(() -> {
+				try {
+					r.run();
+				} finally {
+					scheduleNext();
+				}
+			});
+
+			if (active == null)
+				scheduleNext();
+		}
+
+		protected synchronized void scheduleNext() {
+			if ((active = tasks.poll()) != null)
+				this.internal.execute(active);
+		}
+	}
+
 	// Private Executor for non-MAIN priorities.
 	// TODO: Support SynchronousQueue and PriorityBlockingQueue.
 	private static int PROCESSORS = Runtime.getRuntime().availableProcessors() * 2;
-	private static PriorityBlockingQueue<Runnable> QUEUE = new PriorityBlockingQueue<>();
-	private static Handler UITHREAD = new Handler(Looper.getMainLooper());
-	private static PausableScheduledThreadPoolExecutor EXEC = new PausableScheduledThreadPoolExecutor(PROCESSORS);
+	private static Handler MAINTHREAD = new Handler(Looper.getMainLooper());
+	private static PausableExecutor CONCURRENT = new PausableExecutor(PROCESSORS);
+	private static SerialExecutor SERIAL = new SerialExecutor(CONCURRENT);
 }
