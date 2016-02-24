@@ -16,14 +16,14 @@ public enum Dispatcher {
 	/**
 	 *
 	 */
-	MAIN {
+	UI {
 
 	},
 
 	/**
 	 *
 	 */
-	HIGH {
+	USER {
 
 	},
 
@@ -37,7 +37,7 @@ public enum Dispatcher {
 	/**
 	 *
 	 */
-	LOW {
+	UTILITY {
 
 	},
 
@@ -116,12 +116,12 @@ public enum Dispatcher {
 		// Depending on which Dispatch we are, execute the action differently.
 		// TODO: Currently does not support non-MAIN priorities.
 		switch (this) {
-			case MAIN:
+			case UI:
 				UITHREAD.postDelayed(func, time);
 				break;
-			case HIGH:
+			case USER:
 			case DEFAULT:
-			case LOW:
+			case UTILITY:
 			case BACKGROUND:
 				EXEC.schedule(func, time, TimeUnit.MILLISECONDS);
 				break;
