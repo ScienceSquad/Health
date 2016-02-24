@@ -2,11 +2,14 @@ package com.sciencesquad.health;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java8.util.concurrent.CompletableFuture;
 
+import java.lang.reflect.Field;
 import java.util.ArrayDeque;
+import java.util.Comparator;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -96,15 +99,35 @@ public enum Dispatcher {
 
 		// Wrap the callable or runnable to interact with the future.
 		Runnable func = () -> {
+
+			// Cache and set the thread priority before execution.
+			int _id = Process.getThreadPriority(Process.myTid());
+			switch (this) {
+				case UI:
+					Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY); break;
+				case USER:
+					Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND); break;
+				case DEFAULT:
+					Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT); break;
+				case UTILITY:
+					Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND); break;
+				case BACKGROUND:
+					Process.setThreadPriority(Process.THREAD_PRIORITY_LOWEST); break;
+			}
+
+			// Invoke the action, and fulfill the future by either completing with
+			// the return value of the action, or exceptionally with the throwable.
+			// Before returning, the thread MUST be returned to its original priority.
 			try {
 				future.complete(action.call());
 			} catch (Exception e) {
 				future.completeExceptionally(e);
+			} finally {
+				Process.setThreadPriority(_id);
 			}
 		};
 
 		// Depending on which Dispatch we are, execute the action differently.
-		// TODO: Currently does not support non-UI priorities.
 		// TODO: Currently does not support SERIAL/CONCURRENT setting.
 		switch (this) {
 			case UI:
@@ -205,7 +228,6 @@ public enum Dispatcher {
 	 * Internal container for ScheduledThreadPoolExecutor that supports all
 	 * the Dispatcher-required features (i.e. SERIAL execution mode).
 	 */
-	// TODO: Use this.
 	private static class SerialExecutor implements Executor {
 		final ArrayDeque<Runnable> tasks = new ArrayDeque<>();
 		final ThreadPoolExecutor internal;
@@ -231,6 +253,29 @@ public enum Dispatcher {
 		protected synchronized void scheduleNext() {
 			if ((active = tasks.poll()) != null)
 				this.internal.execute(active);
+		}
+	}
+
+	public class CFRunnableComparator implements Comparator<Runnable> {
+
+		@Override
+		@SuppressWarnings("unchecked")
+		public int compare(Runnable r1, Runnable r2) {
+			// T might be AsyncSupply, UniApply, etc., but we want to
+			// compare our original Runnables.
+			return ((Comparable) unwrap(r1)).compareTo(unwrap(r2));
+		}
+
+		private Object unwrap(Runnable r) {
+			try {
+				Field field = r.getClass().getDeclaredField("fn");
+				field.setAccessible(true);
+				// NB: For performance-intensive contexts, you may want to
+				// cache these in a ConcurrentHashMap<Class<?>, Field>.
+				return field.get(r);
+			} catch (IllegalAccessException | NoSuchFieldException e) {
+				throw new IllegalArgumentException("Couldn't unwrap " + r, e);
+			}
 		}
 	}
 

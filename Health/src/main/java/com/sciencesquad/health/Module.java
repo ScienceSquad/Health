@@ -56,9 +56,22 @@ public abstract class Module implements Observable {
 	 *     Module.registerModule(this);
 	 * }
 	 * ```
+	 *
+	 * @param module the module to register
+	 * @return true if registration successful, false otherwise
 	 */
 	public static boolean registerModule(@NonNull Class<? extends Module> module) {
 		return _modules.add(module);
+	}
+
+	/**
+	 * Unregister.
+	 *
+	 * @param module the module to unregister
+	 * @return true if unregistration successful, false otherwise
+	 */
+	public static boolean unregisterModule(@NonNull Class<? extends Module> module) {
+		return _modules.remove(module);
 	}
 
 	/**
@@ -69,6 +82,30 @@ public abstract class Module implements Observable {
 	@NonNull
 	public static Set<Class<? extends Module>> registeredModules() {
 		return _modules;
+	}
+
+	/**
+	 * Get an instance of specified ViewModel based on its unique ID. The instance will be either restored from an
+	 * in-memory map or created using the default constructor and put inside the map
+	 *
+	 * @param moduleClass ViewModel class
+	 * @return ViewModel inside a wrapper containing a flag indicating if the instance was created or restored
+	 */
+	@NonNull
+	@SuppressWarnings("unchecked")
+	public synchronized Pair<Module, Boolean> getModuleInstance(@NonNull Class<? extends Module> moduleClass) {
+		Module instance = null;//_modules.get(moduleClass);
+		if(instance != null)
+			return new Pair<>(instance, false);
+
+		try {
+			//instance = viewModelClass.newInstance();
+			//instance.setViewModelId(viewModelId);
+			//mViewModels.put(viewModelId, instance);
+			return new Pair<>(instance, true);
+		} catch(Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	/**
