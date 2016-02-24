@@ -10,43 +10,35 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public enum Dispatcher {
 
 	/**
 	 *
 	 */
-	UI {
-
-	},
+	UI,
 
 	/**
 	 *
 	 */
-	USER {
-
-	},
+	USER,
 
 	/**
 	 *
 	 */
-	DEFAULT {
-
-	},
+	DEFAULT,
 
 	/**
 	 *
 	 */
-	UTILITY {
-
-	},
+	UTILITY,
 
 	/**
 	 *
 	 */
-	BACKGROUND {
-
-	};
+	BACKGROUND;
 
 	/**
 	 * A convenience method to execute a Runnable action on the UI thread.
@@ -114,7 +106,8 @@ public enum Dispatcher {
 		};
 
 		// Depending on which Dispatch we are, execute the action differently.
-		// TODO: Currently does not support non-MAIN priorities.
+		// TODO: Currently does not support non-UI priorities.
+		// TODO: Currently does not support SERIAL/CONCURRENT setting.
 		switch (this) {
 			case UI:
 				UITHREAD.postDelayed(func, time);
@@ -129,10 +122,87 @@ public enum Dispatcher {
 		return future;
 	}
 
+	/**
+	 * Pauses the Dispatcher's execution of any current blocks.
+	 * Unsupported for Dispatcher.UI (the main thread).
+	 */
+	public void pause() {
+		switch (this) {
+			case UI: break; // Unsupported
+			case USER:
+			case DEFAULT:
+			case UTILITY:
+			case BACKGROUND:
+				EXEC.pause();
+				break;
+		}
+	}
+
+	/**
+	 * Resumes the Dispatcher's execution of any current blocks.
+	 * Unsupported for Dispatcher.UI (the main thread).
+	 */
+	public void resume() {
+		switch (this) {
+			case UI: break; // Unsupported
+			case USER:
+			case DEFAULT:
+			case UTILITY:
+			case BACKGROUND:
+				EXEC.resume();
+				break;
+		}
+	}
+
+	/**
+	 * Internal container for ScheduledThreadPoolExecutor that supports all
+	 * the Dispatcher-required features (i.e. pause/resume, priorities).
+	 */
+	private static class PausableScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
+		private boolean isPaused;
+		private ReentrantLock pauseLock = new ReentrantLock();
+		private Condition unpaused = pauseLock.newCondition();
+
+		public PausableScheduledThreadPoolExecutor(int corePoolSize) {
+			super(corePoolSize);
+		}
+
+		protected void beforeExecute(Thread t, Runnable r) {
+			super.beforeExecute(t, r);
+			pauseLock.lock();
+			try {
+				while (isPaused) unpaused.await();
+			} catch (InterruptedException ie) {
+				t.interrupt();
+			} finally {
+				pauseLock.unlock();
+			}
+		}
+
+		public void pause() {
+			pauseLock.lock();
+			try {
+				isPaused = true;
+			} finally {
+				pauseLock.unlock();
+			}
+		}
+
+		public void resume() {
+			pauseLock.lock();
+			try {
+				isPaused = false;
+				unpaused.signalAll();
+			} finally {
+				pauseLock.unlock();
+			}
+		}
+	}
+
 	// Private Executor for non-MAIN priorities.
 	// TODO: Support SynchronousQueue and PriorityBlockingQueue.
 	private static int PROCESSORS = Runtime.getRuntime().availableProcessors() * 2;
 	private static PriorityBlockingQueue<Runnable> QUEUE = new PriorityBlockingQueue<>();
 	private static Handler UITHREAD = new Handler(Looper.getMainLooper());
-	private static ScheduledThreadPoolExecutor EXEC = new ScheduledThreadPoolExecutor(PROCESSORS);
+	private static PausableScheduledThreadPoolExecutor EXEC = new PausableScheduledThreadPoolExecutor(PROCESSORS);
 }
