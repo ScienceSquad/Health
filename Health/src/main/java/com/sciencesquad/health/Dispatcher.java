@@ -6,44 +6,59 @@ import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java8.util.concurrent.CompletableFuture;
+import java8.util.function.Supplier;
 
-import java.lang.reflect.Field;
 import java.util.ArrayDeque;
-import java.util.Comparator;
-import java.util.concurrent.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public enum Dispatcher {
 
 	/**
-	 *
+	 * Priority of actions involved in updating the user interface.
 	 */
 	UI,
 
 	/**
-	 *
+	 * Priority of actions when running a user interface that the user
+	 * is currently interacting with.
 	 */
 	USER,
 
 	/**
-	 *
+	 * Standard priority of actions with no context.
 	 */
 	DEFAULT,
 
 	/**
-	 *
+	 * Priority of actions that have less of a chance chance to impact
+	 * the responsiveness of the user interface.
 	 */
 	UTILITY,
 
 	/**
-	 *
+	 * Priority for actions that really, really don't want to run if
+	 * anything else is happening. Do not use frivolously.
 	 */
 	BACKGROUND;
 
 	/**
-	 * A convenience method to execute a Runnable action on the UI thread.
-	 * This should be used for all UI-related or concurrent interactions.
+	 * Currently only SERIAL and CONCURRENT execution is supported.
+	 */
+	public enum ExecutionMode {
+		SERIAL, CONCURRENT;
+	}
+
+	/**
+	 * Which mode of execution should be taken for actions.
+	 */
+	private ExecutionMode _executionMode;
+
+	/**
+	 * Execute an action on the current Dispatcher with a "rain-check".
 	 *
 	 * Using the Future provided, the action may become synchronous or asynchronous
 	 * depending on whether `.then()` or `.wait()` is called. Asynchronous
@@ -52,30 +67,43 @@ public enum Dispatcher {
 	 *
 	 * @param action the action to execute on the Dispatcher
 	 */
-	public CompletableFuture<Void> run(@NonNull Runnable action) {
-		return this.run(action, 0, null);
+	@NonNull public CompletableFuture<Void> run(@NonNull Runnable action) {
+		return this.run(() -> {
+			action.run();
+			return null;
+		}, 0, null);
 	}
 
 	/**
-	 * A convenience method to execute a Runnable action on the UI thread.
-	 * This should be used for all UI-related interactions.
+	 * Execute an action on the current Dispatcher with a "rain-check".
+	 * The Future returned contains the result of the action provided.
+	 *
+	 * Using the Future provided, the action may become synchronous or asynchronous
+	 * depending on whether `.then()` or `.wait()` is called. Asynchronous
+	 * is preferred, unless a UI action or something similar requires sequential
+	 * processing.
 	 *
 	 * @param action the action to execute on the UI thread
 	 */
-	public <T> CompletableFuture<T> run(@NonNull Callable<T> action) {
+	@NonNull public <T> CompletableFuture<T> run(@NonNull Supplier<T> action) {
 		return this.run(action, 0, null);
 	}
 
 	/**
-	 * A convenience method to execute a Runnable action on the UI thread
-	 * after a duration of time (i.e. delayed action).
-	 * This should be used for all UI-related interactions.
+	 * Execute an action on the current Dispatcher with a "rain-check"
+	 * after a specified duration, used as a scheduling delay.
+	 *
+	 * Using the Future provided, the action may become synchronous or asynchronous
+	 * depending on whether `.then()` or `.wait()` is called. Asynchronous
+	 * is preferred, unless a UI action or something similar requires sequential
+	 * processing.
 	 *
 	 * @param action the action to execute on the UI thread
 	 * @param duration the delay time after which the action is executed
 	 * @param timeUnit the time unit corresponding to duration
 	 */
-	public CompletableFuture<Void> run(@NonNull Runnable action, long duration, @Nullable TimeUnit timeUnit) {
+	@NonNull public CompletableFuture<Void> run(@NonNull Runnable action,
+										long duration, @Nullable TimeUnit timeUnit) {
 		return this.run(() -> {
 			action.run();
 			return null;
@@ -83,29 +111,38 @@ public enum Dispatcher {
 	}
 
 	/**
-	 * A convenience method to execute a Runnable action on the UI thread
-	 * after a duration of time (i.e. delayed action).
-	 * This should be used for all UI-related interactions.
+	 * Execute an action on the current Dispatcher with a "rain-check"
+	 * after a specified duration, used as a scheduling delay.
+	 * The Future returned contains the result of the action provided.
+	 *
+	 * Using the Future provided, the action may become synchronous or asynchronous
+	 * depending on whether `.then()` or `.wait()` is called. Asynchronous
+	 * is preferred, unless a UI action or something similar requires sequential
+	 * processing.
+	 *
+	 * @implNote Executing an action after a duration of time is not possible
+	 * if the execution mode is set to SERIAL, inherently, and will be ignored.
 	 *
 	 * @param action the action to execute on the UI thread
 	 * @param duration the delay time after which the action is executed
 	 * @param timeUnit the time unit corresponding to duration
 	 */
-	public <T> CompletableFuture<T> run(@NonNull Callable<T> action, long duration, @Nullable TimeUnit timeUnit) {
+	@NonNull public <T> CompletableFuture<T> run(@NonNull Supplier<T> action,
+										 long duration, @Nullable TimeUnit timeUnit) {
 		final CompletableFuture<T> future = new CompletableFuture<>();
 
 		// If duration and timeUnit aren't present, we're not scheduling the action.
 		long time = (duration == 0 || timeUnit == null) ? 0 : timeUnit.toMillis(duration);
 
 		// Wrap the callable or runnable to interact with the future.
-		Runnable func = () -> {
+		Runnable wrapper = () -> {
 
 			// Cache and set the thread priority before execution.
 			int _id = Process.getThreadPriority(Process.myTid());
 			switch (this) {
-				case UI:
-					Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY); break;
+				case UI: break; // Special handling.
 				case USER:
+					// FIXME: This might actually not work. See docs.
 					Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND); break;
 				case DEFAULT:
 					Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT); break;
@@ -119,7 +156,7 @@ public enum Dispatcher {
 			// the return value of the action, or exceptionally with the throwable.
 			// Before returning, the thread MUST be returned to its original priority.
 			try {
-				future.complete(action.call());
+				future.complete(action.get());
 			} catch (Exception e) {
 				future.completeExceptionally(e);
 			} finally {
@@ -128,23 +165,24 @@ public enum Dispatcher {
 		};
 
 		// Depending on which Dispatch we are, execute the action differently.
-		// TODO: Currently does not support SERIAL/CONCURRENT setting.
 		switch (this) {
 			case UI:
-				MAINTHREAD.postDelayed(func, time);
+				MAINTHREAD.postDelayed(wrapper, time);
 				break;
 			case USER:
 			case DEFAULT:
 			case UTILITY:
 			case BACKGROUND:
-				CONCURRENT.schedule(func, time, TimeUnit.MILLISECONDS);
+				if (this._executionMode == ExecutionMode.SERIAL)
+					SERIAL.execute(wrapper);
+				else CONCURRENT.schedule(wrapper, time, TimeUnit.MILLISECONDS);
 				break;
 		}
 		return future;
 	}
 
 	/**
-	 * Pauses the Dispatcher's execution of any current blocks.
+	 * Pauses the Dispatcher's execution of any current actions.
 	 * Unsupported for Dispatcher.UI (the main thread).
 	 *
 	 * This is a dangerous call! Only perform on a Dispatcher you own.
@@ -162,7 +200,7 @@ public enum Dispatcher {
 	}
 
 	/**
-	 * Resumes the Dispatcher's execution of any current blocks.
+	 * Resumes the Dispatcher's execution of any current actions.
 	 * Unsupported for Dispatcher.UI (the main thread).
 	 *
 	 * This is a dangerous call! Only perform on a Dispatcher you own.
@@ -180,11 +218,40 @@ public enum Dispatcher {
 	}
 
 	/**
+	 * Checks if the Dispatcher's execution is currently paused.
+	 * Unsupported for Dispatcher.UI (the main thread).
+	 *
+	 * @return whether the Dispatcher is paused.
+	 */
+	public boolean isPaused() {
+		switch (this) {
+			case UI: return false; // Unsupported
+			case USER:
+			case DEFAULT:
+			case UTILITY:
+			case BACKGROUND:
+				return CONCURRENT.isPaused;
+		}
+		return false;
+	}
+
+	/**
+	 * Sets the execution mode for the Dispatcher.
+	 * Unsupported for Dispatcher.UI (the main thread).
+	 *
+	 * @param executionMode the execution mode.
+	 */
+	public void setExecutionMode(ExecutionMode executionMode) {
+		if (this != Dispatcher.UI)
+			this._executionMode = executionMode;
+	}
+
+	/**
 	 * Internal container for ScheduledThreadPoolExecutor that supports all
 	 * the Dispatcher-required features (i.e. pause/resume, priorities).
 	 */
 	private static class PausableExecutor extends ScheduledThreadPoolExecutor {
-		private boolean isPaused;
+		boolean isPaused;
 		private ReentrantLock pauseLock = new ReentrantLock();
 		private Condition unpaused = pauseLock.newCondition();
 
@@ -230,10 +297,10 @@ public enum Dispatcher {
 	 */
 	private static class SerialExecutor implements Executor {
 		final ArrayDeque<Runnable> tasks = new ArrayDeque<>();
-		final ThreadPoolExecutor internal;
+		final Executor internal;
 		Runnable active;
 
-		public SerialExecutor(ThreadPoolExecutor internal) {
+		public SerialExecutor(Executor internal) {
 			this.internal = internal;
 		}
 
@@ -256,32 +323,8 @@ public enum Dispatcher {
 		}
 	}
 
-	public class CFRunnableComparator implements Comparator<Runnable> {
-
-		@Override
-		@SuppressWarnings("unchecked")
-		public int compare(Runnable r1, Runnable r2) {
-			// T might be AsyncSupply, UniApply, etc., but we want to
-			// compare our original Runnables.
-			return ((Comparable) unwrap(r1)).compareTo(unwrap(r2));
-		}
-
-		private Object unwrap(Runnable r) {
-			try {
-				Field field = r.getClass().getDeclaredField("fn");
-				field.setAccessible(true);
-				// NB: For performance-intensive contexts, you may want to
-				// cache these in a ConcurrentHashMap<Class<?>, Field>.
-				return field.get(r);
-			} catch (IllegalAccessException | NoSuchFieldException e) {
-				throw new IllegalArgumentException("Couldn't unwrap " + r, e);
-			}
-		}
-	}
-
 	// Private Executor for non-MAIN priorities.
-	// TODO: Support SynchronousQueue and PriorityBlockingQueue.
-	private static int PROCESSORS = Runtime.getRuntime().availableProcessors() * 2;
+	private static int PROCESSORS = Runtime.getRuntime().availableProcessors() * 2 + 1;
 	private static Handler MAINTHREAD = new Handler(Looper.getMainLooper());
 	private static PausableExecutor CONCURRENT = new PausableExecutor(PROCESSORS);
 	private static SerialExecutor SERIAL = new SerialExecutor(CONCURRENT);
