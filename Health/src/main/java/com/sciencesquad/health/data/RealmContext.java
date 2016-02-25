@@ -2,21 +2,24 @@ package com.sciencesquad.health.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.sciencesquad.health.events.BaseApplication;
 import io.realm.*;
 import java8.util.function.Consumer;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
  * The RealmContext.
  */
-public final class RealmContext<M extends RealmObject> extends DataContext<M> {
+public final class RealmContext<M extends RealmObject> implements DataContext<M> {
     private static final String TAG = RealmContext.class.getSimpleName();
 
 	private Realm realm;
-	private String realmName;
 	private Class<M> realmClass;
+
+	private RealmResults<M> items() {
+		return this.realm.where(this.realmClass).findAll();
+	}
 
     /**
      * This sets up the Realm for the module.
@@ -39,54 +42,96 @@ public final class RealmContext<M extends RealmObject> extends DataContext<M> {
 				.build();
 
         this.realm = Realm.getInstance(config);
-		this.realmName = identifier;
 		this.realmClass = realmClass;
     }
 
-    /**
-     * This will update the realm and will update the model given that something has changed.
-     * This will generate an event to all subscribers on the Event Bus.
-     *
-     * This can later be modified to write to a list of Realm Objects
-     * which could be useful for a history.
-     */
+	/**
+	 * Return the Realm for this RealmContext.
+	 * @return the Realm underlying this RealmContext
+	 */
+	@NonNull
+	public Realm getRealm() {
+		return this.realm;
+	}
+
+	/**
+	 * @see Collection
+	 */
     @Override
     public boolean add(M object) {
         realm.beginTransaction();
 		this.realm.copyToRealm(object);
         realm.commitTransaction();
-
-        //BaseApplication.application().eventBus().publish(RealmUpdateEvent.from(this).key("FIXME").create());
 		return true;
     }
 
+	/**
+	 * @see Collection
+	 */
+	@Override
+	public boolean addAll(Collection<? extends M> collection) {
+		realm.beginTransaction();
+		this.realm.copyToRealm(collection);
+		realm.commitTransaction();
+		return true;
+	}
+
+	/**
+	 * @see Collection
+	 */
 	@Override
 	public boolean contains(Object object) {
-		realm.beginTransaction();
-		boolean result = false;
-		RealmResults<M> results = realm.where(this.realmClass).findAll();
-		for (M m : results) {
-			if (m.equals(object)) {
-				result = true;
-				break;
-			}
-		}
-		realm.commitTransaction();
-		return result;
+		return items().contains(object);
 	}
 
+	/**
+	 * @see Collection
+	 */
+	@Override
+	public boolean containsAll(@NonNull Collection<?> collection) {
+		return items().containsAll(collection);
+	}
+
+	/**
+	 * @see Collection
+	 */
+	@Override
+	public boolean equals(Object object) {
+		return items().equals(object);
+	}
+
+	/**
+	 * @see Collection
+	 */
+	@Override
+	public int hashCode() {
+		return items().hashCode();
+	}
+
+	/**
+	 * @see Collection
+	 */
+	@Override
+	public boolean isEmpty() {
+		return items().isEmpty();
+	}
+
+	/**
+	 * @see Collection
+	 */
 	@Override @NonNull
 	public Iterator<M> iterator() {
-		realm.beginTransaction();
-		Iterator<M> it = this.realm.where(this.realmClass).findAll().iterator();
-		realm.commitTransaction();
-		return it;
+		return items().iterator();
 	}
 
+	/**
+	 * @see Collection
+	 */
+	// Note: Realm doesn't do remove() well.
 	@Override
 	public boolean remove(Object object) {
 		realm.beginTransaction();
-		RealmResults<M> results = realm.where(this.realmClass).findAll();
+		RealmResults<M> results = items();
 		for (M m : results) {
 			if (m.equals(object)) {
 				results.remove(m);
@@ -97,12 +142,82 @@ public final class RealmContext<M extends RealmObject> extends DataContext<M> {
 		return true;
 	}
 
+	/**
+	 * @see Collection
+	 */
+	// Note: Realm doesn't do remove() well.
+	@Override
+	public boolean removeAll(@NonNull Collection<?> collection) {
+		realm.beginTransaction();
+		RealmResults<M> results = items();
+		for (Object object : collection) {
+			for (M m : results) {
+				if (m.equals(object)) {
+					results.remove(m);
+					break;
+				}
+			}
+		}
+		realm.commitTransaction();
+		return true;
+	}
+
+	/**
+	 * @see Collection
+	 */
+	// Note: Realm doesn't do remove() well.
+	@Override
+	public boolean retainAll(@NonNull Collection<?> collection) {
+		realm.beginTransaction();
+		RealmResults<M> results = items();
+		for (M m : results) {
+			if (!collection.contains(m)) {
+				results.remove(m);
+				break;
+			}
+		}
+		realm.commitTransaction();
+		return true;
+	}
+
+	/**
+	 * @see Collection
+	 */
 	@Override
 	public int size() {
+		return items().size();
+	}
+
+	/**
+	 * @see Collection
+	 */
+	public void clear() {
 		realm.beginTransaction();
-		long result = this.realm.where(this.realmClass).count();
+		realm.clear(this.realmClass);
 		realm.commitTransaction();
-		return (int)result;
+	}
+
+	/**
+	 * @see Collection
+	 */
+	@Override @NonNull
+	public Object[] toArray() {
+		return items().toArray();
+	}
+
+	/**
+	 * @see Collection
+	 */
+	@Override @NonNull
+	public <T> T[] toArray(@NonNull T[] array) {
+		return items().toArray(array);
+	}
+
+	/**
+	 * @see AutoCloseable
+	 */
+	public void close() throws Exception {
+		realm.close();
 	}
 
 	/**
@@ -113,44 +228,17 @@ public final class RealmContext<M extends RealmObject> extends DataContext<M> {
      * RealmList<RealmObjectClass> results,
      * which is pertinent to that query.
      */
-    @Override
-	@SuppressWarnings("unchecked")
     public RealmQuery<M> query() {
         return realm.where(this.realmClass);
     }
 
-    /**
-     * This will clear all the relevant models from the realm.
-     * This will generate an event to all subscribers on the Event Bus.
-     * Use this with caution.
-     */
-    public void clear() {
-        realm.beginTransaction();
-        realm.clear(this.realmClass);
-        realm.commitTransaction();
-
-        BaseApplication.application().eventBus().publish(DataEmptyEvent.from(this).realmName(realmName).create());
-    }
-
-    /**
-     * This function should be called every time the module is done being used.
-     * Because closing files is the right thing to do preserve data.
-     */
-    public void close() throws Exception {
-        realm.close();
-    }
-
+	// FIXME: Not exactly a helpful method right now.
 	@Override
-	public void update() {
-
+	public void update(M object, Consumer<M> handler) {
+		realm.beginTransaction();
+		handler.accept(object);
+		realm.commitTransaction();
 	}
-
-
-	//
-
-
-
-
 
     /**
      * This will take a model that is stored in the realm
@@ -160,9 +248,7 @@ public final class RealmContext<M extends RealmObject> extends DataContext<M> {
      */
     public void updateRealmModel(int index, Consumer<M> handler) {
         realm.beginTransaction();
-		handler.accept(queryNotation.findAll().get(index));
+		handler.accept(items().get(index));
         realm.commitTransaction();
-
-        BaseApplication.application().eventBus().publish(DataUpdateEvent.from(this).key("FIXME").create());
     }
 }
