@@ -1,13 +1,13 @@
 package com.sciencesquad.health.sleep;
 
 import android.animation.ValueAnimator;
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-import android.support.annotation.RawRes;
 import android.util.Log;
 import com.sciencesquad.health.MainActivity;
 import com.sciencesquad.health.R;
@@ -19,21 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class SoundService extends Service {
+public class SoundService extends IntentService {
 	private static final String TAG = SoundService.class.getSimpleName();
-
-	/**
-	 * Creates a looping MediaPlayer for the given RawRes sound.
-	 *
-	 * @param res the sound to create a looping player for
-	 * @return a MediaPlayer for the RawRes given
-	 */
-	public static MediaPlayer createPlayer(@RawRes int res) {
-		MediaPlayer player = MediaPlayer.create(BaseApplication.application(), res);
-		player.setVolume(0.25f, 0.25f);
-		player.setLooping(true);
-		return player;
-	}
 
 	/**
 	 * Loads all Sleep-specific RawRes sounds into MediaPlayers.
@@ -41,15 +28,17 @@ public class SoundService extends Service {
 	 *
 	 * @return a map of all Sleep-specific sounds to MediaPlayers.
 	 */
-	public static Map<String, MediaPlayer> players() {
+	public static Map<String, MediaPlayer> defaultPlayers() {
 		HashMap<String, MediaPlayer> players = new HashMap<>();
-		players.put("waves", createPlayer(R.raw.waves));
-		players.put("birds", createPlayer(R.raw.birds));
-		players.put("crickets", createPlayer(R.raw.crickets));
-		players.put("rain", createPlayer(R.raw.rain));
-		players.put("thunder", createPlayer(R.raw.thunder));
-		players.put("fire", createPlayer(R.raw.fire));
-		players.put("wind", createPlayer(R.raw.wind));
+		X.of(BaseApplication.application()).let(app -> {
+			players.put("waves", MediaPlayer.create(app, R.raw.waves));
+			players.put("birds", MediaPlayer.create(app, R.raw.birds));
+			players.put("crickets", MediaPlayer.create(app, R.raw.crickets));
+			players.put("rain", MediaPlayer.create(app, R.raw.rain));
+			players.put("thunder", MediaPlayer.create(app, R.raw.thunder));
+			players.put("fire", MediaPlayer.create(app, R.raw.fire));
+			players.put("wind", MediaPlayer.create(app, R.raw.wind));
+		});
 		return players;
 	}
 
@@ -94,7 +83,21 @@ public class SoundService extends Service {
 	/**
 	 *
 	 */
-	private Map<String, MediaPlayer> players = players();
+	private Map<String, MediaPlayer> players = defaultPlayers();
+
+	/**
+	 * @see IntentService
+	 */
+	public SoundService() {
+		super("Default");
+	}
+
+	/**
+	 * @see IntentService
+	 */
+	public SoundService(String name) {
+		super(name);
+	}
 
 	/**
 	 * @see Service
@@ -102,6 +105,7 @@ public class SoundService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		StreamSupport.stream(players.keySet()).forEach(key -> {
+			players.get(key).setLooping(true);
 			players.get(key).start();
 
 			// Slowly "animate" value to the new one.
@@ -125,6 +129,11 @@ public class SoundService extends Service {
 	public IBinder onBind(Intent intent) {
 		// Unimplemented.
 		return null;
+	}
+
+	@Override
+	protected void onHandleIntent(Intent intent) {
+
 	}
 
 	/**
