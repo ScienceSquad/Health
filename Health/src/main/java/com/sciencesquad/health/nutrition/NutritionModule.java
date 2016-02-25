@@ -2,9 +2,11 @@ package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
 import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.data.DataEmptyEvent;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 import io.realm.RealmQuery;
+import rx.Subscription;
 
 import java.util.Calendar;
 
@@ -24,6 +26,12 @@ public class NutritionModule extends Module {
     */
     public NutritionModule() throws Exception {
         this.nutritionRealm = new RealmContext<>();
+
+        // should this be kept track of?
+        Subscription subscription = BaseApplication.application().eventBus().subscribe(DataEmptyEvent.class, null, dataEmptyEvent -> {
+                Log.d(TAG, "DataWasEmpty");
+        });
+
 		this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
         try {
             this.testNutritionModule();
