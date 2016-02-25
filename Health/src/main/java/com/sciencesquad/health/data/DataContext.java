@@ -2,7 +2,6 @@ package com.sciencesquad.health.data;
 
 import android.content.Context;
 import com.sciencesquad.health.events.Event;
-import java8.util.function.Consumer;
 import org.immutables.value.Value;
 
 import java.util.Collection;
@@ -34,12 +33,17 @@ public interface DataContext<E> extends Collection<E>, AutoCloseable {
 	/**
 	 * Event in case of a data failure.
 	 */
-
 	@Value.Immutable @Event.EventType
 	interface DataFailure extends Event {
 		String operation();
 	}
 
-    void init(Context context, Class clazz, String identifier);
-
+	/**
+	 * Initialize the context.
+	 *
+	 * @param context the Android Context for any file access needed
+	 * @param modelClass the class type of the Model used
+	 * @param identifier the identifier, if needed for the Model
+	 */
+    void init(Context context, Class<E> modelClass, String identifier);
 }
