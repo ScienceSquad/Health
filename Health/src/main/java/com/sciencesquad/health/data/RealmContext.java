@@ -2,10 +2,16 @@ package com.sciencesquad.health.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+
+import com.sciencesquad.health.events.BaseApplication;
+
 import io.realm.*;
 import java8.util.function.Consumer;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -21,6 +27,27 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		return this.realm.where(this.realmClass).findAll();
 	}
 
+	public static class Failures{
+		public static final String COULD_NOT_INIT_REALM="COULD_NOT_INIT_REALM";
+		public static final String COULD_NOT_ADD_SINGLE_OBJECT = "COULD_NOT_ADD_SINGLE_OBJECT";
+		public static final String COULD_NOT_ADD_COLLECTION_OBJECT = "COULD_NOT_ADD_COLLECTION_OBJECT";
+		public static final String COULD_NOT_REMOVE_SINGLE_OBJECT = "COULD_NOT_REMOVE_SINGLE_OBJECT ";
+		public static final String COULD_NOT_REMOVE_COLLECTION_OBJECT = "COULD_NOT_REMOVE_COLLECTION_OBJECT";
+		public static final String OBJECT_DOES_NOT_EXIST = "OBJECT_DOES_NOT_EXIST";
+		public static final String OBJECT_COLLECTION_DOES_NOT_EXIST = "OBJECT_COLLECTION_DOES_NOT_EXIST";
+		public static final String COULD_NOT_PRODUCE_HASH_CODE = "COULD_NOT_PRODUCE_HASH_CODE";
+		public static final String COULD_NOT_CLEAR_REALM = "COULD_NOT_CLEAR_REALM";
+		public static final String COULD_NOT_UPDATE_REALM_AT_INDEX = "COULD_NOT_UPDATE_REALM_AT_INDEX";
+		public static final String COULD_NOT_COMPARE_OBJECT = "COULD_NOT_COMPARE_OBJECT";
+		public static final String COULD_NOT_PRODUCE_ITERATOR = "COULD_NOT_PRODUCE_ITERATOR";
+		public static final String COULD_NOT_RETAIN_OBJECTS = "COULD_NOT_RETAIN_OBJECTS";
+		public static final String COULD_NOT_PRODUCE_QUERY = "COULD_NOT_PRODUCE_QUERY";
+		public static final String OBJECT_CANNOT_CHECK_ISEMPTY= "OBJECT_CANNOT_CHECK_ISEMPTY";
+		public static final String OBJECT_HAS_NO_SIZE = "OBJECT_HAS_NO_SIZE";
+		public static final String COULD_NOT_PRODUCE_ARRAY = "COULD_NOT_PRODUCE_ARRAY";
+		public static final String COULD_NOT_PRODUCE_ARRAY_OF_TYPE = "COULD_NOT_PRODUCE_ARRAY_OF_TYPE";
+
+	}
     /**
      * This sets up the Realm for the module.
      *
@@ -36,13 +63,18 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
     @Override
 	@SuppressWarnings("unchecked")
     public void init(Context context, Class realmClass, String identifier) {
-		RealmConfiguration config = new RealmConfiguration.Builder(context)
-				.name(identifier)
-				.deleteRealmIfMigrationNeeded() // DEBUG ONLY
-				.build();
+		try {
+			RealmConfiguration config = new RealmConfiguration.Builder(context)
+					.name(identifier)
+					.deleteRealmIfMigrationNeeded() // DEBUG ONLY
+					.build();
 
-        this.realm = Realm.getInstance(config);
-		this.realmClass = realmClass;
+			this.realm = Realm.getInstance(config);
+			this.realmClass = realmClass;
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_INIT_REALM).create());
+		}
     }
 
 	/**
@@ -59,10 +91,15 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
     @Override
     public boolean add(M object) {
-        realm.beginTransaction();
-		this.realm.copyToRealm(object);
-        realm.commitTransaction();
+		try {
+			realm.beginTransaction();
+			this.realm.copyToRealm(object);
+			realm.commitTransaction();
 
+		} catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_ADD_SINGLE_OBJECT).create());
+			return false;
+		}
 		return true;
     }
 
@@ -71,9 +108,15 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override
 	public boolean addAll(Collection<? extends M> collection) {
-		realm.beginTransaction();
-		this.realm.copyToRealm(collection);
-		realm.commitTransaction();
+		try {
+			realm.beginTransaction();
+			this.realm.copyToRealm(collection);
+			realm.commitTransaction();
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_ADD_COLLECTION_OBJECT).create());
+			return false;
+		}
 		return true;
 	}
 
@@ -82,7 +125,13 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override
 	public boolean contains(Object object) {
-		return items().contains(object);
+		try {
+			return items().contains(object);
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_DOES_NOT_EXIST).create());
+			return false;
+		}
 	}
 
 	/**
@@ -90,7 +139,13 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override
 	public boolean containsAll(@NonNull Collection<?> collection) {
-		return items().containsAll(collection);
+		try {
+			return items().containsAll(collection);
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_COLLECTION_DOES_NOT_EXIST).create());
+			return false;
+		}
 	}
 
 	/**
@@ -98,7 +153,13 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override
 	public boolean equals(Object object) {
-		return items().equals(object);
+		try {
+			return items().equals(object);
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_COMPARE_OBJECT).create());
+			return false;
+		}
 	}
 
 	/**
@@ -106,7 +167,13 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override
 	public int hashCode() {
-		return items().hashCode();
+		try {
+			return items().hashCode();
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_HASH_CODE).create());
+			return -1;
+		}
 	}
 
 	/**
@@ -114,7 +181,13 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override
 	public boolean isEmpty() {
-		return items().isEmpty();
+		try {
+			return items().isEmpty();
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_CANNOT_CHECK_ISEMPTY).create());
+			return false;
+		}
 	}
 
 	/**
@@ -122,7 +195,14 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override @NonNull
 	public Iterator<M> iterator() {
-		return items().iterator();
+		try {
+			return items().iterator();
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_ITERATOR).create());
+			return Collections.emptyIterator();
+		}
+
 	}
 
 	/**
@@ -131,16 +211,22 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	// Note: Realm doesn't do remove() well.
 	@Override
 	public boolean remove(Object object) {
-		realm.beginTransaction();
-		RealmResults<M> results = items();
-		for (M m : results) {
-			if (m.equals(object)) {
-				results.remove(m);
-				break;
+		try {
+			realm.beginTransaction();
+			RealmResults<M> results = items();
+			for (M m : results) {
+				if (m.equals(object)) {
+					results.remove(m);
+					break;
+				}
 			}
+			realm.commitTransaction();
+			return true;
 		}
-		realm.commitTransaction();
-		return true;
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_REMOVE_SINGLE_OBJECT).create());
+			return false;
+		}
 	}
 
 	/**
@@ -149,18 +235,24 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	// Note: Realm doesn't do remove() well.
 	@Override
 	public boolean removeAll(@NonNull Collection<?> collection) {
-		realm.beginTransaction();
-		RealmResults<M> results = items();
-		for (Object object : collection) {
-			for (M m : results) {
-				if (m.equals(object)) {
-					results.remove(m);
-					break;
+		try {
+			realm.beginTransaction();
+			RealmResults<M> results = items();
+			for (Object object : collection) {
+				for (M m : results) {
+					if (m.equals(object)) {
+						results.remove(m);
+						break;
+					}
 				}
 			}
+			realm.commitTransaction();
+			return true;
 		}
-		realm.commitTransaction();
-		return true;
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_REMOVE_COLLECTION_OBJECT).create());
+			return false;
+		}
 	}
 
 	/**
@@ -169,16 +261,22 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	// Note: Realm doesn't do remove() well.
 	@Override
 	public boolean retainAll(@NonNull Collection<?> collection) {
-		realm.beginTransaction();
-		RealmResults<M> results = items();
-		for (M m : results) {
-			if (!collection.contains(m)) {
-				results.remove(m);
-				break;
+		try {
+			realm.beginTransaction();
+			RealmResults<M> results = items();
+			for (M m : results) {
+				if (!collection.contains(m)) {
+					results.remove(m);
+					break;
+				}
 			}
+			realm.commitTransaction();
+			return true;
 		}
-		realm.commitTransaction();
-		return true;
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_RETAIN_OBJECTS).create());
+			return false;
+		}
 	}
 
 	/**
@@ -186,16 +284,27 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override
 	public int size() {
-		return items().size();
+		try {
+			return items().size();
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_HAS_NO_SIZE).create());
+			return -1;
+		}
 	}
 
 	/**
 	 * @see Collection
 	 */
 	public void clear() {
-		realm.beginTransaction();
-		realm.clear(this.realmClass);
-		realm.commitTransaction();
+		try {
+			realm.beginTransaction();
+			realm.clear(this.realmClass);
+			realm.commitTransaction();
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_CLEAR_REALM).create());
+		}
 	}
 
 	/**
@@ -203,12 +312,19 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 */
 	@Override @NonNull
 	public Object[] toArray() {
-		return items().toArray();
+		try {
+			return items().toArray();
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_ARRAY).create());
+			return (new Object[1]);
+		}
 	}
 
 	/**
 	 * @see Collection
 	 */
+	// Note: Dunno how to handle this type of failure.
 	@Override @NonNull
 	public <T> T[] toArray(@NonNull T[] array) {
 		return items().toArray(array);
@@ -229,8 +345,15 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
      * RealmList<RealmObjectClass> results,
      * which is pertinent to that query.
      */
+	@Nullable
     public RealmQuery<M> query() {
-        return realm.where(this.realmClass);
+		try {
+			return realm.where(this.realmClass);
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_QUERY).create());
+			return null;
+		}
     }
 
 
@@ -241,8 +364,13 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
      * This can be also used to update other certain values one at a time.
      */
     public void updateRealmModel(int index, Consumer<M> handler) {
-        realm.beginTransaction();
-		handler.accept(items().get(index));
-        realm.commitTransaction();
+		try {
+			realm.beginTransaction();
+			handler.accept(items().get(index));
+			realm.commitTransaction();
+		}
+		catch (Exception e){
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_UPDATE_REALM_AT_INDEX).create());
+		}
     }
 }
