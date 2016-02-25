@@ -27,9 +27,9 @@ public class NutritionModule extends Module {
     public NutritionModule() throws Exception {
         this.nutritionRealm = new RealmContext<>();
 
-        // should this be kept track of?
-        Subscription subscription = BaseApplication.application().eventBus().subscribe(DataEmptyEvent.class, null, dataEmptyEvent -> {
-                Log.d(TAG, "DataWasEmpty");
+
+        this.subscribe(DataEmptyEvent.class, null, dataEmptyEvent -> {
+            Log.d(TAG, "Some realm was empty.");
         });
 
 		this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
