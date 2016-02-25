@@ -11,7 +11,7 @@ import io.realm.Realm;
 public class RealmBackupAgent extends BackupAgentHelper {
     private static final String TAG = RealmBackupAgent.class.getSimpleName();
 
-    private final String realmList = Realm.getDefaultInstance().getPath() + ", nutrition.realm";
+    private final String realmList = Realm.getDefaultInstance().getPath() + ", nutrition.realm" + ", steps.realm";
 
     @Override
     public void onCreate() {

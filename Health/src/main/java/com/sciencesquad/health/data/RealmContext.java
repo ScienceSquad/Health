@@ -113,7 +113,7 @@ public final class RealmContext<M extends RealmObject> extends DataContext<M> {
      * RealmList<RealmObjectClass> results,
      * which is pertinent to that query.
      */
-    @Override
+
 	@SuppressWarnings("unchecked")
     public RealmQuery<M> query() {
         return realm.where(this.realmClass);
@@ -146,12 +146,6 @@ public final class RealmContext<M extends RealmObject> extends DataContext<M> {
 	}
 
 
-	//
-
-
-
-
-
     /**
      * This will take a model that is stored in the realm
      * via a query then update the key to it.
@@ -160,7 +154,7 @@ public final class RealmContext<M extends RealmObject> extends DataContext<M> {
      */
     public void updateRealmModel(int index, Consumer<M> handler) {
         realm.beginTransaction();
-		handler.accept(queryNotation.findAll().get(index));
+		handler.accept(this.query().findAll().get(index));
         realm.commitTransaction();
 
         BaseApplication.application().eventBus().publish(DataUpdateEvent.from(this).key("FIXME").create());
