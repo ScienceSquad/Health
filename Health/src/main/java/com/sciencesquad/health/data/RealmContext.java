@@ -26,6 +26,10 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		return this.realm.where(this.realmClass).findAll();
 	}
 
+
+	/**
+	 * List of Failure strings for Data Failure.
+	 */
 	public static class Failures{
 		public static final String COULD_NOT_INIT_REALM="COULD_NOT_INIT_REALM";
 		public static final String COULD_NOT_ADD_SINGLE_OBJECT = "COULD_NOT_ADD_SINGLE_OBJECT";
