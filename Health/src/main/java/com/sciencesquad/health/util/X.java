@@ -1,4 +1,4 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
