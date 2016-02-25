@@ -1,12 +1,10 @@
 package com.sciencesquad.health.steps;
 
 import android.util.Log;
-import com.sciencesquad.health.Module;
+import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.events.BaseApplication;
 import io.realm.RealmQuery;
 
-/**
- * Created by colin on 2/19/16.
- */
 
 /**
  * Steps Module itself.

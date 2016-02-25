@@ -8,10 +8,6 @@ import io.realm.annotations.Required;
 import java.util.Date;
 
 /**
- * Created by colin on 2/22/16.
- */
-
-/**
  * Realm Model for Steps database.
  * Things that are relevant to store for the Steps Module go here.
  */

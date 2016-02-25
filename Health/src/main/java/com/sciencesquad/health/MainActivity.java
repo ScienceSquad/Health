@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.nutrition.NutritionModule;
+import com.sciencesquad.health.steps.StepsModule;
 
 
 public class MainActivity extends BaseActivity
@@ -42,6 +43,7 @@ public class MainActivity extends BaseActivity
 
 		try {
 			NutritionModule abc = new NutritionModule();
+			StepsModule orange = new StepsModule();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
