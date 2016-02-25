@@ -1,8 +1,12 @@
 package com.sciencesquad.health.nutrition;
 
+import android.nfc.Tag;
 import android.util.Log;
 import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.data.DataContext;
 import com.sciencesquad.health.data.DataEmptyEvent;
+import com.sciencesquad.health.data.DataFailureEvent;
+import com.sciencesquad.health.data.DataUpdateEvent;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 import io.realm.RealmQuery;
@@ -26,13 +30,32 @@ public class NutritionModule extends Module {
     */
     public NutritionModule() throws Exception {
         this.nutritionRealm = new RealmContext<>();
-
+        this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
 
         this.subscribe(DataEmptyEvent.class, null, dataEmptyEvent -> {
             Log.d(TAG, "Some realm was empty.");
         });
+        this.subscribe(DataFailureEvent.class, this, dataFailureEvent1 -> {
+            Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
 
-		this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
+        });
+        this.subscribe(DataFailureEvent.class, null, dataFailureEvent -> {
+            Log.d(TAG, "Data failed somewhere.");
+
+        });
+        this.subscribe(DataUpdateEvent.class, null, dataUpdateEvent -> {
+            Log.d(TAG, "There was an update to a realm.");
+
+            // maybe use the key as the realmname?
+            if (dataUpdateEvent.key().equals("nutrition.realm")){
+                return;
+            }
+            else {
+                // do something about it.
+            }
+        });
+
+
         try {
             this.testNutritionModule();
         } catch (Exception e) {
