@@ -1,8 +1,11 @@
 package com.sciencesquad.health.data;
 
 import android.content.Context;
+import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
 import com.sciencesquad.health.events.BaseApplication;
 import io.realm.*;
 import java8.util.function.Consumer;
@@ -64,13 +67,15 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	@SuppressWarnings("unchecked")
     public void init(Context context, Class realmClass, String identifier) {
 		try {
+			Log.d(TAG, "Initing realm for this model: " + realmClass.getSimpleName());
 			RealmConfiguration config = new RealmConfiguration.Builder(context)
 					.name(identifier)
 					.deleteRealmIfMigrationNeeded() // DEBUG ONLY
 					.build();
-
+			Log.d(TAG, "getting instance of realm.");
 			this.realm = Realm.getInstance(config);
 			this.realmClass = realmClass;
+			Log.d(TAG, "Done");
 		} catch (Exception e) {
 			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_INIT_REALM).create());
 		}

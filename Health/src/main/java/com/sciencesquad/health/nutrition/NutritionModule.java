@@ -1,5 +1,6 @@
 package com.sciencesquad.health.nutrition;
 
+import android.content.Context;
 import android.util.Log;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.data.RealmContext;
@@ -22,14 +23,19 @@ public class NutritionModule extends Module {
     /**
      * Constructs the module itself.
     */
-    public NutritionModule() throws Exception {
+
+    // OVERLOADING
+
+    public NutritionModule() throws Exception{
+        Log.d(TAG, "Constructing Nutrition Module");
         this.nutritionRealm = new RealmContext<>();
-		this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
-        try {
-            this.testNutritionModule();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
+    }
+
+    public NutritionModule(Context context, String id) throws Exception {
+        Log.d(TAG, "Constructing Nutrition Module");
+        this.nutritionRealm = new RealmContext<>();
+		this.nutritionRealm.init(context, NutritionModel.class, id);
     }
 
     /**
