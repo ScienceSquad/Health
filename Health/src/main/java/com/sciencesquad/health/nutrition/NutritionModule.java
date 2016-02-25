@@ -36,7 +36,7 @@ public class NutritionModule extends Module {
      * Unit testing method for this module.
      * Also used to test Realm capabilities/ integration is correct.
     */
-    protected void testNutritionModule() throws Exception {
+    public boolean testNutritionModule() throws Exception {
         nutritionRealm.clear();
         NutritionModel testModel = new NutritionModel();
         testModel.setCalorieIntake(50);
@@ -75,8 +75,10 @@ public class NutritionModule extends Module {
 
         try {
             nutritionRealm.close();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 }
