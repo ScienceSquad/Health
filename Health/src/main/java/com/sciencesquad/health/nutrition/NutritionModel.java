@@ -15,7 +15,7 @@ public class NutritionModel extends RealmObject {
 	/**
 	 * Calories taken in on a certain day.
 	 */
-	@Required private int calorieIntake;
+	private int calorieIntake;
 
 	/**
 	 * Calendar date where this model was created.

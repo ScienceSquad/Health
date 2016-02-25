@@ -40,7 +40,11 @@ public class MainActivity extends BaseActivity
 		navigationView.setNavigationItemSelectedListener(this);
 
 
-		NutritionModule abc = new NutritionModule();
+		try {
+			NutritionModule abc = new NutritionModule();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 

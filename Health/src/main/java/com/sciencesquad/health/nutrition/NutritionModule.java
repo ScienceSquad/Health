@@ -22,27 +22,30 @@ public class NutritionModule extends Module {
     /**
      * Constructs the module itself.
     */
-    public NutritionModule() {
+    public NutritionModule() throws Exception {
         this.nutritionRealm = new RealmContext<>();
 		this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
-        testNutritionModule();
+        try {
+            this.testNutritionModule();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Unit testing method for this module.
      * Also used to test Realm capabilities/ integration is correct.
     */
-    protected void testNutritionModule() {
-        nutritionRealm.clearRealm();
-        nutritionRealm.getList().clear();
+    protected void testNutritionModule() throws Exception {
+        nutritionRealm.clear();
         NutritionModel testModel = new NutritionModel();
         testModel.setCalorieIntake(50);
         Calendar rightNow = Calendar.getInstance();
         testModel.setDate(rightNow.getTime());
-        nutritionRealm.getList().add(testModel);
+        nutritionRealm.add(testModel);
         nutritionRealm.update();
         nutritionRealm.query();
-        RealmQuery<NutritionModel> testQuery = nutritionRealm.getQueryNotation();
+        RealmQuery<NutritionModel> testQuery = nutritionRealm.query();
 
         Log.d(TAG, "Checking initial value");
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
@@ -53,7 +56,7 @@ public class NutritionModule extends Module {
             NutritionModel testModelI = new NutritionModel();
             testModelI.setCalorieIntake(i);
             testModelI.setDate(rightNow.getTime());
-            nutritionRealm.getList().add(testModelI);
+            nutritionRealm.add(testModelI);
             nutritionRealm.update();
         }
         Log.d(TAG, "Done adding");
@@ -70,11 +73,14 @@ public class NutritionModule extends Module {
         Log.d(TAG, "Grabbing changed value: " + testQuery.equalTo("calorieIntake", 500).findAll().get(0).getCalorieIntake());
         
         Log.d(TAG, "Clearing database");
-        nutritionRealm.clearRealm();
-        nutritionRealm.getList().clear();
+        nutritionRealm.clear();
         nutritionRealm.update();
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
 
-        nutritionRealm.closeRealm();
+        try {
+            nutritionRealm.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
