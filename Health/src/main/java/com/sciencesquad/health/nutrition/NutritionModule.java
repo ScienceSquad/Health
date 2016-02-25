@@ -22,33 +22,35 @@ import java.util.Calendar;
  */
 public class NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
+    private static final String REALMNAME = "nutrition.realm";
 
     private RealmContext<NutritionModel> nutritionRealm;
 
     /**
      * Constructs the module itself.
+     * Subscribes to events necessary to maintaining its own model.
     */
     public NutritionModule() throws Exception {
         this.nutritionRealm = new RealmContext<>();
         this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
 
-        this.subscribe(DataEmptyEvent.class, null, dataEmptyEvent -> {
+        this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> {
             Log.d(TAG, "Some realm was empty.");
         });
-        this.subscribe(DataFailureEvent.class, this, dataFailureEvent1 -> {
+        this.subscribe(DataFailureEvent.class, this, (DataFailureEvent dataFailureEvent1) -> {
             Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
 
         });
-        this.subscribe(DataFailureEvent.class, null, dataFailureEvent -> {
+        this.subscribe(DataFailureEvent.class, null, (DataFailureEvent dataFailureEvent) -> {
             Log.d(TAG, "Data failed somewhere.");
 
         });
-        this.subscribe(DataUpdateEvent.class, null, dataUpdateEvent -> {
+        this.subscribe(DataUpdateEvent.class, null, (DataUpdateEvent dataUpdateEvent) -> {
             Log.d(TAG, "There was an update to a realm.");
 
-            // maybe use the key as the realmname?
-            if (dataUpdateEvent.key().equals("nutrition.realm")){
-                return;
+            // maybe use the key as the realm name?
+            if (dataUpdateEvent.key().equals(REALMNAME)){
+                Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
             }
             else {
                 // do something about it.
