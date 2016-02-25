@@ -31,6 +31,15 @@ public interface DataContext<E> extends Collection<E>, AutoCloseable {
 		String key();
 	}
 
+	/**
+	 * Event in case of a data failure.
+	 */
+
+	@Value.Immutable @Event.EventType
+	interface DataFailure extends Event {
+		String operation();
+	}
+
     void init(Context context, Class clazz, String identifier);
 
 }
