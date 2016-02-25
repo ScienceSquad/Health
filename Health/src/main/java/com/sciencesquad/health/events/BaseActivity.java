@@ -1,15 +1,13 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.events;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import com.sciencesquad.health.events.Event;
 import com.sciencesquad.health.events.Event.EventType;
-import com.sciencesquad.health.events.EventBus;
 import org.immutables.value.Value.Immutable;
 
 public class BaseActivity extends AppCompatActivity {
-	private static final String TAG = "BaseActivity";
+	private static final String TAG = BaseActivity.class.getSimpleName();
 
 	/**
 	 * The Activity was created.
