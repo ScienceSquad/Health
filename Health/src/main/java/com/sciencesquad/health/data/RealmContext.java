@@ -1,45 +1,22 @@
 package com.sciencesquad.health.data;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.sciencesquad.health.events.BaseApplication;
-import com.sciencesquad.health.events.Event;
-import com.sciencesquad.health.nutrition.NutritionModel;
 import io.realm.*;
 import java8.util.function.Consumer;
-import org.immutables.value.Value;
 
-import java.util.List;
+import java.util.Iterator;
 
 /**
- * Realm module for the Nutrition module.
- * This will be the first example of Realm Integration.
+ * The RealmContext.
  */
-public final class RealmContext<M extends RealmObject> implements DataContext {
+public final class RealmContext<M extends RealmObject> extends DataContext<M> {
     private static final String TAG = RealmContext.class.getSimpleName();
-
-    /**
-     * Event for clearing a realm.
-     * This means the database has been wiped.
-     */
-    @Value.Immutable @Event.EventType
-    public interface RealmEmpty extends Event {
-        String realmName();
-    }
-
-    /**
-     * Event for updating a Realm in any abstract way.
-     */
-    @Event.EventType @Value.Immutable
-    public interface RealmUpdate extends Event {
-        String key();
-    }
 
 	private Realm realm;
 	private String realmName;
-
-	private Class<M> clazz;
-    private RealmList<M> listOfModels;
-    private RealmQuery<M> queryNotation;
+	private Class<M> realmClass;
 
     /**
      * This sets up the Realm for the module.
@@ -54,16 +31,16 @@ public final class RealmContext<M extends RealmObject> implements DataContext {
      *      support multiple versions of the application.
      */
     @Override
-    public void init(Context context, Class clazz, String identifier) {
+	@SuppressWarnings("unchecked")
+    public void init(Context context, Class realmClass, String identifier) {
 		RealmConfiguration config = new RealmConfiguration.Builder(context)
 				.name(identifier)
 				.deleteRealmIfMigrationNeeded() // DEBUG ONLY
 				.build();
 
-        this.realmName = identifier;
-		this.clazz = clazz;
-        realm = Realm.getInstance(config);
-        listOfModels = new RealmList<>();
+        this.realm = Realm.getInstance(config);
+		this.realmName = identifier;
+		this.realmClass = realmClass;
     }
 
     /**
@@ -74,16 +51,61 @@ public final class RealmContext<M extends RealmObject> implements DataContext {
      * which could be useful for a history.
      */
     @Override
-    public void update() {
+    public boolean add(M object) {
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(listOfModels);
+		this.realm.copyToRealm(object);
         realm.commitTransaction();
 
-        BaseApplication.application().eventBus().publish(RealmUpdateEvent.from(this).key(returnRealmKey()).create());
+        //BaseApplication.application().eventBus().publish(RealmUpdateEvent.from(this).key("FIXME").create());
+		return true;
     }
 
-    /**
-     *
+	@Override
+	public boolean contains(Object object) {
+		realm.beginTransaction();
+		boolean result = false;
+		RealmResults<M> results = realm.where(this.realmClass).findAll();
+		for (M m : results) {
+			if (m.equals(object)) {
+				result = true;
+				break;
+			}
+		}
+		realm.commitTransaction();
+		return result;
+	}
+
+	@Override @NonNull
+	public Iterator<M> iterator() {
+		realm.beginTransaction();
+		Iterator<M> it = this.realm.where(this.realmClass).findAll().iterator();
+		realm.commitTransaction();
+		return it;
+	}
+
+	@Override
+	public boolean remove(Object object) {
+		realm.beginTransaction();
+		RealmResults<M> results = realm.where(this.realmClass).findAll();
+		for (M m : results) {
+			if (m.equals(object)) {
+				results.remove(m);
+				break;
+			}
+		}
+		realm.commitTransaction();
+		return true;
+	}
+
+	@Override
+	public int size() {
+		realm.beginTransaction();
+		long result = this.realm.where(this.realmClass).count();
+		realm.commitTransaction();
+		return (int)result;
+	}
+
+	/**
      * This will set up a Realm Query object
      * based off of the Realm Object associated with the module
      *
@@ -92,33 +114,43 @@ public final class RealmContext<M extends RealmObject> implements DataContext {
      * which is pertinent to that query.
      */
     @Override
-	@SuppressWarnings("unchecked") // forgive me for these sins
-    public void query() {
-        queryNotation = realm.where(this.clazz);
+	@SuppressWarnings("unchecked")
+    public RealmQuery<M> query() {
+        return realm.where(this.realmClass);
     }
 
     /**
-     *
      * This will clear all the relevant models from the realm.
      * This will generate an event to all subscribers on the Event Bus.
      * Use this with caution.
      */
-
-    public void clearRealm() {
+    public void clear() {
         realm.beginTransaction();
-        realm.clear(NutritionModel.class);
+        realm.clear(this.realmClass);
         realm.commitTransaction();
 
-        BaseApplication.application().eventBus().publish(RealmEmptyEvent.from(this).realmName(realmName).create());
+        BaseApplication.application().eventBus().publish(DataEmptyEvent.from(this).realmName(realmName).create());
     }
 
     /**
      * This function should be called every time the module is done being used.
      * Because closing files is the right thing to do preserve data.
      */
-    public void closeRealm() {
+    public void close() throws Exception {
         realm.close();
     }
+
+	@Override
+	public void update() {
+
+	}
+
+
+	//
+
+
+
+
 
     /**
      * This will take a model that is stored in the realm
@@ -126,42 +158,11 @@ public final class RealmContext<M extends RealmObject> implements DataContext {
      * This will generate an event to all subscribers on the Event Bus.
      * This can be also used to update other certain values one at a time.
      */
-
     public void updateRealmModel(int index, Consumer<M> handler) {
         realm.beginTransaction();
 		handler.accept(queryNotation.findAll().get(index));
         realm.commitTransaction();
 
-        BaseApplication.application().eventBus().publish(RealmUpdateEvent.from(this).key(returnRealmKey()).create());
-    }
-
-    /**
-     * Returns a string representation of the primary key
-     * stored in a particular realm.
-     */
-
-    public String returnRealmKey() {
-        if (realmName.equals("nutrition.realm"))
-            return "calorieIntake";
-        else if (realmName.equals("steps.realm"))
-            return "stepCount";
-        else
-            return "";
-    }
-
-    /**
-     * Returns a list of Models stored in a realm.
-     */
-
-    public List<M> getList() {
-        return listOfModels;
-    }
-
-    /**
-     * Returns the most recent query format that was created query().
-     */
-
-    public RealmQuery<M> getQueryNotation() {
-        return queryNotation;
+        BaseApplication.application().eventBus().publish(DataUpdateEvent.from(this).key("FIXME").create());
     }
 }
