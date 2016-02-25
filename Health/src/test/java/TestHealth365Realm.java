@@ -15,10 +15,9 @@ public class TestHealth365Realm {
         try {
             NutritionModule nutritionModule = new NutritionModule();
             assertTrue(nutritionModule.testNutritionModule());
-            //assertThat(nutritionModule.testNutritionModule(), is(true));
         }
         catch (Exception e){
-
+            e.printStackTrace();
         }
 
     }
