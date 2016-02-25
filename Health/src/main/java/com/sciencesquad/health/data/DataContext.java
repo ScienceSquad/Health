@@ -33,5 +33,4 @@ public interface DataContext<E> extends Collection<E>, AutoCloseable {
 
     void init(Context context, Class clazz, String identifier);
 
-	void update(E object, Consumer<E> handler);
 }

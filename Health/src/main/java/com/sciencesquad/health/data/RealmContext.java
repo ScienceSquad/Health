@@ -62,6 +62,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
         realm.beginTransaction();
 		this.realm.copyToRealm(object);
         realm.commitTransaction();
+
 		return true;
     }
 
@@ -232,13 +233,6 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
         return realm.where(this.realmClass);
     }
 
-	// FIXME: Not exactly a helpful method right now.
-	@Override
-	public void update(M object, Consumer<M> handler) {
-		realm.beginTransaction();
-		handler.accept(object);
-		realm.commitTransaction();
-	}
 
     /**
      * This will take a model that is stored in the realm

@@ -43,8 +43,6 @@ public class NutritionModule extends Module {
         Calendar rightNow = Calendar.getInstance();
         testModel.setDate(rightNow.getTime());
         nutritionRealm.add(testModel);
-        nutritionRealm.update();
-        nutritionRealm.query();
         RealmQuery<NutritionModel> testQuery = nutritionRealm.query();
 
         Log.d(TAG, "Checking initial value");
@@ -57,7 +55,6 @@ public class NutritionModule extends Module {
             testModelI.setCalorieIntake(i);
             testModelI.setDate(rightNow.getTime());
             nutritionRealm.add(testModelI);
-            nutritionRealm.update();
         }
         Log.d(TAG, "Done adding");
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
@@ -74,7 +71,6 @@ public class NutritionModule extends Module {
         
         Log.d(TAG, "Clearing database");
         nutritionRealm.clear();
-        nutritionRealm.update();
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
 
         try {
