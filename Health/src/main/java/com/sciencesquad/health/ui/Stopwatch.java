@@ -184,7 +184,7 @@ public class Stopwatch {
         }
         this.prevTime = currentTime;
 
-        /** DEBUG!
+        /** DEBUG!!
          */
         if (this.debug && (this.pauseAfter != 0) && (this.elapsed.getSeconds() >= pauseAfter)) this.pause();
         if (this.debug && (this.pauseAfter != 0) && (this.elapsed.getSeconds() >= pauseAfter)) this.pause();
