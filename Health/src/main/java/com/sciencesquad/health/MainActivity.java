@@ -101,8 +101,8 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_send) {
 
 		} else if (id == R.id.nav_workout){
-			Toast toast = Toast.makeText(getApplicationContext(), "Selected Workout!", Toast.LENGTH_SHORT);
-			toast.show();
+			//Toast toast = Toast.makeText(getApplicationContext(), "Selected Workout!", Toast.LENGTH_SHORT);
+			//toast.show();
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
