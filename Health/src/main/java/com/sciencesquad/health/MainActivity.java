@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.nutrition.NutritionModule;
 
@@ -98,6 +100,9 @@ public class MainActivity extends BaseActivity
 
 		} else if (id == R.id.nav_send) {
 
+		} else if (id == R.id.nav_workout){
+			Toast toast = Toast.makeText(getApplicationContext(), "Selected Workout!", Toast.LENGTH_SHORT);
+			toast.show();
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
