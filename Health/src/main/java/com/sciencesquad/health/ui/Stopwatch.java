@@ -47,27 +47,43 @@ public class Stopwatch {
 
     private Runnable msTicker = createRunnable(this);
 
-    enum WatchMode {
+    private enum WatchMode {
         DOWN, UP, ALARM
     }
 
-    WatchMode mode;
+    private WatchMode mode;
 
 
+    /** CONSTRUCTOR
+     * (no arguments, yet)
+     */
     public Stopwatch() {
         remaining = Duration.ZERO;
         elapsed = Duration.ZERO;
     }
 
 
-    public Handler getHandler() {
+    // INTERVAL MANAGEMENT
+    // Functions for running the clock
+
+    /** getHandler
+     * A singleton getter for a handler
+     * - necessary for the stopwatch to run
+     *
+     * @return new Handler
+     */
+    private Handler getHandler() {
         if (handler == null) {
             handler = new Handler();
         }
         return handler;
     }
 
-    // START add/subtract time
+    /** addTime/subtractTime
+     * These functions use the TimeUnit class to convert from any time unit to milliseconds and add
+     * to the stopwatch time.
+     * I don't think these will be particularly useful, but they're here if you want them.
+     */
     public void addTime(long toAdd, TimeUnit tu) {
         this.remaining = this.remaining.plusMillis(tu.toMillis(toAdd));
     }
@@ -75,6 +91,14 @@ public class Stopwatch {
     public void subtractTime(long toSubtract, TimeUnit tu) {
         this.remaining = this.remaining.minusMillis(tu.toMillis(toSubtract));
     }
+
+    /** plus[Unit]/minus[Unit]
+     * These functions use functions in the Java Time package's Duration class
+     * to add time to the stopwatch.
+     * All relevant units are available
+     * Nanoseconds are too small.
+     * Years are too large.
+     */
 
     public void plusMillis(long toAdd) {
         this.remaining = this.remaining.plusMillis(toAdd);
@@ -115,7 +139,6 @@ public class Stopwatch {
     public void minusDays(long toSubtract) {
         this.remaining = this.remaining.minusDays(toSubtract);
     }
-    // END add/subtract time
 
     public long getMillisRemaining() {
         return this.remaining.toMillis() % 1000;
@@ -144,10 +167,12 @@ public class Stopwatch {
                 .toDays();
     }
 
-    public void init_interval() {
-        msTicker.run();
-    }
 
+
+    /** printTime
+     *
+     * Prints the time in a nice format, with padded zeroes, colons, periods... the whole shebang!
+     */
     public void printTime() {
         String milliseconds = String.format("%04d", this.getMillisRemaining());
         String seconds = String.format("%02d", this.getSecondsRemaining());
@@ -158,55 +183,129 @@ public class Stopwatch {
                 + minutes + ":" + seconds + "." + milliseconds);
     }
 
+
+    /** getMode
+     *
+     * Returns the current mode of the Stopwatch as a string
+     *
+     * UP, DOWN, or ALARM
+     * @return
+     */
+    public String getMode() {
+        switch (this.mode) {
+            case DOWN: return "DOWN";
+            case UP: return "UP";
+            case ALARM: return "ALARM";
+            default: return "";
+        }
+    }
+
+    /** setMode I
+     *
+     * Uses the herein defined WatchMode enum to set the current mode
+     */
+    private void setMode(WatchMode mode) {
+        this.mode = mode;
+    }
+
+    /** setMode II
+     *
+     * Takes a string argument and passes the corresponding WatchMode enum
+     * to the other setMode function
+     */
+    public void setMode(String mode) {
+        switch (mode) {
+            case "DOWN": this.setMode(WatchMode.DOWN);
+                break;
+            case "UP": this.setMode(WatchMode.UP);
+                break;
+            case "ALARM": this.setMode(WatchMode.ALARM);
+                break;
+            default: return;
+        }
+    }
+
+
+    /** Debug functions
+     *
+     * These are pretty much just for me
+     */
     public void setDebug(boolean debug) {
+        // Probably shouldn't be swapping to debug mode while it's running...
+        if (this.running) return;
+
         this.debug = debug;
+
         if (debug) {
             this.otherWatch = new Stopwatch();
         }
     }
 
     public void setPauseAfter(int pauseAfter) {
+        // Probably don't want to use this unless debug is on...
+        if (!this.debug) return;
+
         this.pauseAfter = pauseAfter;
     }
 
     public void setResumeAfter(int resumeAfter) {
+        // Probably don't want to use this unless debug is on...
+        if (!this.debug) return;
+
+        // Probably don't want the watch to resume before it pauses...
         if (resumeAfter > this.pauseAfter) this.resumeAfter = resumeAfter;
     }
 
-    public void updateTime() {
+    private void debugStuff() {
+        if ((this.pauseAfter > 0) && (this.otherWatch.getElapsedDuration().getSeconds() >= this.pauseAfter)) this.pause();
+        if ((this.resumeAfter > 0) && (this.otherWatch.getElapsedDuration().getSeconds() >= this.resumeAfter)) {
+            this.resume();
+            this.otherWatch.pause();
+        }
+        this.printTime();
+    }
+
+
+    /** Things to do at every interval
+     * Occurs every "this.interval" milliseconds while the stopwatch is running
+     */
+    private void updateTime() {
+
         long currentTime = System.currentTimeMillis();
         long diff = currentTime - this.prevTime;
+
         if (this.prevTime > 0) {
             if (this.mode == WatchMode.DOWN) {
                 this.remaining = this.remaining.minusMillis(diff);
             }
             this.elapsed = this.elapsed.plusMillis(diff);
         }
+
         this.prevTime = currentTime;
 
-        /** DEBUG!!
-         */
-        if (this.debug && (this.pauseAfter != 0) && (this.elapsed.getSeconds() >= pauseAfter)) this.pause();
-        if (this.debug && (this.pauseAfter != 0) && (this.elapsed.getSeconds() >= pauseAfter)) this.pause();
-        if (debug) this.printTime();
-        /** end DEBUG **/
+        if (this.debug) {
+            debugStuff();
+        }
 
-        if (!running) {
+        if (!this.running) {
             this.getHandler().removeCallbacks(msTicker);
         }
     }
 
-    public void addLap() {
-
+    /** init_interval
+     *
+     * Just calls the Runnable to get the stopwatch running.
+     * Probably could have just called the runnable directly instead of putting it in
+     * another function, but phooey to that. I like this better.
+     */
+    private void init_interval() {
+        msTicker.run();
     }
 
-    public void reset() {
-        if (this.mode == WatchMode.DOWN) {
-            this.remaining = this.remaining.plusMillis(this.elapsed.toMillis());
-        }
-        this.elapsed = Duration.ZERO;
-    }
-
+    /** Start controls
+     * Functions for actually starting / stopping the stopwatch
+     * Bind these to pretty buttons!
+     */
     public void resume() {
         this.prevTime = System.currentTimeMillis();
         this.running = true;
@@ -221,8 +320,20 @@ public class Stopwatch {
         this.running = false;
     }
 
-    public Duration getElapsedDuration() {
-        return elapsed;
+    public void reset() {
+        if (this.mode == WatchMode.DOWN) {
+            this.remaining = this.remaining.plusMillis(this.elapsed.toMillis());
+        }
+        this.elapsed = Duration.ZERO;
+    }
+
+    /** Add a lap
+     *
+     * Still have yet to do this.
+     * Once I write it, it'll probably add the elapsed time to a list and restart the stopwatch
+     */
+    public void addLap() {
+
     }
 
     public boolean isRunning() {
@@ -231,5 +342,9 @@ public class Stopwatch {
 
     public Duration getRemainingDuration() {
         return remaining;
+    }
+
+    public Duration getElapsedDuration() {
+        return elapsed;
     }
 }
