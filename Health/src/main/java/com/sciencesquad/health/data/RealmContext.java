@@ -1,7 +1,6 @@
 package com.sciencesquad.health.data;
 
 import android.content.Context;
-import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -72,10 +71,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 					.name(identifier)
 					.deleteRealmIfMigrationNeeded() // DEBUG ONLY
 					.build();
-			Log.d(TAG, "getting instance of realm.");
 			this.realm = Realm.getInstance(config);
 			this.realmClass = realmClass;
-			Log.d(TAG, "Done");
 		} catch (Exception e) {
 			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_INIT_REALM).create());
 		}
