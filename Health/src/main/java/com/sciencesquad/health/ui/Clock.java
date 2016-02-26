@@ -7,8 +7,6 @@ import java.time.*;
  */
 public class Clock {
 
-    private Instant
-
     public Clock() {
 
     }

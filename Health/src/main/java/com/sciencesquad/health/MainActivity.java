@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.content.Intent;
 
 import com.sciencesquad.health.ui.Clock;
+import com.sciencesquad.health.ui.Stopwatch;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,13 +39,9 @@ public class MainActivity extends BaseActivity
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
 
-		Clock clock = new Clock(10, 23, 53, 18);
-		clock.printClock();
-		clock.setHours(18);
-		clock.setMinutes(37);
-		clock.setSeconds(24);
-		clock.setMilliseconds(900);
-		clock.printClock();
+		Stopwatch stopwatch = new Stopwatch();
+		stopwatch.plusMinutes(5);
+		stopwatch.start();
 	}
 
 	@Override
