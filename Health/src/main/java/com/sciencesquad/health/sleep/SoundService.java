@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 import com.sciencesquad.health.R;
@@ -91,8 +92,12 @@ public class SoundService extends Service {
 		}
 
 		StreamSupport.stream(players.keySet()).forEach(key -> {
-			this.players.get(key).setLooping(true);
-			this.players.get(key).start();
+
+			// Set each player to loop and hold a partial wake lock.
+			final MediaPlayer player = this.players.get(key);
+			player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+			player.setLooping(true);
+			player.start();
 
 			// Install an animator to slowly interpolate value to the new one.
 			float vol = (float)Math.random();
@@ -102,9 +107,10 @@ public class SoundService extends Service {
 			animator.setRepeatMode(ValueAnimator.REVERSE);
 			animator.addUpdateListener(animation -> {
 				float value = (Float)(animation.getAnimatedValue());
-				players.get(key).setVolume(value, value);
+				player.setVolume(value, value);
 			});
 
+			// Save this animator and start it.
 			this.animators.put(key, animator);
 			animator.start();
 		});
@@ -156,8 +162,8 @@ public class SoundService extends Service {
 
 		// Create the notification as we like it.
 		Notification n = new Notification.Builder(this)
-				.setSmallIcon(R.drawable.ic_menu_manage)
-				.setContentTitle("Playing sounds...")
+				.setSmallIcon(R.drawable.ic_music_circle)
+				.setContentTitle("Playing sleep sounds...")
 				.setContentText("Tap to stop playing sounds.")
 				.setContentIntent(pending)
 				.setDeleteIntent(pending)
