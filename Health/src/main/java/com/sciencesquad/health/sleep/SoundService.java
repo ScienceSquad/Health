@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
-import com.sciencesquad.health.MainActivity;
+import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.util.X;
@@ -74,17 +74,27 @@ public class SoundService extends Service {
 	 *
 	 */
 	private Map<String, MediaPlayer> players = defaultPlayers();
+	private Map<String, ValueAnimator> animators = new HashMap<>();
 
 	/**
 	 * @see Service
 	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		StreamSupport.stream(players.keySet()).forEach(key -> {
-			players.get(key).setLooping(true);
-			players.get(key).start();
 
-			// Slowly "animate" value to the new one.
+		// Handle STOP first, and pass-through to START.
+		// If intent is null, the Service was just restarted.
+		if (intent != null && "STOP".equals(intent.getAction())) {
+			Toast.makeText(this, "Stopping sounds...", Toast.LENGTH_SHORT).show();
+			stopSelfResult(startId);
+			return Service.START_REDELIVER_INTENT;
+		}
+
+		StreamSupport.stream(players.keySet()).forEach(key -> {
+			this.players.get(key).setLooping(true);
+			this.players.get(key).start();
+
+			// Install an animator to slowly interpolate value to the new one.
 			float vol = (float)Math.random();
 			ValueAnimator animator = ValueAnimator.ofFloat(0.25f, vol);
 			animator.setDuration(TimeUnit.SECONDS.toMillis(3L));
@@ -94,6 +104,8 @@ public class SoundService extends Service {
 				float value = (Float)(animation.getAnimatedValue());
 				players.get(key).setVolume(value, value);
 			});
+
+			this.animators.put(key, animator);
 			animator.start();
 		});
 		this.showNotification();
@@ -113,9 +125,10 @@ public class SoundService extends Service {
 	 */
 	@Override
 	public void onDestroy() {
-		StreamSupport.stream(players.keySet()).forEach(key -> {
-			players.get(key).stop();
-			players.get(key).release();
+		StreamSupport.stream(this.players.keySet()).forEach(key -> {
+			this.players.get(key).stop();
+			this.players.get(key).release();
+			this.animators.get(key).cancel();
 		});
 
 		NotificationManager m = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -130,17 +143,29 @@ public class SoundService extends Service {
 		// Unimplemented.
 	}
 
+	/**
+	 * Creates the ongoing notification that can stop this service.
+	 */
+	// TODO: Fix the PendingIntent to actually stop the service. :(
 	private void showNotification() {
-		PendingIntent pending = PendingIntent.getActivity(this, 3, new Intent(this, MainActivity.class), 0);
+
+		// Create the STOP intent first.
+		Intent intent = new Intent(this, SoundService.class);
+		intent.setAction("STOP");
+		PendingIntent pending = PendingIntent.getService(this, 0, intent, 0);
+
+		// Create the notification as we like it.
 		Notification n = new Notification.Builder(this)
-				.setWhen(System.currentTimeMillis())
 				.setSmallIcon(R.drawable.ic_menu_manage)
 				.setContentTitle("Playing sounds...")
 				.setContentText("Tap to stop playing sounds.")
 				.setContentIntent(pending)
+				.setDeleteIntent(pending)
 				.setAutoCancel(true)
 				.setOngoing(true)
 				.build();
+
+		// Send it on its way.
 		NotificationManager m = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		m.notify(332, n);
 	}
