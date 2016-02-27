@@ -40,6 +40,9 @@ public class MainActivity extends BaseActivity
 		navigationView.setNavigationItemSelectedListener(this);
 
 		Stopwatch stopwatch = new Stopwatch();
+		stopwatch.setDebug(true);
+		stopwatch.setPauseAfter(15 * 1000);
+		stopwatch.setResumeAfter(30 * 1000);
 		stopwatch.plusMinutes(5);
 		stopwatch.start();
 	}

@@ -140,33 +140,60 @@ public class Stopwatch {
         this.remaining = this.remaining.minusDays(toSubtract);
     }
 
-    public long getMillisRemaining() {
-        return this.remaining.toMillis() % 1000;
+    /** get[Unit]Remaining
+     * If total == true,
+     *  return total time
+     * else
+     *  return the corresponding component
+     *
+     * Example:
+     *  If the total time is 354.056 seconds,
+     *      getMillisRemaining(false) returns 56
+     *      getMillisRemaining(true) returns 354056
+     *      getSecondsRemaining(false) returns 54
+     *      getSecondsRemaining(true) returns 354
+     *      getMinutesRemaining(false) returns 5
+     *      getMinutesRemaining(true) returns 5
+     */
+    public long getMillisRemaining(boolean total) {
+        long totalMillis = this.remaining.toMillis();
+        if (total) {
+            return totalMillis;
+        }
+        return totalMillis % 1000;
     }
 
-    public long getSecondsRemaining() {
-        return this.remaining.minusMillis(this.getMillisRemaining())
-                .getSeconds()
-                % 60;
+    public long getSecondsRemaining(boolean total) {
+        long totalSeconds = this.remaining.minusMillis(this.getMillisRemaining(false))
+                .getSeconds();
+        if (total) {
+            return totalSeconds;
+        }
+        return totalSeconds % 60;
     }
 
-    public long getMinutesRemaining() {
-        return this.remaining.minusSeconds(this.getSecondsRemaining())
-                .toMinutes()
-                % 60;
+    public long getMinutesRemaining(boolean total) {
+        long totalMinutes = this.remaining.minusSeconds(this.getSecondsRemaining(false))
+                .toMinutes();
+        if (total) {
+            return totalMinutes;
+        }
+        return totalMinutes % 60;
     }
 
-    public long getHoursRemaining() {
-        return this.remaining.minusMinutes(this.getMinutesRemaining())
-                .toHours()
-                % 24;
+    public long getHoursRemaining(boolean total) {
+        long totalHours = this.remaining.minusMinutes(this.getMinutesRemaining(false))
+                .toHours();
+        if (total) {
+            return totalHours;
+        }
+        return totalHours % 24;
     }
 
     public long getDaysRemaining() {
-        return this.remaining.minusHours(this.getHoursRemaining())
+        return this.remaining.minusHours(this.getHoursRemaining(false))
                 .toDays();
     }
-
 
 
     /** printTime
@@ -174,10 +201,10 @@ public class Stopwatch {
      * Prints the time in a nice format, with padded zeroes, colons, periods... the whole shebang!
      */
     public void printTime() {
-        String milliseconds = String.format("%04d", this.getMillisRemaining());
-        String seconds = String.format("%02d", this.getSecondsRemaining());
-        String minutes = String.format("%02d", this.getMinutesRemaining());
-        String hours = String.format("%02d", this.getHoursRemaining());
+        String milliseconds = String.format("%04d", this.getMillisRemaining(false));
+        String seconds = String.format("%02d", this.getSecondsRemaining(false));
+        String minutes = String.format("%02d", this.getMinutesRemaining(false));
+        String hours = String.format("%02d", this.getHoursRemaining(false));
         String days = String.valueOf(this.getDaysRemaining());
         System.out.println("Time remaining: " + days + ":" + hours + ":"
                 + minutes + ":" + seconds + "." + milliseconds);
@@ -235,10 +262,6 @@ public class Stopwatch {
         if (this.running) return;
 
         this.debug = debug;
-
-        if (debug) {
-            this.otherWatch = new Stopwatch();
-        }
     }
 
     public void setPauseAfter(int pauseAfter) {
@@ -312,8 +335,22 @@ public class Stopwatch {
         this.init_interval();
     }
 
+    /**
+     * Though this calls resume, it is actually different from resume.
+     * It starts the "otherWatch" if necessary.
+     *
+     * In actual production use of the class, though, it probably won't be
+     * any different.
+     */
     public void start() {
-        if (!this.running) this.resume();
+        if (this.running) return;
+        this.resume();
+        if (this.debug) {
+            if (this.pauseAfter > 0) {
+                this.otherWatch = new Stopwatch();
+                this.start();
+            }
+        }
     }
 
     public void pause() {
