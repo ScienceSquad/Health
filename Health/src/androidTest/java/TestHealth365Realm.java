@@ -33,7 +33,9 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
         createApplication();
         try {
             NutritionModule testNutrition = new NutritionModule();
-            testNutrition.testNutritionModule();
+            if (!testNutrition.testNutritionModule()){
+                Assert.fail(); // if we get false from this test, something failed.
+            }
         } catch (Exception e){
             Assert.fail();
         }
