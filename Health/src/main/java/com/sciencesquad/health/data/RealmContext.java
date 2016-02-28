@@ -66,7 +66,6 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	@SuppressWarnings("unchecked")
     public void init(Context context, Class realmClass, String identifier) {
 		try {
-			Log.d(TAG, "Initing realm for this model: " + realmClass.getSimpleName());
 			RealmConfiguration config = new RealmConfiguration.Builder(context)
 					.name(identifier)
 					.deleteRealmIfMigrationNeeded() // DEBUG ONLY
