@@ -17,7 +17,6 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
     /**
      * Constructor sets up the test case an Application class
      * and will allow to set up the context for the test case.
-     *
      */
 
     public TestHealth365Realm(){
