@@ -12,11 +12,11 @@
     tools:context="com.sciencesquad.health.ClockActivity"
     tools:showIn="@layout/activity_clock">
 
-    <include
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/clock_view"
-        android:layout_marginTop="125dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+    <com.sciencesquad.health.ClockView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        app:backgroundColor="#FFF"
+        app:textColor="#000"
+        app:textHeight="20dp" />
 </RelativeLayout>

@@ -32,7 +32,7 @@ public class Stopwatch {
     private int pauseAfter = 0;
     private int resumeAfter = 0;
 
-    private Stopwatch otherWatch = null;
+    private Runnable onTimeChange = null;
 
     public Runnable createRunnable(Stopwatch stopwatch) {
         return new Runnable() {
@@ -51,7 +51,7 @@ public class Stopwatch {
         DOWN, UP, ALARM
     }
 
-    private WatchMode mode;
+    private WatchMode mode = WatchMode.UP;
 
 
     /** CONSTRUCTOR
@@ -155,16 +155,24 @@ public class Stopwatch {
      *      getMinutesRemaining(false) returns 5
      *      getMinutesRemaining(true) returns 5
      */
-    public long getMillisRemaining(boolean total) {
-        long totalMillis = this.remaining.toMillis();
+    public long getMillis(Duration duration, boolean total) {
+        long totalMillis = duration.toMillis();
         if (total) {
             return totalMillis;
         }
         return totalMillis % 1000;
     }
 
-    public long getSecondsRemaining(boolean total) {
-        long totalSeconds = this.remaining.minusMillis(this.getMillisRemaining(false))
+    public long getMillisElapsed(boolean total) {
+        return getMillis(this.elapsed, total);
+    }
+
+    public long getMillisRemaining(boolean total) {
+        return getMillis(this.remaining, total);
+    }
+
+    public long getSeconds(Duration duration, boolean total) {
+        long totalSeconds = duration.minusMillis(this.getMillis(duration, false))
                 .getSeconds();
         if (total) {
             return totalSeconds;
@@ -172,8 +180,16 @@ public class Stopwatch {
         return totalSeconds % 60;
     }
 
-    public long getMinutesRemaining(boolean total) {
-        long totalMinutes = this.remaining.minusSeconds(this.getSecondsRemaining(false))
+    public long getSecondsElapsed(boolean total) {
+        return getSeconds(this.elapsed, total);
+    }
+
+    public long getSecondsRemaining(boolean total) {
+        return getSeconds(this.remaining, total);
+    }
+
+    public long getMinutes(Duration duration, boolean total) {
+        long totalMinutes = duration.minusSeconds(this.getSeconds(duration, false))
                 .toMinutes();
         if (total) {
             return totalMinutes;
@@ -181,8 +197,16 @@ public class Stopwatch {
         return totalMinutes % 60;
     }
 
-    public long getHoursRemaining(boolean total) {
-        long totalHours = this.remaining.minusMinutes(this.getMinutesRemaining(false))
+    public long getMinutesElapsed(boolean total) {
+        return getMinutes(this.elapsed, total);
+    }
+
+    public long getMinutesRemaining(boolean total) {
+        return getMinutes(this.remaining, total);
+    }
+
+    public long getHours(Duration duration, boolean total) {
+        long totalHours = duration.minusMinutes(this.getMinutes(duration, false))
                 .toHours();
         if (total) {
             return totalHours;
@@ -190,9 +214,25 @@ public class Stopwatch {
         return totalHours % 24;
     }
 
-    public long getDaysRemaining() {
-        return this.remaining.minusHours(this.getHoursRemaining(false))
+    public long getHoursElapsed(boolean total) {
+        return getHours(this.elapsed, total);
+    }
+
+    public long getHoursRemaining(boolean total) {
+        return getHours(this.remaining, total);
+    }
+
+    public long getDays(Duration duration) {
+        return duration.minusHours(this.getHours(duration, false))
                 .toDays();
+    }
+
+    public long getDaysElapsed() {
+        return getDays(this.elapsed);
+    }
+
+    public long getDaysRemaining() {
+        return getDays(this.remaining);
     }
 
 
@@ -200,14 +240,27 @@ public class Stopwatch {
      *
      * Prints the time in a nice format, with padded zeroes, colons, periods... the whole shebang!
      */
+    public String getPrettyTime(Duration duration) {
+        String milliseconds = String.format("%03d", this.getMillis(duration, false));
+        String seconds = String.format("%02d", this.getSeconds(duration, false));
+        String minutes = String.format("%02d", this.getMinutes(duration, false));
+        String hours = String.format("%02d", this.getHours(duration, false));
+        String days = String.valueOf(this.getDays(duration));
+        String prettyTime = days + ":" + hours + ":"
+                + minutes + ":" + seconds + "." + milliseconds;
+        return prettyTime;
+    }
+
+    public String getPrettyElapsed() {
+        return getPrettyTime(this.elapsed);
+    }
+
+    public String getPrettyRemaining() {
+        return getPrettyTime(this.remaining);
+    }
+
     public void printTime() {
-        String milliseconds = String.format("%04d", this.getMillisRemaining(false));
-        String seconds = String.format("%02d", this.getSecondsRemaining(false));
-        String minutes = String.format("%02d", this.getMinutesRemaining(false));
-        String hours = String.format("%02d", this.getHoursRemaining(false));
-        String days = String.valueOf(this.getDaysRemaining());
-        System.out.println("Time remaining: " + days + ":" + hours + ":"
-                + minutes + ":" + seconds + "." + milliseconds);
+        System.out.println("Time remaining: " + this.getPrettyRemaining());
     }
 
 
@@ -264,27 +317,7 @@ public class Stopwatch {
         this.debug = debug;
     }
 
-    public void setPauseAfter(int pauseAfter) {
-        // Probably don't want to use this unless debug is on...
-        if (!this.debug) return;
-
-        this.pauseAfter = pauseAfter;
-    }
-
-    public void setResumeAfter(int resumeAfter) {
-        // Probably don't want to use this unless debug is on...
-        if (!this.debug) return;
-
-        // Probably don't want the watch to resume before it pauses...
-        if (resumeAfter > this.pauseAfter) this.resumeAfter = resumeAfter;
-    }
-
     private void debugStuff() {
-        if ((this.pauseAfter > 0) && (this.otherWatch.getElapsedDuration().getSeconds() >= this.pauseAfter)) this.pause();
-        if ((this.resumeAfter > 0) && (this.otherWatch.getElapsedDuration().getSeconds() >= this.resumeAfter)) {
-            this.resume();
-            this.otherWatch.pause();
-        }
         this.printTime();
     }
 
@@ -310,9 +343,17 @@ public class Stopwatch {
             debugStuff();
         }
 
+        if (this.onTimeChange != null) {
+            this.onTimeChange.run();
+        }
+
         if (!this.running) {
             this.getHandler().removeCallbacks(msTicker);
         }
+    }
+
+    public void setOnTimeChange(Runnable onTimeChange) {
+        this.onTimeChange = onTimeChange;
     }
 
     /** init_interval
@@ -330,6 +371,7 @@ public class Stopwatch {
      * Bind these to pretty buttons!
      */
     public void resume() {
+        if (this.running) return;
         this.prevTime = System.currentTimeMillis();
         this.running = true;
         this.init_interval();
@@ -343,14 +385,7 @@ public class Stopwatch {
      * any different.
      */
     public void start() {
-        if (this.running) return;
         this.resume();
-        if (this.debug) {
-            if (this.pauseAfter > 0) {
-                this.otherWatch = new Stopwatch();
-                this.start();
-            }
-        }
     }
 
     public void pause() {

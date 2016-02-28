@@ -38,13 +38,6 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
-
-		Stopwatch stopwatch = new Stopwatch();
-		stopwatch.setDebug(true);
-		stopwatch.setPauseAfter(15 * 1000);
-		stopwatch.setResumeAfter(30 * 1000);
-		stopwatch.plusMinutes(5);
-		stopwatch.start();
 	}
 
 	@Override
