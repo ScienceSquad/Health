@@ -30,6 +30,13 @@ class ClockView extends View {
         init(context, attrs);
     }
 
+    class mListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+    }
+
     private void init(Context context, AttributeSet attrs) {
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs,
@@ -41,13 +48,6 @@ class ClockView extends View {
             mTextHeight = a.getDimension(R.styleable.ClockView_textHeight, 0);
         } finally {
             a.recycle();
-        }
-
-        class mListener extends GestureDetector.SimpleOnGestureListener {
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
         }
         mDetector = new GestureDetector(this.getContext(), new mListener());
 
@@ -65,9 +65,10 @@ class ClockView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = mDetector.onTouchEvent(event);
         if (!result) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
                 System.out.println("View pressed");
                 if (this.stopwatch.isRunning()) {
+                    System.out.println("Should pause");
                     this.stopwatch.pause();
                 }
                 else {

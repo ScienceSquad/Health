@@ -37,10 +37,15 @@ public class Stopwatch {
     public Runnable createRunnable(Stopwatch stopwatch) {
         return new Runnable() {
             public void run() {
-                stopwatch.updateTime();
-                long now = SystemClock.uptimeMillis();
-                long next = now + (stopwatch.interval - now % stopwatch.interval);
-                getHandler().postAtTime(stopwatch.msTicker, next);
+                if (stopwatch.isRunning()) {
+                    stopwatch.updateTime();
+                    long now = SystemClock.uptimeMillis();
+                    long next = now + (stopwatch.interval - now % stopwatch.interval);
+                    getHandler().postAtTime(stopwatch.msTicker, next);
+                }
+                else {
+                    stopwatch.getHandler().removeCallbacks(msTicker);
+                }
             }
         };
     }
@@ -346,10 +351,6 @@ public class Stopwatch {
         if (this.onTimeChange != null) {
             this.onTimeChange.run();
         }
-
-        if (!this.running) {
-            this.getHandler().removeCallbacks(msTicker);
-        }
     }
 
     public void setOnTimeChange(Runnable onTimeChange) {
@@ -389,6 +390,7 @@ public class Stopwatch {
     }
 
     public void pause() {
+        this.updateTime();
         this.running = false;
     }
 
