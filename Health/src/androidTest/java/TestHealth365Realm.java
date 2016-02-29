@@ -61,8 +61,8 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             Assert.assertEquals(testQuery.findAll().get(4).getCalorieIntake(), 4);
             testRealm.updateRealmModel(4, new Consumer<NutritionModel>() {
                 @Override
-                public void accept(NutritionModel d) {
-                    d.setCalorieIntake(500);
+                public void accept(NutritionModel model) {
+                    model.setCalorieIntake(500);
                 }
             });
 
@@ -76,12 +76,12 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
                 testRealm.close();
             } catch (Exception e) {
                 e.printStackTrace();
-                Assert.fail();
+                Assert.fail("Realm Failed to Close.");
             }
 
         } catch (Exception e){
             e.printStackTrace();
-            Assert.fail();
+            Assert.fail("An Exception Occurred.");
         }
 
     }
