@@ -80,6 +80,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             }
 
         } catch (Exception e){
+            e.printStackTrace();
             Assert.fail();
         }
 
