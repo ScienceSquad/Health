@@ -17,14 +17,20 @@ import java.util.HashMap;
 import static com.sciencesquad.health.events.Event.EventType;
 
 /**
+ * The SensorContext is a transparent entity bound to the application
+ * which can be requested to translate callback functions into events.
+ * A typical use-case is that of the normal `SensorManager` -- instead,
+ * the request is made to the `SensorContext`, and that sends events
+ * to all listeners, instead of just one. These events can then be
+ * filtered to match what is required of the client.
  *
+ * TODO: Events must manually be paused when there is no on-screen activity.
+ * TODO: Can probably be reimplemented in a Service container.
  */
-// FIXME: Events should be paused when there is no activity on-screen.
-// FIXME: Should be implemented in a Service container.
 public class SensorContext {
 
 	/**
-	 *
+	 * An exception thrown if the Sensor is not available when requested.
 	 */
 	public class SensorNotAvailableException extends Exception {
 		public SensorNotAvailableException(String message) {
@@ -33,72 +39,70 @@ public class SensorContext {
  	}
 
 	/**
-	 *
+	 * The sensor specified by sensorEvent has changed value.
 	 */
 	@Immutable @EventType
 	public interface SensorChange extends Event {
 
 		/**
-		 *
-		 * @return
+		 * The underlying SensorEvent.
 		 */
 		SensorEvent sensorEvent();
 	}
 
 	/**
-	 *
+	 * The sensor specified by sensor has changed accuracy.
 	 */
 	@Immutable @EventType
 	public interface SensorAccuracy extends Event {
 
 		/**
-		 *
-		 * @return
+		 * The underlying Sensor.
 		 */
 		Sensor sensor();
 
 		/**
-		 *
-		 * @return
+		 * The new accuracy level.
 		 */
 		int accuracy();
 	}
 
 	/**
-	 *
+	 * The sensor specified by sensor flushed its data.
 	 */
 	@Immutable @EventType
 	public interface SensorFlush extends Event {
 
 		/**
-		 *
-		 * @return
+		 * The underlying Sensor.
 		 */
 		Sensor sensor();
 	}
 
 	/**
-	 *
+	 * The underlying SensorManager.
 	 */
 	private SensorManager _sensorManager;
 
 	/**
-	 *
+	 * The set of all `SensorListerner2`s which broadcast events.
 	 */
 	private HashMap<Integer, SensorEventListener2> _sensorListeners = new HashMap<>();
 
 	/**
+	 * Initializes the SensorContext.
 	 *
-	 * @param context
+	 * @param context the context to initialize SensorContext with
 	 */
 	public SensorContext(final Context context) {
 		this._sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
 	}
 
 	/**
+	 * Returns the Sensor for the given sensorType.
 	 *
-	 * @param sensorType
-	 * @return
+	 * @param sensorType the sensor as an int
+	 * @return the sensor as a Sensor
 	 */
 	@Nullable
 	public Sensor sensorForType(int sensorType) {
@@ -106,10 +110,12 @@ public class SensorContext {
 	}
 
 	/**
+	 * Requests sensor events for the given sensorType with the
+	 * added sample period and latency modifiers.
 	 *
 	 * @param sensorType
 	 * @param samplePeriod
-	 * @throws SensorNotAvailableException
+	 * @throws SensorNotAvailableException if the sensor is unavailable
 	 */
 	public void requestSensorEvents(int sensorType, int samplePeriod, int maxLatency) throws SensorNotAvailableException {
 		final Sensor sensor = this.sensorForType(sensorType);
@@ -162,8 +168,8 @@ public class SensorContext {
 	}
 
 	/**
-	 *
-	 * @param sensorType
+	 * Relinquishes the sensor events requested for this sensor type.
+	 * @param sensorType the sensor type
 	 */
 	public void relinquishSensorEvents(int sensorType) {
 		Optional.ofNullable(this._sensorListeners.get(sensorType))
