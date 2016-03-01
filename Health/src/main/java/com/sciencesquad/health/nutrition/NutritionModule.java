@@ -116,11 +116,26 @@ public class NutritionModule extends Module {
         }
     }
 
+    /**
+     * Method to write current Nutrition data to its realm.
+     * Will be changed to fit the Dispatcher Patter later.
+     */
+    public void addNutritionRecord(){
+        NutritionModel newNutritionModel = new NutritionModel();
+        newNutritionModel.setHadCaffeine(hadCaffeine);
+        newNutritionModel.setCalorieIntake(calorieIntake);
+        newNutritionModel.setDate(LocalDateTime.now());
+        nutritionRealm.add(newNutritionModel);
+    }
+
     public void setHadCaffeine(boolean hadCaffeine) {
         this.hadCaffeine = hadCaffeine;
     }
 
-    public boolean isHadCaffeine() {
+    /**
+     * Getter for user's response to having caffeine today.
+     */
+    public boolean isCaffeinated() {
         return hadCaffeine;
     }
 
