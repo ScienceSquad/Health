@@ -1,7 +1,8 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.core;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.events.Event;
 import java8.util.Optional;
 import java8.util.stream.StreamSupport;
@@ -12,7 +13,7 @@ import java.util.HashSet;
 
 // TODO: NEEDS TO BE FLESHED OUT!!
 public abstract class Module {
-	private static final String TAG = "Module";
+	private static final String TAG = Module.class.getSimpleName();
 
 	/**
 	 * The internal set of Subscriptions to auto-unsubscribe from.

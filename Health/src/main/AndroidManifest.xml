@@ -3,12 +3,17 @@
     package="com.sciencesquad.health" >
 
 <application
-	android:name=".BaseApplication"
+	android:name=".events.BaseApplication"
 	android:allowBackup="true"
 	android:icon="@mipmap/ic_launcher"
 	android:label="@string/app_name"
 	android:supportsRtl="true"
-	android:theme="@style/AppTheme">
+	android:theme="@style/AppTheme"
+	android:backupAgent=".data.RealmBackupAgent"
+	android:fullBackupOnly="true"
+	android:fullBackupContent="true">
+	<meta-data android:name="com.google.android.backup.api_key"
+		android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
 	<activity
 		android:name=".MainActivity"
 		android:label="@string/app_name"
