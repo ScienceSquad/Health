@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_steps"
-            android:icon="@drawable/menu_walk"
+            android:icon="@drawable/menu_steps"
             android:title="Steps" />
         <item
             android:id="@+id/nav_run"

@@ -88,11 +88,11 @@ public class MainActivity extends BaseActivity
 		// Handle navigation view item clicks here.
 		int id = item.getItemId();
 
-		if (id == R.id.nav_camera) {
-			// Handle the camera action
-		} else if (id == R.id.nav_gallery) {
+		if (id == R.id.nav_run) {
+			// Handle the run action
+		} else if (id == R.id.nav_sleep) {
 
-		} else if (id == R.id.nav_slideshow) {
+		} else if (id == R.id.nav_steps) {
 
 		} else if (id == R.id.nav_manage) {
 
