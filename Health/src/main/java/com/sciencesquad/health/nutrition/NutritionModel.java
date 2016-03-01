@@ -1,10 +1,13 @@
 package com.sciencesquad.health.nutrition;
 
+import io.realm.annotations.PrimaryKey;
 import android.support.annotation.NonNull;
 import io.realm.RealmObject;
-import io.realm.annotations.Required;
+import org.threeten.bp.LocalDateTime;
 
-import java.util.Date;
+
+
+
 
 /**
  * Realm Model for Nutrition database.
@@ -21,7 +24,8 @@ public class NutritionModel extends RealmObject {
 	/**
 	 * Calendar date where this model was created.
 	 */
-	@Required private Date date;
+	@PrimaryKey
+	private LocalDateTime date;
 
 	//
 	// GENERATED METHODS FOLLOW
@@ -45,11 +49,11 @@ public class NutritionModel extends RealmObject {
 	}
 
 	@NonNull
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(@NonNull Date date) {
+	public void setDate(@NonNull LocalDateTime date) {
 		this.date = date;
 	}
 }

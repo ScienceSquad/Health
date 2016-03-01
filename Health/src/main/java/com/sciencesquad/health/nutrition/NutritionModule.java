@@ -7,6 +7,9 @@ import com.sciencesquad.health.data.DataFailureEvent;
 import com.sciencesquad.health.data.DataUpdateEvent;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
+
+import org.threeten.bp.LocalDateTime;
+
 import io.realm.RealmQuery;
 
 import java.util.Calendar;
@@ -73,7 +76,7 @@ public class NutritionModule extends Module {
         testModel.setHadCaffeine(false);
         testModel.setCalorieIntake(50);
         Calendar rightNow = Calendar.getInstance();
-        testModel.setDate(rightNow.getTime());
+        testModel.setDate(LocalDateTime.now());
         nutritionRealm.add(testModel);
         RealmQuery<NutritionModel> testQuery = nutritionRealm.query();
 
@@ -87,7 +90,7 @@ public class NutritionModule extends Module {
             NutritionModel testModelI = new NutritionModel();
             testModelI.setHadCaffeine(testCaffeine);
             testModelI.setCalorieIntake(i);
-            testModelI.setDate(rightNow.getTime());
+            testModelI.setDate(LocalDateTime.now());
             nutritionRealm.add(testModelI);
             testCaffeine = !testCaffeine;
         }
