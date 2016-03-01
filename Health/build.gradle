@@ -87,7 +87,7 @@ dependencies {
     compile 'com.android.support:support-v13:23+'
     compile 'com.android.support:design:23+'
     // Framework-level Libraries
-    compile 'io.realm:realm-android:0.87.4'
+    compile 'io.realm:realm-android:0.87.5'
     apt 'com.github.frankiesardo:auto-parcel-processor:0.3.1'
     // User Interface libraries.
 
