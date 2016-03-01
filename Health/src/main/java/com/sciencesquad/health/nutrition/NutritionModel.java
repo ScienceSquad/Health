@@ -5,10 +5,6 @@ import android.support.annotation.NonNull;
 import io.realm.RealmObject;
 import org.threeten.bp.LocalDateTime;
 
-
-
-
-
 /**
  * Realm Model for Nutrition database.
  * Things that are relevant to store for the Nutrition Module go here.

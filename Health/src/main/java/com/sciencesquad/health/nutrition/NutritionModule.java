@@ -12,7 +12,6 @@ import org.threeten.bp.LocalDateTime;
 
 import io.realm.RealmQuery;
 
-import java.util.Calendar;
 
 /**
  * Nutrition Module itself.
@@ -75,7 +74,6 @@ public class NutritionModule extends Module {
         NutritionModel testModel = new NutritionModel();
         testModel.setHadCaffeine(false);
         testModel.setCalorieIntake(50);
-        Calendar rightNow = Calendar.getInstance();
         testModel.setDate(LocalDateTime.now());
         nutritionRealm.add(testModel);
         RealmQuery<NutritionModel> testQuery = nutritionRealm.query();
