@@ -6,6 +6,7 @@ public class SleepModule extends Module {
 	public static final String TAG = SleepModule.class.getSimpleName();
 
 	public SleepModule() {
-		SoundService.startSoundService(true);
+		// FIXME: Put this in a unit test or hook it up to the UI.
+		//SoundService.startSoundService();
 	}
 }

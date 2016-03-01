@@ -21,11 +21,24 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * SoundService is the background daemon for the SleepModule. It plays
+ * a set of media files ("waves", "birds", "crickets", "rain", "thunder",
+ * "fire", and "wind), with variable volume levels until the user taps
+ * the stop notification to end it. It can also meander volume levels.
  */
-// TODO: Use PARTIAL_WAKE_LOCK.
 public class SoundService extends Service {
 	private static final String TAG = SoundService.class.getSimpleName();
+
+	/**
+	 * The action to send this Service if it should be stopped.
+	 */
+	public static final String STOP = SoundService.class.getName() + ".STOP";
+
+	/**
+	 * The Notification ID used to allow the user to send the STOP
+	 * action to the SoundService manually.
+	 */
+	private static final int NOTE_ID = 0xDEADFA11;
 
 	/**
 	 * Loads all Sleep-specific RawRes sounds into MediaPlayers.
@@ -50,7 +63,7 @@ public class SoundService extends Service {
 	/**
 	 * Convenience method to start the SoundService.
 	 */
-	public static void startSoundService(boolean foreground) {
+	public static void startSoundService() {
 		X.of(BaseApplication.application()).let(app -> {
 			Intent startIntent = new Intent(app, SoundService.class);
 			app.startService(startIntent);
@@ -61,6 +74,7 @@ public class SoundService extends Service {
 
 	/**
 	 * Convenience method to stop the SoundService.
+	 * Note that this cannot be invoked by the user directly.
 	 */
 	public static void stopSoundService() {
 		X.of(BaseApplication.application()).let(app -> {
@@ -72,7 +86,8 @@ public class SoundService extends Service {
 	}
 
 	/**
-	 *
+	 * The private group of `MediaPlayer`s used by the SoundService.
+	 * A set of `ValueAnimator`s is used to meander volume levels.
 	 */
 	private Map<String, MediaPlayer> players = defaultPlayers();
 	private Map<String, ValueAnimator> animators = new HashMap<>();
@@ -85,7 +100,7 @@ public class SoundService extends Service {
 
 		// Handle STOP first, and pass-through to START.
 		// If intent is null, the Service was just restarted.
-		if (intent != null && "STOP".equals(intent.getAction())) {
+		if (intent != null && STOP.equals(intent.getAction())) {
 			Toast.makeText(this, "Stopping sounds...", Toast.LENGTH_SHORT).show();
 			stopSelfResult(startId);
 			return Service.START_REDELIVER_INTENT;
@@ -114,6 +129,8 @@ public class SoundService extends Service {
 			this.animators.put(key, animator);
 			animator.start();
 		});
+
+		// Start the notification and keep us alive.
 		this.showNotification();
 		return Service.START_STICKY;
 	}
@@ -137,8 +154,9 @@ public class SoundService extends Service {
 			this.animators.get(key).cancel();
 		});
 
+		// Cancel the notification because it's invalid now.
 		NotificationManager m = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		m.cancel(332);
+		m.cancel(NOTE_ID);
 	}
 
 	/**
@@ -152,12 +170,11 @@ public class SoundService extends Service {
 	/**
 	 * Creates the ongoing notification that can stop this service.
 	 */
-	// TODO: Fix the PendingIntent to actually stop the service. :(
 	private void showNotification() {
 
 		// Create the STOP intent first.
 		Intent intent = new Intent(this, SoundService.class);
-		intent.setAction("STOP");
+		intent.setAction(STOP);
 		PendingIntent pending = PendingIntent.getService(this, 0, intent, 0);
 
 		// Create the notification as we like it.
@@ -173,6 +190,6 @@ public class SoundService extends Service {
 
 		// Send it on its way.
 		NotificationManager m = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		m.notify(332, n);
+		m.notify(NOTE_ID, n);
 	}
 }
