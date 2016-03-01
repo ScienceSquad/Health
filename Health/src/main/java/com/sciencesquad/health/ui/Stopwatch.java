@@ -14,6 +14,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class Stopwatch {
 
+    private final long MAX_MILLIS = 1000;
+    private final long MAX_SECONDS = 60;
+    private final long MAX_MINUTES = 60;
+    private final long MAX_HOURS = 24;
+    private final float START_ANGLE = (float) Math.PI / 2;
+    private final float WATCH_DIRECTION = -1;
+
+
     private Duration remaining;
     private Duration elapsed;
 
@@ -25,7 +33,7 @@ public class Stopwatch {
 
     private boolean running = false;
 
-    private int interval = 100;
+    private int interval = 1000 / 30;
 
     private boolean debug = false;
 
@@ -52,7 +60,7 @@ public class Stopwatch {
 
     private Runnable msTicker = createRunnable(this);
 
-    private enum WatchMode {
+    public enum WatchMode {
         DOWN, UP, ALARM
     }
 
@@ -165,7 +173,7 @@ public class Stopwatch {
         if (total) {
             return totalMillis;
         }
-        return totalMillis % 1000;
+        return totalMillis % MAX_MILLIS;
     }
 
     public long getMillisElapsed(boolean total) {
@@ -182,7 +190,7 @@ public class Stopwatch {
         if (total) {
             return totalSeconds;
         }
-        return totalSeconds % 60;
+        return totalSeconds % MAX_SECONDS;
     }
 
     public long getSecondsElapsed(boolean total) {
@@ -199,7 +207,7 @@ public class Stopwatch {
         if (total) {
             return totalMinutes;
         }
-        return totalMinutes % 60;
+        return totalMinutes % MAX_MINUTES;
     }
 
     public long getMinutesElapsed(boolean total) {
@@ -216,7 +224,7 @@ public class Stopwatch {
         if (total) {
             return totalHours;
         }
-        return totalHours % 24;
+        return totalHours % MAX_HOURS;
     }
 
     public long getHoursElapsed(boolean total) {
@@ -240,6 +248,42 @@ public class Stopwatch {
         return getDays(this.remaining);
     }
 
+
+	/**
+     * Functions for clock hands
+     * Return the angle of the hand (NOT relative to "12 o'clock")
+     */
+
+    public float getAngle(float value, float maxValue) {
+        return this.START_ANGLE + (this.WATCH_DIRECTION * 2 * (float) Math.PI * value / maxValue);
+    }
+
+    public float getMillisecondHandAngle() {
+        Duration duration = this.getDurationForMode();
+        float millis = this.getMillis(duration, false);
+        return this.getAngle(millis, MAX_MILLIS);
+    }
+
+    public float getSecondHandAngle() {
+        Duration duration = this.getDurationForMode();
+        float millis = this.getMillis(duration, false);
+        float seconds = this.getSeconds(duration, false) + (millis / MAX_MILLIS);
+        return this.getAngle(seconds, MAX_SECONDS);
+    }
+
+    public float getMinuteHandAngle() {
+        Duration duration = this.getDurationForMode();
+        float seconds = this.getSeconds(duration, false);
+        float minutes = this.getMinutes(duration,false) + (seconds / MAX_SECONDS);
+        return this.getAngle(minutes, MAX_MINUTES);
+    }
+
+    public float getHourHandAngle() {
+        Duration duration = this.getDurationForMode();
+        float minutes = this.getMinutes(duration, false);
+        float hours = this.getHours(duration, false) + (minutes / MAX_MINUTES);
+        return this.getAngle(hours, MAX_HOURS);
+    }
 
     /** printTime
      *
@@ -276,37 +320,24 @@ public class Stopwatch {
      * UP, DOWN, or ALARM
      * @return
      */
-    public String getMode() {
-        switch (this.mode) {
-            case DOWN: return "DOWN";
-            case UP: return "UP";
-            case ALARM: return "ALARM";
-            default: return "";
-        }
+    public WatchMode getMode() {
+        return this.mode;
     }
 
     /** setMode I
      *
      * Uses the herein defined WatchMode enum to set the current mode
      */
-    private void setMode(WatchMode mode) {
+    public void setMode(WatchMode mode) {
         this.mode = mode;
     }
 
-    /** setMode II
-     *
-     * Takes a string argument and passes the corresponding WatchMode enum
-     * to the other setMode function
-     */
-    public void setMode(String mode) {
-        switch (mode) {
-            case "DOWN": this.setMode(WatchMode.DOWN);
-                break;
-            case "UP": this.setMode(WatchMode.UP);
-                break;
-            case "ALARM": this.setMode(WatchMode.ALARM);
-                break;
-            default: return;
+    public Duration getDurationForMode() {
+        if (this.getMode() == WatchMode.UP) {
+            return this.elapsed;
+        }
+        else {
+            return this.remaining;
         }
     }
 

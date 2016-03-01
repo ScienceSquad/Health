@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.sciencesquad.health.ui.Stopwatch;
 
@@ -66,9 +67,7 @@ class ClockView extends View {
         boolean result = mDetector.onTouchEvent(event);
         if (!result) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                System.out.println("View pressed");
                 if (this.stopwatch.isRunning()) {
-                    System.out.println("Should pause");
                     this.stopwatch.pause();
                 }
                 else {
@@ -92,16 +91,28 @@ class ClockView extends View {
         if (this.stopwatch != null) return;
         this.stopwatch = new Stopwatch();
         this.stopwatch.setOnTimeChange(createRunnable(this));
-        this.stopwatch.setMode("DOWN");
-        this.stopwatch.plusMinutes(5);
+        this.stopwatch.setMode(Stopwatch.WatchMode.UP);
+        // this.stopwatch.plusMinutes(5);
         this.stopwatch.start();
     }
 
+    private void drawLineDirection(Canvas canvas, float startX, float startY, float length, float angle) {
+        canvas.drawLine(startX, startY, (float) (startX + length * Math.cos(angle)),
+                (float) (startX - length * Math.sin(angle)), mTextPaint);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        float width = canvas.getWidth();
+        float height = canvas.getHeight();
         canvas.drawText(this.stopwatch.getPrettyElapsed(), 0, mTextHeight, mTextPaint);
         canvas.drawText(this.stopwatch.getPrettyRemaining(), 0, 2 * mTextHeight, mTextPaint);
+        drawLineDirection(canvas, width / 2, height / 2, width / 2, stopwatch.getMillisecondHandAngle());
+        drawLineDirection(canvas, width / 2, height / 2, width / 2, stopwatch.getSecondHandAngle());
+        drawLineDirection(canvas, width / 2, height / 2, width / 2, stopwatch.getMinuteHandAngle());
+        drawLineDirection(canvas, width / 2, height / 2, width / 2, stopwatch.getHourHandAngle());
     }
 
 }
