@@ -127,7 +127,6 @@ public class StepsActivity extends BaseActivity
                 }
             };
 
-    @Override
     protected void OnCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_steps);
@@ -168,7 +167,7 @@ public class StepsActivity extends BaseActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if present
-        getMenuInflater().inflate(R.layout.activity_steps, menu);
+        getMenuInflater().inflate((R.menu.health_steps, menu)); // I don't know about this yet
         return true;
     }
 
