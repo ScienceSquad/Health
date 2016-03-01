@@ -1,13 +1,14 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.events;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.events.Event;
 import com.sciencesquad.health.events.Event.EventType;
-import com.sciencesquad.health.events.EventBus;
 import org.immutables.value.Value.Immutable;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * The BaseApplication connects the monolithic Android Application
@@ -16,7 +17,7 @@ import org.immutables.value.Value.Immutable;
  * any preference key changes as an Event as well.
  */
 public class BaseApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
-	private static final String TAG = "BaseApplication";
+	private static final String TAG = BaseApplication.class.getSimpleName();
 
 	/**
 	 * The Application was created.
@@ -114,10 +115,19 @@ public class BaseApplication extends Application implements SharedPreferences.On
 
 	/**
 	 * Overridden to provide Application lifecycle Events to the EventBus.
+	 * "Setting a default configuration in your custom Application class,
+	 * will ensure that it is available in the rest of your code."
+	 * - Realm Library 0.87.4
 	 */
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(getBaseContext())
+				.name("default.health.realm")
+				.build();
+		Realm.setDefaultConfiguration(defaultConfig);
+
 		_application = this;
 		this.eventBus().publish(AppCreateEvent.from(this)
 				.create());
