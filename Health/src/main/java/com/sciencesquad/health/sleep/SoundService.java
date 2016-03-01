@@ -13,8 +13,10 @@ import android.util.Log;
 import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.events.Event;
 import com.sciencesquad.health.util.X;
 import java8.util.stream.StreamSupport;
+import org.immutables.value.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,22 @@ import java.util.concurrent.TimeUnit;
  */
 public class SoundService extends Service {
 	private static final String TAG = SoundService.class.getSimpleName();
+
+	/**
+	 * The event sent when the SoundService is started.
+	 */
+	@Value.Immutable @Event.EventType
+	public interface SoundServiceStart extends Event {
+		//
+	}
+
+	/**
+	 * The event sent when the SoundService is stopped.
+	 */
+	@Value.Immutable @Event.EventType
+	public interface SoundServiceStop extends Event {
+		//
+	}
 
 	/**
 	 * The action to send this Service if it should be stopped.
@@ -130,6 +148,11 @@ public class SoundService extends Service {
 			animator.start();
 		});
 
+		// Broadcast an event to say that we started up.
+		X.of(BaseApplication.application()).map(BaseApplication::eventBus).let(bus -> {
+			bus.publish(SoundServiceStartEvent.from(this).create());
+		});
+
 		// Start the notification and keep us alive.
 		this.showNotification();
 		return Service.START_STICKY;
@@ -157,6 +180,11 @@ public class SoundService extends Service {
 		// Cancel the notification because it's invalid now.
 		NotificationManager m = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		m.cancel(NOTE_ID);
+
+		// Broadcast an event to say that we stopped.
+		X.of(BaseApplication.application()).map(BaseApplication::eventBus).let(bus -> {
+			bus.publish(SoundServiceStopEvent.from(this).create());
+		});
 	}
 
 	/**
