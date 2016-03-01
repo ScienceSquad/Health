@@ -8,7 +8,6 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.BaseApplication;
 import java8.util.Optional;
 import org.immutables.value.Value.Immutable;
 
