@@ -5,35 +5,35 @@
         <item
             android:id="@+id/nav_steps"
             android:icon="@drawable/ic_menu_steps"
-            android:title="Steps" />
+            android:title="@string/steps_module" />
         <item
             android:id="@+id/nav_run"
             android:icon="@drawable/ic_menu_run"
-            android:title="Run/Cycle" />
+            android:title="@string/run_module" />
         <item
             android:id="@+id/nav_sleep"
             android:icon="@drawable/ic_menu_sleep"
-            android:title="Sleep" />
+            android:title="@string/sleep_module" />
         <item
             android:id="@+id/nav_nutrition"
             android:icon="@drawable/ic_menu_nutrition"
-            android:title="Nutrition" />
+            android:title="@string/nutrition_module" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Settings" />
+            android:title="@string/action_settings" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="@string/share" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="@string/send" />
         </menu>
     </item>
 
