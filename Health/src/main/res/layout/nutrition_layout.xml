@@ -20,8 +20,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Calories Eaten Today"
-            android:id="@+id/textView2"
-            android:layout_gravity="right" />
+            android:id="@+id/textView2" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
