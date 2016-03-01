@@ -127,7 +127,7 @@ public class StepsActivity extends BaseActivity
                 }
             };
 
-    protected void OnCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_steps);
 
