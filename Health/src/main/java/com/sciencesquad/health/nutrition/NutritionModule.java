@@ -1,16 +1,13 @@
 package com.sciencesquad.health.nutrition;
 
-import android.nfc.Tag;
 import android.util.Log;
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.data.DataContext;
 import com.sciencesquad.health.data.DataEmptyEvent;
 import com.sciencesquad.health.data.DataFailureEvent;
 import com.sciencesquad.health.data.DataUpdateEvent;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 import io.realm.RealmQuery;
-import rx.Subscription;
 
 import java.util.Calendar;
 
@@ -24,6 +21,9 @@ public class NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
     private static final String REALMNAME = "nutrition.realm";
 
+    private int calorieIntake;
+    private boolean hadCaffeine;
+
     private RealmContext<NutritionModel> nutritionRealm;
 
     /**
@@ -34,9 +34,7 @@ public class NutritionModule extends Module {
         this.nutritionRealm = new RealmContext<>();
         this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
 
-        this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> {
-            Log.d(TAG, "Some realm was empty.");
-        });
+        this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> Log.d(TAG, "Some realm was empty."));
         this.subscribe(DataFailureEvent.class, this, (DataFailureEvent dataFailureEvent1) -> {
             Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
 
@@ -72,6 +70,7 @@ public class NutritionModule extends Module {
     protected void testNutritionModule() throws Exception {
         nutritionRealm.clear();
         NutritionModel testModel = new NutritionModel();
+        testModel.setHadCaffeine(false);
         testModel.setCalorieIntake(50);
         Calendar rightNow = Calendar.getInstance();
         testModel.setDate(rightNow.getTime());
@@ -83,11 +82,14 @@ public class NutritionModule extends Module {
         Log.d(TAG, "testQuery first value:" + testQuery.findAll().first().getCalorieIntake());
 
         Log.d(TAG, "Adding mass values");
+        boolean testCaffeine = false;
         for (int i = 1 ; i < 12; i++){
             NutritionModel testModelI = new NutritionModel();
+            testModelI.setHadCaffeine(testCaffeine);
             testModelI.setCalorieIntake(i);
             testModelI.setDate(rightNow.getTime());
             nutritionRealm.add(testModelI);
+            testCaffeine = !testCaffeine;
         }
         Log.d(TAG, "Done adding");
         Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
@@ -111,5 +113,21 @@ public class NutritionModule extends Module {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setHadCaffeine(boolean hadCaffeine) {
+        this.hadCaffeine = hadCaffeine;
+    }
+
+    public boolean isHadCaffeine() {
+        return hadCaffeine;
+    }
+
+    public int getCalorieIntake() {
+        return calorieIntake;
+    }
+
+    public void setCalorieIntake(int calorieIntake) {
+        this.calorieIntake = calorieIntake;
     }
 }

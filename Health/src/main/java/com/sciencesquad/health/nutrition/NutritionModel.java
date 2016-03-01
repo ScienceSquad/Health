@@ -16,6 +16,7 @@ public class NutritionModel extends RealmObject {
 	 * Calories taken in on a certain day.
 	 */
 	private int calorieIntake;
+	private boolean hadCaffeine;
 
 	/**
 	 * Calendar date where this model was created.
@@ -33,6 +34,14 @@ public class NutritionModel extends RealmObject {
 
 	public void setCalorieIntake(int calorieIntake) {
 		this.calorieIntake = calorieIntake;
+	}
+
+	public void setHadCaffeine(boolean caffeineCondition){
+		this.hadCaffeine = caffeineCondition;
+	}
+
+	public boolean getHadCaffeine(){
+		return this.hadCaffeine;
 	}
 
 	@NonNull
