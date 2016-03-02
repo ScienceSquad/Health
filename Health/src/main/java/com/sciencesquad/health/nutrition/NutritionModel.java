@@ -1,16 +1,15 @@
 package com.sciencesquad.health.nutrition;
 
-import io.realm.annotations.PrimaryKey;
 import android.support.annotation.NonNull;
 import io.realm.RealmObject;
-import org.threeten.bp.LocalDateTime;
+import io.realm.annotations.Required;
+import java.util.Date;
 
 /**
  * Realm Model for Nutrition database.
  * Things that are relevant to store for the Nutrition Module go here.
  */
 public class NutritionModel extends RealmObject {
-
 	/**
 	 * Calories taken in on a certain day.
 	 */
@@ -20,8 +19,8 @@ public class NutritionModel extends RealmObject {
 	/**
 	 * Calendar date where this model was created.
 	 */
-	@PrimaryKey
-	private LocalDateTime date;
+	@Required
+	private Date date;
 
 	//
 	// GENERATED METHODS FOLLOW
@@ -36,20 +35,20 @@ public class NutritionModel extends RealmObject {
 		this.calorieIntake = calorieIntake;
 	}
 
-	public void setHadCaffeine(boolean caffeineCondition){
-		this.hadCaffeine = caffeineCondition;
-	}
-
-	public boolean getHadCaffeine(){
-		return this.hadCaffeine;
-	}
-
 	@NonNull
-	public LocalDateTime getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(@NonNull LocalDateTime date) {
+	public void setDate(@NonNull Date date) {
 		this.date = date;
+	}
+
+	public boolean isHadCaffeine() {
+		return hadCaffeine;
+	}
+
+	public void setHadCaffeine(boolean hadCaffeine) {
+		this.hadCaffeine = hadCaffeine;
 	}
 }
