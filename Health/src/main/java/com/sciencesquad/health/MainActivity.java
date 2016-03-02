@@ -39,13 +39,6 @@ public class MainActivity extends BaseActivity
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
 
-
-		try {
-			NutritionModule abc = new NutritionModule();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override
