@@ -3,19 +3,21 @@ package com.sciencesquad.health.core;
 import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
+import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.Pair;
+import com.sciencesquad.health.ViewContext;
 import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.events.Event;
-import java8.util.Optional;
+import com.sciencesquad.health.util.X;
 import java8.util.stream.StreamSupport;
 import rx.Subscription;
 import rx.functions.Action1;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * The Module abstract class is the binding glue behind a modular architecture
@@ -47,6 +49,26 @@ public abstract class Module implements Observable {
 	 * already fulfills the Controller requirement of MVC and now MVVM).
 	 */
 	private transient PropertyChangeRegistry _callbacks;
+
+	/**
+	 * Special identifier only set by a ContextBinder for identification.
+	 */
+	/*package*/ transient UUID _identifier;
+
+	/**
+	 *
+	 */
+	/*package*/ ViewContext<? extends ViewDataBinding> _viewContext;
+
+	/**
+	 *
+	 */
+	/*package*/ ViewContext<? extends ViewDataBinding> _dataContext;
+
+	/**
+	 *
+	 */
+	/*package*/ ViewContext<? extends ViewDataBinding> _sensorContext;
 
 	/**
 	 * Any subclass of the Module class should ideally register itself
@@ -92,31 +114,6 @@ public abstract class Module implements Observable {
 	}
 
 	/**
-	 * Get an instance of specified ViewModel based on its unique ID. The instance will be either restored from an
-	 * in-memory map or created using the default constructor and put inside the map
-	 *
-	 * @param moduleClass ViewModel class
-	 * @return ViewModel inside a wrapper containing a flag indicating if the instance was created or restored
-	 */
-	@NonNull
-	@SuppressWarnings("unchecked")
-	public synchronized Pair<Module, Boolean> getModuleInstance(@NonNull Class<? extends Module> moduleClass) {
-		Module instance = null;//_modules.get(moduleClass);
-		if(instance != null)
-			return new Pair<>(instance, false);
-		Log.i(TAG, this.getClass().getSimpleName() + " initialized.");
-
-		try {
-			//instance = viewModelClass.newInstance();
-			//instance.setViewModelId(viewModelId);
-			//mViewModels.put(viewModelId, instance);
-			return new Pair<>(instance, true);
-		} catch(Exception ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-
-	/**
 	 * A Module's identifier provides the name and icon of a Module for
 	 * implementations where the user interacts with available Modules.
 	 *
@@ -137,15 +134,43 @@ public abstract class Module implements Observable {
 	public abstract void init();
 
 	/**
+	 *
+	 *
+	 * @param <T>
+	 * @return
+	 */
+	protected <T extends ViewDataBinding> X<ViewContext<T>> viewContext() {
+		return X.of(null);
+	}
+
+	/**
+	 *
+	 *
+	 * @param <T>
+	 * @return
+	 */
+	protected <T extends ViewDataBinding> X<ViewContext<T>> dataContext() {
+		return X.of(null);
+	}
+
+	/**
+	 *
+	 *
+	 * @param <T>
+	 * @return
+	 */
+	protected <T extends ViewDataBinding> X<ViewContext<T>> sensorContext() {
+		return X.of(null);
+	}
+
+	/**
 	 * Publishes any Events to the shared application EventBus.
 	 *
 	 * @param event the event to publish
 	 * @param <E> the type of Event being published
 	 */
 	public synchronized <E extends Event> void publish(@NonNull E event) {
-		this.app().ifPresent(app -> {
-			app.eventBus().publish(event);
-		});
+		this.app().map(BaseApplication::eventBus).let(bus -> bus.publish(event));
 	}
 
 	/**
@@ -160,8 +185,8 @@ public abstract class Module implements Observable {
 	 */
 	public synchronized <E extends Event> void subscribe(@NonNull final Class<E> eventClass,
 														 @Nullable final Object source, @NonNull final Action1<E> handler) {
-		this.app().ifPresent(app -> {
-			Subscription sub = app.eventBus().subscribe(eventClass, source, handler);
+		this.app().map(BaseApplication::eventBus).let(bus -> {
+			Subscription sub = bus.subscribe(eventClass, source, handler);
 			this._subscriptions.add(sub);
 		});
 	}
@@ -187,8 +212,8 @@ public abstract class Module implements Observable {
 	 * @return the Application as a nullable Optional
 	 */
 	@NonNull
-	protected Optional<BaseApplication> app() {
-		return Optional.ofNullable(BaseApplication.application());
+	protected X<BaseApplication> app() {
+		return X.of(BaseApplication.application());
 	}
 
 	/**
