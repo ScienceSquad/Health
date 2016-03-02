@@ -14,12 +14,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class Stopwatch {
 
-    private final long MAX_MILLIS = 1000;
-    private final long MAX_SECONDS = 60;
-    private final long MAX_MINUTES = 60;
-    private final long MAX_HOURS = 24;
-    private final float START_ANGLE = (float) Math.PI / 2;
-    private final float WATCH_DIRECTION = -1;
+    public final long MAX_MILLIS = 1000;
+    public final long MAX_SECONDS = 60;
+    public final long MAX_MINUTES = 60;
+    public final long MAX_HOURS = 24;
+    public final float START_ANGLE = (float) Math.PI / 2;
+    public final float WATCH_DIRECTION = -1;
 
 
     private Duration remaining;
@@ -289,27 +289,39 @@ public class Stopwatch {
      *
      * Prints the time in a nice format, with padded zeroes, colons, periods... the whole shebang!
      */
-    public String getPrettyTime(Duration duration) {
-        String milliseconds = String.format("%03d", this.getMillis(duration, false));
-        String seconds = String.format("%02d", this.getSeconds(duration, false));
-        String minutes = String.format("%02d", this.getMinutes(duration, false));
-        String hours = String.format("%02d", this.getHours(duration, false));
+    public String getPrettyTime(Duration duration, boolean all) {
+        long numSeconds = this.getSeconds(duration, false);
+        long numMinutes = this.getMinutes(duration, false);
+        long numHours = this.getHours(duration, false);
+        long numDays = this.getDays(duration);
+        String seconds = String.format("%02d", numSeconds);
+        String minutes = String.format("%02d", numMinutes);
+        String hours = String.format("%02d", numHours);
         String days = String.valueOf(this.getDays(duration));
-        String prettyTime = days + ":" + hours + ":"
-                + minutes + ":" + seconds + "." + milliseconds;
+        String prettyTime = minutes + " " + seconds + " ";
+        if ((numHours > 0) && (!all)) {
+            prettyTime = hours + " " + prettyTime;
+        }
+        else if (numDays > 0) {
+            prettyTime = days + " " + hours + " " + prettyTime;
+        }
         return prettyTime;
     }
 
-    public String getPrettyElapsed() {
-        return getPrettyTime(this.elapsed);
+    public String getMilliString(Duration duration) {
+        return String.format("%03d", this.getMillis(duration, false));
     }
 
-    public String getPrettyRemaining() {
-        return getPrettyTime(this.remaining);
+    public String getPrettyElapsed(boolean all) {
+        return getPrettyTime(this.elapsed, all);
+    }
+
+    public String getPrettyRemaining(boolean all) {
+        return getPrettyTime(this.remaining, all);
     }
 
     public void printTime() {
-        System.out.println("Time remaining: " + this.getPrettyRemaining());
+        System.out.println("Time remaining: " + this.getPrettyRemaining(false));
     }
 
 

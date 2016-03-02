@@ -12,9 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 
-import com.sciencesquad.health.ui.Clock;
-import com.sciencesquad.health.ui.Stopwatch;
-
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
