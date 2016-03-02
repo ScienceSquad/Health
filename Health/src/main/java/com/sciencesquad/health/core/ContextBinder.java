@@ -23,10 +23,10 @@ public class ContextBinder<T extends Module> {
 	/**
 	 *
      */
-	public void bind(final @NonNull Activity activity, final @Nullable Bundle savedInstanceState,
-					 final @NonNull ViewDataBinding dataBinding, final @NonNull Module module,
-					 final @LayoutRes int layoutRes, final int layoutVar, final @NonNull Runnable handler) {
-		DataBindingUtil.setContentView(activity, layoutRes);
+	public static void bind(final @NonNull Activity activity, final @Nullable Bundle savedInstanceState,
+					 		final @NonNull Module module, final @LayoutRes int layoutRes,
+							final int layoutVar, final @NonNull Runnable handler) {
+		final ViewDataBinding dataBinding = DataBindingUtil.setContentView(activity, layoutRes);
 
 		// Assign or retrieve the module's UUID.
 		if(savedInstanceState == null) {
@@ -54,11 +54,9 @@ public class ContextBinder<T extends Module> {
 	/**
 	 *
 	 */
-	public void unbind(final @NonNull Module module, final @NonNull ViewDataBinding dataBinding,
-					   final int layoutVar, final @NonNull Runnable handler) {
-
+	public static void unbind(final @NonNull Module module, final int layoutVar, final @NonNull Runnable handler) {
 		// Undo everything done above.
-		dataBinding.setVariable(layoutVar, null);
+		module._viewContext.binding().setVariable(layoutVar, null);
 		module._viewContext = null;
 		handler.run();
 	}
