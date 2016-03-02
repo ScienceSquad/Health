@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
-
 import com.sciencesquad.health.ui.Stopwatch;
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.nutrition.NutritionModule;
@@ -41,10 +40,6 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
-
-		Stopwatch stopwatch = new Stopwatch();
-		stopwatch.plusMinutes(5);
-		stopwatch.start();
 	}
 
 	@Override
@@ -98,7 +93,6 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_send) {
 
 		} else if (id == R.id.nav_clock) {
-			System.out.println("Pressed the clock");
 			Intent intent = new Intent(this, ClockActivity.class);
 			startActivity(intent);
 		}
