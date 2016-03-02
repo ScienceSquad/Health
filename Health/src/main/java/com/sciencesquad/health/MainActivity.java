@@ -10,10 +10,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.content.Intent;
+import com.sciencesquad.health.ui.Stopwatch;
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.nutrition.NutritionModule;
 import com.sciencesquad.health.sleep.SleepModule;
-
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -91,6 +92,9 @@ public class MainActivity extends BaseActivity
 
 		} else if (id == R.id.nav_send) {
 
+		} else if (id == R.id.nav_clock) {
+			Intent intent = new Intent(this, ClockActivity.class);
+			startActivity(intent);
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
