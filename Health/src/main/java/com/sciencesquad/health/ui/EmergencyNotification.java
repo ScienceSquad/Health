@@ -3,6 +3,9 @@ package com.sciencesquad.health.ui;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
+import android.widget.RemoteViews;
+
+import com.sciencesquad.health.R;
 
 /**
  * Created by andrew on 3/2/16.
@@ -13,8 +16,8 @@ public class EmergencyNotification {
 	sendNotification(Context context, CharSequence title, CharSequence content) {
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
 				.setOngoing(true)
-				.setContentTitle(title)
-				.setContentText(content);
+				.setContent(new RemoteViews(context.getPackageName(), R.layout.emergency_card))
+				.setSmallIcon(R.drawable.ic_menu_manage);
 
 		int mNotificationId = 1;
 

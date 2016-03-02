@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.ui.EmergencyNotification;
 
 public class EmergencyCardActivity extends BaseActivity {
 
@@ -18,13 +19,8 @@ public class EmergencyCardActivity extends BaseActivity {
 		setSupportActionBar(toolbar);
 
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-		fab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-						.setAction("Action", null).show();
-			}
-		});
+		fab.setOnClickListener(view -> EmergencyNotification.sendNotification(view.getContext(),
+				"Rad Notification", "The fish was delish and it made quite a dish"));
 	}
 
 }
