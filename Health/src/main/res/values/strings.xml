@@ -22,4 +22,5 @@
     <string name="z">Z</string>
     <string name="dash">---</string>
     <string name="reset_steps">Reset Steps</string>
+    <string name="title_activity_clock">ClockActivity</string>
 </resources>
