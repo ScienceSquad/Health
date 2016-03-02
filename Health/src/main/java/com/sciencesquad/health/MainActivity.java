@@ -12,11 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 
-import com.sciencesquad.health.ui.Clock;
 import com.sciencesquad.health.ui.Stopwatch;
+import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.nutrition.NutritionModule;
+import com.sciencesquad.health.sleep.SleepModule;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +31,7 @@ public class MainActivity extends BaseActivity
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setOnClickListener(view ->
 				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-				.setAction("Action", null).show());
+						.setAction("Action", null).show());
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

@@ -31,6 +31,8 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -53,24 +55,29 @@ android {
     dataBinding {
         enabled = true
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-
+    // Unit Tests
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+    androidTestCompile 'com.android.support:support-annotations:23.1.1'
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    androidTestCompile 'com.android.support.test:rules:0.4.1'
     // RxJava and RxAndroid
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'io.reactivex:rxjava:1.1.0'
-
     // Java 8 Support
     compile 'net.sourceforge.streamsupport:streamsupport:1.1.4'
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
-
-	// Immutable Value Class support.
+    // Immutable Value Class support.
     apt "org.immutables:value:2.1.10"
-    provided "org.immutables:value:2.1.10"
-    provided "org.immutables:builder:2.1.10"
-
+    provided 'org.immutables:value:2.1.10'
+    provided 'org.immutables:builder:2.1.10'
     // Android Support Library
     compile 'com.android.support:palette-v7:23+'
     compile 'com.android.support:cardview-v7:23+'
@@ -79,22 +86,21 @@ dependencies {
     compile 'com.android.support:support-v4:23+'
     compile 'com.android.support:support-v13:23+'
     compile 'com.android.support:design:23+'
-
     // Framework-level Libraries
-    compile 'io.realm:realm-android:0.87.4'
+    compile 'io.realm:realm-android:0.87.5'
     apt 'com.github.frankiesardo:auto-parcel-processor:0.3.1'
-
     // User Interface libraries.
+
     //compile 'com.github.orangegangsters:lollipin:1.7.0@aar' // no resource identifier found for attribute gradle issues...
     compile 'com.ogaclejapan.smarttablayout:library:1.6.0@aar'
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     compile 'it.sephiroth.android.library.viewrevealanimator:view-reveal-animator:+'
-    compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    compile 'com.daimajia.swipelayout:library:1.2.0@aar'
     compile 'com.txusballesteros:snake:1.0'
     compile 'com.klinkerapps:sliding-activity:1.1.1'
     compile 'com.diogobernardino:williamchart:2.2'
     compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
-    compile ('com.github.florent37:materialviewpager:1.1.3@aar') {
+    compile('com.github.florent37:materialviewpager:1.1.3@aar') {
         transitive = true
     }
     compile 'junit:junit:4.12'
