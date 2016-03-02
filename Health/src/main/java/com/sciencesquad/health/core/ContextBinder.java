@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.R;
 
 import java.util.UUID;
 
@@ -26,7 +25,7 @@ public class ContextBinder<T extends Module> {
      */
 	public void bind(final @NonNull Activity activity, final @Nullable Bundle savedInstanceState,
 					 final @NonNull ViewDataBinding dataBinding, final @NonNull Module module,
-					 final @LayoutRes int layoutRes) {
+					 final @LayoutRes int layoutRes, final int layoutVar, final @NonNull Runnable handler) {
 		DataBindingUtil.setContentView(activity, layoutRes);
 
 		// Assign or retrieve the module's UUID.
@@ -45,23 +44,22 @@ public class ContextBinder<T extends Module> {
 			@Override public Activity activity() {
 				return activity;
 			}
-			@Override public Bundle bundle() {
-				return savedInstanceState;
-			}
-			@Override public int layout() {
-				return layoutRes;
-			}
 		};
 
-		dataBinding.setVariable(R.id.dataBinding, module);
-		// CALLBACK HERE: onViewAttached
+		// Set the binding and execute the view attached handler.
+		dataBinding.setVariable(layoutVar, module);
+		handler.run();
 	}
 
 	/**
 	 *
 	 */
-	public void unbind(final @NonNull Module module, final @NonNull ViewDataBinding dataBinding) {
-		dataBinding.setVariable(R.id.dataBinding, null);
+	public void unbind(final @NonNull Module module, final @NonNull ViewDataBinding dataBinding,
+					   final int layoutVar, final @NonNull Runnable handler) {
+
+		// Undo everything done above.
+		dataBinding.setVariable(layoutVar, null);
 		module._viewContext = null;
+		handler.run();
 	}
 }

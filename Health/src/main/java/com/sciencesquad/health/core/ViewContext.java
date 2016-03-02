@@ -2,37 +2,25 @@ package com.sciencesquad.health.core;
 
 import android.app.Activity;
 import android.databinding.ViewDataBinding;
-import android.os.Bundle;
-import android.support.annotation.LayoutRes;
 
 /**
- * Defines the interaction between a Module and its View.
+ * Defines the interaction between a Module and an Activity.
  *
  * @param <T> a generated subclass of ViewDataBinding
  */
 public interface ViewContext<T extends ViewDataBinding> {
 
 	/**
-	 * The ViewDataBinding that hooks the View and ViewModel.
-	 * @return the ViewDataBinding that hooks the View and the ViewModel
+	 * The ViewDataBinding that connects the Activity and Module.
+	 *
+	 * @return the ViewDataBinding that hooks the Activity and Module
 	 */
 	T binding();
 
 	/**
-	 * The Activity in which the View is displayed.
-	 * @return the Activity in which the View is displayed
+	 * The Activity in which the Module is displayed.
+	 *
+	 * @return the Activity in which the Module is displayed
 	 */
 	Activity activity();
-
-	/**
-	 * The options bundle for the View.
-	 * @return the options bundle for the View
-	 */
-	Bundle bundle();
-
-	/**
-	 * The layout resource ID.
-	 * @return the layout resource ID
-	 */
-	@LayoutRes int layout();
 }

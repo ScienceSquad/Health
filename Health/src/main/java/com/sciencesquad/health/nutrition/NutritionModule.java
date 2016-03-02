@@ -3,9 +3,9 @@ package com.sciencesquad.health.nutrition;
 import android.util.Pair;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.data.DataContext;
-import com.sciencesquad.health.data.RealmContext;
+import com.sciencesquad.health.core.RealmContext;
 
 /**
  * Nutrition Module

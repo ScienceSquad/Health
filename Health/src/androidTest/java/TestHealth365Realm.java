@@ -1,6 +1,6 @@
 import android.test.ApplicationTestCase;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.data.RealmContext;
+import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.nutrition.NutritionModel;
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;

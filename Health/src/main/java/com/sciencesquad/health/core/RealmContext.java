@@ -1,9 +1,12 @@
-package com.sciencesquad.health.data;
+package com.sciencesquad.health.core;
 
+import android.app.backup.BackupAgentHelper;
+import android.app.backup.BackupHelper;
+import android.app.backup.FileBackupHelper;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.data.DataFailureEvent;
 import io.realm.*;
 import java8.util.function.Consumer;
 
@@ -355,4 +358,20 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_UPDATE_REALM_AT_INDEX).create());
 		}
     }
+
+	/**
+	 * Backup agent to back up all the realm files.
+	 */
+	public static class RealmBackupAgent extends BackupAgentHelper {
+		private static final String TAG = RealmBackupAgent.class.getSimpleName();
+
+		private final String realmList = Realm.getDefaultInstance().getPath() + ", nutrition.realm" + ", steps.realm";
+
+		@Override
+		public void onCreate() {
+			super.onCreate();
+			BackupHelper helper = new FileBackupHelper(this, realmList);
+			addHelper("realms", helper);
+		}
+	}
 }
