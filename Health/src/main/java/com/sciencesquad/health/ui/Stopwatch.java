@@ -18,12 +18,14 @@ public class Stopwatch {
     public final long MAX_SECONDS = 60;
     public final long MAX_MINUTES = 60;
     public final long MAX_HOURS = 24;
+
     public final float START_ANGLE = (float) Math.PI / 2;
     public final float WATCH_DIRECTION = -1;
 
 
     private Duration remaining;
     private Duration elapsed;
+    private Duration total;
 
     private long prevTime = 0;
 
@@ -32,43 +34,39 @@ public class Stopwatch {
     private Handler handler = null;
 
     private boolean running = false;
+    private boolean finished = false;
 
     private int interval = 1000 / 30;
 
-    private boolean debug = false;
-
-    private int pauseAfter = 0;
-    private int resumeAfter = 0;
-
     private Runnable onTimeChange = null;
+    private Runnable onTimeFinish = null;
 
+	/**
+	 * Returns a runnable which is run at every interval
+	 */
     public Runnable createRunnable(Stopwatch stopwatch) {
-        return new Runnable() {
-            public void run() {
-                if (stopwatch.isRunning()) {
-                    stopwatch.updateTime();
-                    long now = SystemClock.uptimeMillis();
-                    long next = now + (stopwatch.interval - now % stopwatch.interval);
-                    getHandler().postAtTime(stopwatch.msTicker, next);
-                }
-                else {
-                    stopwatch.getHandler().removeCallbacks(msTicker);
-                }
-            }
-        };
+        return () -> {
+			if (stopwatch.isRunning()) {
+				stopwatch.updateTime();
+				long now = SystemClock.uptimeMillis();
+				long next = now + (stopwatch.interval - now % stopwatch.interval);
+				getHandler().postAtTime(stopwatch.msTicker, next);
+			} else {
+				stopwatch.getHandler().removeCallbacks(msTicker);
+			}
+		};
     }
 
     private Runnable msTicker = createRunnable(this);
 
     public enum WatchMode {
-        DOWN, UP, ALARM
+        DOWN, UP
     }
 
     private WatchMode mode = WatchMode.UP;
 
 
     /** CONSTRUCTOR
-     * (no arguments, yet)
      */
     public Stopwatch() {
         remaining = Duration.ZERO;
@@ -115,42 +113,52 @@ public class Stopwatch {
 
     public void plusMillis(long toAdd) {
         this.remaining = this.remaining.plusMillis(toAdd);
+        this.total = this.remaining;
     }
 
     public void minusMillis(long toSubtract) {
         this.remaining = this.remaining.minusMillis(toSubtract);
+        this.total = this.remaining;
     }
 
     public void plusSeconds(long toAdd) {
         this.remaining = this.remaining.plusSeconds(toAdd);
+        this.total = this.remaining;
     }
 
     public void minusSeconds(long toSubtract) {
         this.remaining = this.remaining.minusSeconds(toSubtract);
+        this.total = this.remaining;
     }
 
     public void plusMinutes(long toAdd) {
         this.remaining = this.remaining.plusMinutes(toAdd);
+        this.total = this.remaining;
     }
 
     public void minusMinutes(long toSubtract) {
         this.remaining = this.remaining.minusMinutes(toSubtract);
+        this.total = this.remaining;
     }
 
     public void plusHours(long toAdd) {
         this.remaining = this.remaining.plusHours(toAdd);
+        this.total = this.remaining;
     }
 
     public void minusHours(long toSubtract) {
         this.remaining = this.remaining.minusHours(toSubtract);
+        this.total = this.remaining;
     }
 
     public void plusDays(long toAdd) {
         this.remaining = this.remaining.plusDays(toAdd);
+        this.total = this.remaining;
     }
 
     public void minusDays(long toSubtract) {
         this.remaining = this.remaining.minusDays(toSubtract);
+        this.total = this.remaining;
     }
 
     /** get[Unit]Remaining
@@ -258,31 +266,15 @@ public class Stopwatch {
         return this.START_ANGLE + (this.WATCH_DIRECTION * 2 * (float) Math.PI * value / maxValue);
     }
 
-    public float getMillisecondHandAngle() {
-        Duration duration = this.getDurationForMode();
-        float millis = this.getMillis(duration, false);
-        return this.getAngle(millis, MAX_MILLIS);
-    }
-
-    public float getSecondHandAngle() {
-        Duration duration = this.getDurationForMode();
-        float millis = this.getMillis(duration, false);
-        float seconds = this.getSeconds(duration, false) + (millis / MAX_MILLIS);
-        return this.getAngle(seconds, MAX_SECONDS);
-    }
-
-    public float getMinuteHandAngle() {
-        Duration duration = this.getDurationForMode();
-        float seconds = this.getSeconds(duration, false);
-        float minutes = this.getMinutes(duration,false) + (seconds / MAX_SECONDS);
-        return this.getAngle(minutes, MAX_MINUTES);
-    }
-
-    public float getHourHandAngle() {
-        Duration duration = this.getDurationForMode();
-        float minutes = this.getMinutes(duration, false);
-        float hours = this.getHours(duration, false) + (minutes / MAX_MINUTES);
-        return this.getAngle(hours, MAX_HOURS);
+    public float getDotAngle() {
+        if (this.mode == WatchMode.UP) {
+            float millis = this.getMillis(this.elapsed, false);
+            float seconds = this.getSeconds(this.elapsed, false) + (millis / MAX_MILLIS);
+            return this.getAngle(seconds, MAX_SECONDS);
+        }
+        float totalMillis = this.getMillis(this.total, true);
+        float remainingMillis = this.getMillis(this.remaining, true);
+        return this.getAngle(remainingMillis, totalMillis);
     }
 
     /** printTime
@@ -327,7 +319,7 @@ public class Stopwatch {
 
     /** getMode
      *
-     * Returns the current mode of the Stopwatch as a string
+     * Returns the current mode of the Stopwatch
      *
      * UP, DOWN, or ALARM
      * @return
@@ -336,7 +328,7 @@ public class Stopwatch {
         return this.mode;
     }
 
-    /** setMode I
+    /** setMode
      *
      * Uses the herein defined WatchMode enum to set the current mode
      */
@@ -344,6 +336,11 @@ public class Stopwatch {
         this.mode = mode;
     }
 
+
+	/**
+	 * Returns the proper Duration object for the current mode
+	 * @return
+	 */
     public Duration getDurationForMode() {
         if (this.getMode() == WatchMode.UP) {
             return this.elapsed;
@@ -351,22 +348,6 @@ public class Stopwatch {
         else {
             return this.remaining;
         }
-    }
-
-
-    /** Debug functions
-     *
-     * These are pretty much just for me
-     */
-    public void setDebug(boolean debug) {
-        // Probably shouldn't be swapping to debug mode while it's running...
-        if (this.running) return;
-
-        this.debug = debug;
-    }
-
-    private void debugStuff() {
-        this.printTime();
     }
 
 
@@ -381,23 +362,36 @@ public class Stopwatch {
         if (this.prevTime > 0) {
             if (this.mode == WatchMode.DOWN) {
                 this.remaining = this.remaining.minusMillis(diff);
+                if (this.getMillis(this.remaining, true) < 0) {
+                    this.remaining = Duration.ZERO;
+                    this.finished = true;
+                    this.finish();
+                }
             }
             this.elapsed = this.elapsed.plusMillis(diff);
         }
 
         this.prevTime = currentTime;
 
-        if (this.debug) {
-            debugStuff();
-        }
-
         if (this.onTimeChange != null) {
             this.onTimeChange.run();
         }
     }
 
+	/** setOnTimeChange
+	 * Pass in a Runnable that will run every time the time is updated!
+	 * @param onTimeChange
+	 */
     public void setOnTimeChange(Runnable onTimeChange) {
         this.onTimeChange = onTimeChange;
+    }
+
+	/** setOnTimeFinish
+	 * Pass in a Runnable that will run when the countdown timer finishes
+	 * @param onTimeFinish
+	 */
+    public void setOnTimeFinish(Runnable onTimeFinish) {
+        this.onTimeFinish = onTimeFinish;
     }
 
     /** init_interval
@@ -415,7 +409,7 @@ public class Stopwatch {
      * Bind these to pretty buttons!
      */
     public void resume() {
-        if (this.running) return;
+        if (this.running || this.finished) return;
         this.prevTime = System.currentTimeMillis();
         this.running = true;
         this.init_interval();
@@ -433,8 +427,17 @@ public class Stopwatch {
     }
 
     public void pause() {
-        this.updateTime();
+        if (!this.finished)
+            this.updateTime();
         this.running = false;
+    }
+
+    public void finish() {
+        this.pause();
+
+        if (this.onTimeFinish != null) {
+            this.onTimeFinish.run();
+        }
     }
 
     public void reset() {
@@ -450,12 +453,13 @@ public class Stopwatch {
      * Once I write it, it'll probably add the elapsed time to a list and restart the stopwatch
      */
     public void addLap() {
-
+		// TODO in Sprint 2, toodaloo
     }
 
     public boolean isRunning() {
         return this.running;
     }
+	public boolean isFinished() { return this.finished; }
 
     public Duration getRemainingDuration() {
         return remaining;

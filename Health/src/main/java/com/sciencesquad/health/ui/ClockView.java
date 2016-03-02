@@ -39,7 +39,9 @@ public class ClockView extends View {
     private int mTextColor;
 
     private float mTextHeight;
-    private double mMsTextHeight = 0.75;
+    private double mMsTextHeight = 0.5;
+
+	private int maxTextWidth = 0;
 
 	/**
 	 * Lengths expressed as fractions of the watch radius:
@@ -165,20 +167,15 @@ public class ClockView extends View {
         this.setPaints();
     }
 
-    private Runnable createRunnable(ClockView view) {
-        return () -> view.postInvalidate();
-    }
-
     private void startStopwatch() {
         if (this.stopwatch != null) return;
         this.stopwatch = new Stopwatch();
-        this.stopwatch.setOnTimeChange(createRunnable(this));
-        this.stopwatch.setMode(Stopwatch.WatchMode.UP);
-        // this.stopwatch.plusMinutes(5);
-        this.stopwatch.start();
+        this.stopwatch.setOnTimeChange(this::postInvalidate);
+        this.stopwatch.setMode(Stopwatch.WatchMode.DOWN);
+        this.stopwatch.plusSeconds(10);
     }
 
-    private void drawDot(Canvas canvas, float radius, float angle) {
+    private void drawDot(Canvas canvas, float radius, double angle) {
         canvas.drawCircle(this.PADDING + (radius * (1 + (float) Math.cos(angle))),
                 this.PADDING + (radius * (1 - (float) Math.sin(angle))),
                 this.DOT_RADIUS, this.mDotPaint);
@@ -196,6 +193,7 @@ public class ClockView extends View {
         radius -= this.PADDING;
 
         Duration duration = this.stopwatch.getDurationForMode();
+
         String timeText = this.stopwatch.getPrettyTime(duration, false);
         String milliText = this.stopwatch.getMilliString(duration);
 
@@ -208,12 +206,20 @@ public class ClockView extends View {
         int msTextWidth = bounds.width();
         int totalTextWidth = textWidth + msTextWidth;
 
+		if (totalTextWidth > maxTextWidth)
+			maxTextWidth = totalTextWidth;
+		else totalTextWidth = maxTextWidth;
+
         canvas.drawText(timeText, this.PADDING + radius - (totalTextWidth / 2),
                 this.PADDING + radius + (mTextHeight / 2), mTimePaint);
         canvas.drawText(milliText, this.PADDING + radius - (totalTextWidth / 2) + textWidth,
                 this.PADDING + radius + (mTextHeight / 2), mMsPaint);
 
-        this.drawDot(canvas, radius, this.stopwatch.getSecondHandAngle());
+		double angle = Math.PI / 2;
+		if (this.stopwatch.isRunning()) {
+			angle = this.stopwatch.getDotAngle();
+		}
+        this.drawDot(canvas, radius, angle);
         canvas.drawCircle(this.PADDING + radius, this.PADDING + radius, radius, this.mCirclePaint);
     }
 

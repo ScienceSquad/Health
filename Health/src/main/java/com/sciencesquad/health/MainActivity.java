@@ -88,7 +88,6 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_send) {
 
 		} else if (id == R.id.nav_clock) {
-			System.out.println("Pressed the clock");
 			Intent intent = new Intent(this, ClockActivity.class);
 			startActivity(intent);
 		}

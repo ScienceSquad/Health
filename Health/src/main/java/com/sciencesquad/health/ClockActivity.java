@@ -24,8 +24,6 @@ public class ClockActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        System.out.println("PRINTED FROM CLOCKACTIVITY'S ONCREATE");
     }
 
 }
