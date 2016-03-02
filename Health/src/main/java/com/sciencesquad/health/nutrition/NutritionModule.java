@@ -10,6 +10,8 @@ import com.sciencesquad.health.events.BaseApplication;
 
 import org.threeten.bp.LocalDateTime;
 
+import java.util.Calendar;
+
 import io.realm.RealmQuery;
 
 
@@ -56,64 +58,6 @@ public class NutritionModule extends Module {
                 // do something about it.
             }
         });
-
-
-        try {
-            this.testNutritionModule();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Unit testing method for this module.
-     * Also used to test Realm capabilities/ integration is correct.
-    */
-    protected void testNutritionModule() throws Exception {
-        nutritionRealm.clear();
-        NutritionModel testModel = new NutritionModel();
-        testModel.setHadCaffeine(false);
-        testModel.setCalorieIntake(50);
-        testModel.setDate(LocalDateTime.now());
-        nutritionRealm.add(testModel);
-        RealmQuery<NutritionModel> testQuery = nutritionRealm.query();
-
-        Log.d(TAG, "Checking initial value");
-        Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
-        Log.d(TAG, "testQuery first value:" + testQuery.findAll().first().getCalorieIntake());
-
-        Log.d(TAG, "Adding mass values");
-        boolean testCaffeine = false;
-        for (int i = 1 ; i < 12; i++){
-            NutritionModel testModelI = new NutritionModel();
-            testModelI.setHadCaffeine(testCaffeine);
-            testModelI.setCalorieIntake(i);
-            testModelI.setDate(LocalDateTime.now());
-            nutritionRealm.add(testModelI);
-            testCaffeine = !testCaffeine;
-        }
-        Log.d(TAG, "Done adding");
-        Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
-        Log.d(TAG, "Grabbing random value: " + testQuery.findAll().get(4).getCalorieIntake());
-
-        Log.d(TAG, "Setting random value to something different");
-        Log.d(TAG, "Length: " + testQuery.findAll().size());
-        nutritionRealm.updateRealmModel(4, d -> d.setCalorieIntake(500));
-        Log.d(TAG, "Length: " + testQuery.findAll().size());
-
-        Log.d(TAG, "Sanity checks");
-        Log.d(TAG, "testQuery length where it's equal to 500: " + testQuery.equalTo("calorieIntake", 500).findAll().size());
-        Log.d(TAG, "Grabbing changed value: " + testQuery.equalTo("calorieIntake", 500).findAll().get(0).getCalorieIntake());
-        
-        Log.d(TAG, "Clearing database");
-        nutritionRealm.clear();
-        Log.d(TAG, "testQuery length: " + testQuery.findAll().size());
-
-        try {
-            nutritionRealm.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -124,7 +68,7 @@ public class NutritionModule extends Module {
         NutritionModel newNutritionModel = new NutritionModel();
         newNutritionModel.setHadCaffeine(hadCaffeine);
         newNutritionModel.setCalorieIntake(calorieIntake);
-        newNutritionModel.setDate(LocalDateTime.now());
+        newNutritionModel.setDate(Calendar.getInstance().getTime());
         nutritionRealm.add(newNutritionModel);
     }
 
