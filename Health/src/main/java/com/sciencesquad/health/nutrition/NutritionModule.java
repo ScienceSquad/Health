@@ -9,7 +9,12 @@ import com.sciencesquad.health.data.DataUpdateEvent;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 
-import org.joda.time.LocalDateTime;
+import org.threeten.bp.DateTimeUtils;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZoneOffset;
+
+import java.util.Date;
 
 /**
  * Nutrition Module itself.
@@ -64,8 +69,7 @@ public class NutritionModule extends Module {
         NutritionModel newNutritionModel = new NutritionModel();
         newNutritionModel.setHadCaffeine(hadCaffeine);
         newNutritionModel.setCalorieIntake(calorieIntake);
-        LocalDateTime timestamp = LocalDateTime.now();
-        newNutritionModel.setDate(timestamp.toDate());
+        DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC));
         nutritionRealm.add(newNutritionModel);
     }
 
