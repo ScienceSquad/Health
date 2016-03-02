@@ -12,9 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.events.BaseActivity;
-import com.sciencesquad.health.nutrition.NutritionModule;
-import com.sciencesquad.health.steps.StepsModule;
-
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 

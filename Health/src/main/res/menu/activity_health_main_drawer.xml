@@ -26,10 +26,7 @@
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
 			android:title="@string/action_settings" />
-		<item
-			android:id="@+id/nav_clock"
-			android:icon="@drawable/ic_menu_manage"
-			android:title="Clock" />
+
     </group>
 
     <item android:title="@string/communicate">
