@@ -2,10 +2,10 @@ package com.sciencesquad.health.nutrition;
 
 import android.util.Pair;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.data.DataContext;
 import com.sciencesquad.health.data.RealmContext;
-import com.sciencesquad.health.events.BaseApplication;
 
 /**
  * Nutrition Module
@@ -18,7 +18,7 @@ public class NutritionModule extends Module {
 
     public void init() {
         this.dataContext = new RealmContext<>();
-        this.dataContext.init(BaseApplication.application(), NutritionModel.class, "nutrition.realm");
+        this.dataContext.init(BaseApp.app(), NutritionModel.class, "nutrition.realm");
     }
 
     @Override

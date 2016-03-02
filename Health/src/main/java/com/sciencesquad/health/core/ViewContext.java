@@ -1,4 +1,4 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.core;
 
 import android.app.Activity;
 import android.databinding.ViewDataBinding;

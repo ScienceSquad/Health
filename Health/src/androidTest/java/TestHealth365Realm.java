@@ -1,23 +1,22 @@
 import android.test.ApplicationTestCase;
-
-import org.junit.Test;
-import junit.framework.Assert;
-
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.data.RealmContext;
-import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.nutrition.NutritionModel;
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;
+import junit.framework.Assert;
+import org.junit.Test;
+
 import java.util.Calendar;
 
 
 /**
  * This is a JUnit test for android.
  * This provides an example of how to run a test
- * which uses an application and allow it to use context.
+ * which uses an app and allow it to use context.
  */
 
-public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
+public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
 
     /**
      * Constructor sets up the test case an Application class
@@ -25,7 +24,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
      */
 
     public TestHealth365Realm(){
-        super(BaseApplication.class);
+        super(BaseApp.class);
     }
 
     /**
@@ -38,7 +37,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
         createApplication();
         try {
             RealmContext testRealm = new RealmContext<>();
-            testRealm.init(BaseApplication.application(), NutritionModel.class, "test.realm");
+            testRealm.init(BaseApp.app(), NutritionModel.class, "test.realm");
             testRealm.clear();
             NutritionModel testModel = new NutritionModel();
             testModel.setCalorieIntake(50);

@@ -3,9 +3,7 @@ package com.sciencesquad.health.data;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.BaseApp;
 import io.realm.*;
 import java8.util.function.Consumer;
 
@@ -60,7 +58,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
      *      - configNutritionRealm is set to delete the Realm if there are changes in the model,
      *      which in the early stages of development is okay.
      *      HOWEVER, once this is released, we need to make a separate Migration, which is will
-     *      support multiple versions of the application.
+     *      support multiple versions of the app.
      */
     @Override
 	@SuppressWarnings("unchecked")
@@ -73,7 +71,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			this.realm = Realm.getInstance(config);
 			this.realmClass = realmClass;
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_INIT_REALM).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_INIT_REALM).create());
 		}
     }
 
@@ -96,7 +94,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			this.realm.copyToRealm(object);
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_ADD_SINGLE_OBJECT).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_ADD_SINGLE_OBJECT).create());
 			return false;
 		}
 		return true;
@@ -112,7 +110,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			this.realm.copyToRealm(collection);
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_ADD_COLLECTION_OBJECT).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_ADD_COLLECTION_OBJECT).create());
 			return false;
 		}
 		return true;
@@ -126,7 +124,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().contains(object);
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_DOES_NOT_EXIST).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_DOES_NOT_EXIST).create());
 			return false;
 		}
 	}
@@ -139,7 +137,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().containsAll(collection);
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_COLLECTION_DOES_NOT_EXIST).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_COLLECTION_DOES_NOT_EXIST).create());
 			return false;
 		}
 	}
@@ -152,7 +150,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().equals(object);
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_COMPARE_OBJECT).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_COMPARE_OBJECT).create());
 			return false;
 		}
 	}
@@ -165,7 +163,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().hashCode();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_HASH_CODE).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_HASH_CODE).create());
 			return -1;
 		}
 	}
@@ -178,7 +176,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().isEmpty();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_CANNOT_CHECK_ISEMPTY).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_CANNOT_CHECK_ISEMPTY).create());
 			return false;
 		}
 	}
@@ -191,7 +189,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().iterator();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_ITERATOR).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_ITERATOR).create());
 			return Collections.emptyIterator();
 		}
 
@@ -215,7 +213,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.commitTransaction();
 			return true;
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_REMOVE_SINGLE_OBJECT).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_REMOVE_SINGLE_OBJECT).create());
 			return false;
 		}
 	}
@@ -240,7 +238,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.commitTransaction();
 			return true;
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_REMOVE_COLLECTION_OBJECT).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_REMOVE_COLLECTION_OBJECT).create());
 			return false;
 		}
 	}
@@ -263,7 +261,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.commitTransaction();
 			return true;
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_RETAIN_OBJECTS).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_RETAIN_OBJECTS).create());
 			return false;
 		}
 	}
@@ -276,7 +274,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().size();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_HAS_NO_SIZE).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_HAS_NO_SIZE).create());
 			return -1;
 		}
 	}
@@ -290,7 +288,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.clear(this.realmClass);
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_CLEAR_REALM).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_CLEAR_REALM).create());
 		}
 	}
 
@@ -302,7 +300,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().toArray();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_ARRAY).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_ARRAY).create());
 			return (new Object[1]);
 		}
 	}
@@ -336,7 +334,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return realm.where(this.realmClass);
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_QUERY).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_QUERY).create());
 			return null;
 		}
     }
@@ -354,7 +352,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			handler.accept(items().get(index));
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_UPDATE_REALM_AT_INDEX).create());
+			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_UPDATE_REALM_AT_INDEX).create());
 		}
     }
 }

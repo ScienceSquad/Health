@@ -7,9 +7,6 @@ import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
-import com.sciencesquad.health.ViewContext;
-import com.sciencesquad.health.events.BaseApplication;
-import com.sciencesquad.health.events.Event;
 import com.sciencesquad.health.util.X;
 import java8.util.stream.StreamSupport;
 import rx.Subscription;
@@ -164,18 +161,18 @@ public abstract class Module implements Observable {
 	}
 
 	/**
-	 * Publishes any Events to the shared application EventBus.
+	 * Publishes any Events to the shared app EventBus.
 	 *
 	 * @param event the event to publish
 	 * @param <E> the type of Event being published
 	 */
 	public synchronized <E extends Event> void publish(@NonNull E event) {
-		this.app().map(BaseApplication::eventBus).let(bus -> bus.publish(event));
+		this.app().map(BaseApp::eventBus).let(bus -> bus.publish(event));
 	}
 
 	/**
 	 * Subscribes and auto-manage a Subscription to an Event.
-	 * Automatically uses the shared application EventBus.
+	 * Automatically uses the shared app EventBus.
 	 *
 	 * @implNote Relies on the invocation of finalize() to clean up.
 	 *
@@ -185,7 +182,7 @@ public abstract class Module implements Observable {
 	 */
 	public synchronized <E extends Event> void subscribe(@NonNull final Class<E> eventClass,
 														 @Nullable final Object source, @NonNull final Action1<E> handler) {
-		this.app().map(BaseApplication::eventBus).let(bus -> {
+		this.app().map(BaseApp::eventBus).let(bus -> {
 			Subscription sub = bus.subscribe(eventClass, source, handler);
 			this._subscriptions.add(sub);
 		});
@@ -212,8 +209,8 @@ public abstract class Module implements Observable {
 	 * @return the Application as a nullable Optional
 	 */
 	@NonNull
-	protected X<BaseApplication> app() {
-		return X.of(BaseApplication.application());
+	protected X<BaseApp> app() {
+		return X.of(BaseApp.app());
 	}
 
 	/**
