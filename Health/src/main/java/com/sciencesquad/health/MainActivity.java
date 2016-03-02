@@ -1,5 +1,6 @@
 package com.sciencesquad.health;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -11,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.events.BaseActivity;
-import com.sciencesquad.health.nutrition.NutritionModule;
 
 
 public class MainActivity extends BaseActivity
@@ -38,13 +38,6 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
-
-
-		try {
-			NutritionModule abc = new NutritionModule();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 	}
 
@@ -98,6 +91,9 @@ public class MainActivity extends BaseActivity
 
 		} else if (id == R.id.nav_send) {
 
+		} else if (id == R.id.nav_clock) {
+			Intent intent = new Intent(this, ClockActivity.class);
+			startActivity(intent);
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
