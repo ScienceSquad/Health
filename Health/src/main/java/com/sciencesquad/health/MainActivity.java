@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.nutrition.NutritionModule;
+import com.sciencesquad.health.sleep.SleepModule;
 
 
 public class MainActivity extends BaseActivity
@@ -38,7 +39,6 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
-
 	}
 
 	@Override
