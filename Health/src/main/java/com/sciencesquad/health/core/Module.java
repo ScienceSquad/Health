@@ -5,6 +5,7 @@ import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.Pair;
 import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.events.Event;
@@ -33,7 +34,7 @@ public abstract class Module implements Observable {
 	 * A collection of all the registered modules; a module may not be
 	 * registered more than once.
 	 */
-	private static Set<Class<? extends Module>> _modules = new HashSet<>();
+	private static Set<Module> _modules = new HashSet<>();
 
 	/**
 	 * The internal set of Subscriptions to auto-unsubscribe from.
@@ -61,8 +62,13 @@ public abstract class Module implements Observable {
 	 * @param module the module to register
 	 * @return true if registration successful, false otherwise
 	 */
-	public static boolean registerModule(@NonNull Class<? extends Module> module) {
-		return _modules.add(module);
+	public static <T extends Module> boolean registerModule(@NonNull Class<T> module) {
+		try {
+			T instance = module.newInstance();
+			return _modules.add(instance);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -71,7 +77,7 @@ public abstract class Module implements Observable {
 	 * @param module the module to unregister
 	 * @return true if unregistration successful, false otherwise
 	 */
-	public static boolean unregisterModule(@NonNull Class<? extends Module> module) {
+	public static <T extends Module> boolean unregisterModule(@NonNull Class<T> module) {
 		return _modules.remove(module);
 	}
 
@@ -81,7 +87,7 @@ public abstract class Module implements Observable {
 	 * @return all registered Module subclasses
 	 */
 	@NonNull
-	public static Set<Class<? extends Module>> registeredModules() {
+	public static Set<Module> registeredModules() {
 		return _modules;
 	}
 
@@ -98,6 +104,7 @@ public abstract class Module implements Observable {
 		Module instance = null;//_modules.get(moduleClass);
 		if(instance != null)
 			return new Pair<>(instance, false);
+		Log.i(TAG, this.getClass().getSimpleName() + " initialized.");
 
 		try {
 			//instance = viewModelClass.newInstance();
@@ -119,6 +126,15 @@ public abstract class Module implements Observable {
 	 * @return a tuple of a String for the name and int for the drawable
 	 */
 	public abstract Pair<String, Integer> identifier();
+
+	/**
+	 * Refrain from using the constructor of a module for initialization
+	 * procedure. Module instances may be constructed and destroyed randomly.
+	 *
+	 * This method is the preferred point of initialization and is called
+	 * by the system when the module is to be created, only once.
+	 */
+	public abstract void init();
 
 	/**
 	 * Publishes any Events to the shared application EventBus.
