@@ -5,11 +5,8 @@ import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-<<<<<<< HEAD:Health/src/main/java/com/sciencesquad/health/Module.java
 import android.util.Pair;
-=======
 import com.sciencesquad.health.events.BaseApplication;
->>>>>>> master:Health/src/main/java/com/sciencesquad/health/core/Module.java
 import com.sciencesquad.health.events.Event;
 import java8.util.Optional;
 import java8.util.stream.StreamSupport;
@@ -19,7 +16,6 @@ import rx.functions.Action1;
 import java.util.HashSet;
 import java.util.Set;
 
-<<<<<<< HEAD:Health/src/main/java/com/sciencesquad/health/Module.java
 /**
  * The Module abstract class is the binding glue behind a modular architecture
  * that relies on dependency injection and a global and/or local event bus.
@@ -32,11 +28,6 @@ import java.util.Set;
  */
 public abstract class Module implements Observable {
 	private static final String TAG = "Module";
-=======
-// TODO: NEEDS TO BE FLESHED OUT!!
-public abstract class Module {
-	private static final String TAG = Module.class.getSimpleName();
->>>>>>> master:Health/src/main/java/com/sciencesquad/health/core/Module.java
 
 	/**
 	 * A collection of all the registered modules; a module may not be
@@ -152,7 +143,7 @@ public abstract class Module {
 	 * @param <E> the type of Event being subscribed to
 	 */
 	public synchronized <E extends Event> void subscribe(@NonNull final Class<E> eventClass,
-							 @Nullable final Object source, @NonNull final Action1<E> handler) {
+														 @Nullable final Object source, @NonNull final Action1<E> handler) {
 		this.app().ifPresent(app -> {
 			Subscription sub = app.eventBus().subscribe(eventClass, source, handler);
 			this._subscriptions.add(sub);
