@@ -16,7 +16,7 @@ import java.lang.ref.WeakReference;
  * of the Event types they wish to listen to.
  */
 public class EventBus {
-	private static final String TAG = "EventBus";
+	private static final String TAG = EventBus.class.getSimpleName();
 
 	/*
 	// In case we switch away from RxJava:
