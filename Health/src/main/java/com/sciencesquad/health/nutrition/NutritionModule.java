@@ -1,6 +1,7 @@
 package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
+
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.data.DataEmptyEvent;
 import com.sciencesquad.health.data.DataFailureEvent;
@@ -8,12 +9,7 @@ import com.sciencesquad.health.data.DataUpdateEvent;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 
-import org.threeten.bp.LocalDateTime;
-
-import java.util.Calendar;
-
-import io.realm.RealmQuery;
-
+import org.joda.time.LocalDateTime;
 
 /**
  * Nutrition Module itself.
@@ -68,7 +64,8 @@ public class NutritionModule extends Module {
         NutritionModel newNutritionModel = new NutritionModel();
         newNutritionModel.setHadCaffeine(hadCaffeine);
         newNutritionModel.setCalorieIntake(calorieIntake);
-        newNutritionModel.setDate(Calendar.getInstance().getTime());
+        LocalDateTime timestamp = LocalDateTime.now();
+        newNutritionModel.setDate(timestamp.toDate());
         nutritionRealm.add(newNutritionModel);
     }
 
