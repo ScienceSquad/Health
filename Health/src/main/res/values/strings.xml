@@ -16,12 +16,12 @@
 
 	<string name="user_name">User Person</string>
 	<string name="user_email">user.person@gmail.com</string>
-
+	
 	<string name="x">X</string>
 	<string name="y">Y</string>
 	<string name="z">Z</string>
 	<string name="dash">---</string>
 	<string name="reset_steps">Reset Steps</string>
-
+	
 	<string name="title_activity_clock">ClockActivity</string>
 </resources>

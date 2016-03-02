@@ -12,8 +12,95 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <TextView
+
+    <TableRow
+        android:id="@+id/tableRow1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ahoy, Mateys!" />
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tvX"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_column="1"
+            android:text="@string/z" />
+
+        <TextView
+            android:id="@+id/tvY"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_column="2"
+            android:text="@string/y" />
+
+        <TextView
+            android:id="@+id/tvZ"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_column="3"
+            android:text="@string/z" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/buttonReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="4"
+            android:onClick="resetSteps"
+            android:text="@string/reset_steps"
+            />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tvSteps"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_span="4"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/dash"
+            android:textSize="40sp"
+            />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="4"
+            android:max="20"
+            />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tvSensitive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="4"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/dash"
+            android:textSize="20sp"
+            />
+    </TableRow>
 </RelativeLayout>
