@@ -1,11 +1,13 @@
 package com.sciencesquad.health.steps;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -31,25 +33,6 @@ public class StepsModule extends Module {
 
     private RealmContext<StepsModel> stepsRealm;
 
-    /**
-     * Constructs the module itself.
-     * Subscribes to events necessary to maintaining its own model.
-     */
-    public StepsModule() throws Exception {
-        this.stepsRealm = new RealmContext<>();
-        this.stepsRealm.init(BaseApplication.application(), StepsModel.class, "steps.realm");
-
-        try {
-            this.testStepsModule();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void testStepsModule() throws Exception {
-
-    }
-
     // Display fields for accelerometer
     private TextView tvX;
     private TextView tvY;
@@ -66,98 +49,92 @@ public class StepsModule extends Module {
 
     // Sensor manager
     private SensorManager sensorManager;
-    private float acceleration;
 
     // Values to calculate number of steps
     private float prevY;
     private float currY; // YUM!
     private int numSteps;
+    private int maxDelay;
+    private int counterSteps;
 
     // SeekBar fields
     private SeekBar seekBar;
     private int threshold;
+
+    /**
+     * Constructs the module itself.
+     * Subscribes to events necessary to maintaining its own model.
+     */
+    public StepsModule() throws Exception {
+        this.stepsRealm = new RealmContext<>();
+        this.stepsRealm.init(BaseApplication.application(), StepsModel.class, "steps.realm");
+        onCreate();
+        registerEventListener(maxDelay);
+
+    }
+
+    private void registerEventListener(int maxdelay) {
+        // BEGIN_INCLUDE(register)
+
+        // Keep track of state so that the correct sensor type and batch delay can be set up when
+        // the app is restored (for example on screen rotation).
+        maxDelay = maxdelay;
+        counterSteps = 0;
+
+        // Get the default sensor for the sensor type from the SenorManager
+
+        SensorManager sensorManager = (SensorManager) BaseApplication.application().getSystemService(Context.SENSOR_SERVICE);
+        // sensorType is either Sensor.TYPE_STEP_COUNTER or Sensor.TYPE_STEP_DETECTOR
+        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+        // Register the listener for this sensor in batch mode.
+        // If the max delay is 0, events will be delivered in continuous mode without batching.
+        final boolean sensorWorking = sensorManager.registerListener(
+                sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL, maxDelay);
+        // END_INCLUDE(register)
+
+        if (!sensorWorking){
+            // something fucked up
+            Log.e(TAG, "Sensor could not be initialized");
+        }
+        else {
+            Log.d(TAG, "Counting enabled");
+        }
+
+    }
 
     // Event handler for accelerometer events
     private SensorEventListener sensorEventListener = new SensorEventListener() {
         //
         @Override
         public void onSensorChanged(SensorEvent event) {
-            // Gather values from accelerometer
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-
-            // Fetch current y
-            currY = y;
-
-            // Measure if a step is taken
-            if (Math.abs(currY - prevY) > threshold) {
-                numSteps++;
-                tvSteps.setText(String.valueOf(numSteps));
+            // Empty for now.
+            if (counterSteps < 1) {
+                // initial value
+                counterSteps = (int) event.values[0];
             }
 
-            // Display the values
-            tvX.setText(String.valueOf(x));
-            tvY.setText(String.valueOf(y));
-            tvZ.setText(String.valueOf(z));
+            // Calculate steps taken based on first counter value received.
+            numSteps= (int) event.values[0] - counterSteps;
+            Log.d(TAG, "Sensor picked up steps. Current step count: " + numSteps);
 
-            // Store previous y
-            prevY = y;
         }
 
         //
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            // Empty
+            // Empty for the rest of time.
         }
     };
 
-    private SensorManager getSystemService(String string) {
-        SensorManager sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        return sm;
+    // Self Explanatory
+    public void resetSteps(View v) {
+        numSteps = 0;
+        counterSteps = 0;
+        tvSteps.setText(String.valueOf(numSteps));
     }
 
-    // Enable accelerometer and register listener
-    private void enableAccelerometerListening() {
-        // Initialize the sensor manager
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorManager.registerListener(sensorEventListener,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                sensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    private SeekBar.OnSeekBarChangeListener seekBarListener =
-            new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    // Change threshold
-                    threshold = seekBar.getProgress();
-                    // Write to text view
-                    tvSensitive.setText(String.valueOf(threshold));
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                    // TODO
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    // TODO
-                }
-            };
-
-    private void setContentView(int view) {
-        view = view;
-    }
-
-    private View findViewById(int button) {
-        //int resID = getResources();
-        //View button;
-        return null;//button;
-    }
-
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate() {
 
         setContentView(R.layout.steps_layout);
 
@@ -186,18 +163,45 @@ public class StepsModule extends Module {
         prevY = 0;
         currY = 0;
         numSteps = 0;
-
-        // Initialize acceleration values
-        acceleration = 0.00f;
-
-        // Enable the listener
-        enableAccelerometerListening();
+        counterSteps = 0;
+        maxDelay = 0;
     }
 
-    // Self Explanatory
-    public void resetSteps(View v) {
-        numSteps = 0;
-        tvSteps.setText(String.valueOf(numSteps));
+    private SensorManager getSystemService(String string) {
+        SensorManager sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        return sm;
+    }
+
+    private SeekBar.OnSeekBarChangeListener seekBarListener =
+            new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    // Change threshold
+                    threshold = seekBar.getProgress();
+                    // Write to text view
+                    tvSensitive.setText(String.valueOf(threshold));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    // TODO
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    // TODO
+                }
+            };
+
+    private void setContentView(int view) {
+        // what does this do exactly?
+        view = view;
+    }
+
+    private View findViewById(int button) {
+        //int resID = getResources();
+        //View button;
+        return null;//button;
     }
 
 }
