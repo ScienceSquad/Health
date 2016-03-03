@@ -2,8 +2,6 @@ package com.sciencesquad.health.workout;
 
 import android.support.annotation.NonNull;
 
-import org.threeten.bp.Duration;
-
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
@@ -14,31 +12,18 @@ public class ExerciseSetModel extends RealmObject {
 
     private int reps;               // number of repetitions
     private Integer weight;         // amount of weight
-    private Duration length;        // length of time
+    private Long duration;          // length of time
     private Double distance;        // distance in miles
     /**
      * Calendar date where this model was created.
      */
     @Required private Date date;
 
-
-    public ExerciseSetModel(int reps, Integer weight){
-        this.reps = reps;
-        this.weight = weight;
-    }
-
-    public ExerciseSetModel(int reps, Duration length){
-        this.reps = reps;
-        this.length = length;
-    }
-
     public void setReps(int reps){ this.reps = reps; }
 
     public void setWeight(Integer weight){ this.weight = weight; }
 
-    public void setLength(Duration length){
-        this.length = length;
-    }
+    public void setDuration(Long duration){ this.duration = duration; }
 
     public void setDistance(Double distance) { this.distance = distance; }
 
@@ -48,8 +33,8 @@ public class ExerciseSetModel extends RealmObject {
         return weight;
     }
 
-    public Duration getDuration() {
-        return length;
+    public Long getDuration() {
+        return duration;
     }
 
     public Double getDistance() { return distance; }
