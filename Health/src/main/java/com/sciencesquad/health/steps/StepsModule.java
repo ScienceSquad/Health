@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.data.RealmContext;
+import com.sciencesquad.health.events.SensorContext;
 import com.sciencesquad.health.events.BaseApplication;
 
 import org.threeten.bp.DateTimeUtils;
@@ -34,6 +35,28 @@ public class StepsModule extends Module {
     private static final String REALMNAME = "steps.realm";
 
     private RealmContext<StepsModel> stepsRealm;
+    private SensorContext sensorContext;
+
+
+    /**
+     * Constructs the module itself.
+     * Subscribes to events necessary to maintaining its own model.
+     *
+    public StepsModule() throws Exception {
+        this.stepsRealm = new RealmContext<>();
+        this.stepsRealm.init(BaseApplication.application(), StepsModel.class, "steps.realm");
+        this.sensorContext = new SensorContext(Context);
+
+        try {
+            this.testStepsModule();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void testStepsModule() throws Exception {
+
+    } */
 
     // Display fields for accelerometer
     private TextView tvX;
