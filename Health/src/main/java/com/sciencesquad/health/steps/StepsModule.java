@@ -17,6 +17,10 @@ import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 
+import org.threeten.bp.DateTimeUtils;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneOffset;
+
 
 /**
  * Steps Module itself.
@@ -170,6 +174,13 @@ public class StepsModule extends Module {
         numSteps = 0;
         counterSteps = 0;
         maxDelay = 0;
+    }
+
+    public void writeStepsToRealm(){
+        StepsModel model = new StepsModel();
+        model.setStepCount(numSteps);
+        model.setDate(DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
+        stepsRealm.add(model);
     }
 
     // Self Explanatory
