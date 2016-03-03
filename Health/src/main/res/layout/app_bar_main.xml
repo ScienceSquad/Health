@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/plus" />
+        android:src="@drawable/ic_plus"
+        android:clickable="true"/>
 
 </android.support.design.widget.CoordinatorLayout>
