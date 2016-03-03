@@ -33,11 +33,12 @@
             </intent-filter>
         </activity>
 
-	<!-- For Clock testing. -->
+	    <!-- For Clock testing. -->
         <activity
             android:name=".ClockActivity"
             android:label="@string/title_activity_clock"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
 
         <!-- For SleepModule to play audio in the background. -->
         <service

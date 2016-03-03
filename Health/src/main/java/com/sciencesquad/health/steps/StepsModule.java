@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.data.RealmContext;
+import com.sciencesquad.health.events.SensorContext;
 import com.sciencesquad.health.events.BaseApplication;
 
 
