@@ -19,7 +19,6 @@ public class StepsModel extends RealmObject {
      */
     // we can set up the primary key to something else if need be.
 
-    //private LocalDateTime date;
     private Date date;
 
     private int stepCount;
