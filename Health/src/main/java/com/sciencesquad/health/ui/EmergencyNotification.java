@@ -2,6 +2,7 @@ package com.sciencesquad.health.ui;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
@@ -18,6 +19,7 @@ public class EmergencyNotification {
 	private static final int notificationId = 0x95ADDAD5;
 	private static Runnable onNotificationSend;
 	private static boolean sent = false;
+	private static PendingIntent resultPendingIntent;
 
 	private static NotificationManager getNotificationManager(Context context) {
 		return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -38,6 +40,9 @@ public class EmergencyNotification {
 				.setOngoing(true)
 				.setContent(rv)
 				.setSmallIcon(R.drawable.ic_alert);
+
+		if (resultPendingIntent != null)
+			mBuilder.setContentIntent(resultPendingIntent);
 
 		NotificationManager notifyManager = getNotificationManager(context);
 
@@ -72,6 +77,10 @@ public class EmergencyNotification {
 
 	public static void setOnNotificationSend(Runnable onNotificationSend) {
 		EmergencyNotification.onNotificationSend = onNotificationSend;
+	}
+
+	public static void setResultPendingIntent(PendingIntent resultPendingIntent) {
+		EmergencyNotification.resultPendingIntent = resultPendingIntent;
 	}
 
 	public static boolean hasSent() {

@@ -46,11 +46,6 @@
             android:name=".sleep.SoundService"
             android:exported="false"/>
 
-        <activity
-            android:name=".EmergencyCardActivity"
-            android:label="@string/title_activity_emergency_card"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
     </application>
 
 </manifest>
