@@ -12,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.steps.StepsModule;
+
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -36,6 +38,13 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+
+		try{
+			StepsModule stepsModule = new StepsModule();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override

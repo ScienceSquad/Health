@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -139,8 +140,8 @@ public class StepsModule extends Module {
      * This is a very rough sketch of it as of now.
      */
     protected void onCreate() {
-
-        setContentView(R.layout.steps_layout);
+        // commented out to prevent null pointer exception
+        /*setContentView(R.layout.steps_layout);
 
         // Attach objects to XML view
         tvX = (TextView) findViewById(R.id.tvX);
@@ -161,7 +162,7 @@ public class StepsModule extends Module {
         seekBar.setProgress(10);
         seekBar.setOnSeekBarChangeListener(seekBarListener);
         threshold = 10;
-        tvSensitive.setText(String.valueOf(threshold));
+        tvSensitive.setText(String.valueOf(threshold));*/
 
         // Initial values
         prevY = 0;
