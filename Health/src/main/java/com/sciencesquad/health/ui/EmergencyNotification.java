@@ -17,12 +17,15 @@ public class EmergencyNotification {
 	// 95 A.D.D. ADS
 	private static final int notificationId = 0x95ADDAD5;
 	private static Runnable onNotificationSend;
+	private static boolean sent = false;
 
 	private static NotificationManager getNotificationManager(Context context) {
 		return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 	public static void sendNotification(Context context, CharSequence title, CharSequence content) {
+		if (sent) return;
+
 		// Create RemoteView for standard notification
 		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.emergency_card);
 
@@ -34,7 +37,7 @@ public class EmergencyNotification {
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
 				.setOngoing(true)
 				.setContent(rv)
-				.setSmallIcon(R.drawable.ic_menu_manage);
+				.setSmallIcon(R.drawable.ic_alert);
 
 		NotificationManager notifyManager = getNotificationManager(context);
 
@@ -51,14 +54,27 @@ public class EmergencyNotification {
 
 		// Send the notification!
 		notifyManager.notify(notificationId, note);
+
+		if (onNotificationSend != null)
+			onNotificationSend.run();
+
+		sent = true;
 	}
 
 	public static void closeNotification(Context context) {
+		if (!sent) return;
+
 		NotificationManager notifyManager = getNotificationManager(context);
 		notifyManager.cancel(notificationId);
+
+		sent = false;
 	}
 
 	public static void setOnNotificationSend(Runnable onNotificationSend) {
 		EmergencyNotification.onNotificationSend = onNotificationSend;
+	}
+
+	public static boolean hasSent() {
+		return sent;
 	}
 }
