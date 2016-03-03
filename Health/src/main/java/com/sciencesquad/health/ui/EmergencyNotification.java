@@ -1,5 +1,6 @@
 package com.sciencesquad.health.ui;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
@@ -12,17 +13,46 @@ import com.sciencesquad.health.R;
  */
 public class EmergencyNotification {
 
-	public static void
-	sendNotification(Context context, CharSequence title, CharSequence content) {
+	// 9 SAD DADS
+	// 95 A.D.D. ADS
+	private static final int notificationId = 0x95ADDAD5;
+	private static Runnable onNotificationSend;
+
+	private static NotificationManager getNotificationManager(Context context) {
+		return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+	}
+
+	public static void sendNotification(Context context, CharSequence title, CharSequence content) {
+		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.emergency_card);
+
+		rv.setTextViewText(R.id.emc_title, title);
+		rv.setTextViewText(R.id.emc_content, content);
+
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
 				.setOngoing(true)
-				.setContent(new RemoteViews(context.getPackageName(), R.layout.emergency_card))
+				.setContent(rv)
 				.setSmallIcon(R.drawable.ic_menu_manage);
 
-		int mNotificationId = 1;
+		NotificationManager notifyManager = getNotificationManager(context);
 
-		NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification note = mBuilder.build();
 
-		mNotifyMgr.notify(mNotificationId, mBuilder.build());
+		RemoteViews rv_lg = new RemoteViews(context.getPackageName(), R.layout.emergency_card_lg);
+
+		rv_lg.setTextViewText(R.id.emc_title_lg, title);
+		rv_lg.setTextViewText(R.id.emc_content_lg, content);
+
+		note.bigContentView = rv_lg;
+
+		notifyManager.notify(notificationId, note);
+	}
+
+	public static void closeNotification(Context context) {
+		NotificationManager notifyManager = getNotificationManager(context);
+		notifyManager.cancel(notificationId);
+	}
+
+	public static void setOnNotificationSend(Runnable onNotificationSend) {
+		EmergencyNotification.onNotificationSend = onNotificationSend;
 	}
 }

@@ -11,6 +11,8 @@ import com.sciencesquad.health.ui.EmergencyNotification;
 
 public class EmergencyCardActivity extends BaseActivity {
 
+	private boolean notificationSent = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -19,8 +21,14 @@ public class EmergencyCardActivity extends BaseActivity {
 		setSupportActionBar(toolbar);
 
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-		fab.setOnClickListener(view -> EmergencyNotification.sendNotification(view.getContext(),
-				"Rad Notification", "The fish was delish and it made quite a dish"));
+		fab.setOnClickListener(view -> {
+			if (this.notificationSent)
+				EmergencyNotification.closeNotification(view.getContext());
+			else
+				EmergencyNotification.sendNotification(view.getContext(),
+						"Rad Notification", "The fish was delish and it made quite a dish");
+			this.notificationSent = !this.notificationSent;
+		});
 	}
 
 }
