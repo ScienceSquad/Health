@@ -8,17 +8,18 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".events.BaseApplication"
         android:allowBackup="true"
+        android:backupAgent=".data.RealmBackupAgent"
+        android:fullBackupContent="true"
+        android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:backupAgent=".data.RealmBackupAgent"
-        android:fullBackupContent="true"
-        android:fullBackupOnly="true">
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
@@ -47,7 +48,10 @@
 
         <activity
             android:name=".activity.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps"
+            android:exported="true">
+        </activity>
+
     </application>
 
 </manifest>
