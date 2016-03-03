@@ -2,9 +2,10 @@ package com.sciencesquad.health.workout;
 
 import android.support.annotation.NonNull;
 
-import org.threeten.bp.Duration;
+
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.Required;
 
 import java.util.Date;
@@ -15,68 +16,63 @@ enum ExerciseKind {
     STRENGTH, CARDIO
 }
 
+
+
 public class ExerciseTypeModel extends RealmObject {
 
     private String name;
-    private ExerciseKind kind;       // Strength or Cardio
-    private String category;          // Part of body
+    private String category;    // Strength or Cardio
+    private String target;          // Part of body
     private Double maxDistance;
     private Integer maxWeight;
-    private Duration maxDuration;
+    private Long maxDuration;
+
+    @Ignore
+    private ExerciseKind enumb;
+
 
     /**
      * Calendar date where this model was created.
      */
     @Required private Date date;
 
-    ExerciseTypeModel(String name, ExerciseKind kind, String category){
-        this.name = name;
-        this.kind = kind;
-        this.category = category;
-        this.maxDistance = 0.0;
-        this.maxWeight = 0;
-    }
-
     //
     // GENERATED METHODS FOLLOW
     // DO NOT MODIFY -- REALM ONLY
     //
-
-    public String getName() {
-        return name;
+    public void setEnumb(ExerciseKind kind) {
+        setCategory(kind.toString());
     }
 
-    public ExerciseKind getType() {
-        return kind;
+    public ExerciseKind getEnumb() {
+        return ExerciseKind.valueOf(getCategory());
     }
 
-    public String getCategory() {
-        return category;
-    }
+    public String getName() { return name; }
 
-    public Integer get1RMax(){
+    public String getCategory() { return category; }
+
+    public String getTarget() { return target; }
+
+    public Integer getMaxWeight(){
         return maxWeight;
     }
 
-    public Duration getMaxDuration(){
+    public Long getMaxDuration(){
         return maxDuration;
     }
 
     public Double getMaxDistance() { return  maxDistance; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) { this.name = name; }
 
-    public void setType(ExerciseKind kind) {
-        this.kind = kind;
-    }
+    public void setCategory(String category) { this.category = category; }
 
-    public void set1RMax(int newMax){
-        maxWeight = newMax;
-    }
+    public void setTarget(String target) { this.target = target; }
 
-    public void setMaxDuration(Duration newMax){
+    public void setMaxWeight(Integer newMax){ maxWeight = newMax; }
+
+    public void setMaxDuration(Long newMax){
         maxDuration = newMax;
     }
 
