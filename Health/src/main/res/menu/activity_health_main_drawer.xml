@@ -22,6 +22,10 @@
             android:id="@+id/nav_clock"
             android:icon="@drawable/ic_menu_manage"
             android:title="Clock" />
+        <item
+            android:id="@+id/nav_alarm"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Alarm" />
     </group>
 
     <item android:title="Communicate">
