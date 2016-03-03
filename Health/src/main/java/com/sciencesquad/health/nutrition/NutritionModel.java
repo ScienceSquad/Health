@@ -11,10 +11,16 @@ import java.util.Date;
  */
 public class NutritionModel extends RealmObject {
 	/**
-	 * Calories taken in on a certain day.
+	 * Data that is relevant to store for Nutrition Purposes.
 	 */
 	private int calorieIntake;
 	private boolean hadCaffeine;
+
+	private NutrientModel nutrientModel;
+	private VitaminModel vitaminModel;
+	private MineralModel mineralModel;
+
+
 
 	/**
 	 * Calendar date where this model was created.
@@ -50,5 +56,33 @@ public class NutritionModel extends RealmObject {
 
 	public void setHadCaffeine(boolean hadCaffeine) {
 		this.hadCaffeine = hadCaffeine;
+	}
+
+	@NonNull
+	public MineralModel getMineralModel() {
+		return mineralModel;
+	}
+
+	public void setMineralModel(@NonNull MineralModel mineralModel) {
+		this.mineralModel = mineralModel;
+	}
+
+	@NonNull
+	public VitaminModel getVitaminModel() {
+		return vitaminModel;
+	}
+
+
+	public void setVitaminModel(@NonNull VitaminModel vitaminModel) {
+		this.vitaminModel = vitaminModel;
+	}
+
+	@NonNull
+	public NutrientModel getNutrientModel() {
+		return nutrientModel;
+	}
+
+	public void setNutrientModel(@NonNull NutrientModel nutrientModel) {
+		this.nutrientModel = nutrientModel;
 	}
 }
