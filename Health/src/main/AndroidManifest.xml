@@ -8,6 +8,7 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COURSE_LOCATION" />
 
     <application
         android:name=".events.BaseApplication"
@@ -47,7 +48,8 @@
 
         <activity
             android:name=".activity.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps"
+            android:exported="true"></activity>
     </application>
 
 </manifest>
