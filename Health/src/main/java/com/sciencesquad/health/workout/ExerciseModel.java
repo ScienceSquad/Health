@@ -7,6 +7,7 @@ import com.sciencesquad.health.workout.ExerciseTypeModel;
 
 import org.threeten.bp.Duration;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class ExerciseModel extends RealmObject {
 
     private ExerciseTypeModel exercise;
-    private List<ExerciseSetModel> sets;
+    private RealmList<ExerciseSetModel> sets;
     /**
      * Calendar date where this model was created.
      */
@@ -29,27 +30,25 @@ public class ExerciseModel extends RealmObject {
     // DO NOT MODIFY -- REALM ONLY
     //
 
-    public List<ExerciseSetModel> getSets() {
+    public RealmList<ExerciseSetModel> getSets() {
         return sets;
     }
 
-    public void setType(ExerciseTypeModel exercise) {
+    public ExerciseTypeModel getExercise() {
+        return exercise;
+    }
+
+    public void setSets(RealmList<ExerciseSetModel> sets){
+        this.sets = sets;
+    }
+
+    public void setExercise(ExerciseTypeModel exercise) {
         this.exercise = exercise;
-    }
-
-    public void addSet(int reps, Integer weight){
-        ExerciseSetModel newSet = new ExerciseSetModel(reps, weight);
-        sets.add(newSet);
-    }
-
-    public void addSet(int reps, Duration length){
-        ExerciseSetModel newSet = new ExerciseSetModel(reps, length);
-        sets.add(newSet);
     }
 
     /**
     /* Returns one-rep-max from this exercise instance
-     */
+
     public Integer get1RMax(){
         Integer maxWeight = 0;
         Integer nextWeight = 0;
@@ -61,6 +60,7 @@ public class ExerciseModel extends RealmObject {
         }
         return maxWeight;
     }
+     */
 
     @NonNull
     public Date getDate() {
