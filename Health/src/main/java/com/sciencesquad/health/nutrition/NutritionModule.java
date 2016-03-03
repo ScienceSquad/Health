@@ -69,7 +69,7 @@ public class NutritionModule extends Module {
         NutritionModel newNutritionModel = new NutritionModel();
         newNutritionModel.setHadCaffeine(hadCaffeine);
         newNutritionModel.setCalorieIntake(calorieIntake);
-        DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC));
+        newNutritionModel.setDate(DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
         nutritionRealm.add(newNutritionModel);
     }
 
