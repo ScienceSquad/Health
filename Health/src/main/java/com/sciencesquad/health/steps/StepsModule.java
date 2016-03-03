@@ -70,7 +70,14 @@ public class StepsModule extends Module {
     public StepsModule() throws Exception {
         this.stepsRealm = new RealmContext<>();
         this.stepsRealm.init(BaseApplication.application(), StepsModel.class, "steps.realm");
-        onCreate();
+
+        // Initial values
+        prevY = 0;
+        currY = 0;
+        numSteps = 0;
+        counterSteps = 0;
+        maxDelay = 0;
+
         registerEventListener(maxDelay);
 
     }
@@ -139,43 +146,6 @@ public class StepsModule extends Module {
         }
     };
 
-    /**
-     * Initialisation helper of the module.
-     * This is a very rough sketch of it as of now.
-     */
-    protected void onCreate() {
-        // commented out to prevent null pointer exception
-        /*setContentView(R.layout.steps_layout);
-
-        // Attach objects to XML view
-        tvX = (TextView) findViewById(R.id.tvX);
-        tvY = (TextView) findViewById(R.id.tvY);
-        tvZ = (TextView) findViewById(R.id.tvZ);
-
-        // Attach step and sensitive view objects to XML
-        tvSteps = (TextView) findViewById(R.id.tvSteps);
-        tvSensitive = (TextView) findViewById(R.id.tvSensitive);
-
-        // Attach reset button to XML
-        buttonReset = (Button) findViewById(R.id.buttonReset);
-
-        // Attach the seekBar to XML
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
-
-        // Set the values on the seekBar, threshold and threshold display
-        seekBar.setProgress(10);
-        seekBar.setOnSeekBarChangeListener(seekBarListener);
-        threshold = 10;
-        tvSensitive.setText(String.valueOf(threshold));*/
-
-        // Initial values
-        prevY = 0;
-        currY = 0;
-        numSteps = 0;
-        counterSteps = 0;
-        maxDelay = 0;
-    }
-
     public void writeStepsToRealm(){
         StepsModel model = new StepsModel();
         model.setStepCount(numSteps);
@@ -215,11 +185,6 @@ public class StepsModule extends Module {
                     // TODO
                 }
             };
-
-    private void setContentView(int view) {
-        // what does this do exactly?
-        view = view;
-    }
 
     private View findViewById(int button) {
         //int resID = getResources();
