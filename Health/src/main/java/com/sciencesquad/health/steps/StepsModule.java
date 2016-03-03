@@ -1,12 +1,10 @@
 package com.sciencesquad.health.steps;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.data.RealmContext;
-import com.sciencesquad.health.events.SensorContext;
 import com.sciencesquad.health.events.BaseApplication;
 
 
@@ -73,6 +70,11 @@ public class StepsModule extends Module {
 
     }
 
+    /**
+     * Registers a listener for the Sensor to pick up User's steps.
+     * @param maxdelay
+     */
+
     private void registerEventListener(int maxdelay) {
         // BEGIN_INCLUDE(register)
 
@@ -103,7 +105,12 @@ public class StepsModule extends Module {
 
     }
 
-    // Event handler for accelerometer events
+
+    /**
+     * Event handler for StepCounter events.
+     * It will log the steps as it picks up events.
+     */
+
     private SensorEventListener sensorEventListener = new SensorEventListener() {
         //
         @Override
@@ -127,13 +134,10 @@ public class StepsModule extends Module {
         }
     };
 
-    // Self Explanatory
-    public void resetSteps(View v) {
-        numSteps = 0;
-        counterSteps = 0;
-        tvSteps.setText(String.valueOf(numSteps));
-    }
-
+    /**
+     * Initialisation helper of the module.
+     * This is a very rough sketch of it as of now.
+     */
     protected void onCreate() {
 
         setContentView(R.layout.steps_layout);
@@ -165,6 +169,13 @@ public class StepsModule extends Module {
         numSteps = 0;
         counterSteps = 0;
         maxDelay = 0;
+    }
+
+    // Self Explanatory
+    public void resetSteps(View v) {
+        numSteps = 0;
+        counterSteps = 0;
+        tvSteps.setText(String.valueOf(numSteps));
     }
 
     private SensorManager getSystemService(String string) {
