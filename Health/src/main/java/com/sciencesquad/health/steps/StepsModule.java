@@ -182,9 +182,9 @@ public class StepsModule extends Module {
     }
 
     private View findViewById(int button) {
-        int resID = getResources();
-        View button;
-        return button;
+        //int resID = getResources();
+        //View button;
+        return null;//button;
     }
 
     protected void onCreate(Bundle savedInstanceState) {

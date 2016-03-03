@@ -7,20 +7,20 @@ import io.realm.annotations.Required;
 
 import java.util.Date;
 
-import org.threeten.bp.LocalDateTime;
 
 /**
  * Realm Model for Steps database.
  * Things that are relevant to store for the Steps Module go here.
  */
-public final class StepsModel extends RealmObject {
+public class StepsModel extends RealmObject {
 
     /**
      * Date and step count. Date should always be Primary Key
      */
     // we can set up the primary key to something else if need be.
-    @PrimaryKey
-    LocalDateTime date;
+
+    //private LocalDateTime date;
+    private Date date;
 
     private int stepCount;
 
@@ -38,11 +38,11 @@ public final class StepsModel extends RealmObject {
     }
 
     @NonNull
-    public LocalDateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(@NonNull LocalDateTime date) {
+    public void setDate(@NonNull Date date) {
         this.date = date;
     }
 }
