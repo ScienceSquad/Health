@@ -33,6 +33,8 @@ public class AlarmView extends View implements TimePickerDialog.OnTimeSetListene
 
 	private Activity parentActivity;
 
+	private boolean timeSet = false;
+
 	private int mTextColor = Color.BLACK;
 	private float mTextHeight = 50;
 
@@ -68,7 +70,12 @@ public class AlarmView extends View implements TimePickerDialog.OnTimeSetListene
 		boolean result = mDetector.onTouchEvent(event);
 		if (!result) {
 			if (event.getAction() == MotionEvent.ACTION_UP) {
-				this.callDatePicker();
+				if (this.timeSet) {
+					this.alarm.setAlarm(this.parentActivity.getApplicationContext());
+				}
+				else {
+					this.callDatePicker();
+				}
 				result = true;
 			}
 		}
@@ -81,6 +88,7 @@ public class AlarmView extends View implements TimePickerDialog.OnTimeSetListene
 		this.alarm.set(Calendar.MINUTE, minute);
 		this.alarm.set(Calendar.SECOND, second);
 		this.postInvalidate();
+		this.timeSet = true;
 	}
 
 	@Override
@@ -94,12 +102,14 @@ public class AlarmView extends View implements TimePickerDialog.OnTimeSetListene
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		canvas.drawText(this.alarm.getFieldString(Calendar.YEAR, true), 0, this.mTextHeight, mTextPaint);
-		canvas.drawText(this.alarm.getFieldString(Calendar.MONTH, true), 0, 2 * this.mTextHeight, mTextPaint);
-		canvas.drawText(this.alarm.getFieldString(Calendar.DAY_OF_MONTH, true), 0, 3 * this.mTextHeight, mTextPaint);
-		canvas.drawText(this.alarm.getFieldString(Calendar.HOUR_OF_DAY, true), 0, 4 * this.mTextHeight, mTextPaint);
-		canvas.drawText(this.alarm.getFieldString(Calendar.MINUTE, true), 0, 5 * this.mTextHeight, mTextPaint);
-		canvas.drawText(this.alarm.getFieldString(Calendar.SECOND, true), 0, 6 * this.mTextHeight, mTextPaint);
+		String year = this.alarm.getFieldString(Calendar.YEAR, true);
+		String month = this.alarm.getFieldString(Calendar.MONTH, true);
+		String day = this.alarm.getFieldString(Calendar.DAY_OF_MONTH, true);
+		String hour = this.alarm.getFieldString(Calendar.HOUR_OF_DAY, true);
+		String minute = this.alarm.getFieldString(Calendar.MINUTE, true);
+		String second = this.alarm.getFieldString(Calendar.SECOND, true);
+		String date = month + " " + day + ", " + year + " @ " + hour + ":" + minute + ":" + second;
+		canvas.drawText(date, 0, this.mTextHeight, mTextPaint);
 	}
 
 	public void callDatePicker() {
