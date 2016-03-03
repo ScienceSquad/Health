@@ -6,7 +6,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -14,14 +13,8 @@ import android.widget.TextView;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.data.DataEmptyEvent;
-import com.sciencesquad.health.data.DataFailureEvent;
-import com.sciencesquad.health.data.DataUpdateEvent;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
-import com.sciencesquad.health.steps.StepsModel;
-
-import io.realm.RealmQuery;
 
 
 /**
@@ -165,7 +158,7 @@ public class StepsModule extends Module {
 
     protected void onCreate(Bundle savedInstanceState) {
 
-        setContentView(R.layout.activity_steps);
+        setContentView(R.layout.steps_layout);
 
         // Attach objects to XML view
         tvX = (TextView) findViewById(R.id.tvX);
