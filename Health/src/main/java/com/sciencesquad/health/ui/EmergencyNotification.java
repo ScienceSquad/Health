@@ -23,11 +23,14 @@ public class EmergencyNotification {
 	}
 
 	public static void sendNotification(Context context, CharSequence title, CharSequence content) {
+		// Create RemoteView for standard notification
 		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.emergency_card);
 
+		// Set title and content of notification
 		rv.setTextViewText(R.id.emc_title, title);
 		rv.setTextViewText(R.id.emc_content, content);
 
+		// Create builder for notification
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
 				.setOngoing(true)
 				.setContent(rv)
@@ -37,13 +40,16 @@ public class EmergencyNotification {
 
 		Notification note = mBuilder.build();
 
+		// Create RemoteView for expanded notification
 		RemoteViews rv_lg = new RemoteViews(context.getPackageName(), R.layout.emergency_card_lg);
 
+		// Set title and content of expanded notification
 		rv_lg.setTextViewText(R.id.emc_title_lg, title);
 		rv_lg.setTextViewText(R.id.emc_content_lg, content);
 
 		note.bigContentView = rv_lg;
 
+		// Send the notification!
 		notifyManager.notify(notificationId, note);
 	}
 
