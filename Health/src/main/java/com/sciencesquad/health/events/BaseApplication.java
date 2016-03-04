@@ -125,6 +125,7 @@ public class BaseApplication extends Application implements SharedPreferences.On
 
 		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(getBaseContext())
 				.name("default.health.realm")
+				.deleteRealmIfMigrationNeeded()
 				.build();
 		Realm.setDefaultConfiguration(defaultConfig);
 
