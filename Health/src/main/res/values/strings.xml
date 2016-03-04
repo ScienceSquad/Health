@@ -8,4 +8,5 @@
 
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_clock">ClockActivity</string>
+    <string name="title_activity_emergency_card">EmergencyCardActivity</string>
 </resources>
