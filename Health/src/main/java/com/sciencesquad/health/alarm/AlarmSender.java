@@ -33,7 +33,6 @@ public class AlarmSender {
 	private boolean repeat = false;
 	private long repeatInterval;
 	private AlarmManager alarmMgr;
-	private PendingIntent pendingIntent;
 
 	private final int DEFAULT_REPEAT = 7;
 
@@ -44,20 +43,15 @@ public class AlarmSender {
 		this.repeatInterval = AlarmManager.INTERVAL_DAY * DEFAULT_REPEAT;
 	}
 
-	public void setAlarm(Context context) {
-		this.pendingIntent = this.getPendingIntent(context);
+	public void setAlarm(Context context, Intent intent) {
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 		alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		if (repeat) {
-			alarmMgr.setInexactRepeating(AlarmManager.RTC, this.getTimeInMillis(), this.repeatInterval, this.pendingIntent);
+			alarmMgr.setInexactRepeating(AlarmManager.RTC, this.getTimeInMillis(), this.repeatInterval, pendingIntent);
 		}
 		else {
-			alarmMgr.set(AlarmManager.RTC, this.getTimeInMillis(), this.pendingIntent);
+			alarmMgr.set(AlarmManager.RTC, this.getTimeInMillis(), pendingIntent);
 		}
-	}
-
-	private PendingIntent getPendingIntent(Context context) {
-		Intent intent = new Intent(context, AlarmReceiver.class);
-		return PendingIntent.getActivity(context, 0, intent, 0);
 	}
 
 	public long getTimeInMillis() {

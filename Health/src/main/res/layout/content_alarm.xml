@@ -11,11 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.sciencesquad.health.AlarmActivity"
-    tools:showIn="@layout/activity_alarm">
-
-    <com.sciencesquad.health.ui.AlarmView
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_centerHorizontal="true" />
+    tools:showIn="@layout/activity_alarm"
+    android:id="@+id/alarm_rl">
 
 </RelativeLayout>
