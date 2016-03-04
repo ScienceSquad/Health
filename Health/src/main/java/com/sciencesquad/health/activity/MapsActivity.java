@@ -146,11 +146,16 @@ public class MapsActivity extends FragmentActivity implements
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
 
-
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-        if (computeDistanceBetween(lastLoc,latLng)>1) {
 
+        if (lastLoc==null) {
+            lastLoc = latLng;
         }
+
+        if (computeDistanceBetween(lastLoc,latLng)<1) {
+            return; //stops running the method if distance is inconsequential.
+        }
+        lastLoc = latLng;
 
         pointsLatLng.add(latLng);
         timeStamps.add(currentTimeMillis());
