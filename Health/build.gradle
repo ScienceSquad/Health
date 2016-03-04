@@ -25,7 +25,7 @@ android {
         config {
             keyAlias 'Health365'
             keyPassword 'd3012356101530'
-            storeFile file('/Users/brandonschabell/keystores/Health365.jks')
+            storeFile file('/Users/mrjohnson/Documents/Health365.jks')
             storePassword 'd3012356101530'
         }
     }
@@ -38,7 +38,6 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
-        
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -127,4 +126,3 @@ dependencies {
     compile 'junit:junit:4.12'
     compile 'com.wdullaer:materialdatetimepicker:2.2.0'
 }
-

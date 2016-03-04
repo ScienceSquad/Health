@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.sciencesquad.health">
+    package="com.sciencesquad.health" >
 
     <!-- For the Steps Module  -->
     <uses-feature android:name="android.hardware.sensor.stepcounter" />
