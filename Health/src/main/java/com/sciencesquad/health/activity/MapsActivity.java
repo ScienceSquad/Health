@@ -125,41 +125,16 @@ public class MapsActivity extends FragmentActivity implements
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        // Could probably delete this method.
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
-
-    // Method to calculate distance between two points.
-    public double distanceCalculation(LatLng StartP, LatLng EndP) {
-        int Radius = 6371;// radius of earth in Km
-        double lat1 = StartP.latitude;
-        double lat2 = EndP.latitude;
-        double lon1 = StartP.longitude;
-        double lon2 = EndP.longitude;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                * Math.sin(dLon / 2);
-        double c = 2 * Math.asin(Math.sqrt(a));
-        double valueResult = Radius * c;
-        double km = valueResult / 1;
-        DecimalFormat newFormat = new DecimalFormat("####");
-        int kmInDec = Integer.valueOf(newFormat.format(km));
-        double meter = valueResult % 1000;
-        int meterInDec = Integer.valueOf(newFormat.format(meter));
-        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
-                + " Meter   " + meterInDec);
-
-        return meter;
-    }
-
 
     List<LatLng> pointsLatLng = new ArrayList<>();
     List<Long> timeStamps = new ArrayList<>();
     List<Double> distances = new ArrayList<>();
     double totalDistance = 0;
     double totalCalories = 0;
+    LatLng lastLoc = null;
 
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
     Marker currentPos = null; // used to display current position
@@ -171,9 +146,12 @@ public class MapsActivity extends FragmentActivity implements
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
 
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
-        //pointsLatLng.add();
+        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        if (computeDistanceBetween(lastLoc,latLng)>1) {
+
+        }
+
         pointsLatLng.add(latLng);
         timeStamps.add(currentTimeMillis());
         if (timeStamps.size()>1) {
