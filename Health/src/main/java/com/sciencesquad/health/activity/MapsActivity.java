@@ -159,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements
 
         pointsLatLng.add(latLng);
         timeStamps.add(currentTimeMillis());
-        if (timeStamps.size()>1) {
+        if (timeStamps.size()>2) {
             double distanceDiff = computeDistanceBetween(pointsLatLng.get(timeStamps.size() - 2), latLng);
             distances.add(distanceDiff);
             totalDistance = totalDistance + distanceDiff;
