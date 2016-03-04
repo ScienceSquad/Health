@@ -12,6 +12,7 @@ public class PrescriptionModel extends RealmObject {
 	private String name;
 	private int dosage;
 	private long repeatDuration;
+	private long startDate;
 
 	public void setName(String name) {
 		this.name = name;
@@ -29,11 +30,19 @@ public class PrescriptionModel extends RealmObject {
 		return this.dosage;
 	}
 
-	public void setRepeatDuration(int repeatDuration) {
+	public void setRepeatDuration(long repeatDuration) {
 		this.repeatDuration = repeatDuration;
 	}
 
 	public long getRepeatDuration() {
 		return this.repeatDuration;
+	}
+
+	public void setStartDate(long startDate) {
+		this.startDate = startDate;
+	}
+
+	public long getStartDate() {
+		return this.startDate;
 	}
 }
