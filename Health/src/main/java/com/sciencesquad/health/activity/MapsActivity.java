@@ -20,6 +20,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -124,6 +125,9 @@ public class MapsActivity extends FragmentActivity implements
     }
     List<LatLng> pointsLatLng = new ArrayList<>();
 
+    boolean firstLoc = true; // used to ensure that only one starting marker is created.
+    Marker currentPos = null;
+
 
     private void handleNewLocation(Location location) {
         Log.d(TAG, location.toString());
@@ -136,10 +140,24 @@ public class MapsActivity extends FragmentActivity implements
         //pointsLatLng.add();
         pointsLatLng.add(latLng);
 
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("Starting Place");
-        mMap.addMarker(options);
+        // Creates a marker at the starting point.
+
+        if (firstLoc) {
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title("Starting Place");
+            mMap.addMarker(options);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+
+            MarkerOptions currentPosOptions = new MarkerOptions()
+                    .position(latLng)
+                    .title("Current Position");
+            currentPos = mMap.addMarker(currentPosOptions);
+
+            firstLoc = false;
+        }
+
+        currentPos.setPosition(latLng);
 
         PolylineOptions polylineoptions = new PolylineOptions()
                 .width(5)
@@ -149,7 +167,7 @@ public class MapsActivity extends FragmentActivity implements
                 .addAll(pointsLatLng));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        changeMapLocation(location);
+        //changeMapLocation(location);
     }
 
     @Override
@@ -182,6 +200,7 @@ public class MapsActivity extends FragmentActivity implements
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         } else {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             handleNewLocation(location);
         }
     }
@@ -226,12 +245,13 @@ public class MapsActivity extends FragmentActivity implements
 
     }
 
+    //TODO: This method could potentially be deleted. Check with handleNewLocation()
     private void changeMapLocation(Location location) {
         LatLng latlong = new LatLng(location.getLatitude(),
                 location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlong, 15));
 
         // Zoom in, animating the camera.
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
 }
