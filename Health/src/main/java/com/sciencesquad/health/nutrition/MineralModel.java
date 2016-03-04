@@ -13,6 +13,10 @@ public class MineralModel extends RealmObject {
     private double iron;
     private double potassium;
     private double zinc;
+    private double magnesium;
+    private double folicAcid;
+    private double chromium;
+    private double selenium;
 
     public double getCalcium() {
         return calcium;
@@ -44,5 +48,37 @@ public class MineralModel extends RealmObject {
 
     public void setZinc(double zinc) {
         this.zinc = zinc;
+    }
+
+    public double getSelenium() {
+        return selenium;
+    }
+
+    public void setSelenium(double selenium) {
+        this.selenium = selenium;
+    }
+
+    public double getChromium() {
+        return chromium;
+    }
+
+    public void setChromium(double chromium) {
+        this.chromium = chromium;
+    }
+
+    public double getFolicAcid() {
+        return folicAcid;
+    }
+
+    public void setFolicAcid(double folicAcid) {
+        this.folicAcid = folicAcid;
+    }
+
+    public double getMagnesium() {
+        return magnesium;
+    }
+
+    public void setMagnesium(double magnesium) {
+        this.magnesium = magnesium;
     }
 }
