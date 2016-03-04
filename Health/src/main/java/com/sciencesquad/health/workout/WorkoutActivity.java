@@ -1,8 +1,12 @@
 package com.sciencesquad.health.workout;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -11,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,8 +65,9 @@ public class WorkoutActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                  //      .setAction("Action", null).show();
+                showDialog();
             }
         });
 
@@ -89,6 +95,23 @@ public class WorkoutActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    void showDialog() {
+        DialogFragment newFragment = MyAlertDialogFragment.newInstance(
+                R.string.title_new_exercise_dialog);
+        newFragment.show(getSupportFragmentManager(), "dialog");
+    }
+
+    public void doPositiveClick() {
+        // Do stuff here.
+        Log.i("FragmentAlertDialog", "Positive click!");
+    }
+
+    public void doNegativeClick() {
+        // Do stuff here.
+        Log.i("FragmentAlertDialog", "Negative click!");
+    }
+
 
     /**
      * A placeholder fragment containing a simple view.
@@ -157,6 +180,41 @@ public class WorkoutActivity extends AppCompatActivity {
                     return "Routines";
             }
             return null;
+        }
+    }
+
+    public static class MyAlertDialogFragment extends DialogFragment {
+
+        public static MyAlertDialogFragment newInstance(int title) {
+            MyAlertDialogFragment frag = new MyAlertDialogFragment();
+            Bundle args = new Bundle();
+            args.putInt("title", title);
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            int title = getArguments().getInt("title");
+
+            return new AlertDialog.Builder(getActivity())
+                    .setIcon(R.drawable.ic_fitness_center_24dp)
+                    .setTitle(title)
+                    .setPositiveButton("Save",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((WorkoutActivity)getActivity()).doPositiveClick();
+                                }
+                            }
+                    )
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((WorkoutActivity)getActivity()).doNegativeClick();
+                                }
+                            }
+                    )
+                    .create();
         }
     }
 }
