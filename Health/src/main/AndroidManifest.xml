@@ -54,4 +54,47 @@
 
     </application>
 
+    <!-- For SoundService to play audio with the screen off. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+            android:name=".events.BaseApplication"
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            android:backupAgent=".data.RealmBackupAgent"
+            android:fullBackupOnly="true"
+            android:fullBackupContent="true">
+
+        <!-- For Google's AutoBackupAgent. -->
+        <meta-data android:name="com.google.android.backup.api_key"
+                   android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
+
+        <!-- Entry point for the application. -->
+        <activity
+                android:name=".MainActivity"
+                android:label="@string/app_name"
+                android:theme="@style/AppTheme.NoActionBar">
+
+            <!-- Can be started from any launcher application. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+	<!-- For Clock testing. -->
+        <activity
+            android:name=".ClockActivity"
+            android:label="@string/title_activity_clock"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <!-- For SleepModule to play audio in the background. -->
+        <service
+                android:name=".sleep.SoundService"
+                android:exported="false"/>
+    </application>
 </manifest>
