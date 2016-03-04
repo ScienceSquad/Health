@@ -12,10 +12,6 @@ import java.util.Date;
 import java.util.HashSet;
 
 
-enum ExerciseKind {
-    STRENGTH, CARDIO
-}
-
 
 
 public class ExerciseTypeModel extends RealmObject {
@@ -25,7 +21,7 @@ public class ExerciseTypeModel extends RealmObject {
     private String target;          // Part of body
     private Double maxDistance;
     private Integer maxWeight;
-    private Long maxDuration;
+    private long maxDuration;
 
     @Ignore
     private ExerciseKind enumb;
@@ -58,7 +54,7 @@ public class ExerciseTypeModel extends RealmObject {
         return maxWeight;
     }
 
-    public Long getMaxDuration(){
+    public long getMaxDuration(){
         return maxDuration;
     }
 
@@ -72,7 +68,7 @@ public class ExerciseTypeModel extends RealmObject {
 
     public void setMaxWeight(Integer newMax){ maxWeight = newMax; }
 
-    public void setMaxDuration(Long newMax){
+    public void setMaxDuration(long newMax){
         maxDuration = newMax;
     }
 

@@ -294,6 +294,17 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		}
 	}
 
+	public void clearClass(Class<M> realmClazz) {
+		try {
+			realm.beginTransaction();
+			realm.clear(realmClazz);
+			realm.commitTransaction();
+		} catch (Exception e){
+            Log.e(TAG, "Could not clear specified class from RealmContext", e);
+			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_CLEAR_REALM).create());
+		}
+	}
+
 	/**
 	 * @see Collection
 	 */

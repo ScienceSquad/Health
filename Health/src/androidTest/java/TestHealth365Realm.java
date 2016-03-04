@@ -6,6 +6,11 @@ import junit.framework.Assert;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.nutrition.NutritionModel;
+import com.sciencesquad.health.workout.ExerciseTypeModel;
+import com.sciencesquad.health.workout.WorkoutModule;
+import com.sciencesquad.health.workout.ExerciseKind;
+import com.sciencesquad.health.workout.RoutineModel;
+
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;
 import java.util.Calendar;
@@ -84,5 +89,34 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             Assert.fail("An Exception Occurred.");
         }
 
+    }
+    @Test
+    public void testWorkout(){
+        createApplication();
+        try{
+            RealmContext workoutTestRealm = new RealmContext<>();
+            workoutTestRealm.init(BaseApplication.application(), RoutineModel.class, "test.realm");
+            workoutTestRealm.clear();
+            ExerciseKind kind = ExerciseKind.valueOf("STRENGTH");
+            ExerciseTypeModel newExerciseType = com.sciencesquad.health.workout.WorkoutModule.createNewExercise("Bench Press", kind, "Chest");
+            workoutTestRealm.add(newExerciseType);
+            RealmQuery<ExerciseTypeModel> testQuery = workoutTestRealm.query();
+            Assert.assertEquals(testQuery.findAll().size(), 1);
+            Assert.assertEquals(testQuery.findAll().first().getName(), "Bench Press");
+
+            workoutTestRealm.getRealm().clear(ExerciseTypeModel.class);
+            Assert.assertEquals(testQuery.findAll().size(), 0);
+
+            try {
+                workoutTestRealm.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Assert.fail("Realm Failed to Close.");
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+            Assert.fail("An Exception Occurred.");
+        }
     }
 }
