@@ -1,4 +1,4 @@
-package com.sciencesquad.health.ui;
+package com.sciencesquad.health.alarm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

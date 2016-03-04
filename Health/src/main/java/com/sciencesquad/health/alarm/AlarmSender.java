@@ -1,4 +1,4 @@
-package com.sciencesquad.health.ui;
+package com.sciencesquad.health.alarm;
 
 
 import android.app.AlarmManager;
@@ -11,19 +11,19 @@ import java.util.Locale;
 /**
  * Created by andrew on 3/3/16.
  */
-public class Alarm {
+public class AlarmSender {
 
 	/** Variables for the various calendar fields
 	 *
 	 * HOUR_OF_DAY - Military time, 24-hour scheme
 	 * HOUR - Standard 12 hour scheme
 	 */
-	static final int YEAR = Calendar.YEAR;
-	static final int MONTH = Calendar.MONTH;
-	static final int DAY_OF_MONTH = Calendar.DAY_OF_MONTH;
-	static final int HOUR = Calendar.HOUR;
-	static final int HOUR_OF_DAY = Calendar.HOUR_OF_DAY;
-	static final int MINUTE = Calendar.MINUTE;
+	public static final int YEAR = Calendar.YEAR;
+	public static final int MONTH = Calendar.MONTH;
+	public static final int DAY_OF_MONTH = Calendar.DAY_OF_MONTH;
+	public static final int HOUR = Calendar.HOUR;
+	public static final int HOUR_OF_DAY = Calendar.HOUR_OF_DAY;
+	public static final int MINUTE = Calendar.MINUTE;
 	/* Don't know why anyone would need these:
 	static final int SECOND = Calendar.SECOND;
 	static final int MILLISECOND = Calendar.MILLISECOND;
@@ -37,7 +37,7 @@ public class Alarm {
 
 	private final int DEFAULT_REPEAT = 7;
 
-	public Alarm() {
+	public AlarmSender() {
 		this.time = Calendar.getInstance();
 		this.time.set(Calendar.SECOND, 0);
 		this.time.set(Calendar.MILLISECOND, 0);

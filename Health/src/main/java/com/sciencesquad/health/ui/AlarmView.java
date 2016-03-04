@@ -9,11 +9,11 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.sciencesquad.health.alarm.AlarmSender;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-
-import java.util.Calendar;
 
 /**
  * Created by andrew on 3/3/16.
@@ -21,7 +21,7 @@ import java.util.Calendar;
 public class AlarmView extends View implements TimePickerDialog.OnTimeSetListener,
 		DatePickerDialog.OnDateSetListener {
 
-	private Alarm alarm;
+	private AlarmSender alarm;
 
 	private GestureDetector mDetector;
 
@@ -48,7 +48,7 @@ public class AlarmView extends View implements TimePickerDialog.OnTimeSetListene
 
 	private void init(Context context, AttributeSet attrs) {
 		mDetector = new GestureDetector(this.getContext(), new mListener());
-		this.alarm = new Alarm();
+		this.alarm = new AlarmSender();
 
 		this.parentActivity = (Activity) context;
 
@@ -80,47 +80,44 @@ public class AlarmView extends View implements TimePickerDialog.OnTimeSetListene
 
 	@Override
 	public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-		this.alarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
-		this.alarm.set(Calendar.MINUTE, minute);
-		this.alarm.set(Calendar.SECOND, second);
+		this.alarm.set(AlarmSender.HOUR_OF_DAY, hourOfDay);
+		this.alarm.set(AlarmSender.MINUTE, minute);
 		this.postInvalidate();
 		this.timeSet = true;
 	}
 
 	@Override
 	public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-		this.alarm.set(Calendar.YEAR, year);
-		this.alarm.set(Calendar.MONTH, monthOfYear);
-		this.alarm.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+		this.alarm.set(AlarmSender.YEAR, year);
+		this.alarm.set(AlarmSender.MONTH, monthOfYear);
+		this.alarm.set(AlarmSender.DAY_OF_MONTH, dayOfMonth);
 		this.postInvalidate();
 		this.callTimePicker(false);
 	}
 
 	@Override
 	public void onDraw(Canvas canvas) {
-		String year = this.alarm.getFieldString(Calendar.YEAR, true);
-		String month = this.alarm.getFieldString(Calendar.MONTH, true);
-		String day = this.alarm.getFieldString(Calendar.DAY_OF_MONTH, true);
-		String hour = this.alarm.getFieldString(Calendar.HOUR_OF_DAY, true);
-		String minute = this.alarm.getFieldString(Calendar.MINUTE, true);
-		String second = this.alarm.getFieldString(Calendar.SECOND, true);
-		String date = month + " " + day + ", " + year + " @ " + hour + ":" + minute + ":" + second;
+		String year = this.alarm.getFieldString(AlarmSender.YEAR, true);
+		String month = this.alarm.getFieldString(AlarmSender.MONTH, true);
+		String day = this.alarm.getFieldString(AlarmSender.DAY_OF_MONTH, true);
+		String hour = this.alarm.getFieldString(AlarmSender.HOUR_OF_DAY, true);
+		String minute = this.alarm.getFieldString(AlarmSender.MINUTE, true);
+		String date = month + " " + day + ", " + year + " @ " + hour + ":" + minute;
 		canvas.drawText(date, 0, this.mTextHeight, mTextPaint);
 	}
 
 	public void callDatePicker() {
 		DatePickerDialog dpd = DatePickerDialog.newInstance(this,
-				this.alarm.get(Calendar.YEAR),
-				this.alarm.get(Calendar.MONTH),
-				this.alarm.get(Calendar.DAY_OF_MONTH));
+				this.alarm.get(AlarmSender.YEAR),
+				this.alarm.get(AlarmSender.MONTH),
+				this.alarm.get(AlarmSender.DAY_OF_MONTH));
 		dpd.show(this.parentActivity.getFragmentManager(), "Datepickerdialog");
 	}
 
 	public void callTimePicker(boolean is24HourMode) {
 		TimePickerDialog tpd = TimePickerDialog.newInstance(this,
-				this.alarm.get(Calendar.HOUR_OF_DAY),
-				this.alarm.get(Calendar.MINUTE),
-				this.alarm.get(Calendar.SECOND),
+				this.alarm.get(AlarmSender.HOUR_OF_DAY),
+				this.alarm.get(AlarmSender.MINUTE),
 				is24HourMode);
 		tpd.show(this.parentActivity.getFragmentManager(), "Timepickerdialog");
 	}
