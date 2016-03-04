@@ -185,12 +185,12 @@ public class MapsActivity extends FragmentActivity implements
             double distanceDiff = computeDistanceBetween(pointsLatLng.get(timeStamps.size() - 2), latLng);
             distances.add(distanceDiff);
             totalDistance = totalDistance + distanceDiff;
-            Log.d(TAG, "Distance traveled" + String.valueOf(totalDistance));
+            Log.i(TAG, "Distance traveled" + String.valueOf(totalDistance));
             double timeDiff = (timeStamps.get(timeStamps.size()-1)-timeStamps.get(timeStamps.size()-2))/1000; //time difference in seconds
             double speed = distanceDiff/timeDiff; //calculates the speed since the last location update
             totalCalories = totalCalories + calorieBurn(speed,timeDiff,weightKG);
-            Log.d(TAG, "Burned: " + String.valueOf(totalCalories));
-            Log.d(TAG, "Time since last location update:" + String.valueOf(timeDiff));
+            Log.i(TAG, "Burned: " + String.valueOf(totalCalories));
+            Log.i(TAG, "Time since last location update:" + String.valueOf(timeDiff));
         }
 
 
