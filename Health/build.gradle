@@ -31,8 +31,6 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -54,9 +52,6 @@ android {
     }
     dataBinding {
         enabled = true
-    }
-    testOptions {
-        unitTests.returnDefaultValues = true
     }
 }
 
