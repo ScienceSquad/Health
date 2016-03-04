@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.sciencesquad.health.R;
@@ -35,45 +34,12 @@ public class StepsModule extends Module {
     private static final String REALMNAME = "steps.realm";
 
     private RealmContext<StepsModel> stepsRealm;
-    private SensorContext sensorContext;
-
-
-    /**
-     * Constructs the module itself.
-     * Subscribes to events necessary to maintaining its own model.
-     *
-    public StepsModule() throws Exception {
-        this.stepsRealm = new RealmContext<>();
-        this.stepsRealm.init(BaseApplication.application(), StepsModel.class, "steps.realm");
-        this.sensorContext = new SensorContext(Context);
-
-        try {
-            this.testStepsModule();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void testStepsModule() throws Exception {
-
-    } */
-
-    // Display fields for accelerometer
-    private TextView tvX;
-    private TextView tvY;
-    private TextView tvZ;
-
-    // Display field for sensitivity
-    private TextView tvSensitive;
 
     // Display for steps
-    private TextView tvSteps;
-
-    // Reset button
-    private Button buttonReset;
+    private TextView num_steps;
 
     // Sensor manager
-    private SensorManager sensorManager;
+    //private SensorManager sensorManager;
 
     // Values to calculate number of steps
     private float prevY;
@@ -82,34 +48,27 @@ public class StepsModule extends Module {
     private int maxDelay;
     private int counterSteps;
 
-    // SeekBar fields
-    private SeekBar seekBar;
-    private int threshold;
-
     /**
      * Constructs the module itself.
      * Subscribes to events necessary to maintaining its own model.
+     * Going to pretend it does not throw an exception for now.
      */
-    public StepsModule() throws Exception {
+    //public StepsModule() throws Exception {
+    public StepsModule() {
         this.stepsRealm = new RealmContext<>();
-        this.stepsRealm.init(BaseApplication.application(), StepsModel.class, "steps.realm");
+        this.stepsRealm.init(BaseApplication.application(), StepsModel.class, REALMNAME);
 
         // Initial values
-        prevY = 0;
-        currY = 0;
         numSteps = 0;
         counterSteps = 0;
         maxDelay = 0;
-
-        registerEventListener(maxDelay);
-
     }
 
     /**
      * Registers a listener for the Sensor to pick up User's steps.
      * @param maxdelay
      */
-
+    /**
     private void registerEventListener(int maxdelay) {
         // BEGIN_INCLUDE(register)
 
@@ -119,8 +78,8 @@ public class StepsModule extends Module {
         counterSteps = 0;
 
         // Get the default sensor for the sensor type from the SenorManager
+        sensorManager = (SensorManager) BaseApplication.application().getSystemService(Context.SENSOR_SERVICE);
 
-        SensorManager sensorManager = (SensorManager) BaseApplication.application().getSystemService(Context.SENSOR_SERVICE);
         // sensorType is either Sensor.TYPE_STEP_COUNTER or Sensor.TYPE_STEP_DETECTOR
         Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
 
@@ -130,22 +89,21 @@ public class StepsModule extends Module {
                 sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL, maxDelay);
         // END_INCLUDE(register)
 
-        if (!sensorWorking){
+        if (!sensorWorking) {
             // something fucked up
             Log.e(TAG, "Sensor could not be initialized");
         }
         else {
             Log.d(TAG, "Counting enabled");
         }
-
     }
-
+    */
 
     /**
      * Event handler for StepCounter events.
      * It will log the steps as it picks up events.
      */
-
+    /**
     private SensorEventListener sensorEventListener = new SensorEventListener() {
         //
         @Override
@@ -157,7 +115,7 @@ public class StepsModule extends Module {
             }
 
             // Calculate steps taken based on first counter value received.
-            numSteps= (int) event.values[0] - counterSteps;
+            numSteps = (int) event.values[0] - counterSteps;
             Log.d(TAG, "Sensor picked up steps. Current step count: " + numSteps);
 
         }
@@ -168,51 +126,50 @@ public class StepsModule extends Module {
             // Empty for the rest of time.
         }
     };
+    */
 
-    public void writeStepsToRealm(){
+    // I'm sorry
+    /** public SensorEventListener getSensorEventListener() {
+        return sensorEventListener;
+    }*/
+
+    /**
+    public SensorManager getSensorManager() {
+        return sensorManager;
+    }
+    */
+
+    public int getNumSteps() {
+        return numSteps;
+    }
+    public void setNumSteps(int ns) {
+        numSteps = ns;
+    }
+
+    public int getMaxDelay() {
+        return maxDelay;
+    }
+    public void setMaxDelay(int md) {
+        maxDelay = md;
+    }
+
+    public int getCounterSteps() {
+        return counterSteps;
+    }
+    public void setCounterSteps(int cs) {
+        counterSteps = cs;
+    }
+
+    public void writeStepsToRealm() {
         StepsModel model = new StepsModel();
         model.setStepCount(numSteps);
         model.setDate(DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
         stepsRealm.add(model);
     }
 
-    // Self Explanatory
     public void resetSteps(View v) {
         numSteps = 0;
         counterSteps = 0;
-        tvSteps.setText(String.valueOf(numSteps));
+        //writeStepsToRealm();
     }
-
-    private SensorManager getSystemService(String string) {
-        SensorManager sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        return sm;
-    }
-
-    private SeekBar.OnSeekBarChangeListener seekBarListener =
-            new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    // Change threshold
-                    threshold = seekBar.getProgress();
-                    // Write to text view
-                    tvSensitive.setText(String.valueOf(threshold));
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                    // TODO
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    // TODO
-                }
-            };
-
-    private View findViewById(int button) {
-        //int resID = getResources();
-        //View button;
-        return null;//button;
-    }
-
 }

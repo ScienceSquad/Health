@@ -12,95 +12,48 @@
     tools:context="com.sciencesquad.health.steps.StepsModule"
     tools:showIn="@layout/app_bar_steps">
 
-
-    <TableRow
-        android:id="@+id/tableRow1"
+    <Button
+        android:id="@+id/buttonReset"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_centerInParent="true"
+        android:gravity="bottom"
+        android:onClick="resetSteps"
+        android:text="@string/reset_steps" />
 
-        <TextView
-            android:id="@+id/tvX"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:layout_column="1"
-            android:text="@string/x" />
+    <TextView
+        android:id="@+id/num_steps"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="left"
+        android:text="@string/dash"
+        android:textSize="40sp" />
 
-        <TextView
-            android:id="@+id/tvY"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:layout_column="2"
-            android:text="@string/y" />
-
-        <TextView
-            android:id="@+id/tvZ"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:layout_column="3"
-            android:text="@string/z" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow2"
+    <TextView
+        android:id="@+id/stride_length"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:text="@string/dash"
+        android:textSize="40sp" />
 
-        <Button
-            android:id="@+id/buttonReset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_span="4"
-            android:onClick="resetSteps"
-            android:text="@string/reset_steps"
-            />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow3"
+    <TextView
+        android:id="@+id/avg_speed"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:text="@string/dash"
+        android:textSize="40sp" />
 
-        <TextView
-            android:id="@+id/tvSteps"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_span="4"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/dash"
-            android:textSize="40sp"
-            />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow4"
+    <TextView
+        android:id="@+id/elapsed_time"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:text="@string/dash"
+        android:textSize="40sp" />
 
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_span="4"
-            android:max="20"
-            />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/tvSensitive"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_span="4"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/dash"
-            android:textSize="20sp"
-            />
-    </TableRow>
 </RelativeLayout>

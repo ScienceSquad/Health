@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.sciencesquad.health">
 
+    <!-- For the Steps Module  -->
+    <uses-feature android:name="android.hardware.sensor.stepcounter" />
+
     <!-- For SoundService to play audio with the screen off. -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
@@ -39,6 +42,12 @@
         <activity
             android:name=".ClockActivity"
             android:label="@string/title_activity_clock"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <!-- For Steps testing. -->
+        <activity
+            android:name=".steps.StepsViewModel"
+            android:label="@string/steps_module"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <!-- For SleepModule to play audio in the background. -->
