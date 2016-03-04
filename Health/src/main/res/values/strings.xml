@@ -5,4 +5,23 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="title_activity_clock">ClockActivity</string>
+    <string name="title_activity_emergency_card">EmergencyCardActivity</string>
+    <string name="notification_sleep_ticker">Notification Sleep Ticker</string>
+    <string name="notification_sleep_title">Notification Sleep Title</string>
+    <string name="notification_sleep_text">Notification Sleep Test</string>
+    <string name="message_not_calibrated">Message Not Calibrated</string>
+    <string name="message_prefs_not_compatible">Message Prefs Not Compatible</string>
+    <string name="message_recommend_calibration">Message Recommended Calibration</string>
+    <string name="pref_alarm_trigger_sensitivity">Pref Alarm Trigger Sensitivity</string>
+    <string name="pref_sensor_delay">Pref Sensor Delay</string>
+    <string name="pref_use_alarm">Pref Use Alarm</string>
+    <string name="pref_alarm_window">Pref Alarm Window</string>
+    <string name="pref_airplane_mode">Pref Airplane Mode</string>
+    <string name="pref_silent_mode">Pref Silent Mode</string>
+    <string name="pref_force_screen">Pref Force Screen</string>
+    <string name="notification_save_sleep_ticker">Notification Save Sleep Ticker</string>
+    <string name="notification_save_sleep_title">Notification Save Sleep Title</string>
+    <string name="notification_save_sleep_text">Notification Save Sleep Text</string>
+    <string name="to">to</string>
 </resources>
