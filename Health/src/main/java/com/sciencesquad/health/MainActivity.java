@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.workout.WorkoutActivity;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -92,8 +93,8 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_send) {
 
 		} else if (id == R.id.nav_workout){
-			//Toast toast = Toast.makeText(getApplicationContext(), "Selected Workout!", Toast.LENGTH_SHORT);
-			//toast.show();
+			Intent intent = new Intent(this, WorkoutActivity.class);
+			startActivity(intent);
 		} else if (id == R.id.nav_clock) {
 			Intent intent = new Intent(this, ClockActivity.class);
 			startActivity(intent);
