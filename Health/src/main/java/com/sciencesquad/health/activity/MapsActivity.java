@@ -133,6 +133,7 @@ public class MapsActivity extends FragmentActivity implements
     double totalCalories = 0;
     LatLng lastLoc = null;
 
+
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
     Marker currentPos = null; // used to display current position
 
@@ -145,11 +146,35 @@ public class MapsActivity extends FragmentActivity implements
 
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
+        // Sets the minimum distance needed to trigger a change in location
+        // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
+        float minDistResolution = location.getAccuracy();
+
         if (lastLoc==null) {
             lastLoc = latLng;
         }
 
-        if (computeDistanceBetween(lastLoc,latLng)<2) {
+        // Creates a marker at the starting point.
+
+        if (firstLoc) {
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title("Starting Place");
+            mMap.addMarker(options);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+
+            MarkerOptions currentPosOptions = new MarkerOptions()
+                    .position(latLng)
+                    .title("Current Position");
+            currentPos = mMap.addMarker(currentPosOptions);
+
+            pointsLatLng.add(latLng);
+            timeStamps.add(currentTimeMillis());
+
+            firstLoc = false;
+        }
+
+        if (computeDistanceBetween(lastLoc,latLng)<minDistResolution) {
             return; //stops running the method if distance is inconsequential.
         }
         lastLoc = latLng;
@@ -168,28 +193,13 @@ public class MapsActivity extends FragmentActivity implements
             Log.d(TAG, "Time since last location update:" + String.valueOf(timeDiff));
         }
 
-        // Creates a marker at the starting point.
 
-        if (firstLoc) {
-            MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title("Starting Place");
-            mMap.addMarker(options);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
-
-            MarkerOptions currentPosOptions = new MarkerOptions()
-                    .position(latLng)
-                    .title("Current Position");
-            currentPos = mMap.addMarker(currentPosOptions);
-
-            firstLoc = false;
-        }
 
         currentPos.setPosition(latLng);
 
         PolylineOptions polylineoptions = new PolylineOptions()
-                .width(5)
-                .color(Color.RED);
+                .width(8)
+                .color(Color.BLUE);
 
         mMap.addPolyline((polylineoptions)
                 .addAll(pointsLatLng));
@@ -233,7 +243,7 @@ public class MapsActivity extends FragmentActivity implements
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSION: {
-                //This if statement may be unnecessary. 
+                //This if statement may be unnecessary.
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // Do what you wanted to do with the permissions
                 } else {
