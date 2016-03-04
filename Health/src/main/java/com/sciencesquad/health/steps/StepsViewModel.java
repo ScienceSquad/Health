@@ -36,6 +36,7 @@ import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.ui.Stopwatch;
 
 import org.threeten.bp.Duration;
+import org.w3c.dom.Text;
 
 /**
  * This is the only way I know how to do this as of right now. Should this be in my Model instead?
@@ -50,6 +51,7 @@ public class StepsViewModel extends BaseActivity implements SensorEventListener 
     int numSteps;
     int maxDelay;
     int counterSteps;
+    double strideLength;
     private Button reset_steps;
     private TextView num_steps;
     private TextView stride_length;
@@ -75,17 +77,25 @@ public class StepsViewModel extends BaseActivity implements SensorEventListener 
         num_steps = (TextView) findViewById(R.id.num_steps);
         num_steps.setText(String.valueOf(numSteps));
 
+        strideLength = Math.round((0.415 * 1.8796)*100d)/100d;
+
+        stride_length = (TextView) findViewById(R.id.stride_length);
+        stride_length.setText(String.valueOf(strideLength) + "m");
+
         elapsed_time = (TextView) findViewById(R.id.elapsed_time);
         stopwatch.start();
-        stopwatch.setInterval(50);
+        stopwatch.setInterval(51);
         stopwatch.setOnTimeChange(new Runnable() {
             public void run() {
                 long millisElapsed = stopwatch.getMillisElapsed(true);
                 Duration duration = stopwatch.getDurationForMode();
                 elapsed_time.setText(stopwatch.getPrettyTime(duration, false) + "."
-                        + stopwatch.getMilliString(duration));
+                        + stopwatch.getMilliString(duration) + "s");
             }
         });
+
+        avg_speed = (TextView) findViewById(R.id.avg_speed);
+        avg_speed.setText(String.valueOf(strideLength) + "m/s");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

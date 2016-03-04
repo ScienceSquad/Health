@@ -29,7 +29,7 @@
         android:layout_centerInParent="true"
         android:gravity="left"
         android:text="@string/dash"
-        android:textSize="40sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/stride_length"
@@ -37,7 +37,7 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:text="@string/dash"
-        android:textSize="40sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/avg_speed"
@@ -45,7 +45,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:text="@string/dash"
-        android:textSize="40sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/elapsed_time"
@@ -54,6 +54,6 @@
         android:layout_alignParentRight="true"
         android:gravity="center"
         android:text="@string/dash"
-        android:textSize="40sp" />
+        android:textSize="20sp" />
 
 </RelativeLayout>
