@@ -75,6 +75,10 @@ public class AlarmSender {
 		this.time.set(field, value);
 	}
 
+	public void setTimeInMillis(long timeInMillis) {
+		this.time.setTimeInMillis(timeInMillis);
+	}
+
 	public void setRepeat(boolean repeat) {
 		this.repeat = repeat;
 	}
@@ -97,6 +101,10 @@ public class AlarmSender {
 		int intervals = minutes / 15;
 		if (intervals <= 0) return;
 		this.repeatInterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES * intervals;
+	}
+
+	public void setInterval(long interval) {
+		this.repeatInterval = interval;
 	}
 
 	public String getFieldString(int field, boolean prettyName) {
