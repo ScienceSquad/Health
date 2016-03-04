@@ -19,14 +19,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +66,7 @@ public class MapsActivity extends FragmentActivity implements
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(2 * 1000)        // 10 seconds, in milliseconds
+                .setInterval(3 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
     }
 
@@ -152,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements
             lastLoc = latLng;
         }
 
-        if (computeDistanceBetween(lastLoc,latLng)<1) {
+        if (computeDistanceBetween(lastLoc,latLng)<2) {
             return; //stops running the method if distance is inconsequential.
         }
         lastLoc = latLng;
@@ -236,6 +233,7 @@ public class MapsActivity extends FragmentActivity implements
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSION: {
+                //This if statement may be unnecessary. 
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // Do what you wanted to do with the permissions
                 } else {
