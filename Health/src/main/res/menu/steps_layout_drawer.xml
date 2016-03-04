@@ -19,30 +19,14 @@
             android:icon="@drawable/ic_menu_nutrition"
             android:title="@string/nutrition_module" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-			android:title="@string/action_settings" />
-        <item
             android:id="@+id/nav_clock"
             android:icon="@drawable/ic_menu_clock"
             android:title="Clock" />
         <item
-            android:id="@+id/nav_alarm"
+            android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Alarm" />
-    </group>
+            android:title="@string/action_settings" />
 
-    <item android:title="@string/communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/send" />
-        </menu>
-    </item>
+    </group>
 
 </menu>

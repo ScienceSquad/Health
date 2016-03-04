@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Health</string>
+    <string name="app_name">Health365</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -8,5 +8,24 @@
 
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_clock">ClockActivity</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
     <string name="title_activity_emergency_card">EmergencyCardActivity</string>
+
+	<string name="steps_module">Steps</string>
+	<string name="sleep_module">Sleep</string>
+	<string name="nutrition_module">Nutrition</string>
+	<string name="run_module">Run/Cycle</string>
+	<string name="communicate">Communicate</string>
+	<string name="share">Share</string>
+	<string name="send">Send</string>
+
+	<string name="user_name">User Person</string>
+	<string name="user_email">user.person@gmail.com</string>
+	
+	<string name="x">X</string>
+	<string name="y">Y</string>
+	<string name="z">Z</string>
+	<string name="dash">---</string>
+	<string name="reset_steps">Reset Steps</string>
+    
 </resources>
