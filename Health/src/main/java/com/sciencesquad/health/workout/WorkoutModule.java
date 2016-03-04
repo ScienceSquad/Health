@@ -15,22 +15,16 @@ import java.util.Calendar;
 public class WorkoutModule extends Module {
     public static final String TAG = WorkoutModule.class.getSimpleName();
 
-    private RealmContext<RoutineModel> workoutRealm;
+    //private RealmContext<RoutineModel> workoutRealm;
 
     /**
      * Constructs the module itself.
      * It also sets up a Realm Context for the Module.
      */
 
-    public WorkoutModule() throws Exception{
-        Log.d(TAG, "Constructing Workout Module");
-        // Set up Workout Realm
-        this.workoutRealm = new RealmContext<>();
-        this.workoutRealm.init(BaseApplication.application(), ExerciseTypeModel.class, "workout.realm");
-    }
+    public WorkoutModule(){}
 
-
-
+    /*
     public static ExerciseTypeModel createNewExercise(String name, ExerciseKind kind, String target){
         ExerciseTypeModel newExerciseType = new ExerciseTypeModel();
         newExerciseType.setName(name);
@@ -44,4 +38,6 @@ public class WorkoutModule extends Module {
 
         return newExerciseType;
     }
+    */
+
 }

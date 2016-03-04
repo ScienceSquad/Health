@@ -1,5 +1,6 @@
 package com.sciencesquad.health.workout;
 
+import android.app.ListActivity;
 import android.support.annotation.NonNull;
 
 
@@ -8,13 +9,14 @@ import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.Required;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 
-
-
-public class ExerciseTypeModel extends RealmObject {
+public class ExerciseTypeModel {
 
     private String name;
     private String category;    // Strength or Cardio
@@ -22,6 +24,8 @@ public class ExerciseTypeModel extends RealmObject {
     private Double maxDistance;
     private Integer maxWeight;
     private long maxDuration;
+
+    public List<List<ExerciseSetModel>> instances = new ArrayList<>();
 
     @Ignore
     private ExerciseKind enumb;
@@ -74,6 +78,11 @@ public class ExerciseTypeModel extends RealmObject {
 
     public void setMaxDistance(Double newMax) { maxDistance = newMax; }
 
+    @Override
+    public String toString(){
+        return getName();
+    }
+
     @NonNull
     public Date getDate() {
         return date;
@@ -81,5 +90,16 @@ public class ExerciseTypeModel extends RealmObject {
 
     public void setDate(@NonNull Date date) {
         this.date = date;
+    }
+
+    public ExerciseTypeModel(String name, String category, String target){
+        setName(name);
+        setCategory(category);
+        setTarget(target);
+        setMaxDistance(0.0);
+        setMaxDuration((long) 0);
+        setMaxWeight(0);
+        Calendar rightNow = Calendar.getInstance();
+        setDate(rightNow.getTime());
     }
 }

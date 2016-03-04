@@ -9,4 +9,5 @@
     <string name="title_activity_workout">WorkoutActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_new_exercise_dialog">New Exercise</string>
+    <string name="title_new_routine_dialog">New Routine</string>
 </resources>

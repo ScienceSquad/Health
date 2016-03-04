@@ -8,7 +8,7 @@ import io.realm.annotations.Required;
 import java.util.Date;
 
 
-public class ExerciseSetModel extends RealmObject {
+public class ExerciseSetModel {
 
     private int reps;               // number of repetitions
     private Integer weight;         // amount of weight
@@ -38,6 +38,20 @@ public class ExerciseSetModel extends RealmObject {
     }
 
     public Double getDistance() { return distance; }
+
+    public ExerciseSetModel(int reps, int weight){
+        this.reps = reps;
+        this.weight = weight;
+        this.duration = (long)0;
+        this.distance = 0.0;
+
+    }
+
+    @Override
+    public String toString(){
+        String str = "Reps: " + reps + "     Weight: " + weight;
+        return str;
+    }
 
     //
     // GENERATED METHODS FOLLOW

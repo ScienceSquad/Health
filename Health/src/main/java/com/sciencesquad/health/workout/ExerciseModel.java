@@ -16,10 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class ExerciseModel extends RealmObject {
+public class ExerciseModel {
 
     private ExerciseTypeModel exercise;
-    private RealmList<ExerciseSetModel> sets;
+    private List<ExerciseSetModel> sets;
     /**
      * Calendar date where this model was created.
      */
@@ -30,7 +30,7 @@ public class ExerciseModel extends RealmObject {
     // DO NOT MODIFY -- REALM ONLY
     //
 
-    public RealmList<ExerciseSetModel> getSets() {
+    public List<ExerciseSetModel> getSets() {
         return sets;
     }
 
@@ -38,7 +38,7 @@ public class ExerciseModel extends RealmObject {
         return exercise;
     }
 
-    public void setSets(RealmList<ExerciseSetModel> sets){
+    public void setSets(List<ExerciseSetModel> sets){
         this.sets = sets;
     }
 

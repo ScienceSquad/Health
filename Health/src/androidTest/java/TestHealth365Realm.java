@@ -90,6 +90,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
         }
 
     }
+    /*
     @Test
     public void testWorkout(){
         createApplication();
@@ -106,7 +107,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             Assert.assertEquals(testQuery.findAll().first().getName(), "Bench Press");
 
 
-            //workoutTestRealm.clear();
+            workoutTestRealm.clear();
             //workoutTestRealm.getRealm().clear(ExerciseTypeModel.class);
            //Assert.assertEquals(testQuery.findAll().size(), 0);
 
@@ -122,4 +123,5 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             Assert.fail("An Exception Occurred.");
         }
     }
+    */
 }
