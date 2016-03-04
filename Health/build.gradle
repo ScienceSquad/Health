@@ -39,7 +39,6 @@ android {
         versionName "1.0"
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         multiDexEnabled true
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
