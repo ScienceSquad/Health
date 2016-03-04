@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.events.BaseActivity;
-
+import com.sciencesquad.health.steps.StepsViewModel;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -27,7 +27,7 @@ public class MainActivity extends BaseActivity
 
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setOnClickListener(view ->
-				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+				Snackbar.make(view, "Spaghett!", Snackbar.LENGTH_LONG)
 						.setAction("Action", null).show());
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -38,7 +38,6 @@ public class MainActivity extends BaseActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
-
 	}
 
 	@Override
@@ -79,12 +78,13 @@ public class MainActivity extends BaseActivity
 		// Handle navigation view item clicks here.
 		int id = item.getItemId();
 
-		if (id == R.id.nav_camera) {
-			// Handle the camera action
-		} else if (id == R.id.nav_gallery) {
+		if (id == R.id.nav_run) {
 
-		} else if (id == R.id.nav_slideshow) {
+		} else if (id == R.id.nav_sleep) {
 
+		} else if (id == R.id.nav_steps) {
+			Intent intent = new Intent(this, StepsViewModel.class);
+			startActivity(intent);
 		} else if (id == R.id.nav_manage) {
 
 		} else if (id == R.id.nav_share) {

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.sciencesquad.health">
 
+    <!-- For the Steps Module  -->
+    <uses-feature android:name="android.hardware.sensor.stepcounter" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -67,10 +69,15 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
+        <!-- For Steps testing. -->
+        <activity
+            android:name=".steps.StepsViewModel"
+            android:label="@string/steps_module"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
             android:exported="false" />
     </application>
-
 </manifest>

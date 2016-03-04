@@ -75,7 +75,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     // MultiDex Support
     // RxJava and RxAndroid
     // Java 8 Support
@@ -96,14 +96,13 @@ dependencies {
     provided 'org.immutables:value:2.1.10'
     provided 'org.immutables:builder:2.1.10'
     // Android Support Library
-    // Framework-level Libraries
     compile 'com.android.support:palette-v7:23.2.0'
     compile 'com.android.support:cardview-v7:23.2.0'
     compile 'com.android.support:recyclerview-v7:23.2.0'
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:support-v13:23.2.0'
-    compile 'com.android.support:design:23.2.0'
+    compile 'com.android.support:design:23.1.0'
     // Framework-level Libraries
     compile 'io.realm:realm-android:0.87.5'
     apt 'com.github.frankiesardo:auto-parcel-processor:0.3.1'
