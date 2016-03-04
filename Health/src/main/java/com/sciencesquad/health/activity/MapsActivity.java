@@ -26,8 +26,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.System.currentTimeMillis;
 
 
 public class MapsActivity extends FragmentActivity implements
@@ -123,10 +126,41 @@ public class MapsActivity extends FragmentActivity implements
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
+
+    // Method to calculate distance between two points.
+    public double calculationByDistance(LatLng StartP, LatLng EndP) {
+        int Radius = 6371;// radius of earth in Km
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        double valueResult = Radius * c;
+        double km = valueResult / 1;
+        DecimalFormat newFormat = new DecimalFormat("####");
+        int kmInDec = Integer.valueOf(newFormat.format(km));
+        double meter = valueResult % 1000;
+        int meterInDec = Integer.valueOf(newFormat.format(meter));
+        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meterInDec);
+
+        return Radius * c;
+    }
+
+
     List<LatLng> pointsLatLng = new ArrayList<>();
+    List<Long> timeStamps = new ArrayList<>();
+    List<Double> distances = new ArrayList<>();
+    double totalDistance = 0;
 
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
-    Marker currentPos = null;
+    Marker currentPos = null; // used to display current position
 
 
     private void handleNewLocation(Location location) {
@@ -139,6 +173,11 @@ public class MapsActivity extends FragmentActivity implements
 
         //pointsLatLng.add();
         pointsLatLng.add(latLng);
+        timeStamps.add(currentTimeMillis());
+        if (timeStamps.size()>1) {
+            distances.add(calculationByDistance(pointsLatLng.get(timeStamps.size() - 2), latLng));
+            totalDistance = totalDistance + calculationByDistance(pointsLatLng.get(timeStamps.size() - 2), latLng);
+        }
 
         // Creates a marker at the starting point.
 
@@ -167,7 +206,6 @@ public class MapsActivity extends FragmentActivity implements
                 .addAll(pointsLatLng));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        //changeMapLocation(location);
     }
 
     @Override
@@ -243,15 +281,5 @@ public class MapsActivity extends FragmentActivity implements
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
 
-    }
-
-    //TODO: This method could potentially be deleted. Check with handleNewLocation()
-    private void changeMapLocation(Location location) {
-        LatLng latlong = new LatLng(location.getLatitude(),
-                location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlong, 15));
-
-        // Zoom in, animating the camera.
-        //mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
 }
