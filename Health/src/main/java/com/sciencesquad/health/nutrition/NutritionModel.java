@@ -3,7 +3,6 @@ package com.sciencesquad.health.nutrition;
 import android.support.annotation.NonNull;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
-
 import java.util.Date;
 
 /**
@@ -11,16 +10,23 @@ import java.util.Date;
  * Things that are relevant to store for the Nutrition Module go here.
  */
 public class NutritionModel extends RealmObject {
-
 	/**
-	 * Calories taken in on a certain day.
+	 * Data that is relevant to store for Nutrition Purposes.
 	 */
 	private int calorieIntake;
+	private boolean hadCaffeine;
+
+	private NutrientModel nutrientModel;
+	private VitaminModel vitaminModel;
+	private MineralModel mineralModel;
+
+
 
 	/**
 	 * Calendar date where this model was created.
 	 */
-	@Required private Date date;
+	@Required
+	private Date date;
 
 	//
 	// GENERATED METHODS FOLLOW
@@ -42,5 +48,41 @@ public class NutritionModel extends RealmObject {
 
 	public void setDate(@NonNull Date date) {
 		this.date = date;
+	}
+
+	public boolean isHadCaffeine() {
+		return hadCaffeine;
+	}
+
+	public void setHadCaffeine(boolean hadCaffeine) {
+		this.hadCaffeine = hadCaffeine;
+	}
+
+	@NonNull
+	public MineralModel getMineralModel() {
+		return mineralModel;
+	}
+
+	public void setMineralModel(@NonNull MineralModel mineralModel) {
+		this.mineralModel = mineralModel;
+	}
+
+	@NonNull
+	public VitaminModel getVitaminModel() {
+		return vitaminModel;
+	}
+
+
+	public void setVitaminModel(@NonNull VitaminModel vitaminModel) {
+		this.vitaminModel = vitaminModel;
+	}
+
+	@NonNull
+	public NutrientModel getNutrientModel() {
+		return nutrientModel;
+	}
+
+	public void setNutrientModel(@NonNull NutrientModel nutrientModel) {
+		this.nutrientModel = nutrientModel;
 	}
 }

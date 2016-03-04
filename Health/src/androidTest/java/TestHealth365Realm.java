@@ -45,6 +45,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             testRealm.clear();
             NutritionModel testModel = new NutritionModel();
             testModel.setCalorieIntake(50);
+            testModel.setHadCaffeine(false);
             Calendar rightNow = Calendar.getInstance();
             testModel.setDate(rightNow.getTime());
             testRealm.add(testModel);
@@ -53,11 +54,14 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             Assert.assertEquals(testQuery.findAll().size(), 1);
             Assert.assertEquals(testQuery.findAll().first().getCalorieIntake(), 50);
 
+            boolean testCoffee = false;
             for (int i = 1 ; i < 12; i++){
                 NutritionModel testModelI = new NutritionModel();
                 testModelI.setCalorieIntake(i);
+                testModelI.setHadCaffeine(testCoffee);
                 testModelI.setDate(rightNow.getTime());
                 testRealm.add(testModelI);
+                testCoffee = !testCoffee;
             }
 
             Assert.assertEquals(testQuery.findAll().size(), 12);
