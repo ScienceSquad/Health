@@ -6,13 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-
-import com.sciencesquad.health.R;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
@@ -97,7 +93,7 @@ public class AlarmView extends View implements TimePickerDialog.OnTimeSetListene
 		this.alarm.set(Calendar.MONTH, monthOfYear);
 		this.alarm.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 		this.postInvalidate();
-		this.callTimePicker(false, false);
+		this.callTimePicker(false);
 	}
 
 	@Override
@@ -120,7 +116,7 @@ public class AlarmView extends View implements TimePickerDialog.OnTimeSetListene
 		dpd.show(this.parentActivity.getFragmentManager(), "Datepickerdialog");
 	}
 
-	public void callTimePicker(boolean includeSecond, boolean is24HourMode) {
+	public void callTimePicker(boolean is24HourMode) {
 		TimePickerDialog tpd = TimePickerDialog.newInstance(this,
 				this.alarm.get(Calendar.HOUR_OF_DAY),
 				this.alarm.get(Calendar.MINUTE),
