@@ -25,10 +25,12 @@ android {
         config {
             keyAlias 'Health365'
             keyPassword 'd3012356101530'
-            storeFile file('/Users/brandonschabell/keystores/Health365.jks')
+            storeFile file('src/main/res/keystore/Health365.jks')
             storePassword 'd3012356101530'
         }
     }
+
+
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
     defaultConfig {
@@ -73,6 +75,8 @@ android {
         unitTests.returnDefaultValues = true
     }
 }
+
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

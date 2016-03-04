@@ -9,7 +9,7 @@
 *.class
 
 # Sign info
-*.jks
+#*.jks
 
 # Generated files
 bin/
