@@ -13,12 +13,16 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 /**
  * Created by andrew on 3/3/16.
+ * Initiates the Material Design Picker dialog
+ * Sets the AlarmSend variable in this class
  */
 public class AlarmDialog implements TimePickerDialog.OnTimeSetListener,
 		DatePickerDialog.OnDateSetListener {
 
 	private AlarmSender alarm;
 	private Activity parentActivity;
+
+	/** A runnable action to be run after date and time are set by the dialog **/
 	private Runnable onDateTimeSet;
 
 	class mListener extends GestureDetector.SimpleOnGestureListener {
@@ -64,6 +68,10 @@ public class AlarmDialog implements TimePickerDialog.OnTimeSetListener,
 				this.alarm.get(AlarmSender.MONTH),
 				this.alarm.get(AlarmSender.DAY_OF_MONTH));
 		dpd.show(this.parentActivity.getFragmentManager(), "Datepickerdialog");
+	}
+
+	public AlarmSender getAlarm() {
+		return this.alarm;
 	}
 
 	public void callTimePicker(boolean is24HourMode) {

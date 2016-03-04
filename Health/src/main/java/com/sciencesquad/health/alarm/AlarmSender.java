@@ -10,6 +10,7 @@ import java.util.Locale;
 
 /**
  * Created by andrew on 3/3/16.
+ * Maintains a date and time and sends an alarm to AlarmManager
  */
 public class AlarmSender {
 
@@ -43,6 +44,13 @@ public class AlarmSender {
 		this.repeatInterval = AlarmManager.INTERVAL_DAY * DEFAULT_REPEAT;
 	}
 
+	/**
+	 * Sends alarm using context and intent
+	 * Intent is target activity
+	 * Context is current activity
+	 * @param context
+	 * @param intent
+	 */
 	public void setAlarm(Context context, Intent intent) {
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 		alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -58,6 +66,7 @@ public class AlarmSender {
 		return this.time.getTimeInMillis();
 	}
 
+	/** fields are the constants defined at the top (also can be found in the Java Calendar class) **/
 	public int get(int field) {
 		return this.time.get(field);
 	}
