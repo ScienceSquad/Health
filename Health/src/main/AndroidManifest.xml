@@ -52,6 +52,10 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
+        <receiver android:enabled="true"
+            android:name=".prescriptions.PrescriptionAlarmReceiver">
+        </receiver>
+
     </application>
 
 </manifest>

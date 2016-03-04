@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.nutrition.NutritionModel;
+import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
 import com.sciencesquad.health.prescriptions.PrescriptionModel;
 
 import io.realm.RealmQuery;
@@ -108,6 +109,8 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             testModel.setRepeatDuration(AlarmManager.INTERVAL_DAY);
             testRealm.add(testModel);
             RealmQuery<PrescriptionModel> testQuery = testRealm.query();
+
+            PrescriptionAlarm.setAlarm(testModel, BaseApplication.application());
 
             Assert.assertEquals(testQuery.findAll().size(), 1);
             Assert.assertEquals(testQuery.findAll().first().getName(), "Tylenol");

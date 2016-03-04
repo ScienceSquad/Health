@@ -21,6 +21,7 @@ public class AlarmDialog implements TimePickerDialog.OnTimeSetListener,
 
 	private AlarmSender alarm;
 	private Activity parentActivity;
+	private boolean alarmSet = false;
 
 	/** A runnable action to be run after date and time are set by the dialog **/
 	private Runnable onDateTimeSet;
@@ -41,6 +42,10 @@ public class AlarmDialog implements TimePickerDialog.OnTimeSetListener,
 		this.onDateTimeSet = onDateTimeSet;
 	}
 
+	public boolean isSet() {
+		return this.alarmSet;
+	}
+
 	public void setAlarm(Context context, Intent intent) {
 		this.alarm.setAlarm(context, intent);
 	}
@@ -52,6 +57,7 @@ public class AlarmDialog implements TimePickerDialog.OnTimeSetListener,
 		if (onDateTimeSet != null) {
 			onDateTimeSet.run();
 		}
+		this.alarmSet = true;
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -52,13 +54,14 @@ public class AlarmSender {
 	 * @param intent
 	 */
 	public void setAlarm(Context context, Intent intent) {
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+		Log.d("AlarmSender", "Alarm set");
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 		alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		if (repeat) {
-			alarmMgr.setInexactRepeating(AlarmManager.RTC, this.getTimeInMillis(), this.repeatInterval, pendingIntent);
+			alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), this.repeatInterval, pendingIntent);
 		}
 		else {
-			alarmMgr.set(AlarmManager.RTC, this.getTimeInMillis(), pendingIntent);
+			alarmMgr.set(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), pendingIntent);
 		}
 	}
 
@@ -101,6 +104,10 @@ public class AlarmSender {
 		int intervals = minutes / 15;
 		if (intervals <= 0) return;
 		this.repeatInterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES * intervals;
+	}
+
+	public long getRepeatInterval() {
+		return this.repeatInterval;
 	}
 
 	public void setInterval(long interval) {
