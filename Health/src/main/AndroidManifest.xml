@@ -10,50 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <application
-        android:name=".events.BaseApplication"
-        android:allowBackup="true"
-        android:backupAgent=".data.RealmBackupAgent"
-        android:fullBackupContent="true"
-        android:fullBackupOnly="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <meta-data
-            android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
-
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
-        -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
-        <activity
-            android:name=".activity.MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:exported="true">
-        </activity>
-
-    </application>
-
     <!-- For SoundService to play audio with the screen off. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -66,7 +22,7 @@
             android:theme="@style/AppTheme"
             android:backupAgent=".data.RealmBackupAgent"
             android:fullBackupOnly="true"
-            android:fullBackupContent="true">
+            android:fullBackupContent="true" >
 
         <!-- For Google's AutoBackupAgent. -->
         <meta-data android:name="com.google.android.backup.api_key"
@@ -76,7 +32,7 @@
         <activity
                 android:name=".MainActivity"
                 android:label="@string/app_name"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme.NoActionBar" >
 
             <!-- Can be started from any launcher application. -->
             <intent-filter>
@@ -85,16 +41,34 @@
             </intent-filter>
         </activity>
 
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".activity.MapsActivity"
+            android:label="@string/title_activity_maps"
+            android:exported="true">
+        </activity>
+
 	<!-- For Clock testing. -->
         <activity
             android:name=".ClockActivity"
             android:label="@string/title_activity_clock"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
         <!-- For SleepModule to play audio in the background. -->
         <service
                 android:name=".sleep.SoundService"
-                android:exported="false"/>
+                android:exported="false" />
     </application>
 </manifest>
