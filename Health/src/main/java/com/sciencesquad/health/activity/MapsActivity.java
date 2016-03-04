@@ -148,7 +148,7 @@ public class MapsActivity extends FragmentActivity implements
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        float minDistResolution = location.getAccuracy();
+        float minDistResolution = location.getAccuracy()/2;
 
         if (lastLoc==null) {
             lastLoc = latLng;
