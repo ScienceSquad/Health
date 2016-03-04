@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sciencesquad.health">
+          package="com.sciencesquad.health">
 
     <!-- For SoundService to play audio with the screen off. -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:name=".events.BaseApplication"
@@ -29,9 +29,9 @@
 
             <!-- Can be started from any launcher application. -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -40,6 +40,7 @@
             android:name=".ClockActivity"
             android:label="@string/title_activity_clock"
             android:theme="@style/AppTheme.NoActionBar" />
+
 
         <!-- For SleepModule to play audio in the background. -->
         <service
@@ -50,6 +51,7 @@
             android:name=".workout.WorkoutActivity"
             android:label="@string/title_activity_workout"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
     </application>
 
 </manifest>
