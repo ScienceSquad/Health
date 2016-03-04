@@ -38,6 +38,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+        
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -124,4 +125,9 @@ dependencies {
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'junit:junit:4.12'
+<<<<<<< HEAD
+    compile 'com.wdullaer:materialdatetimepicker:2.2.0'
 }
+=======
+}
+>>>>>>> master

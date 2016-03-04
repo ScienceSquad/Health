@@ -78,6 +78,16 @@
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
-            android:exported="false" />
+            android:exported="false"/>
+
+        <activity
+            android:name=".AlarmActivity"
+            android:label="@string/title_activity_alarm"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <receiver android:enabled="true"
+            android:name=".prescriptions.PrescriptionAlarmReceiver">
+        </receiver>
     </application>
 </manifest>

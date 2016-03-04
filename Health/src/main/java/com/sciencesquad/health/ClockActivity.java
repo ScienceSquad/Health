@@ -1,11 +1,18 @@
 package com.sciencesquad.health;
 
+import android.app.AlarmManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
+import com.sciencesquad.health.prescriptions.PrescriptionModel;
+import com.sciencesquad.health.ui.EmergencyNotification;
+
+import java.util.Calendar;
 
 public class ClockActivity extends BaseActivity {
 
@@ -20,8 +27,13 @@ public class ClockActivity extends BaseActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (EmergencyNotification.hasSent()) {
+                    EmergencyNotification.closeNotification(view.getContext());
+                }
+                else {
+                    EmergencyNotification.sendNotification(view.getContext(), "THIS IS AN EMERGENCY",
+                            "This is actually a pretty big deal, you should be concerned.");
+                }
             }
         });
     }

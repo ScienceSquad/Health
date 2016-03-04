@@ -8,6 +8,7 @@
 
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_clock">ClockActivity</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
     <string name="title_activity_emergency_card">EmergencyCardActivity</string>
 
 	<string name="steps_module">Steps</string>

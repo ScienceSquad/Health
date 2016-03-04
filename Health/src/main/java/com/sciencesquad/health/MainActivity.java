@@ -94,6 +94,9 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_clock) {
 			Intent intent = new Intent(this, ClockActivity.class);
 			startActivity(intent);
+		} else if (id == R.id.nav_alarm) {
+			Intent intent = new Intent(this, AlarmActivity.class);
+			startActivity(intent);
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
