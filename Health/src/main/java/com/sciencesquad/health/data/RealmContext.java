@@ -3,8 +3,6 @@ package com.sciencesquad.health.data;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.sciencesquad.health.events.BaseApplication;
 import io.realm.*;
 import java8.util.function.Consumer;
@@ -70,6 +68,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 					.name(identifier)
 					.deleteRealmIfMigrationNeeded() // DEBUG ONLY
 					.build();
+
 			this.realm = Realm.getInstance(config);
 			this.realmClass = realmClass;
 		} catch (Exception e) {
@@ -290,17 +289,6 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.clear(this.realmClass);
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_CLEAR_REALM).create());
-		}
-	}
-
-	public void clearClass(Class<M> realmClazz) {
-		try {
-			realm.beginTransaction();
-			realm.clear(realmClazz);
-			realm.commitTransaction();
-		} catch (Exception e){
-            Log.e(TAG, "Could not clear specified class from RealmContext", e);
 			BaseApplication.application().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_CLEAR_REALM).create());
 		}
 	}

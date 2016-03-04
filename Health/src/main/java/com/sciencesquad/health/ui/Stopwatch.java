@@ -447,6 +447,10 @@ public class Stopwatch {
         this.elapsed = Duration.ZERO;
     }
 
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
+
     /** Add a lap
      *
      * Still have yet to do this.
