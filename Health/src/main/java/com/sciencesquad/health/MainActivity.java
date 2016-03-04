@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.sciencesquad.health.activity.MapsActivity;
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.steps.StepsViewModel;
 
@@ -79,7 +81,8 @@ public class MainActivity extends BaseActivity
 		int id = item.getItemId();
 
 		if (id == R.id.nav_run) {
-
+			Intent intent = new Intent(this, MapsActivity.class);
+			startActivity(intent);
 		} else if (id == R.id.nav_sleep) {
 
 		} else if (id == R.id.nav_steps) {
