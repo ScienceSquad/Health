@@ -22,12 +22,30 @@ def buildTime = new Date().format("yyyy-MM-dd'T'HH:mm'Z'", TimeZone.getTimeZone(
 
 android {
     signingConfigs {
-        config {
+        /*config {
             keyAlias 'Health365'
             keyPassword 'd3012356101530'
             storeFile file('src/main/res/keystore/Health365.jks')
             storePassword 'd3012356101530'
+        }*/
+
+
+        if (System.getenv("TRAVIS")) {
+            config {
+                storeFile rootProject.file('Health365.jks')
+                storePassword System.getenv("KEYSTORE_PASS")
+                keyAlias System.getenv("ALIAS_NAME")
+                keyPassword System.getenv("ALIAS_PASS")
+            }
+        } else {
+            config {
+                keyAlias 'Health365'
+                keyPassword 'd3012356101530'
+                storeFile file('src/main/res/keystore/Health365.jks')
+                storePassword 'd3012356101530'
+            }
         }
+
     }
 
 
