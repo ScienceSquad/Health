@@ -96,8 +96,10 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_send) {
 
 		} else if (id == R.id.nav_workout){
-			Intent intent = new Intent(this, WorkoutActivity.class);
-			startActivity(intent);
+			//Intent intent = new Intent(this, WorkoutActivity.class);
+			//startActivity(intent);
+			startActivity(new Intent(this, WorkoutActivity.class));
+
 		} else if (id == R.id.nav_clock) {
 			Intent intent = new Intent(this, ClockActivity.class);
 			startActivity(intent);

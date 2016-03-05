@@ -20,7 +20,7 @@ import org.threeten.bp.ZoneOffset;
  * Note:
  * It must be expanded upon from this current baby state
  */
-public class NutritionModule extends Module {
+public class    NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
     private static final String REALMNAME = "nutrition.realm";
 
