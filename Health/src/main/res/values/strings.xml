@@ -8,6 +8,10 @@
 
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_clock">ClockActivity</string>
+    <string name="title_activity_workout">WorkoutActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_new_exercise_dialog">New Exercise</string>
+    <string name="title_new_routine_dialog">New Routine</string>
     <string name="title_activity_alarm">AlarmActivity</string>
     <string name="title_activity_emergency_card">EmergencyCardActivity</string>
 

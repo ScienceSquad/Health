@@ -13,8 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.sciencesquad.health.activity.MapsActivity;
+import android.widget.Toast;
+
 import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.workout.WorkoutActivity;
 import com.sciencesquad.health.steps.StepsViewModel;
+
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -94,6 +98,9 @@ public class MainActivity extends BaseActivity
 
 		} else if (id == R.id.nav_send) {
 
+		} else if (id == R.id.nav_workout){
+			Intent intent = new Intent(this, WorkoutActivity.class);
+			startActivity(intent);
 		} else if (id == R.id.nav_clock) {
 			Intent intent = new Intent(this, ClockActivity.class);
 			startActivity(intent);
