@@ -1,14 +1,19 @@
 package com.sciencesquad.health.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -22,7 +27,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.sciencesquad.health.AlarmActivity;
+import com.sciencesquad.health.ClockActivity;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.steps.StepsViewModel;
+import com.sciencesquad.health.workout.WorkoutActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +43,7 @@ import static java.lang.System.currentTimeMillis;
 public class MapsActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = MapsActivity.class.getSimpleName();
 
@@ -313,5 +322,44 @@ public class MapsActivity extends FragmentActivity implements
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
 
+    }
+
+    /**
+     * I have not been tested :-)
+     */
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_run) {
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_sleep) {
+
+        } else if (id == R.id.nav_steps) {
+            Intent intent = new Intent(this, StepsViewModel.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        } else if (id == R.id.nav_workout){
+            Intent intent = new Intent(this, WorkoutActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_clock) {
+            Intent intent = new Intent(this, ClockActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_alarm) {
+            Intent intent = new Intent(this, AlarmActivity.class);
+            startActivity(intent);
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

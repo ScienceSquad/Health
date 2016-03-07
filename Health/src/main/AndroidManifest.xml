@@ -56,6 +56,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <!-- For Maps testing. -->
         <activity
             android:name=".activity.MapsActivity"
             android:label="@string/title_activity_maps"
@@ -75,16 +76,23 @@
             android:label="@string/steps_module"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <!-- For SleepModule to play audio in the background. -->
-        <service
-            android:name=".sleep.SoundService"
-            android:exported="false"/>
+        <!-- For Workout testing. -->
+        <activity
+            android:name=".workout.WorkoutActivity"
+            android:label="@string/workout_module"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
+        <!-- For Alarm testing. -->
         <activity
             android:name=".AlarmActivity"
             android:label="@string/title_activity_alarm"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
+        <!-- For SleepModule to play audio in the background. -->
+        <service
+            android:name=".sleep.SoundService"
+            android:exported="false"/>
 
         <receiver android:enabled="true"
             android:name=".prescriptions.PrescriptionAlarmReceiver">

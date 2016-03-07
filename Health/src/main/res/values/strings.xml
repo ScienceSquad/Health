@@ -19,6 +19,7 @@
 	<string name="sleep_module">Sleep</string>
 	<string name="nutrition_module">Nutrition</string>
 	<string name="run_module">Run/Cycle</string>
+	<string name="workout_module">Workout</string>
 	<string name="communicate">Communicate</string>
 	<string name="share">Share</string>
 	<string name="send">Send</string>
