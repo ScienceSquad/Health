@@ -39,7 +39,7 @@ public class NutritionModule extends Module {
      * Constructs the module itself.
      * Subscribes to events necessary to maintaining its own model.
     */
-    public NutritionModule() throws Exception {
+    public NutritionModule()  {
         this.nutritionRealm = new RealmContext<>();
         this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, REALMNAME);
 

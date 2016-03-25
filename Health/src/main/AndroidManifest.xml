@@ -75,6 +75,12 @@
             android:label="@string/steps_module"
             android:theme="@style/AppTheme.NoActionBar"/>
 
+        <!-- For Nutrition Testing. -->
+        <activity
+            android:name=".nutrition.NutritionViewModel"
+            android:label="@string/nutrition_module"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
