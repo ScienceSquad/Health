@@ -13,6 +13,10 @@ import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 
 /**
  * Nutrition Module itself.
@@ -30,6 +34,7 @@ public class NutritionModule extends Module {
     private NutrientModel nutrients;
     private MineralModel minerals;
     private VitaminModel vitamins;
+    private ArrayList<String> favoriteFoods;
 
 
     //Data context.
@@ -43,6 +48,10 @@ public class NutritionModule extends Module {
         this.nutritionRealm = new RealmContext<>();
         this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, REALMNAME);
 
+        // default values
+        this.favoriteFoods = new ArrayList<String>();
+        this.hadCaffeine = false;
+        this.calorieIntake = 0;
         createModels();
 
         this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> Log.d(TAG, "Some realm was empty."));
@@ -73,9 +82,9 @@ public class NutritionModule extends Module {
      */
 
     public void createModels(){
-        vitamins = new VitaminModel();
-        nutrients = new NutrientModel();
-        minerals = new MineralModel();
+        this.vitamins = new VitaminModel();
+        this.nutrients = new NutrientModel();
+        this.minerals = new MineralModel();
     }
 
     /**
@@ -92,7 +101,7 @@ public class NutritionModule extends Module {
     /**
      * Method to write current Nutrition data to its realm.
      * Resets the data models to be used afresh.
-     * Will be changed to fit the Dispatcher Patter later.
+     * Will be changed to fit the Dispatcher Pattern later.
      */
     public void addNutritionRecord(){
         NutritionModel newNutritionModel = new NutritionModel();
@@ -124,5 +133,14 @@ public class NutritionModule extends Module {
 
     public void setCalorieIntake(int calorieIntake) {
         this.calorieIntake = calorieIntake;
+    }
+
+
+    public ArrayList<String> getFavoriteFoods() {
+        return favoriteFoods;
+    }
+
+    public void setFavoriteFoods(ArrayList<String> favoriteFoods) {
+        this.favoriteFoods = favoriteFoods;
     }
 }

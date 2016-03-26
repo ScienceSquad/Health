@@ -16,8 +16,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit Calories"
-        android:id="@+id/button"
+        android:id="@+id/submit_calories"
+        android:onClick="submitCalories"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="97dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Progress"
+        android:id="@+id/nutrition_save_progress"
+        android:onClick="saveNutritionProgress"
+        android:layout_alignBottom="@+id/submit_calories"
+        android:layout_toStartOf="@+id/submit_calories" />
+
 </RelativeLayout>

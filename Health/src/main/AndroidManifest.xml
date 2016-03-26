@@ -69,6 +69,13 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
+        <!-- For Workout testing. -->
+        <activity
+            android:name=".workout.WorkoutActivity"
+            android:label="@string/title_activity_workout"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+
         <!-- For Steps testing. -->
         <activity
             android:name=".steps.StepsViewModel"
