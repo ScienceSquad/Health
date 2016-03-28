@@ -84,7 +84,7 @@
 
         <!-- For Alarm testing. -->
         <activity
-            android:name=".AlarmActivity"
+            android:name=".alarm.AlarmActivity"
             android:label="@string/title_activity_alarm"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

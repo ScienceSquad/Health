@@ -1,14 +1,11 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.alarm;
 
 import android.app.AlarmManager;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -16,17 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.sciencesquad.health.alarm.AlarmDialog;
-import com.sciencesquad.health.alarm.AlarmSender;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.ClockActivity;
+import com.sciencesquad.health.R;
 import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
-import com.sciencesquad.health.prescriptions.PrescriptionAlarmReceiver;
 import com.sciencesquad.health.prescriptions.PrescriptionModel;
 import com.sciencesquad.health.steps.StepsViewModel;
 import com.sciencesquad.health.workout.WorkoutActivity;
 import com.sciencesquad.health.activity.MapsActivity;
-
-import java.util.Calendar;
 
 public class AlarmActivity extends AppCompatActivity implements
 		NavigationView.OnNavigationItemSelectedListener {

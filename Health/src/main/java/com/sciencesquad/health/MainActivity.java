@@ -13,8 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.sciencesquad.health.activity.MapsActivity;
-import android.widget.Toast;
 
+import com.sciencesquad.health.alarm.AlarmActivity;
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.workout.WorkoutActivity;
 import com.sciencesquad.health.steps.StepsViewModel;

@@ -25,5 +25,4 @@
         app:pressedTranslationZ="12dp"
         app:itemTextColor="?android:textColorPrimary" />
 
-
 </android.support.v4.widget.DrawerLayout>

@@ -27,7 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.sciencesquad.health.AlarmActivity;
+import com.sciencesquad.health.alarm.AlarmActivity;
 import com.sciencesquad.health.ClockActivity;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.steps.StepsViewModel;
