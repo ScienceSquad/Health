@@ -9,6 +9,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -17,6 +20,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -29,6 +33,7 @@ import java.util.List;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
+import static java.lang.System.mapLibraryName;
 
 
 public class MapsActivity extends FragmentActivity implements
@@ -51,10 +56,23 @@ public class MapsActivity extends FragmentActivity implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
+    private TextView myTextViewCalories = null;
+    private TextView myTextViewDistance = null;
+    private TextView myTextViewSpeed = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        //setContentView(R.layout.activity_maps); //old file
+        setContentView(R.layout.maplayout); //new file
+
+        //NEW CODE
+        this.myTextViewCalories = (TextView)findViewById(R.id.textView_Calories);
+        this.myTextViewDistance = (TextView)findViewById(R.id.textView_Distance);
+        this.myTextViewSpeed = (TextView)findViewById(R.id.textView_Speed);
+
+        //END CODE
         setUpMapIfNeeded();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -106,12 +124,12 @@ public class MapsActivity extends FragmentActivity implements
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                setUpMap();
-            }
+                ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+                    .getMapAsync(googleMap -> {
+                        mMap = googleMap;
+                        setUpMap();
+                    });
+
         }
     }
 
@@ -129,8 +147,8 @@ public class MapsActivity extends FragmentActivity implements
     List<LatLng> pointsLatLng = new ArrayList<>();
     List<Long> timeStamps = new ArrayList<>();
     List<Double> distances = new ArrayList<>();
-    double totalDistance = 0;
-    double totalCalories = 0;
+    static double totalDistance = 0;
+    static double totalCalories = 0;
     LatLng lastLoc = null;
 
 
@@ -148,7 +166,8 @@ public class MapsActivity extends FragmentActivity implements
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        float minDistResolution = location.getAccuracy()/2;
+        float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
+
 
         if (lastLoc==null) {
             lastLoc = latLng;
@@ -189,6 +208,11 @@ public class MapsActivity extends FragmentActivity implements
             double timeDiff = (timeStamps.get(timeStamps.size()-1)-timeStamps.get(timeStamps.size()-2))/1000; //time difference in seconds
             double speed = distanceDiff/timeDiff; //calculates the speed since the last location update
             totalCalories = totalCalories + calorieBurn(speed,timeDiff,weightKG);
+            //NEW CODE
+            this.myTextViewCalories.setText("Calories Burned: " + totalCalories);
+            this.myTextViewDistance.setText("Distance: " + totalDistance);
+            this.myTextViewSpeed.setText("Pace: " + speed);
+            //END CODE
             Log.i(TAG, "Burned: " + String.valueOf(totalCalories));
             Log.i(TAG, "Time since last location update:" + String.valueOf(timeDiff));
         }

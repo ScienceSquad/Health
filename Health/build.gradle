@@ -28,10 +28,7 @@ android {
             storeFile file('../../../keystores/Health365.jks')
             storePassword 'd3012356101530'
         }
-
     }
-
-
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
     defaultConfig {
@@ -78,8 +75,6 @@ android {
     }
 }
 
-
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     // MultiDex Support
@@ -109,6 +104,7 @@ dependencies {
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:support-v13:23.2.0'
     compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:percent:23.1.0'
     // Framework-level Libraries
     compile 'io.realm:realm-android:0.87.5'
     apt 'com.github.frankiesardo:auto-parcel-processor:0.3.1'
@@ -130,7 +126,6 @@ dependencies {
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'junit:junit:4.12'
-
     compile 'com.wdullaer:materialdatetimepicker:2.2.0'
-
 }
+
