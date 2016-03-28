@@ -25,7 +25,7 @@ android {
         config {
             keyAlias 'Health365'
             keyPassword 'd3012356101530'
-            storeFile file('src/main/res/keystore/Health365.jks')
+            storeFile file('../../../keystores/Health365.jks')
             storePassword 'd3012356101530'
         }
 
