@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/choose_exercises_view"
         android:layout_gravity="center_horizontal"
-        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:choiceMode="multipleChoice"
+
         />
 </LinearLayout>

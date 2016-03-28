@@ -18,20 +18,19 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sciencesquad.health.R;
@@ -506,6 +505,7 @@ public class WorkoutActivity extends AppCompatActivity {
     public static class BuildRoutineDialogFragment extends DialogFragment {
         public String titleThing;
 
+
         public static BuildRoutineDialogFragment newInstance(int title) {
            BuildRoutineDialogFragment frag = new BuildRoutineDialogFragment();
             Bundle args = new Bundle();
@@ -524,6 +524,7 @@ public class WorkoutActivity extends AppCompatActivity {
             builder.setView(dialogLayout);
             builder.setTitle(title);
 
+
             // fill spinner with all different workout "targets" with which a user can filter exercises
             List<String> filter = new ArrayList<String>(((WorkoutActivity) getActivity()).exerciseTargets);
             Spinner filterSpinner = (Spinner) dialogLayout.findViewById(R.id.filter_spinner);
@@ -535,23 +536,24 @@ public class WorkoutActivity extends AppCompatActivity {
             // list all user-created exercises in Dialog
             // TODO: Make this a multiple selection list and add list of exercises selected to routine
             ListView exerciseListView = (ListView) dialogLayout.findViewById(R.id.choose_exercises_view);
-            ArrayAdapter<ExerciseTypeModel> completedSetAdapter = new ArrayAdapter<>(getContext(),
-                    android.R.layout.simple_list_item_1);
-            exerciseListView.setAdapter(completedSetAdapter);
-            completedSetAdapter.clear();
-            completedSetAdapter.addAll(((WorkoutActivity) getActivity()).exerciseTypeModelList);
-            exerciseListView.setItemsCanFocus(false);
+            ArrayAdapter<ExerciseTypeModel> exerciseListAdapter = new ArrayAdapter<>(getContext(),
+                    android.R.layout.select_dialog_multichoice);
+            exerciseListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            exerciseListView.setAdapter(exerciseListAdapter);
+            exerciseListAdapter.clear();
+            exerciseListAdapter.addAll(((WorkoutActivity) getActivity()).exerciseTypeModelList);
+
 
             // Create button that filters listed exercises based on "target"
             Button button = (Button) dialogLayout.findViewById(R.id.filter_button);
             button.setOnClickListener(butt -> {
                 String f = filterSpinner.getSelectedItem().toString();
 
-                completedSetAdapter.clear(); // clear current list
+                exerciseListAdapter.clear(); // clear current list
                 for (int i = 0; i < ((WorkoutActivity) getActivity()).exerciseTypeModelList.size(); i++) {
                     if (((WorkoutActivity) getActivity()).exerciseTypeModelList.get(i).getTarget().equals(f)) {
                         // only add exercises with matching "target" to the filter selected
-                        completedSetAdapter.add(((WorkoutActivity) getActivity()).exerciseTypeModelList.get(i));
+                        exerciseListAdapter.add(((WorkoutActivity) getActivity()).exerciseTypeModelList.get(i));
                     }
                 }
             });
