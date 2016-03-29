@@ -1,5 +1,6 @@
 package com.sciencesquad.health;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,10 +12,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.sciencesquad.health.events.BaseActivity;
-import com.sciencesquad.health.workout.WorkoutActivity;
+import com.sciencesquad.health.workout.WorkoutFragment;
 import com.sciencesquad.health.steps.StepsViewModel;
 
 
@@ -96,9 +96,16 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_send) {
 
 		} else if (id == R.id.nav_workout){
-			//Intent intent = new Intent(this, WorkoutActivity.class);
+			//Intent intent = new Intent(this, WorkoutFragment.class);
 			//startActivity(intent);
-			startActivity(new Intent(this, WorkoutActivity.class));
+			//startActivity(new Intent(this, WorkoutFragment.class));
+
+			Fragment woot = new WorkoutFragment();
+			getFragmentManager()
+					.beginTransaction()
+					.replace(android.R.id.content, woot, "poop")
+					.addToBackStack("poop")
+					.commit();
 
 		} else if (id == R.id.nav_clock) {
 			Intent intent = new Intent(this, ClockActivity.class);

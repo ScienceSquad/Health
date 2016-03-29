@@ -91,7 +91,7 @@
         </receiver>
 
         <activity
-            android:name=".workout.WorkoutActivity"
+            android:name=".workout.WorkoutFragment"
             android:label="@string/title_activity_workout"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

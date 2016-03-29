@@ -1,20 +1,20 @@
 package com.sciencesquad.health.workout;
 
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.app.DialogFragment;
+import android.app.AlertDialog;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -31,7 +31,6 @@ import android.widget.EditText;
 
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.sciencesquad.health.R;
 
@@ -45,16 +44,16 @@ import java.util.List;
  */
 
 
-public class WorkoutActivity extends AppCompatActivity {
-    public static final String TAG = WorkoutActivity.class.getSimpleName();
+public class WorkoutFragment extends Fragment {
+    public static final String TAG = WorkoutFragment.class.getSimpleName();
 
-    public String routineName = "";     // Used for passing names of new routines b/w fragments
-    public String name = "";            // Used for passing names of new exercises b/w fragments
-    public String category = "";        // Used for passing exercise type (Cardio/Strength)
-    public String target = "";          // Used for passing target of exercise b/w fragments
-    List<ExerciseTypeModel> exerciseTypeModelList = new ArrayList<>();     // list of exercises added by user
-    List<RoutineModel> routineModelList = new ArrayList<>();           // list of routines created by user
-    HashSet<String> exerciseTargets = new HashSet<>();            // contains all exercise targets
+    public static String routineName = "";     // Used for passing names of new routines b/w fragments
+    public static String name = "";            // Used for passing names of new exercises b/w fragments
+    public static String category = "";        // Used for passing exercise type (Cardio/Strength)
+    public static String target = "";          // Used for passing target of exercise b/w fragments
+    static List<ExerciseTypeModel> exerciseTypeModelList = new ArrayList<>();     // list of exercises added by user
+    static List<RoutineModel> routineModelList = new ArrayList<>();           // list of routines created by user
+    static HashSet<String> exerciseTargets = new HashSet<>();            // contains all exercise targets
 
 
     /**
@@ -72,70 +71,43 @@ public class WorkoutActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-    /**
-     * @onCreate called when WokoutActivtity is created
-     *
-     */
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workout);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_workout, container, false);
+    }
 
-        ExerciseTypeModel newExerciseA = new ExerciseTypeModel("Bench Press", "Strength", "Chest");
-        exerciseTypeModelList.add(newExerciseA);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //ExerciseTypeModel newExerciseA = new ExerciseTypeModel("Bench Press", "Strength", "Chest");
+        //exerciseTypeModelList.add(newExerciseA);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager)view.findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout)view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.workoutFab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                  //      .setAction("Action", null).show();
-                int selectedTab = tabLayout.getSelectedTabPosition();
-                if(selectedTab == 0){
-                    // in exercise tab
-                    showNewExerciseDialog();
-                }else if(selectedTab == 1){
-                    // in routine tab
-                    showNewRoutineDialog();
-                }
-
+        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.workoutFab);
+        fab.setOnClickListener(view1 -> {
+            //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            //      .setAction("Action", null).show();
+            int selectedTab = tabLayout.getSelectedTabPosition();
+            if(selectedTab == 0){
+                // in exercise tab
+                showNewExerciseDialog();
+            }else if(selectedTab == 1){
+                // in routine tab
+                showNewRoutineDialog();
             }
+
         });
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_workout, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -191,7 +163,7 @@ public class WorkoutActivity extends AppCompatActivity {
     void showNewExerciseDialog() {
         DialogFragment newFragment = NewExerciseDialogFragment.newInstance(
                 R.string.title_new_exercise_dialog);
-        newFragment.show(getSupportFragmentManager(), "dialog");
+        newFragment.show(getFragmentManager(), "dialog");
     }
 
     /**
@@ -204,7 +176,7 @@ public class WorkoutActivity extends AppCompatActivity {
         DialogFragment newFragment = NameRoutineFragmentDialog.newInstance(
                 R.string.title_new_routine_dialog);
 
-        newFragment.show(getSupportFragmentManager(), "dialog");
+        newFragment.show(getFragmentManager(), "dialog");
     }
 
     /**
@@ -217,7 +189,7 @@ public class WorkoutActivity extends AppCompatActivity {
         SetDialogFragment newFragment = SetDialogFragment.newInstance(
                 R.string.title_new_exercise_dialog);
         newFragment.titleThing = name;
-        newFragment.show(getSupportFragmentManager(), "dialog");
+        newFragment.show(getFragmentManager(), "dialog");
     }
 
     /**
@@ -230,28 +202,27 @@ public class WorkoutActivity extends AppCompatActivity {
         BuildRoutineDialogFragment newFragment = BuildRoutineDialogFragment.newInstance(
                 R.string.title_new_exercise_dialog);
             newFragment.titleThing = name;
-            newFragment.show(getSupportFragmentManager(), "dialog"
-        );
+            newFragment.show(getFragmentManager(), "dialog");
     }
 
     /**
      * @saveNewExerciseType
      * This method builds a new ExerciseTypeModel, populating its
-     * variables with those stored in WorkoutActivity set by
+     * variables with those stored in WorkoutFragment set by
      * a user selecting "Save" in the NewExerciseDialogFragment
      */
-    public void saveNewExerciseType() {
+    public static void saveNewExerciseType() {
         Log.i("FragmentAlertDialog", "Positive click!" + "Name: " + name + " Category: " + category + " Target: " + target);
         if(name.equals("")){
-            Snackbar.make(this.findViewById(android.R.id.content), "Not added: Exercise name field blank!", Snackbar.LENGTH_LONG)
+            Snackbar.make(getView().findViewById(android.R.id.content), "Not added: Exercise name field blank!", Snackbar.LENGTH_LONG)
                   .setAction("Action", null).show();
         }else{
 
             ExerciseTypeModel newExercise = new ExerciseTypeModel(name, category, target);
             exerciseTargets.add(target);
             exerciseTypeModelList.add(newExercise);
-            ListView exerciseListView = (ListView) findViewById(R.id.exercise_model_list_view);
-            ArrayAdapter<ExerciseTypeModel> exerciseTypeAdapter = new ArrayAdapter<ExerciseTypeModel>(WorkoutActivity.this,
+            ListView exerciseListView = (ListView)getView().findViewById(R.id.exercise_model_list_view);
+            ArrayAdapter<ExerciseTypeModel> exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_1);
             exerciseTypeAdapter.clear();
             exerciseTypeAdapter.addAll(exerciseTypeModelList);
@@ -259,22 +230,22 @@ public class WorkoutActivity extends AppCompatActivity {
         }
     }
 
-    public void cancelNewExerciseType() {
+    public static void cancelNewExerciseType() {
         // Do stuff here.
         Log.i("FragmentAlertDialog", "Negative click!");
     }
 
 
-    public void saveRoutine() {
+    public static void saveRoutine() {
         // Do stuff here.
         if(routineName.equals("")){
-            Snackbar.make(this.findViewById(android.R.id.content), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
+            Snackbar.make(getView().findViewById(android.R.id.content), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }else{
             RoutineModel newRoutine = new RoutineModel(routineName);
             routineModelList.add(newRoutine);
-            ListView routineListView = (ListView) findViewById(R.id.routine_model_list_view);
-            ArrayAdapter<RoutineModel> routineModelArrayAdapter = new ArrayAdapter<RoutineModel>(WorkoutActivity.this,
+            ListView routineListView = (ListView)getView().findViewById(R.id.routine_model_list_view);
+            ArrayAdapter<RoutineModel> routineModelArrayAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_1);
             routineModelArrayAdapter.clear();
             routineModelArrayAdapter.addAll(routineModelList);
@@ -282,14 +253,14 @@ public class WorkoutActivity extends AppCompatActivity {
         }
     }
 
-    public void cancelNewRoutine() {
+    public static void cancelNewRoutine() {
         // Do stuff here.
         Log.i("FragmentAlertDialog", "Negative click!");
     }
 
     /**
      * ExerciseTypeFragmet
-     * This is a fragment for the Exercise tab in the WorkoutActivity
+     * This is a fragment for the Exercise tab in the WorkoutFragment
      * This Fragment contains a ListView that lists all exercises
      * added by the user
      */
@@ -323,18 +294,19 @@ public class WorkoutActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_workout, container, false);
             ListView exerciseListView = (ListView) rootView.findViewById(R.id.exercise_model_list_view);        // create ListView for exercises
-            ArrayAdapter<ExerciseTypeModel> exerciseTypeAdapter = new ArrayAdapter<ExerciseTypeModel>(getContext(),             // create an adapter to fill array
-                    android.R.layout.simple_list_item_1, ((WorkoutActivity) getActivity()).exerciseTypeModelList);
+            ArrayAdapter<ExerciseTypeModel> exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
+                    android.R.layout.simple_list_item_1, WorkoutFragment.exerciseTypeModelList);
             exerciseTypeAdapter.clear();                // first clear adapter
-            exerciseTypeAdapter.addAll(((WorkoutActivity) getActivity()).exerciseTypeModelList);        // add all exercises created by user to the adapter
+            exerciseTypeAdapter.addAll(WorkoutFragment.exerciseTypeModelList);        // add all exercises created by user to the adapter
             exerciseListView.setAdapter(exerciseTypeAdapter);       // bind the adapter to the listview
             exerciseListView.setOnItemClickListener(((parent, view, position, id) -> {
-                ((WorkoutActivity) getActivity()).showSetDialog(exerciseTypeAdapter.getItem(position).getName());
+                ((WorkoutFragment) getParentFragment()).showSetDialog(exerciseTypeAdapter.getItem(position).getName());
             }));
 
             return rootView;
         }
     }
+
 
 
     /**
@@ -367,13 +339,13 @@ public class WorkoutActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.routine_fragment_layout, container, false);
             ListView routineListView = (ListView) rootView.findViewById(R.id.routine_model_list_view);
-            ArrayAdapter<RoutineModel> routineAdapter = new ArrayAdapter<RoutineModel>(getContext(),
-                    android.R.layout.simple_list_item_1, ((WorkoutActivity) getActivity()).routineModelList);
+            ArrayAdapter<RoutineModel> routineAdapter = new ArrayAdapter<>(getActivity(),
+                    android.R.layout.simple_list_item_1, WorkoutFragment.routineModelList);
             routineAdapter.clear();
-            routineAdapter.addAll(((WorkoutActivity) getActivity()).routineModelList);
+            routineAdapter.addAll(WorkoutFragment.routineModelList);
             routineListView.setAdapter(routineAdapter);
             routineListView.setOnItemClickListener(((parent, view, position, id) -> {
-                ((WorkoutActivity) getActivity()).showRoutineBuilder(routineAdapter.getItem(position).getName());
+                ((WorkoutFragment) getParentFragment()).showRoutineBuilder(routineAdapter.getItem(position).getName());
             }));
 
 
@@ -383,7 +355,7 @@ public class WorkoutActivity extends AppCompatActivity {
 
 
     /**
-     * SetDialogFragmet
+     * SetDialogFragment
      * This is a fragment view which allows a user to enter sets (reps, weight)
      * for a selected exercise
      */
@@ -405,7 +377,7 @@ public class WorkoutActivity extends AppCompatActivity {
             String title = this.titleThing;
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View dialogLayout = inflater.inflate(R.layout.set_dialog_fragment_layout, null);
             builder.setView(dialogLayout);
             builder.setTitle(title);
@@ -416,7 +388,7 @@ public class WorkoutActivity extends AppCompatActivity {
             weightField.setInputType(InputType.TYPE_CLASS_NUMBER);
 
             ListView completedSetListView = (ListView) dialogLayout.findViewById(R.id.list_complete_reps);
-            ArrayAdapter<ExerciseSetModel> completedSetAdapter = new ArrayAdapter<>(getContext(),
+            ArrayAdapter<ExerciseSetModel> completedSetAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_1);
            completedSetListView.setAdapter(completedSetAdapter);        // When sets are completed, they are listed in the dialog
 
@@ -440,7 +412,7 @@ public class WorkoutActivity extends AppCompatActivity {
             );
             builder.setNegativeButton("Cancel",
                     (dialog, whichButton) -> {
-                        ((WorkoutActivity) getActivity()).cancelNewExerciseType();
+                        ((WorkoutFragment) getParentFragment()).cancelNewExerciseType();
                     }
             );
 
@@ -468,27 +440,27 @@ public class WorkoutActivity extends AppCompatActivity {
             int title = getArguments().getInt("title");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View dialogLayout = inflater.inflate(R.layout.new_exercise_dialog_layout, null);
             builder.setView(dialogLayout);
             builder.setTitle(title);
 
             Spinner kindSpinner = (Spinner) dialogLayout.findViewById(R.id.exercise_kind_spinner);
-            kindSpinner.setAdapter(new ArrayAdapter<ExerciseKind>(getContext(), android.R.layout.simple_list_item_1, ExerciseKind.values()));
+            kindSpinner.setAdapter(new ArrayAdapter<ExerciseKind>(getActivity(), android.R.layout.simple_list_item_1, ExerciseKind.values()));
             EditText nameField = (EditText) dialogLayout.findViewById(R.id.exercise_name_field);
             EditText targetField = (EditText) dialogLayout.findViewById(R.id.exercise_target_field);
             nameField.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setPositiveButton("Save",
                     (dialog, whichButton) -> {
-                        ((WorkoutActivity) getActivity()).name = nameField.getText().toString();
-                        ((WorkoutActivity) getActivity()).category = kindSpinner.getSelectedItem().toString();
-                        ((WorkoutActivity) getActivity()).target = targetField.getText().toString();
-                        ((WorkoutActivity) getActivity()).saveNewExerciseType();
+                        WorkoutFragment.name = nameField.getText().toString();
+                        WorkoutFragment.category = kindSpinner.getSelectedItem().toString();
+                        WorkoutFragment.target = targetField.getText().toString();
+                        WorkoutFragment.saveNewExerciseType();
                     }
             );
             builder.setNegativeButton("Cancel",
                     (dialog, whichButton) -> {
-                        ((WorkoutActivity) getActivity()).cancelNewExerciseType();
+                        WorkoutFragment.cancelNewExerciseType();
                     }
             );
 
@@ -519,16 +491,16 @@ public class WorkoutActivity extends AppCompatActivity {
             String title = this.titleThing;
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View dialogLayout = inflater.inflate(R.layout.build_routine_layout, null);
             builder.setView(dialogLayout);
             builder.setTitle(title);
 
 
             // fill spinner with all different workout "targets" with which a user can filter exercises
-            List<String> filter = new ArrayList<String>(((WorkoutActivity) getActivity()).exerciseTargets);
+            List<String> filter = new ArrayList<String>(WorkoutFragment.exerciseTargets);
             Spinner filterSpinner = (Spinner) dialogLayout.findViewById(R.id.filter_spinner);
-            ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1);
+            ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
             filterSpinner.setAdapter((filterAdapter));
             filterAdapter.clear();
             filterAdapter.addAll(filter);
@@ -536,12 +508,12 @@ public class WorkoutActivity extends AppCompatActivity {
             // list all user-created exercises in Dialog
             // TODO: Make this a multiple selection list and add list of exercises selected to routine
             ListView exerciseListView = (ListView) dialogLayout.findViewById(R.id.choose_exercises_view);
-            ArrayAdapter<ExerciseTypeModel> exerciseListAdapter = new ArrayAdapter<>(getContext(),
+            ArrayAdapter<ExerciseTypeModel> exerciseListAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.select_dialog_multichoice);
             exerciseListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             exerciseListView.setAdapter(exerciseListAdapter);
             exerciseListAdapter.clear();
-            exerciseListAdapter.addAll(((WorkoutActivity) getActivity()).exerciseTypeModelList);
+            exerciseListAdapter.addAll(WorkoutFragment.exerciseTypeModelList);
 
 
             // Create button that filters listed exercises based on "target"
@@ -550,10 +522,10 @@ public class WorkoutActivity extends AppCompatActivity {
                 String f = filterSpinner.getSelectedItem().toString();
 
                 exerciseListAdapter.clear(); // clear current list
-                for (int i = 0; i < ((WorkoutActivity) getActivity()).exerciseTypeModelList.size(); i++) {
-                    if (((WorkoutActivity) getActivity()).exerciseTypeModelList.get(i).getTarget().equals(f)) {
+                for (int i = 0; i < WorkoutFragment.exerciseTypeModelList.size(); i++) {
+                    if (WorkoutFragment.exerciseTypeModelList.get(i).getTarget().equals(f)) {
                         // only add exercises with matching "target" to the filter selected
-                        exerciseListAdapter.add(((WorkoutActivity) getActivity()).exerciseTypeModelList.get(i));
+                        exerciseListAdapter.add(WorkoutFragment.exerciseTypeModelList.get(i));
                     }
                 }
             });
@@ -602,17 +574,13 @@ public class WorkoutActivity extends AppCompatActivity {
             EditText targetField = (EditText) dialogLayout.findViewById(R.id.routine_name_field);
             nameField.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setPositiveButton("Save",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            ((WorkoutActivity) getActivity()).routineName = nameField.getText().toString();
-                            ((WorkoutActivity) getActivity()).saveRoutine();
-                        }
+                    (dialog, whichButton) -> {
+                        WorkoutFragment.routineName = nameField.getText().toString();
+                        ((WorkoutFragment) getParentFragment()).saveRoutine();
                     }
             );
             builder.setNegativeButton("Cancel",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                        }
+                    (dialog, whichButton) -> {
                     }
             );
 
