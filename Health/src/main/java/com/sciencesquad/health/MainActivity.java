@@ -100,11 +100,10 @@ public class MainActivity extends BaseActivity
 			//startActivity(intent);
 			//startActivity(new Intent(this, WorkoutFragment.class));
 
-			Fragment woot = new WorkoutFragment();
 			getFragmentManager()
 					.beginTransaction()
-					.replace(android.R.id.content, woot, "poop")
-					.addToBackStack("poop")
+					.replace(R.id.content_container, new WorkoutFragment(), "WORKOUT")
+					.addToBackStack("WORKOUT")
 					.commit();
 
 		} else if (id == R.id.nav_clock) {
