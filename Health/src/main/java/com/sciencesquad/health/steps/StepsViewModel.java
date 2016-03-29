@@ -1,14 +1,9 @@
 package com.sciencesquad.health.steps;
 
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
-import android.hardware.*;
 import android.widget.Toast;
 
 /**
@@ -19,10 +14,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -36,7 +28,6 @@ import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.ui.Stopwatch;
 
 import org.threeten.bp.Duration;
-import org.w3c.dom.Text;
 
 /**
  * This is the only way I know how to do this as of right now. Should this be in my Model instead?
@@ -63,7 +54,7 @@ public class StepsViewModel extends BaseActivity implements SensorEventListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.steps_layout);
+        setContentView(R.layout.fragment_steps);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

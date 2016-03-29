@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         tools:context="com.sciencesquad.health.ClockActivity"
-        tools:showIn="@layout/activity_clock">
+        tools:showIn="@layout/fragment_clock">
 
     <data>
         <import type="android.graphics.Color" />
