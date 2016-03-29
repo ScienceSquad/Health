@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.sciencesquad.health.activity.MapsActivity;
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.steps.StepsViewModel;
 
@@ -77,8 +79,11 @@ public class MainActivity extends BaseActivity
 	public boolean onNavigationItemSelected(MenuItem item) {
 		// Handle navigation view item clicks here.
 		int id = item.getItemId();
+		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 		if (id == R.id.nav_run) {
+			//setContentView(R.layout.maplayout);
+			startActivity(new Intent(this, MapsActivity.class));
 
 		} else if (id == R.id.nav_sleep) {
 
@@ -99,8 +104,11 @@ public class MainActivity extends BaseActivity
 			startActivity(intent);
 		}
 
-		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-		drawer.closeDrawer(GravityCompat.START);
+		if (drawer!=null) {
+			drawer.closeDrawer(GravityCompat.START);
+		}
+
 		return true;
+
 	}
 }

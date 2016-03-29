@@ -22,6 +22,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -67,12 +69,11 @@ public class MapsActivity extends FragmentActivity implements
         //setContentView(R.layout.activity_maps); //old file
         setContentView(R.layout.maplayout); //new file
 
-        //NEW CODE
+
         this.myTextViewCalories = (TextView)findViewById(R.id.textView_Calories);
         this.myTextViewDistance = (TextView)findViewById(R.id.textView_Distance);
         this.myTextViewSpeed = (TextView)findViewById(R.id.textView_Speed);
 
-        //END CODE
         setUpMapIfNeeded();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -154,9 +155,12 @@ public class MapsActivity extends FragmentActivity implements
 
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
     Marker currentPos = null; // used to display current position
+    Circle accuracyCircle = null;
+
 
 
     private void handleNewLocation(Location location) {
+
         Log.d(TAG, location.toString());
 
         double currentLatitude = location.getLatitude();
@@ -166,7 +170,8 @@ public class MapsActivity extends FragmentActivity implements
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
+        //float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
+        float minDistResolution = location.getAccuracy()/20; //TEST RESOLUTION
 
 
         if (lastLoc==null) {
@@ -185,7 +190,14 @@ public class MapsActivity extends FragmentActivity implements
             MarkerOptions currentPosOptions = new MarkerOptions()
                     .position(latLng)
                     .title("Current Position");
+
+            CircleOptions accuracyCircleOptions = new CircleOptions()
+                    .center(latLng)
+                    .radius((double) location.getAccuracy())
+                    .strokeColor(0xaf00bfff)
+                    .fillColor(0x3f00bfff);
             currentPos = mMap.addMarker(currentPosOptions);
+            accuracyCircle = mMap.addCircle(accuracyCircleOptions);
 
             pointsLatLng.add(latLng);
             timeStamps.add(currentTimeMillis());
@@ -220,6 +232,9 @@ public class MapsActivity extends FragmentActivity implements
 
 
         currentPos.setPosition(latLng);
+        accuracyCircle.setCenter(latLng);
+        accuracyCircle.setRadius((double)location.getAccuracy());
+
 
         PolylineOptions polylineoptions = new PolylineOptions()
                 .width(8)
