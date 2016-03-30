@@ -8,21 +8,24 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.sciencesquad.health.ClockActivity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+
+import com.sciencesquad.health.ClockFragment;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
 import com.sciencesquad.health.prescriptions.PrescriptionModel;
-import com.sciencesquad.health.steps.StepsViewModel;
-import com.sciencesquad.health.workout.WorkoutActivity;
+import com.sciencesquad.health.steps.StepsFragment;
+import com.sciencesquad.health.workout.WorkoutFragment;
 import com.sciencesquad.health.activity.MapsActivity;
 
-public class AlarmActivity extends AppCompatActivity implements
-		NavigationView.OnNavigationItemSelectedListener {
+public class AlarmFragment extends Fragment {
 
 	private boolean alarmSet = false;
 	AlarmDialog dialog;
@@ -34,11 +37,8 @@ public class AlarmActivity extends AppCompatActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_alarm);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
 
-		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+		FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -68,42 +68,4 @@ public class AlarmActivity extends AppCompatActivity implements
 		});
 	}
 
-	/**
-	 * I have not been tested :-)
-	 */
-	@SuppressWarnings("StatementWithEmptyBody")
-	@Override
-	public boolean onNavigationItemSelected(MenuItem item) {
-		// Handle navigation view item clicks here.
-		int id = item.getItemId();
-
-		if (id == R.id.nav_run) {
-			Intent intent = new Intent(this, MapsActivity.class);
-			startActivity(intent);
-		} else if (id == R.id.nav_sleep) {
-
-		} else if (id == R.id.nav_steps) {
-			Intent intent = new Intent(this, StepsViewModel.class);
-			startActivity(intent);
-		} else if (id == R.id.nav_manage) {
-
-		} else if (id == R.id.nav_share) {
-
-		} else if (id == R.id.nav_send) {
-
-		} else if (id == R.id.nav_workout){
-			Intent intent = new Intent(this, WorkoutActivity.class);
-			startActivity(intent);
-		} else if (id == R.id.nav_clock) {
-			Intent intent = new Intent(this, ClockActivity.class);
-			startActivity(intent);
-		} else if (id == R.id.nav_alarm) {
-			Intent intent = new Intent(this, AlarmActivity.class);
-			startActivity(intent);
-		}
-
-		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-		drawer.closeDrawer(GravityCompat.START);
-		return true;
-	}
 }

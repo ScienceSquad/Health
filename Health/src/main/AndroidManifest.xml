@@ -22,15 +22,23 @@
         <screen android:screenSize="small" android:screenDensity="mdpi" />
         <screen android:screenSize="small" android:screenDensity="hdpi" />
         <screen android:screenSize="small" android:screenDensity="xhdpi" />
-        <screen android:screenSize="small" android:screenDensity="xxhdpi" />
-        <screen android:screenSize="small" android:screenDensity="xxxhdpi" />
+        <screen android:screenSize="small" android:screenDensity="280" />
+        <screen android:screenSize="small" android:screenDensity="360" />
+        <screen android:screenSize="small" android:screenDensity="420" />
+        <screen android:screenSize="small" android:screenDensity="480" />
+        <screen android:screenSize="small" android:screenDensity="560" />
+        <screen android:screenSize="small" android:screenDensity="640" />
         <!-- all normal size screens -->
         <screen android:screenSize="normal" android:screenDensity="ldpi" />
         <screen android:screenSize="normal" android:screenDensity="mdpi" />
         <screen android:screenSize="normal" android:screenDensity="hdpi" />
         <screen android:screenSize="normal" android:screenDensity="xhdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xxhdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xxxhdpi" />
+        <screen android:screenSize="normal" android:screenDensity="280" />
+        <screen android:screenSize="normal" android:screenDensity="360" />
+        <screen android:screenSize="normal" android:screenDensity="420" />
+        <screen android:screenSize="normal" android:screenDensity="480" />
+        <screen android:screenSize="normal" android:screenDensity="560" />
+        <screen android:screenSize="normal" android:screenDensity="640" />
     </compatible-screens>
 
     <application
@@ -80,34 +88,6 @@
             android:name=".activity.MapsActivity"
             android:label="@string/title_activity_maps"
             android:exported="true"
-            android:screenOrientation="portrait" />
-
-        <!-- For Clock testing. -->
-        <activity
-            android:name=".ClockActivity"
-            android:label="@string/title_activity_clock"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
-
-        <!-- For Steps testing. -->
-        <activity
-            android:name=".steps.StepsViewModel"
-            android:label="@string/steps_module"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
-
-        <!-- For Workout testing. -->
-        <activity
-            android:name=".workout.WorkoutActivity"
-            android:label="@string/workout_module"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
-
-        <!-- For Alarm testing. -->
-        <activity
-            android:name=".alarm.AlarmActivity"
-            android:label="@string/title_activity_alarm"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
 
         <!-- For SleepModule to play audio in the background. -->

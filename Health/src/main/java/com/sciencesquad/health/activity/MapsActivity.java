@@ -27,11 +27,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.sciencesquad.health.alarm.AlarmActivity;
-import com.sciencesquad.health.ClockActivity;
+import com.sciencesquad.health.alarm.AlarmFragment;
+import com.sciencesquad.health.ClockFragment;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.steps.StepsViewModel;
-import com.sciencesquad.health.workout.WorkoutActivity;
+import com.sciencesquad.health.steps.StepsFragment;
+import com.sciencesquad.health.workout.WorkoutFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -339,7 +339,7 @@ public class MapsActivity extends FragmentActivity implements
         } else if (id == R.id.nav_sleep) {
 
         } else if (id == R.id.nav_steps) {
-            Intent intent = new Intent(this, StepsViewModel.class);
+            Intent intent = new Intent(this, StepsFragment.class);
             startActivity(intent);
         } else if (id == R.id.nav_manage) {
 
@@ -348,13 +348,13 @@ public class MapsActivity extends FragmentActivity implements
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_workout){
-            Intent intent = new Intent(this, WorkoutActivity.class);
+            Intent intent = new Intent(this, WorkoutFragment.class);
             startActivity(intent);
         } else if (id == R.id.nav_clock) {
-            Intent intent = new Intent(this, ClockActivity.class);
+            Intent intent = new Intent(this, ClockFragment.class);
             startActivity(intent);
         } else if (id == R.id.nav_alarm) {
-            Intent intent = new Intent(this, AlarmActivity.class);
+            Intent intent = new Intent(this, AlarmFragment.class);
             startActivity(intent);
         }
 

@@ -1,5 +1,6 @@
 package com.sciencesquad.health;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,10 +15,10 @@ import android.view.MenuItem;
 
 import com.sciencesquad.health.activity.MapsActivity;
 
-import com.sciencesquad.health.alarm.AlarmActivity;
+import com.sciencesquad.health.alarm.AlarmFragment;
 import com.sciencesquad.health.events.BaseActivity;
-import com.sciencesquad.health.workout.WorkoutActivity;
-import com.sciencesquad.health.steps.StepsViewModel;
+import com.sciencesquad.health.workout.WorkoutFragment;
+import com.sciencesquad.health.steps.StepsFragment;
 
 
 public class MainActivity extends BaseActivity
@@ -90,23 +91,31 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_sleep) {
 
 		} else if (id == R.id.nav_steps) {
-			Intent intent = new Intent(this, StepsViewModel.class);
-			startActivity(intent);
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new StepsFragment(), "STEPS")
+					.addToBackStack("STEPS")
+					.commit();
 		} else if (id == R.id.nav_manage) {
 
 		} else if (id == R.id.nav_share) {
 
 		} else if (id == R.id.nav_send) {
 
-		} else if (id == R.id.nav_workout){
-			Intent intent = new Intent(this, WorkoutActivity.class);
-			startActivity(intent);
+		} else if (id == R.id.nav_workout) {
+			getFragmentManager().beginTransaction()
+					.replace(R.id.content_container, new WorkoutFragment(), "WORKOUT")
+					.addToBackStack("WORKOUT")
+					.commit();
 		} else if (id == R.id.nav_clock) {
-			Intent intent = new Intent(this, ClockActivity.class);
-			startActivity(intent);
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new ClockFragment(), "CLOCK")
+					.addToBackStack("CLOCK")
+					.commit();
 		} else if (id == R.id.nav_alarm) {
-			Intent intent = new Intent(this, AlarmActivity.class);
-			startActivity(intent);
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new AlarmFragment(), "ALARM")
+					.addToBackStack("ALARM")
+					.commit();
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
