@@ -106,8 +106,12 @@ public class MainActivity extends BaseActivity
 			Intent intent = new Intent(this, AlarmActivity.class);
 			startActivity(intent);
 		} else if (id == R.id.nav_nutrition){
-			Intent intent = new Intent(this, NutritionViewModel.class);
-			startActivity(intent);
+			NutritionViewModel nextFrag= new NutritionViewModel();
+			this.getFragmentManager().beginTransaction()
+					.replace(R.id.content_main_activity, nextFrag)
+					.addToBackStack(null)
+					.commit();
+			//setContentView(R.layout.nutrition_layout);
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

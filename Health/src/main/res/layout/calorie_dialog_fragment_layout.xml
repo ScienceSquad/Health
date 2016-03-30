@@ -15,4 +15,5 @@
         android:ems="10"
         android:id="@+id/num_calories" />
 
+
 </LinearLayout>
