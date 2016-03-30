@@ -13,11 +13,7 @@ import com.sciencesquad.health.R;
  * A Fragment for the Routine Modules
  */
 public class RoutineFragment extends Fragment {
-	/**
-	 * The fragment argument representing the section number for this
-	 * fragment.
-	 */
-	private static final String ARG_SECTION_NUMBER = "section_number";
+	private static final String TAG = RoutineFragment.class.getSimpleName();
 
 	public RoutineFragment() {
 	}
@@ -26,17 +22,14 @@ public class RoutineFragment extends Fragment {
 	 * Returns a new instance of this fragment for the given section
 	 * number.
 	 */
-	public static RoutineFragment newInstance(int sectionNumber) {
-		RoutineFragment fragment = new RoutineFragment();
-		Bundle args = new Bundle();
-		args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-		fragment.setArguments(args);
-		return fragment;
+	public static RoutineFragment newInstance() {
+		return new RoutineFragment();
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
 		View rootView = inflater.inflate(R.layout.routine_fragment_layout, container, false);
 		ListView routineListView = (ListView) rootView.findViewById(R.id.routine_model_list_view);
 		ArrayAdapter<RoutineModel> routineAdapter = new ArrayAdapter<>(getActivity(),
@@ -47,7 +40,6 @@ public class RoutineFragment extends Fragment {
 		routineListView.setOnItemClickListener(((parent, view, position, id) -> {
 			((WorkoutFragment) getTargetFragment()).showRoutineBuilder(routineAdapter.getItem(position).getName());
 		}));
-
 
 		return rootView;
 	}

@@ -17,31 +17,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * BuildRoutineDialogFragment
  * This Dialog allows a user to select exercises to create a routine
  */
 public class BuildRoutineDialogFragment extends DialogFragment {
-	public String titleThing;
+	private static final String TAG = BuildRoutineDialogFragment.class.getCanonicalName();
 
+	// Key for Dialog's Title
+	public static final String KEY_TITLE = TAG + ".TITLE";
 
-	public static BuildRoutineDialogFragment newInstance(int title) {
+	public static BuildRoutineDialogFragment newInstance(String title) {
 	   BuildRoutineDialogFragment frag = new BuildRoutineDialogFragment();
 		Bundle args = new Bundle();
-		args.putInt("title", title);
+		args.putString(KEY_TITLE, title);
 		frag.setArguments(args);
 		return frag;
 	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		String title = this.titleThing;
+		String title = this.getArguments().getString(KEY_TITLE);
 
+		// Inflate dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View dialogLayout = inflater.inflate(R.layout.build_routine_layout, null);
 		builder.setView(dialogLayout);
 		builder.setTitle(title);
-
 
 		// fill spinner with all different workout "targets" with which a user can filter exercises
 		List<String> filter = new ArrayList<String>(WorkoutFragment.exerciseTargets);
@@ -61,10 +62,9 @@ public class BuildRoutineDialogFragment extends DialogFragment {
 		exerciseListAdapter.clear();
 		exerciseListAdapter.addAll(WorkoutFragment.exerciseTypeModelList);
 
-
 		// Create button that filters listed exercises based on "target"
 		Button button = (Button) dialogLayout.findViewById(R.id.filter_button);
-		button.setOnClickListener(butt -> {
+		button.setOnClickListener(_button -> {
 			String f = filterSpinner.getSelectedItem().toString();
 
 			exerciseListAdapter.clear(); // clear current list
@@ -76,18 +76,9 @@ public class BuildRoutineDialogFragment extends DialogFragment {
 			}
 		});
 
-		builder.setPositiveButton("Save",
-				(dialog, whichButton) -> {
-
-				}
-		);
-		builder.setNegativeButton("Cancel",
-				(dialog, whichButton) -> {
-
-				}
-		);
-
-		Dialog d = builder.create();
-		return d;
+		// Add Dialog buttons
+		builder.setPositiveButton("Save", (dialog, whichButton) -> {});
+		builder.setNegativeButton("Cancel", (dialog, whichButton) -> {});
+		return builder.create();
 	}
 }

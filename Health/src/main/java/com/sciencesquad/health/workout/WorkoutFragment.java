@@ -27,23 +27,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-/**
- * @author      Taylor T. Johnson
- * @since       2016--03-03
- */
-
-
 public class WorkoutFragment extends Fragment {
     public static final String TAG = WorkoutFragment.class.getSimpleName();
 
+    // FIXME: Should be switched out for a database later.
     public static String routineName = "";     // Used for passing names of new routines b/w fragments
     public static String name = "";            // Used for passing names of new exercises b/w fragments
     public static String category = "";        // Used for passing exercise type (Cardio/Strength)
     public static String target = "";          // Used for passing target of exercise b/w fragments
-    static List<ExerciseTypeModel> exerciseTypeModelList = new ArrayList<>();     // list of exercises added by user
-    static List<RoutineModel> routineModelList = new ArrayList<>();           // list of routines created by user
-    static HashSet<String> exerciseTargets = new HashSet<>();            // contains all exercise targets
-
+    public static List<ExerciseTypeModel> exerciseTypeModelList = new ArrayList<>();     // list of exercises added by user
+    public static List<RoutineModel> routineModelList = new ArrayList<>();           // list of routines created by user
+    public static HashSet<String> exerciseTargets = new HashSet<>();            // contains all exercise targets
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -95,7 +89,6 @@ public class WorkoutFragment extends Fragment {
                 // in routine tab
                 showNewRoutineDialog();
             }
-
         });
     }
 
@@ -104,7 +97,6 @@ public class WorkoutFragment extends Fragment {
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
         Fragment source = null;
 
         public SectionsPagerAdapter(FragmentManager fm, Fragment source) {
@@ -121,11 +113,11 @@ public class WorkoutFragment extends Fragment {
             }
             switch(position){
                 case 0:
-                    ExerciseTypeFragment a = ExerciseTypeFragment.newInstance(position + 1);
+                    ExerciseTypeFragment a = ExerciseTypeFragment.newInstance();
                     a.setTargetFragment(source, 0);
                     return a;
                 case 1:
-                    RoutineFragment b = RoutineFragment.newInstance(position + 1);
+                    RoutineFragment b = RoutineFragment.newInstance();
                     b.setTargetFragment(source, 0);
                     return b;
             }
@@ -157,8 +149,7 @@ public class WorkoutFragment extends Fragment {
      * a user to create a new type of exercise
      */
     void showNewExerciseDialog() {
-        DialogFragment newFragment = NewExerciseDialogFragment.newInstance(
-                R.string.title_new_exercise_dialog);
+        DialogFragment newFragment = NewExerciseDialogFragment.newInstance(getString(R.string.title_new_exercise_dialog));
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -197,9 +188,8 @@ public class WorkoutFragment extends Fragment {
      * a select exercises to add to a routine
      */
     void showRoutineBuilder(String name) {
-        BuildRoutineDialogFragment newFragment = BuildRoutineDialogFragment.newInstance(
-                R.string.title_new_exercise_dialog);
-        newFragment.titleThing = name;
+        BuildRoutineDialogFragment newFragment = BuildRoutineDialogFragment.newInstance(getString(R.string.title_new_exercise_dialog));
+        //newFragment.titleThing = name; // FIXME: Is this what we pass in?
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -229,18 +219,23 @@ public class WorkoutFragment extends Fragment {
         }
     }
 
+	/**
+     *
+     */
     public void cancelNewExerciseType() {
         // Do stuff here.
         Log.i("FragmentAlertDialog", "Negative click!");
     }
 
-
+	/**
+	 *
+     */
     public void saveRoutine() {
         // Do stuff here.
-        if(routineName.equals("")){
+        if (routineName.equals("")) {
             Snackbar.make(getView().findViewById(android.R.id.content), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
-        }else{
+        } else {
             RoutineModel newRoutine = new RoutineModel(routineName);
             routineModelList.add(newRoutine);
             ListView routineListView = (ListView)getView().findViewById(R.id.routine_model_list_view);
@@ -252,6 +247,9 @@ public class WorkoutFragment extends Fragment {
         }
     }
 
+	/**
+     *
+     */
     public void cancelNewRoutine() {
         // Do stuff here.
         Log.i("FragmentAlertDialog", "Negative click!");
