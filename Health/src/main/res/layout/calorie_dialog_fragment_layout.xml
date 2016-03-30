@@ -15,5 +15,12 @@
         android:ems="10"
         android:id="@+id/num_calories" />
 
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Caffeine"
+        android:id="@+id/caffeine_button"
+        android:clickable="true" />
+
 
 </LinearLayout>

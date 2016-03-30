@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
+
 
 /**
  * Nutrition Module itself.
@@ -28,9 +31,10 @@ public class NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
     private static final String REALMNAME = "nutrition.realm";
 
-    //Data to be stored.
+    //Important Data.
     private int calorieIntake;
     private boolean hadCaffeine;
+    private int numCheatDays;
     private NutrientModel nutrients;
     private MineralModel minerals;
     private VitaminModel vitamins;
@@ -52,6 +56,7 @@ public class NutritionModule extends Module {
         this.favoriteFoods = new ArrayList<String>();
         this.hadCaffeine = false;
         this.calorieIntake = 0;
+        this.numCheatDays = 5;
         createModels();
 
         this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> Log.d(TAG, "Some realm was empty."));
@@ -116,6 +121,29 @@ public class NutritionModule extends Module {
         createModels();
     }
 
+    public float[] queryCalories(){
+        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
+        float[] calorieSet = new float[nutritionQueryResults.size()];
+
+        for (int index = 0; index < nutritionQueryResults.size(); index++){
+            NutritionModel model = nutritionQueryResults.get(index);
+            calorieSet[index] = (float) model.getCalorieIntake();
+        }
+
+        return calorieSet;
+    }
+
+    public String[] queryDates(){
+        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
+        String[] dateSet = new String[nutritionQueryResults.size()];
+
+        for (int index = 0; index < nutritionQueryResults.size(); index++){
+            NutritionModel model = nutritionQueryResults.get(index);
+            dateSet[index] = model.getDate().toString();
+        }
+        return dateSet;
+    }
+
     public void setHadCaffeine(boolean hadCaffeine) {
         this.hadCaffeine = hadCaffeine;
     }
@@ -142,5 +170,21 @@ public class NutritionModule extends Module {
 
     public void setFavoriteFoods(ArrayList<String> favoriteFoods) {
         this.favoriteFoods = favoriteFoods;
+    }
+
+    public int getNumCheatDays() {
+        return numCheatDays;
+    }
+
+    public void setNumCheatDays(int numCheatDays) {
+        this.numCheatDays = numCheatDays;
+    }
+
+    public void generateData() {
+        for (int i = 0; i < 10; i++){
+            calorieIntake = i * 100;
+            hadCaffeine = !hadCaffeine;
+            addNutritionRecord();
+        }
     }
 }

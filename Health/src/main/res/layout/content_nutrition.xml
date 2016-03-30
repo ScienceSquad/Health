@@ -12,10 +12,17 @@
     tools:context="com.sciencesquad.health.nutrition.NutritionModule"
     tools:showIn="@layout/app_bar_nutrition">
 
+    <com.db.chart.view.LineChartView
+        xmlns:chart="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/linechart"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"/>
+
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit Calories"
+        android:text="Submit"
         android:id="@+id/submit_calories"
         android:onClick="submitCalories"
         android:layout_alignParentBottom="true"
@@ -28,7 +35,17 @@
         android:text="Save Progress"
         android:id="@+id/nutrition_save_progress"
         android:onClick="saveNutritionProgress"
-        android:layout_alignBottom="@+id/submit_calories"
-        android:layout_toStartOf="@+id/submit_calories" />
+        android:layout_alignTop="@+id/submit_calories"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Diet"
+        android:id="@+id/diet_button"
+        android:layout_alignTop="@+id/nutrition_save_progress"
+        android:layout_alignParentStart="true"
+        android:singleLine="true" />
 
 </RelativeLayout>
