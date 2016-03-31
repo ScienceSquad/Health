@@ -38,3 +38,16 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+# Notifications
+notifications:
+  email:
+    recipients:
+      - avaidyam@purdue.edu
+      - mill1298@purdue.edu
+      - bschabel@purdue.edu
+      - waldena@purdue.edu
+      - ford31@purdue.edu
+      - johns789@purdue.edu
+    on_success: [change]
+    on_failure: [always]

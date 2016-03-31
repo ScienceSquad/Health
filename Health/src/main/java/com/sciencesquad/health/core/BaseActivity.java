@@ -1,9 +1,10 @@
-package com.sciencesquad.health.events;
+package com.sciencesquad.health.core;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import com.sciencesquad.health.events.Event.EventType;
+import com.sciencesquad.health.core.Event.EventType;
+import com.sciencesquad.health.events.*;
 import org.immutables.value.Value.Immutable;
 
 public class BaseActivity extends AppCompatActivity {
@@ -169,13 +170,13 @@ public class BaseActivity extends AppCompatActivity {
 	}
 
 	/**
-	 * Returns the application-wide instance of the EventBus.
+	 * Returns the app-wide instance of the EventBus.
 	 *
 	 * @implNote this method is equivalent to `this.getApplication().eventBus()`.
 	 *
-	 * @return the EventBus globally available to the application.
+	 * @return the EventBus globally available to the app.
 	 */
 	public EventBus eventBus() {
-		return ((BaseApplication)this.getApplication()).eventBus();
+		return ((BaseApp)this.getApplication()).eventBus();
 	}
 }

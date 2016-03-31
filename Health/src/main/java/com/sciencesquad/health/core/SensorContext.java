@@ -1,4 +1,4 @@
-package com.sciencesquad.health.events;
+package com.sciencesquad.health.core;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -8,15 +8,18 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import com.sciencesquad.health.events.SensorAccuracyEvent;
+import com.sciencesquad.health.events.SensorChangeEvent;
+import com.sciencesquad.health.events.SensorFlushEvent;
 import java8.util.Optional;
 import org.immutables.value.Value.Immutable;
 
 import java.util.HashMap;
 
-import static com.sciencesquad.health.events.Event.EventType;
+import static com.sciencesquad.health.core.Event.EventType;
 
 /**
- * The SensorContext is a transparent entity bound to the application
+ * The SensorContext is a transparent entity bound to the app
  * which can be requested to translate callback functions into events.
  * A typical use-case is that of the normal `SensorManager` -- instead,
  * the request is made to the `SensorContext`, and that sends events
@@ -131,8 +134,8 @@ public class SensorContext {
 
 		final SensorEventListener2 listener = new SensorEventListener2() {
 			@Override public void onSensorChanged(SensorEvent sensorEvent) {
-				Optional.ofNullable(BaseApplication.application())
-						.map(BaseApplication::eventBus)
+				Optional.ofNullable(BaseApp.app())
+						.map(BaseApp::eventBus)
 						.ifPresent(e -> {
 							e.publish(SensorChangeEvent.from(this)
 									.sensorEvent(sensorEvent)
@@ -141,8 +144,8 @@ public class SensorContext {
 			}
 
 			@Override public void onAccuracyChanged(Sensor sensor, int accuracy) {
-				Optional.ofNullable(BaseApplication.application())
-						.map(BaseApplication::eventBus)
+				Optional.ofNullable(BaseApp.app())
+						.map(BaseApp::eventBus)
 						.ifPresent(e -> {
 							e.publish(SensorAccuracyEvent.from(this)
 									.sensor(sensor)
@@ -152,8 +155,8 @@ public class SensorContext {
 			}
 
 			@Override public void onFlushCompleted(Sensor sensor) {
-				Optional.ofNullable(BaseApplication.application())
-						.map(BaseApplication::eventBus)
+				Optional.ofNullable(BaseApp.app())
+						.map(BaseApp::eventBus)
 						.ifPresent(e -> {
 							e.publish(SensorFlushEvent.from(this)
 									.sensor(sensor)

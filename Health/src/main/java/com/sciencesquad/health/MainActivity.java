@@ -10,8 +10,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.sciencesquad.health.core.BaseActivity;
+import com.sciencesquad.health.core.ContextBinder;
+import com.sciencesquad.health.core.Module;
+import java8.util.stream.StreamSupport;
 
 import android.widget.Toast;
 import com.sciencesquad.health.activity.MapsActivity;
@@ -81,18 +86,28 @@ public class MainActivity extends BaseActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	@SuppressWarnings("StatementWithEmptyBody")
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
 		// Handle navigation view item clicks here.
 		int id = item.getItemId();
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+		StreamSupport.stream(Module.registeredModules())
+		.filter(a -> a.identifier().second == id)
+		.findFirst()
+		.ifPresent(module -> {
+			// code here
+			ContextBinder.bind(this, null, module, R.layout.sleep_layout, 0, () -> {
+				Log.d(TAG, "Module bound!");
+			});
+		});
+		
+
 		if (id == R.id.nav_run) {
 			//setContentView(R.layout.maplayout);
 			startActivity(new Intent(this, MapsActivity.class));
 		} else if (id == R.id.nav_sleep) {
-
+			
 		} else if (id == R.id.nav_steps) {
 			getFragmentManager().beginTransaction()
 					.replace(android.R.id.content, new StepsFragment(), "STEPS")

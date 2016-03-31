@@ -1,5 +1,11 @@
 package com.sciencesquad.health.nutrition;
 
+import android.util.Pair;
+import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.DataContext;
+import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.RealmContext;
 import android.util.Log;
 
 import com.sciencesquad.health.core.Module;
@@ -20,15 +26,12 @@ import java.util.Collections;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
-
 /**
- * Nutrition Module itself.
- *
- * Note:
- * It must be expanded upon from this current baby state
+ * Nutrition Module
  */
 public class NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
+
     private static final String REALMNAME = "nutrition.realm";
 
     //Important Data.

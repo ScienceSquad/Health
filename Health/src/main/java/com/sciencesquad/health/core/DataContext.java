@@ -1,7 +1,6 @@
-package com.sciencesquad.health.data;
+package com.sciencesquad.health.core;
 
 import android.content.Context;
-import com.sciencesquad.health.events.Event;
 import org.immutables.value.Value;
 
 import java.util.Collection;
