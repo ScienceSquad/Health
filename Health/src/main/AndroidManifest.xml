@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<<<<<<< HEAD
     package="com.sciencesquad.health">
+=======
+    package="com.sciencesquad.health" >
+>>>>>>> master
 
     <!-- For the Steps Module -->
     <uses-feature android:name="android.hardware.sensor.stepcounter" />
@@ -68,11 +72,24 @@
             android:label="@string/title_activity_clock"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
+        <!-- For Workout testing. -->
+        <activity
+            android:name=".workout.WorkoutActivity"
+            android:label="@string/title_activity_workout"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+
         <!-- For Steps testing. -->
         <activity
             android:name=".steps.StepsViewModel"
             android:label="@string/steps_module"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- For Nutrition Testing. -->
+        <activity
+            android:name=".nutrition.NutritionViewModel"
+            android:label="@string/nutrition_module"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <!-- For SleepModule to play audio in the background. -->
         <service
@@ -98,6 +115,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
-
+	</application>
 </manifest>

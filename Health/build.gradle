@@ -8,11 +8,13 @@ buildscript {
         classpath 'me.tatarka:gradle-retrolambda:3.1.0'
         classpath 'com.android.databinding:dataBinder:1.0-rc1'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath "io.realm:realm-gradle-plugin:0.88.2"
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'realm-android'
 
 repositories {
     jcenter()
@@ -38,7 +40,6 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
-
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -128,4 +129,3 @@ dependencies {
     compile 'junit:junit:4.12'
     compile 'com.wdullaer:materialdatetimepicker:2.2.0'
 }
-

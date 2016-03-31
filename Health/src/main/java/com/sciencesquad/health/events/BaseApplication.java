@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
+
+import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.sciencesquad.health.events.Event.EventType;
 import org.immutables.value.Value.Immutable;
 
@@ -128,6 +130,8 @@ public class BaseApplication extends Application implements SharedPreferences.On
 				.deleteRealmIfMigrationNeeded()
 				.build();
 		Realm.setDefaultConfiguration(defaultConfig);
+		// gives timezone data.
+		AndroidThreeTen.init(this);
 
 		_application = this;
 		this.eventBus().publish(AppCreateEvent.from(this)

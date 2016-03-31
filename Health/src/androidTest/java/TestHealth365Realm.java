@@ -7,8 +7,14 @@ import junit.framework.Assert;
 import com.sciencesquad.health.data.RealmContext;
 import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.nutrition.NutritionModel;
+import com.sciencesquad.health.workout.ExerciseTypeModel;
+import com.sciencesquad.health.workout.WorkoutModule;
+import com.sciencesquad.health.workout.ExerciseKind;
+import com.sciencesquad.health.workout.RoutineModel;
+
 import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
 import com.sciencesquad.health.prescriptions.PrescriptionModel;
+
 
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;
@@ -93,6 +99,30 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
         }
 
     }
+    /*
+    @Test
+    public void testWorkout(){
+        createApplication();
+        try{
+            RealmContext workoutTestRealm = new RealmContext<>();
+            workoutTestRealm.init(BaseApplication.application(), ExerciseTypeModel.class, "test.realm");
+            workoutTestRealm.clear();
+            ExerciseKind kind = ExerciseKind.valueOf("STRENGTH");
+            ExerciseTypeModel newExerciseType = com.sciencesquad.health.workout.WorkoutModule.createNewExercise("Bench Press", kind, "Chest");
+            workoutTestRealm.add(newExerciseType);
+            RealmQuery<ExerciseTypeModel> testQuery = workoutTestRealm.query();
+
+            Assert.assertEquals(testQuery.findAll().size(), 1);
+            Assert.assertEquals(testQuery.findAll().first().getName(), "Bench Press");
+
+
+            workoutTestRealm.clear();
+            //workoutTestRealm.getRealm().clear(ExerciseTypeModel.class);
+           //Assert.assertEquals(testQuery.findAll().size(), 0);
+
+            try {
+                workoutTestRealm.close();
+
 
     @Test
     public void testPrescriptionRealm() {
@@ -149,4 +179,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApplication>{
             Assert.fail("An Exception Occurred.");
         }
     }
+
+    */
+
 }
