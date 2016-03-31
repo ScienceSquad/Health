@@ -1,26 +1,16 @@
 package com.sciencesquad.health.nutrition;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.db.chart.model.LineSet;
-import com.db.chart.view.LineChartView;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.sciencesquad.health.R;
 
 /**
@@ -32,8 +22,6 @@ public class NutritionViewModel extends Fragment {
     private NutritionModule nutritionModule;
     private static final String TAG = NutritionViewModel.class.getSimpleName();
 
-    LineChartView calorieHistory;
-    LineSet calorieSet;
 
     /**
      * Creates the Nutrition View.
@@ -44,6 +32,10 @@ public class NutritionViewModel extends Fragment {
         return inflater.inflate(R.layout.nutrition_layout, container, false);
     }
 
+    /**
+     * Further creating the UI and setting up buttons and their listeners.
+     * @param savedInstanceState
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -61,27 +53,23 @@ public class NutritionViewModel extends Fragment {
         });
 
         Button saveProgress = (Button) v.findViewById(R.id.nutrition_save_progress);
-        saveProgress.setOnClickListener(v1 -> {
-            saveNutritionProgress(getView());
-        });
+        saveProgress.setOnClickListener(v1 -> saveNutritionProgress(getView()));
 
         Button editDiet = (Button) v.findViewById(R.id.diet_button);
         editDiet.setOnClickListener(v1 -> createDietDialog());
 
-        //calorieHistory = new LineChartView(getActivity());
-        //calorieSet= createCalorieSet();
+        // setting up the chart.
+        LineChart nutritionChart = (LineChart) v.findViewById(R.id.nutrition_chart);
+        nutritionChart.setDescription("Calorie History");
 
-        //calorieHistory.addData(calorieSet);
-
-        //calorieHistory.show();
 
     }
 
-    private LineSet createCalorieSet() {
+    /*private LineSet createCalorieSet() {
         float[] calorieSet = nutritionModule.queryCalories();
         String[] dateSet = nutritionModule.queryDates();
         return new LineSet(dateSet, calorieSet);
-    }
+    }*/
 
     /**
      * TODO: Do things that set up and create a Diet Dialog Fragment.
@@ -106,7 +94,6 @@ public class NutritionViewModel extends Fragment {
         CalorieDialogFragment newFrag = new CalorieDialogFragment();
         newFrag.setTargetFragment(this, 0);
         newFrag.show(getFragmentManager(), "calorie dialog");
-        //getActivity().setContentView(R.layout.calorie_dialog_fragment_layout);
     }
 
     public NutritionModule getNutritionModule(){

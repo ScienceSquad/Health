@@ -51,13 +51,13 @@ public class NutritionModule extends Module {
     public NutritionModule()  {
         this.nutritionRealm = new RealmContext<>();
         this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, REALMNAME);
+        this.nutritionRealm.clear();
 
         // default values
         this.favoriteFoods = new ArrayList<String>();
         this.hadCaffeine = false;
         this.calorieIntake = 0;
         this.numCheatDays = 5;
-        createModels();
 
         this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> Log.d(TAG, "Some realm was empty."));
         this.subscribe(DataFailureEvent.class, this, (DataFailureEvent dataFailureEvent1) -> {
@@ -122,24 +122,32 @@ public class NutritionModule extends Module {
     }
 
     public float[] queryCalories(){
+        Log.v(TAG, "Querying Calories");
         RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
+        Log.v(TAG, "Query Results size: " + nutritionQueryResults.size());
+
         float[] calorieSet = new float[nutritionQueryResults.size()];
 
         for (int index = 0; index < nutritionQueryResults.size(); index++){
             NutritionModel model = nutritionQueryResults.get(index);
-            calorieSet[index] = (float) model.getCalorieIntake();
+            calorieSet[index] =  (Integer.valueOf(model.getCalorieIntake()).floatValue());
+            Log.v(TAG, "Float of calorie: " + calorieSet[index]);
         }
 
         return calorieSet;
     }
 
     public String[] queryDates(){
+        Log.v(TAG, "Querying Dates");
         RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
+        Log.v(TAG, "Query Results size: " + nutritionQueryResults.size());
+
         String[] dateSet = new String[nutritionQueryResults.size()];
 
         for (int index = 0; index < nutritionQueryResults.size(); index++){
             NutritionModel model = nutritionQueryResults.get(index);
             dateSet[index] = model.getDate().toString();
+            Log.v(TAG, "String of Dates: " + dateSet[index]);
         }
         return dateSet;
     }
@@ -182,7 +190,7 @@ public class NutritionModule extends Module {
 
     public void generateData() {
         for (int i = 0; i < 10; i++){
-            calorieIntake = i * 100;
+            calorieIntake = i * 100 + 50;
             hadCaffeine = !hadCaffeine;
             addNutritionRecord();
         }

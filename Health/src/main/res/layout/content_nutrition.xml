@@ -12,12 +12,10 @@
     tools:context="com.sciencesquad.health.nutrition.NutritionModule"
     tools:showIn="@layout/app_bar_nutrition">
 
-    <com.db.chart.view.LineChartView
-        xmlns:chart="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/linechart"
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/nutrition_chart"
         android:layout_width="match_parent"
-        android:layout_height="100dp"/>
-
+        android:layout_height="match_parent" />
 
     <Button
         android:layout_width="wrap_content"
