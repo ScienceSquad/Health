@@ -32,7 +32,7 @@ public class BuildRoutineDialogFragment extends DialogFragment {
 		frag.setArguments(args);
 		return frag;
 	}
-
+	//
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		String title = this.getArguments().getString(KEY_TITLE);
