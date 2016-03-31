@@ -115,7 +115,6 @@ dependencies {
     compile 'com.android.support:support-v13:23.2.1'
     compile 'com.android.support:design:23.2.1'
     compile 'com.android.support:percent:23.1.0'
-    compile 'io.realm:realm-android:0.87.5'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.ogaclejapan.smarttablayout:library:1.6.0@aar'
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
