@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sciencesquad.health" >
+    package="com.sciencesquad.health">
 
-    <!-- For the Steps Module  -->
+    <!-- For the Steps Module -->
     <uses-feature android:name="android.hardware.sensor.stepcounter" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -53,15 +53,16 @@
             android:fullBackupContent="true">
 
         <!-- For Google's AutoBackupAgent. -->
-        <meta-data android:name="com.google.android.backup.api_key"
+        <meta-data
+            android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
 
         <!-- Entry point for the app. -->
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" >
+			android:label="@string/app_name"
+			android:theme="@style/AppTheme.NoActionBar"
+			android:screenOrientation="portrait" >
 
             <!-- Can be started from any launcher app. -->
             <intent-filter>
@@ -105,10 +106,26 @@
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
-            android:exported="false"/>
+            android:exported="false" />
 
-        <receiver android:enabled="true"
-            android:name=".prescriptions.PrescriptionAlarmReceiver">
-        </receiver>
-    </application>
+        <activity
+            android:name=".AlarmActivity"
+            android:label="@string/title_activity_alarm"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <receiver
+            android:name=".prescriptions.PrescriptionAlarmReceiver"
+            android:enabled="true"></receiver>
+
+        <activity
+            android:name=".activity.RunTracking"
+            android:label="@string/title_activity_run_tracking"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+	</application>
 </manifest>
