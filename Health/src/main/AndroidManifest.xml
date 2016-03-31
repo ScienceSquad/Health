@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sciencesquad.health">
+<manifest
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.sciencesquad.health">
 
-    <!-- For the Steps Module -->
+    <!-- For the Steps Module to access the hardware. -->
     <uses-feature android:name="android.hardware.sensor.stepcounter" />
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
+    <!-- For the Activity Module to read GPS data. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- For the Activity Module to read GPS data. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <!-- For SoundService to play audio with the screen off. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- Restricts app to phone-use only; no tablets -->
     <compatible-screens>
-        <!-- all small size screens -->
         <screen android:screenSize="small" android:screenDensity="ldpi" />
         <screen android:screenSize="small" android:screenDensity="mdpi" />
         <screen android:screenSize="small" android:screenDensity="hdpi" />
@@ -28,7 +24,6 @@
         <screen android:screenSize="small" android:screenDensity="480" />
         <screen android:screenSize="small" android:screenDensity="560" />
         <screen android:screenSize="small" android:screenDensity="640" />
-        <!-- all normal size screens -->
         <screen android:screenSize="normal" android:screenDensity="ldpi" />
         <screen android:screenSize="normal" android:screenDensity="mdpi" />
         <screen android:screenSize="normal" android:screenDensity="hdpi" />
@@ -54,8 +49,13 @@
 
         <!-- For Google's AutoBackupAgent. -->
         <meta-data
-            android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
+                android:name="com.google.android.backup.api_key"
+                android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
+
+        <!-- For Google's Maps API. -->
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_maps_key" />
 
         <!-- Entry point for the app. -->
         <activity
@@ -67,65 +67,18 @@
             <!-- Can be started from any launcher app. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- For Clock testing. -->
-        <activity
-                android:name=".ClockActivity"
-                android:label="@string/title_activity_clock"
-                android:theme="@style/AppTheme.NoActionBar"/>
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
-        <!-- For Maps testing. -->
-        <activity
-            android:name=".activity.MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:exported="true"
-            android:screenOrientation="portrait" />
-        </activity>
-
-        <!-- For Nutrition Testing. -->
-        <activity
-            android:name=".nutrition.NutritionViewModel"
-            android:label="@string/nutrition_module"
-            android:theme="@style/AppTheme.NoActionBar"/>
 
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
             android:exported="false" />
 
-        <activity
-            android:name=".AlarmActivity"
-            android:label="@string/title_activity_alarm"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-
+        <!-- For PrescriptionsModule to trigger in a timely manner. -->
         <receiver
             android:name=".prescriptions.PrescriptionAlarmReceiver"
-            android:enabled="true"></receiver>
-
-        <activity
-            android:name=".activity.RunTracking"
-            android:label="@string/title_activity_run_tracking"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:enabled="true" />
 	</application>
 </manifest>
