@@ -1,14 +1,9 @@
 package com.sciencesquad.health.steps;
 
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
-import android.hardware.*;
 import android.widget.Toast;
 
 /**
@@ -19,10 +14,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,19 +22,22 @@ import android.widget.TextView;
  * Above are packages that may or may not need to be used
  */
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.events.BaseApplication;
 import com.sciencesquad.health.ui.Stopwatch;
 
 import org.threeten.bp.Duration;
-import org.w3c.dom.Text;
 
 /**
  * This is the only way I know how to do this as of right now. Should this be in my Model instead?
  * Will write more in a few.
  */
-public class StepsViewModel extends BaseActivity implements SensorEventListener {
+public class StepsFragment extends Fragment implements SensorEventListener {
 
     private StepsModule stepsModule;
     private Stopwatch stopwatch;
@@ -58,14 +53,11 @@ public class StepsViewModel extends BaseActivity implements SensorEventListener 
     private TextView avg_speed;
     private TextView elapsed_time;
     boolean activityRunning;
-    private static final String TAG = StepsViewModel.class.getSimpleName();
+    private static final String TAG = StepsFragment.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.steps_layout);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         stepsModule = new StepsModule();
         numSteps = stepsModule.getNumSteps();
@@ -74,15 +66,15 @@ public class StepsViewModel extends BaseActivity implements SensorEventListener 
 
         registerEventListener(stepsModule.getMaxDelay());
 
-        num_steps = (TextView) findViewById(R.id.num_steps);
+        num_steps = (TextView) getView().findViewById(R.id.num_steps);
         num_steps.setText(String.valueOf(numSteps));
 
         strideLength = Math.round((0.415 * 1.8796)*100d)/100d;
 
-        stride_length = (TextView) findViewById(R.id.stride_length);
+        stride_length = (TextView) getView().findViewById(R.id.stride_length);
         stride_length.setText(String.valueOf(strideLength) + "m");
 
-        elapsed_time = (TextView) findViewById(R.id.elapsed_time);
+        elapsed_time = (TextView) getView().findViewById(R.id.elapsed_time);
         stopwatch.start();
         stopwatch.setInterval(51);
         stopwatch.setOnTimeChange(new Runnable() {
@@ -94,10 +86,10 @@ public class StepsViewModel extends BaseActivity implements SensorEventListener 
             }
         });
 
-        avg_speed = (TextView) findViewById(R.id.avg_speed);
+        avg_speed = (TextView) getView().findViewById(R.id.avg_speed);
         avg_speed.setText(String.valueOf(strideLength) + "m/s");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,7 +99,7 @@ public class StepsViewModel extends BaseActivity implements SensorEventListener 
         });
 
         // This IS used -- see content_steps.xml
-        Button reset_steps = (Button) findViewById(R.id.buttonReset);
+        Button reset_steps = (Button) getView().findViewById(R.id.buttonReset);
     }
 
     /**
@@ -179,7 +171,7 @@ public class StepsViewModel extends BaseActivity implements SensorEventListener 
         if (countSensor != null) {
             sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
         } else {
-            Toast.makeText(this, "Count sensor not available!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Count sensor not available!", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -10,8 +10,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.sciencesquad.health.AlarmActivity"
-    tools:showIn="@layout/activity_alarm"
+    tools:context=".alarm.AlarmFragment"
+    tools:showIn="@layout/app_bar_alarm"
     android:id="@+id/alarm_rl">
 
 </RelativeLayout>
