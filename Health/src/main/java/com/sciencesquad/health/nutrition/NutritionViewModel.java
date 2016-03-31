@@ -11,7 +11,15 @@ import android.widget.Button;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
+import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.sciencesquad.health.R;
+
+import java.util.ArrayList;
+
+import io.realm.RealmResults;
 
 /**
  * ViewModel for the Nutrition Module.
@@ -62,14 +70,19 @@ public class NutritionViewModel extends Fragment {
         LineChart nutritionChart = (LineChart) v.findViewById(R.id.nutrition_chart);
         nutritionChart.setDescription("Calorie History");
 
+        //Gathering and manipulating data.
+        RealmLineDataSet<NutritionModel> nutritionDataSet = new RealmLineDataSet<NutritionModel>(
+                nutritionModule.queryNutrition(), "calorieIntake");
+        ArrayList<ILineDataSet> dataSetList = new ArrayList<ILineDataSet>();
+        dataSetList.add(nutritionDataSet);
+        RealmLineData data = new RealmLineData(nutritionModule.queryNutrition(), "dateString", dataSetList);
+
+        // getting the data to display.
+        nutritionChart.setData(data);
+        nutritionChart.invalidate();
+
 
     }
-
-    /*private LineSet createCalorieSet() {
-        float[] calorieSet = nutritionModule.queryCalories();
-        String[] dateSet = nutritionModule.queryDates();
-        return new LineSet(dateSet, calorieSet);
-    }*/
 
     /**
      * TODO: Do things that set up and create a Diet Dialog Fragment.

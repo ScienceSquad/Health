@@ -36,7 +36,7 @@ public class NutritionModule extends Module {
     private static final String REALMNAME = "nutrition.realm";
 
     //Important Data.
-    private int calorieIntake;
+    private float calorieIntake;
     private boolean hadCaffeine;
     private int numCheatDays;
     private NutrientModel nutrients;
@@ -120,41 +120,17 @@ public class NutritionModule extends Module {
         newNutritionModel.setVitaminModel(vitamins);
         newNutritionModel.setMineralModel(minerals);
         newNutritionModel.setDate(DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
+        newNutritionModel.setDateString(
+                DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)).toString());
         nutritionRealm.add(newNutritionModel);
         clearModels();
         createModels();
     }
 
-    public float[] queryCalories(){
-        Log.v(TAG, "Querying Calories");
-        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
-        Log.v(TAG, "Query Results size: " + nutritionQueryResults.size());
-
-        float[] calorieSet = new float[nutritionQueryResults.size()];
-
-        for (int index = 0; index < nutritionQueryResults.size(); index++){
-            NutritionModel model = nutritionQueryResults.get(index);
-            calorieSet[index] =  (Integer.valueOf(model.getCalorieIntake()).floatValue());
-            Log.v(TAG, "Float of calorie: " + calorieSet[index]);
-        }
-
-        return calorieSet;
+    public RealmResults<NutritionModel> queryNutrition(){
+        return nutritionRealm.query().findAll();
     }
 
-    public String[] queryDates(){
-        Log.v(TAG, "Querying Dates");
-        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
-        Log.v(TAG, "Query Results size: " + nutritionQueryResults.size());
-
-        String[] dateSet = new String[nutritionQueryResults.size()];
-
-        for (int index = 0; index < nutritionQueryResults.size(); index++){
-            NutritionModel model = nutritionQueryResults.get(index);
-            dateSet[index] = model.getDate().toString();
-            Log.v(TAG, "String of Dates: " + dateSet[index]);
-        }
-        return dateSet;
-    }
 
     public void setHadCaffeine(boolean hadCaffeine) {
         this.hadCaffeine = hadCaffeine;
@@ -167,7 +143,7 @@ public class NutritionModule extends Module {
         return hadCaffeine;
     }
 
-    public int getCalorieIntake() {
+    public float getCalorieIntake() {
         return calorieIntake;
     }
 
