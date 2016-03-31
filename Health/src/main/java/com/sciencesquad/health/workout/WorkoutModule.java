@@ -1,10 +1,11 @@
 package com.sciencesquad.health.workout;
 
 import android.util.Log;
+import android.util.Pair;
 
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.data.RealmContext;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.BaseApp;
 
 import java.util.Calendar;
 
@@ -23,6 +24,16 @@ public class WorkoutModule extends Module {
      */
 
     public WorkoutModule(){}
+
+    @Override
+    public Pair<String, Integer> identifier() {
+        return null;
+    }
+
+    @Override
+    public void init() {
+
+    }
 
     /*
     public static ExerciseTypeModel createNewExercise(String name, ExerciseKind kind, String target){

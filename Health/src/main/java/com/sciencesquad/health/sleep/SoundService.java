@@ -12,8 +12,8 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.events.BaseApplication;
-import com.sciencesquad.health.events.Event;
+import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Event;
 import com.sciencesquad.health.util.X;
 import java8.util.stream.StreamSupport;
 import org.immutables.value.Value;
@@ -66,7 +66,7 @@ public class SoundService extends Service {
 	 */
 	public static Map<String, MediaPlayer> defaultPlayers() {
 		HashMap<String, MediaPlayer> players = new HashMap<>();
-		X.of(BaseApplication.application()).let(app -> {
+		X.of(BaseApp.app()).let(app -> {
 			players.put("waves", MediaPlayer.create(app, R.raw.waves));
 			players.put("birds", MediaPlayer.create(app, R.raw.birds));
 			players.put("crickets", MediaPlayer.create(app, R.raw.crickets));
@@ -82,7 +82,7 @@ public class SoundService extends Service {
 	 * Convenience method to start the SoundService.
 	 */
 	public static void startSoundService() {
-		X.of(BaseApplication.application()).let(app -> {
+		X.of(BaseApp.app()).let(app -> {
 			Intent startIntent = new Intent(app, SoundService.class);
 			app.startService(startIntent);
 		}).or(() -> {
@@ -95,7 +95,7 @@ public class SoundService extends Service {
 	 * Note that this cannot be invoked by the user directly.
 	 */
 	public static void stopSoundService() {
-		X.of(BaseApplication.application()).let(app -> {
+		X.of(BaseApp.app()).let(app -> {
 			Intent stopIntent = new Intent(app, SoundService.class);
 			app.stopService(stopIntent);
 		}).or(() -> {
@@ -149,7 +149,7 @@ public class SoundService extends Service {
 		});
 
 		// Broadcast an event to say that we started up.
-		X.of(BaseApplication.application()).map(BaseApplication::eventBus).let(bus -> {
+		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
 			bus.publish(SoundServiceStartEvent.from(this).create());
 		});
 
@@ -182,7 +182,7 @@ public class SoundService extends Service {
 		m.cancel(NOTE_ID);
 
 		// Broadcast an event to say that we stopped.
-		X.of(BaseApplication.application()).map(BaseApplication::eventBus).let(bus -> {
+		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
 			bus.publish(SoundServiceStopEvent.from(this).create());
 		});
 	}

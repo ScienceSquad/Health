@@ -1,35 +1,47 @@
 package com.sciencesquad.health.nutrition;
 
+import android.util.Pair;
+import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.DataContext;
+import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.RealmContext;
 import android.util.Log;
 
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.data.DataEmptyEvent;
-import com.sciencesquad.health.data.DataFailureEvent;
-import com.sciencesquad.health.data.DataUpdateEvent;
-import com.sciencesquad.health.data.RealmContext;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.DataEmptyEvent;
+import com.sciencesquad.health.core.DataFailureEvent;
+import com.sciencesquad.health.core.DataUpdateEvent;
+import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.BaseApp;
 
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 /**
- * Nutrition Module itself.
- *
- * Note:
- * It must be expanded upon from this current baby state
+ * Nutrition Module
  */
 public class    NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
+
     private static final String REALMNAME = "nutrition.realm";
 
-    //Data to be stored.
+    //Important Data.
     private int calorieIntake;
     private boolean hadCaffeine;
+    private int numCheatDays;
     private NutrientModel nutrients;
     private MineralModel minerals;
     private VitaminModel vitamins;
+    private ArrayList<String> favoriteFoods;
 
 
     //Data context.
@@ -39,10 +51,15 @@ public class    NutritionModule extends Module {
      * Constructs the module itself.
      * Subscribes to events necessary to maintaining its own model.
     */
-    public NutritionModule() throws Exception {
+    public NutritionModule()  {
         this.nutritionRealm = new RealmContext<>();
-        this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, REALMNAME);
+        this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
 
+        // default values
+        this.favoriteFoods = new ArrayList<String>();
+        this.hadCaffeine = false;
+        this.calorieIntake = 0;
+        this.numCheatDays = 5;
         createModels();
 
         this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> Log.d(TAG, "Some realm was empty."));
@@ -73,9 +90,9 @@ public class    NutritionModule extends Module {
      */
 
     public void createModels(){
-        vitamins = new VitaminModel();
-        nutrients = new NutrientModel();
-        minerals = new MineralModel();
+        this.vitamins = new VitaminModel();
+        this.nutrients = new NutrientModel();
+        this.minerals = new MineralModel();
     }
 
     /**
@@ -92,7 +109,7 @@ public class    NutritionModule extends Module {
     /**
      * Method to write current Nutrition data to its realm.
      * Resets the data models to be used afresh.
-     * Will be changed to fit the Dispatcher Patter later.
+     * Will be changed to fit the Dispatcher Pattern later.
      */
     public void addNutritionRecord(){
         NutritionModel newNutritionModel = new NutritionModel();
@@ -105,6 +122,29 @@ public class    NutritionModule extends Module {
         nutritionRealm.add(newNutritionModel);
         clearModels();
         createModels();
+    }
+
+    public float[] queryCalories(){
+        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
+        float[] calorieSet = new float[nutritionQueryResults.size()];
+
+        for (int index = 0; index < nutritionQueryResults.size(); index++){
+            NutritionModel model = nutritionQueryResults.get(index);
+            calorieSet[index] = (float) model.getCalorieIntake();
+        }
+
+        return calorieSet;
+    }
+
+    public String[] queryDates(){
+        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
+        String[] dateSet = new String[nutritionQueryResults.size()];
+
+        for (int index = 0; index < nutritionQueryResults.size(); index++){
+            NutritionModel model = nutritionQueryResults.get(index);
+            dateSet[index] = model.getDate().toString();
+        }
+        return dateSet;
     }
 
     public void setHadCaffeine(boolean hadCaffeine) {
@@ -124,5 +164,40 @@ public class    NutritionModule extends Module {
 
     public void setCalorieIntake(int calorieIntake) {
         this.calorieIntake = calorieIntake;
+    }
+
+
+    public ArrayList<String> getFavoriteFoods() {
+        return favoriteFoods;
+    }
+
+    public void setFavoriteFoods(ArrayList<String> favoriteFoods) {
+        this.favoriteFoods = favoriteFoods;
+    }
+
+    public int getNumCheatDays() {
+        return numCheatDays;
+    }
+
+    public void setNumCheatDays(int numCheatDays) {
+        this.numCheatDays = numCheatDays;
+    }
+
+    public void generateData() {
+        for (int i = 0; i < 10; i++){
+            calorieIntake = i * 100;
+            hadCaffeine = !hadCaffeine;
+            addNutritionRecord();
+        }
+    }
+
+    @Override
+    public Pair<String, Integer> identifier() {
+        return null;
+    }
+
+    @Override
+    public void init() {
+
     }
 }

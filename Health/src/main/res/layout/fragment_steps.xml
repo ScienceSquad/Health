@@ -8,24 +8,10 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/content">
-
-    </LinearLayout>
-
     <include
-        layout="@layout/app_bar_main"
+        layout="@layout/app_bar_steps"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/content_container">
-
-    </LinearLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
@@ -34,6 +20,9 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_health_main_drawer" />
+        app:menu="@menu/steps_layout_drawer"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:itemTextColor="?android:textColorPrimary" />
 
 </android.support.v4.widget.DrawerLayout>

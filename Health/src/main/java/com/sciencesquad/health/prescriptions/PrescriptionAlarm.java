@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.sciencesquad.health.alarm.AlarmSender;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.BaseApp;
 
 /**
  * Created by andrew on 3/4/16.
@@ -25,9 +25,9 @@ public class PrescriptionAlarm {
 		// alarm.setInterval(prescriptionModel.getRepeatDuration());
 
 
-		Intent intent = new Intent(BaseApplication.application(), PrescriptionAlarmReceiver.class);
+		Intent intent = new Intent(BaseApp.app(), PrescriptionAlarmReceiver.class);
 		intent.putExtra(PRESCRIPTION_NAME, prescriptionModel.getName());
 		intent.putExtra(PRESCRIPTION_DOSAGE, prescriptionModel.getDosage());
-		alarm.setAlarm(BaseApplication.application(), intent);
+		alarm.setAlarm(BaseApp.app(), intent);
 	}
 }

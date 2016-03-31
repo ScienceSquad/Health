@@ -8,8 +8,7 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include
-        layout="@layout/app_bar_steps"
+    <include layout="@layout/app_bar_clock"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -20,10 +19,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/steps_layout_drawer"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp"
-        app:itemTextColor="?android:textColorPrimary" />
-
+        app:menu="@menu/activity_health_main_drawer" />
 
 </android.support.v4.widget.DrawerLayout>
