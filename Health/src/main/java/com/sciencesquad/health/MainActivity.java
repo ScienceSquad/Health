@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.nutrition.NutritionViewModel;
 import com.sciencesquad.health.workout.WorkoutActivity;
 import com.sciencesquad.health.steps.StepsViewModel;
 
@@ -104,6 +105,13 @@ public class MainActivity extends BaseActivity
 		} else if (id == R.id.nav_alarm) {
 			Intent intent = new Intent(this, AlarmActivity.class);
 			startActivity(intent);
+		} else if (id == R.id.nav_nutrition){
+			NutritionViewModel nextFrag= new NutritionViewModel();
+			this.getFragmentManager().beginTransaction()
+					.replace(R.id.content_main_activity, nextFrag)
+					.addToBackStack(null)
+					.commit();
+			//setContentView(R.layout.nutrition_layout);
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

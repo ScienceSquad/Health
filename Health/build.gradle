@@ -8,11 +8,13 @@ buildscript {
         classpath 'me.tatarka:gradle-retrolambda:3.1.0'
         classpath 'com.android.databinding:dataBinder:1.0-rc1'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath "io.realm:realm-gradle-plugin:0.88.2"
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'realm-android'
 
 repositories {
     jcenter()
@@ -25,7 +27,7 @@ android {
         config {
             keyAlias 'Health365'
             keyPassword 'd3012356101530'
-            storeFile file('../../../keystores/Health365.jks')
+            storeFile file('Health365.jks')
             storePassword 'd3012356101530'
         }
     }
@@ -104,7 +106,6 @@ dependencies {
     compile 'com.android.support:support-v13:23.2.0'
     compile 'com.android.support:design:23.1.0'
     // Framework-level Libraries
-    compile 'io.realm:realm-android:0.87.5'
     apt 'com.github.frankiesardo:auto-parcel-processor:0.3.1'
     // User Interface libraries.
 

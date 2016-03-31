@@ -69,10 +69,23 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
+        <!-- For Workout testing. -->
+        <activity
+            android:name=".workout.WorkoutActivity"
+            android:label="@string/title_activity_workout"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+
         <!-- For Steps testing. -->
         <activity
             android:name=".steps.StepsViewModel"
             android:label="@string/steps_module"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <!-- For Nutrition Testing. -->
+        <activity
+            android:name=".nutrition.NutritionViewModel"
+            android:label="@string/nutrition_module"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <!-- For SleepModule to play audio in the background. -->
