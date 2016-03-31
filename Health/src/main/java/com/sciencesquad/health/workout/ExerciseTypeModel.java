@@ -1,20 +1,13 @@
 package com.sciencesquad.health.workout;
 
-import android.app.ListActivity;
 import android.support.annotation.NonNull;
-
-
-
-import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.Required;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-
 
 public class ExerciseTypeModel {
 
@@ -29,7 +22,6 @@ public class ExerciseTypeModel {
 
     @Ignore
     private ExerciseKind enumb;
-
 
     /**
      * Calendar date where this model was created.
