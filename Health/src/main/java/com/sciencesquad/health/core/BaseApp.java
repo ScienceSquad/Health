@@ -1,25 +1,25 @@
-package com.sciencesquad.health.events;
+package com.sciencesquad.health.core;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
+import com.sciencesquad.health.core.Event.EventType;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
-import com.sciencesquad.health.events.Event.EventType;
 import org.immutables.value.Value.Immutable;
-
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+
 /**
- * The BaseApplication connects the monolithic Android Application
+ * The BaseApp connects the monolithic Android Application
  * to the EventBus mechanism by broadcasting its lifecycle as Events.
  * It also connects to the SharedPreferences singleton and broadcasts
  * any preference key changes as an Event as well.
  */
-public class BaseApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
-	private static final String TAG = BaseApplication.class.getSimpleName();
+public class BaseApp extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
+	private static final String TAG = BaseApp.class.getSimpleName();
 
 	/**
 	 * The Application was created.
@@ -84,32 +84,32 @@ public class BaseApplication extends Application implements SharedPreferences.On
 	}
 
 	/**
-	 * The private application-wide BaseApplication singleton instance.
+	 * The private app-wide BaseApp singleton instance.
 	 */
-	private static BaseApplication _application = null;
+	private static BaseApp _application = null;
 
 	/**
-	 * The private application-wide instance of the EventBus.
+	 * The private app-wide instance of the EventBus.
 	 */
 	private final EventBus _eventBus = new EventBus();
 
 	/**
-	 * Returns the global shared BaseApplication.
+	 * Returns the global shared BaseApp.
 	 *
 	 * @apiNote if called from within a Service not attached to this Application,
 	 * this method will return null.
 	 *
-	 * @return an Optional containing the BaseApplication singleton.
+	 * @return an Optional containing the BaseApp singleton.
 	 */
 	@Nullable
-	public static BaseApplication application() {
+	public static BaseApp app() {
 		return _application;
 	}
 
 	/**
-	 * Returns the application-wide instance of the EventBus.
+	 * Returns the app-wide instance of the EventBus.
 	 *
-	 * @return the EventBus globally available to the application.
+	 * @return the EventBus globally available to the app.
 	 */
 	public EventBus eventBus() {
 		return _eventBus;

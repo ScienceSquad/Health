@@ -1,9 +1,11 @@
 package com.sciencesquad.health.prescriptions;
 
 import android.util.Log;
+import android.util.Pair;
+
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.data.RealmContext;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.BaseApp;
 import io.realm.RealmQuery;
 
 import java.util.Calendar;
@@ -27,7 +29,16 @@ public class PrescriptionModule extends Module {
 	public PrescriptionModule() throws Exception{
 		Log.d(TAG, "Constructing Prescription Module");
 		this.prescriptionRealm = new RealmContext<>();
-		this.prescriptionRealm.init(BaseApplication.application(), PrescriptionModel.class, "prescription.realm");
+		this.prescriptionRealm.init(BaseApp.app(), PrescriptionModel.class, "prescription.realm");
 	}
 
+	@Override
+	public Pair<String, Integer> identifier() {
+		return null;
+	}
+
+	@Override
+	public void init() {
+
+	}
 }

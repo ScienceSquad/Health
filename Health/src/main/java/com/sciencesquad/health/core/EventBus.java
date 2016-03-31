@@ -1,4 +1,4 @@
-package com.sciencesquad.health.events;
+package com.sciencesquad.health.core;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

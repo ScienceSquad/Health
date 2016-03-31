@@ -27,7 +27,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Complete Rep"
+        android:text="Complete Set"
         android:id="@+id/complete_rep_button"
         android:layout_gravity="center_horizontal" />
 

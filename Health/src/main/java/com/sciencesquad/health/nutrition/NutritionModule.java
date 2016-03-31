@@ -1,13 +1,19 @@
 package com.sciencesquad.health.nutrition;
 
+import android.util.Pair;
+import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.DataContext;
+import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.RealmContext;
 import android.util.Log;
 
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.data.DataEmptyEvent;
-import com.sciencesquad.health.data.DataFailureEvent;
-import com.sciencesquad.health.data.DataUpdateEvent;
-import com.sciencesquad.health.data.RealmContext;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.DataEmptyEvent;
+import com.sciencesquad.health.core.DataFailureEvent;
+import com.sciencesquad.health.core.DataUpdateEvent;
+import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.BaseApp;
 
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
@@ -22,13 +28,11 @@ import io.realm.RealmResults;
 
 
 /**
- * Nutrition Module itself.
- *
- * Note:
- * It must be expanded upon from this current baby state
+ * Nutrition Module
  */
 public class NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
+
     private static final String REALMNAME = "nutrition.realm";
 
     //Important Data.
@@ -50,7 +54,7 @@ public class NutritionModule extends Module {
     */
     public NutritionModule()  {
         this.nutritionRealm = new RealmContext<>();
-        this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, REALMNAME);
+        this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
         this.nutritionRealm.clear();
 
         // default values
@@ -194,5 +198,15 @@ public class NutritionModule extends Module {
             hadCaffeine = !hadCaffeine;
             addNutritionRecord();
         }
+    }
+
+    @Override
+    public Pair<String, Integer> identifier() {
+        return null;
+    }
+
+    @Override
+    public void init() {
+
     }
 }
