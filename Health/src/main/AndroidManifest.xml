@@ -64,17 +64,43 @@
 			android:theme="@style/AppTheme.NoActionBar"
 			android:screenOrientation="portrait" >
 
-            <!-- Can be started from any launcher app. -->
+            <!-- Can be started from any launcher application. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".activity.MapsActivity"
+            android:label="@string/title_activity_maps"
+            android:exported="true" >
+        </activity>
+
+        <!-- For Clock testing. -->
+        <activity
+            android:name=".ClockActivity"
+            android:label="@string/title_activity_clock"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
-            android:exported="false" />
+            android:exported="false"/>
 
         <!-- For PrescriptionsModule to trigger in a timely manner. -->
         <receiver

@@ -1,6 +1,5 @@
 package com.sciencesquad.health;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -26,10 +25,15 @@ import com.sciencesquad.health.workout.WorkoutFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.nutrition.NutritionViewModel;
 
+import com.sciencesquad.health.core.BaseActivity;
+import com.sciencesquad.health.workout.WorkoutFragment;
+import com.sciencesquad.health.steps.StepsFragment;
+
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 	private static final String TAG = MainActivity.class.getSimpleName();
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,7 @@ public class MainActivity extends BaseActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+	@SuppressWarnings("StatementWithEmptyBody")
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
 		// Handle navigation view item clicks here.
@@ -147,6 +152,5 @@ public class MainActivity extends BaseActivity
 		}
 
 		return true;
-
 	}
 }

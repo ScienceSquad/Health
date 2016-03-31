@@ -29,7 +29,7 @@ import io.realm.RealmResults;
 /**
  * Nutrition Module
  */
-public class NutritionModule extends Module {
+public class    NutritionModule extends Module {
     private static final String TAG = NutritionModule.class.getSimpleName();
 
     private static final String REALMNAME = "nutrition.realm";

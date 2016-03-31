@@ -13,7 +13,7 @@
         android:id="@+id/routine_name_field"
         android:editable="true"
         android:textSize="18dp"
-        android:hint="Exercise name" />
+        android:hint="Routine name" />
 
 
 </LinearLayout>
