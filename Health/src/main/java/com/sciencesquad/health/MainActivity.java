@@ -1,5 +1,6 @@
 package com.sciencesquad.health;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +17,15 @@ import com.sciencesquad.health.core.BaseActivity;
 import com.sciencesquad.health.core.ContextBinder;
 import com.sciencesquad.health.core.Module;
 import java8.util.stream.StreamSupport;
+import com.sciencesquad.health.activity.MapsActivity;
+
+import com.sciencesquad.health.alarm.AlarmFragment;
+import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.workout.WorkoutFragment;
+import com.sciencesquad.health.steps.StepsFragment;
+import com.sciencesquad.health.nutrition.NutritionViewModel;
+import com.sciencesquad.health.workout.WorkoutActivity;
+import com.sciencesquad.health.steps.StepsViewModel;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,7 +40,7 @@ public class MainActivity extends BaseActivity
 
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setOnClickListener(view ->
-				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+				Snackbar.make(view, "Spaghett!", Snackbar.LENGTH_LONG)
 						.setAction("Action", null).show());
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -81,32 +91,55 @@ public class MainActivity extends BaseActivity
 		int id = item.getItemId();
 
 		StreamSupport.stream(Module.registeredModules())
-				.filter(a -> a.identifier().second == id)
-				.findFirst()
-				.ifPresent(module -> {
-					// code here
-					ContextBinder.bind(this, null, module, R.layout.sleep_layout, 0, () -> {
-						Log.d(TAG, "Module bound!");
-					});
-				});
+		.filter(a -> a.identifier().second == id)
+		.findFirst()
+		.ifPresent(module -> {
+			// code here
+			ContextBinder.bind(this, null, module, R.layout.sleep_layout, 0, () -> {
+				Log.d(TAG, "Module bound!");
+			});
+		});
+		
 
-		/*
-		if (id == R.id.nav_camera) {
-			// Handle the camera action
-		} else if (id == R.id.nav_gallery) {
-
-		} else if (id == R.id.nav_slideshow) {
-
+		if (id == R.id.nav_run) {
+			Intent intent = new Intent(this, MapsActivity.class);
+			startActivity(intent);
+		} else if (id == R.id.nav_sleep) {
+			
+		} else if (id == R.id.nav_steps) {
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new StepsFragment(), "STEPS")
+					.addToBackStack("STEPS")
+					.commit();
 		} else if (id == R.id.nav_manage) {
 
 		} else if (id == R.id.nav_share) {
 
 		} else if (id == R.id.nav_send) {
 
+		} else if (id == R.id.nav_workout) {
+			getFragmentManager().beginTransaction()
+					.replace(R.id.content_container, new WorkoutFragment(), "WORKOUT")
+					.addToBackStack("WORKOUT")
+					.commit();
 		} else if (id == R.id.nav_clock) {
-			Intent intent = new Intent(this, ClockActivity.class);
-			startActivity(intent);
-		}*/
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new ClockFragment(), "CLOCK")
+					.addToBackStack("CLOCK")
+					.commit();
+		} else if (id == R.id.nav_alarm) {
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new AlarmFragment(), "ALARM")
+					.addToBackStack("ALARM")
+					.commit();
+		} else if (id == R.id.nav_nutrition){
+			NutritionViewModel nextFrag= new NutritionViewModel();
+			this.getFragmentManager().beginTransaction()
+					.replace(R.id.content_main_activity, nextFrag)
+					.addToBackStack(null)
+					.commit();
+			//setContentView(R.layout.nutrition_layout);
+		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawer.closeDrawer(GravityCompat.START);

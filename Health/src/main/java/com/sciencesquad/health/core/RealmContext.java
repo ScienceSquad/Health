@@ -7,6 +7,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.sciencesquad.health.data.DataFailureEvent;
+import com.sciencesquad.health.events.BaseApplication;
 import io.realm.*;
 import java8.util.function.Consumer;
 
@@ -71,6 +72,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 					.name(identifier)
 					.deleteRealmIfMigrationNeeded() // DEBUG ONLY
 					.build();
+
 			this.realm = Realm.getInstance(config);
 			this.realmClass = realmClass;
 		} catch (Exception e) {

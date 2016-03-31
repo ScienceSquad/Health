@@ -1,7 +1,17 @@
+import android.app.AlarmManager;
 import android.test.ApplicationTestCase;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.nutrition.NutritionModel;
+import com.sciencesquad.health.workout.ExerciseTypeModel;
+import com.sciencesquad.health.workout.WorkoutModule;
+import com.sciencesquad.health.workout.ExerciseKind;
+import com.sciencesquad.health.workout.RoutineModel;
+
+import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
+import com.sciencesquad.health.prescriptions.PrescriptionModel;
+
+
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;
 import junit.framework.Assert;
@@ -41,6 +51,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             testRealm.clear();
             NutritionModel testModel = new NutritionModel();
             testModel.setCalorieIntake(50);
+            testModel.setHadCaffeine(false);
             Calendar rightNow = Calendar.getInstance();
             testModel.setDate(rightNow.getTime());
             testRealm.add(testModel);
@@ -49,11 +60,14 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             Assert.assertEquals(testQuery.findAll().size(), 1);
             Assert.assertEquals(testQuery.findAll().first().getCalorieIntake(), 50);
 
+            boolean testCoffee = false;
             for (int i = 1 ; i < 12; i++){
                 NutritionModel testModelI = new NutritionModel();
                 testModelI.setCalorieIntake(i);
+                testModelI.setHadCaffeine(testCoffee);
                 testModelI.setDate(rightNow.getTime());
                 testRealm.add(testModelI);
+                testCoffee = !testCoffee;
             }
 
             Assert.assertEquals(testQuery.findAll().size(), 12);
@@ -84,4 +98,87 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
         }
 
     }
+    /*
+    @Test
+    public void testWorkout(){
+        createApplication();
+        try{
+            RealmContext workoutTestRealm = new RealmContext<>();
+            workoutTestRealm.init(BaseApplication.application(), ExerciseTypeModel.class, "test.realm");
+            workoutTestRealm.clear();
+            ExerciseKind kind = ExerciseKind.valueOf("STRENGTH");
+            ExerciseTypeModel newExerciseType = com.sciencesquad.health.workout.WorkoutModule.createNewExercise("Bench Press", kind, "Chest");
+            workoutTestRealm.add(newExerciseType);
+            RealmQuery<ExerciseTypeModel> testQuery = workoutTestRealm.query();
+
+            Assert.assertEquals(testQuery.findAll().size(), 1);
+            Assert.assertEquals(testQuery.findAll().first().getName(), "Bench Press");
+
+
+            workoutTestRealm.clear();
+            //workoutTestRealm.getRealm().clear(ExerciseTypeModel.class);
+           //Assert.assertEquals(testQuery.findAll().size(), 0);
+
+            try {
+                workoutTestRealm.close();
+
+
+    @Test
+    public void testPrescriptionRealm() {
+        createApplication();
+        try {
+            RealmContext testRealm = new RealmContext<>();
+            testRealm.init(BaseApplication.application(), PrescriptionModel.class, "test.realm");
+            testRealm.clear();
+            PrescriptionModel testModel = new PrescriptionModel();
+            testModel.setName("Tylenol");
+            Calendar rightNow = Calendar.getInstance();
+            testModel.setStartDate(rightNow.getTimeInMillis());
+            testModel.setDosage(10);
+            testModel.setRepeatDuration(AlarmManager.INTERVAL_DAY);
+            testRealm.add(testModel);
+            RealmQuery<PrescriptionModel> testQuery = testRealm.query();
+
+            PrescriptionAlarm.setAlarm(testModel, BaseApplication.application());
+
+            Assert.assertEquals(testQuery.findAll().size(), 1);
+            Assert.assertEquals(testQuery.findAll().first().getName(), "Tylenol");
+
+            for (int i = 1 ; i < 12; i++){
+                PrescriptionModel testModelI = new PrescriptionModel();
+                testModelI.setDosage(i);
+                testModelI.setStartDate(rightNow.getTimeInMillis());
+                testRealm.add(testModelI);
+            }
+
+            Assert.assertEquals(testQuery.findAll().size(), 12);
+            Assert.assertEquals(testQuery.findAll().get(4).getDosage(), 4);
+            testRealm.updateRealmModel(4, new Consumer<PrescriptionModel>() {
+                @Override
+                public void accept(PrescriptionModel model) {
+                    model.setDosage(20);
+                }
+            });
+
+            Assert.assertEquals(testQuery.equalTo("dosage", 20).findAll().size(), 1);
+            Assert.assertEquals(testQuery.equalTo("dosage", 20).findAll().get(0).getDosage(), 20);
+
+            testRealm.clear();
+            Assert.assertEquals(testQuery.findAll().size(), 0);
+
+            try {
+                testRealm.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Assert.fail("Realm Failed to Close.");
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+            Assert.fail("An Exception Occurred.");
+        }
+    }
+
+    */
+
 }

@@ -6,6 +6,9 @@ import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 import com.sciencesquad.health.core.Event.EventType;
 import com.sciencesquad.health.events.*;
+import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.sciencesquad.health.events.Event.EventType;
+import org.immutables.value.Value.Immutable;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import org.immutables.value.Value.Immutable;
@@ -125,8 +128,11 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 
 		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(getBaseContext())
 				.name("default.health.realm")
+				.deleteRealmIfMigrationNeeded()
 				.build();
 		Realm.setDefaultConfiguration(defaultConfig);
+		// gives timezone data.
+		AndroidThreeTen.init(this);
 
 		_application = this;
 		this.eventBus().publish(AppCreateEvent.from(this)
