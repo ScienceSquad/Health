@@ -1,29 +1,33 @@
 package com.sciencesquad.health;
 
-import android.app.AlarmManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import com.sciencesquad.health.events.BaseActivity;
-import com.sciencesquad.health.events.BaseApplication;
-import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
-import com.sciencesquad.health.prescriptions.PrescriptionModel;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+
+import com.sciencesquad.health.alarm.AlarmFragment;
+import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.ui.EmergencyNotification;
+import com.sciencesquad.health.workout.WorkoutFragment;
+import com.sciencesquad.health.activity.MapsActivity;
 
-import java.util.Calendar;
-
-public class ClockActivity extends BaseActivity {
+public class ClockFragment extends Fragment {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_clock);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -37,5 +41,4 @@ public class ClockActivity extends BaseActivity {
             }
         });
     }
-
 }

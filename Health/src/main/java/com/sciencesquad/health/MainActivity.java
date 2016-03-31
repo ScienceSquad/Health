@@ -1,5 +1,6 @@
 package com.sciencesquad.health;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,13 +12,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import android.widget.Toast;
 import com.sciencesquad.health.activity.MapsActivity;
+import com.sciencesquad.health.alarm.AlarmFragment;
 import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.workout.WorkoutFragment;
+import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.nutrition.NutritionViewModel;
 import com.sciencesquad.health.workout.WorkoutActivity;
 import com.sciencesquad.health.steps.StepsViewModel;
-
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -87,28 +91,35 @@ public class MainActivity extends BaseActivity
 		if (id == R.id.nav_run) {
 			//setContentView(R.layout.maplayout);
 			startActivity(new Intent(this, MapsActivity.class));
-
 		} else if (id == R.id.nav_sleep) {
 
 		} else if (id == R.id.nav_steps) {
-			Intent intent = new Intent(this, StepsViewModel.class);
-			startActivity(intent);
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new StepsFragment(), "STEPS")
+					.addToBackStack("STEPS")
+					.commit();
 		} else if (id == R.id.nav_manage) {
 
 		} else if (id == R.id.nav_share) {
 
 		} else if (id == R.id.nav_send) {
 
-		} else if (id == R.id.nav_workout){
-			Intent intent = new Intent(this, WorkoutActivity.class);
-			startActivity(intent);
+		} else if (id == R.id.nav_workout) {
+			getFragmentManager().beginTransaction()
+					.replace(R.id.content_container, new WorkoutFragment(), "WORKOUT")
+					.addToBackStack("WORKOUT")
+					.commit();
 		} else if (id == R.id.nav_clock) {
-			Intent intent = new Intent(this, ClockActivity.class);
-			startActivity(intent);
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new ClockFragment(), "CLOCK")
+					.addToBackStack("CLOCK")
+					.commit();
 		} else if (id == R.id.nav_alarm) {
-			Intent intent = new Intent(this, AlarmActivity.class);
-			startActivity(intent);
-		} else if (id == R.id.nav_nutrition){
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new AlarmFragment(), "ALARM")
+					.addToBackStack("ALARM")
+					.commit();
+		} else if (id == R.id.nav_nutrition) {
 			NutritionViewModel nextFrag= new NutritionViewModel();
 			this.getFragmentManager().beginTransaction()
 					.replace(R.id.content_main_activity, nextFrag)

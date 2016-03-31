@@ -23,17 +23,17 @@
             android:icon="@drawable/ic_menu_nutrition"
             android:title="@string/nutrition_module" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-			android:title="@string/action_settings" />
-        <item
             android:id="@+id/nav_clock"
             android:icon="@drawable/ic_menu_clock"
             android:title="Clock" />
         <item
             android:id="@+id/nav_alarm"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_alarm"
             android:title="Alarm" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/action_settings" />
     </group>
 
     <item android:title="@string/communicate">
@@ -48,5 +48,4 @@
                 android:title="@string/send" />
         </menu>
     </item>
-
 </menu>
