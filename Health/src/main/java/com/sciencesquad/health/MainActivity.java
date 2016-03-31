@@ -19,7 +19,9 @@ import com.sciencesquad.health.alarm.AlarmFragment;
 import com.sciencesquad.health.events.BaseActivity;
 import com.sciencesquad.health.workout.WorkoutFragment;
 import com.sciencesquad.health.steps.StepsFragment;
-
+import com.sciencesquad.health.nutrition.NutritionViewModel;
+import com.sciencesquad.health.workout.WorkoutActivity;
+import com.sciencesquad.health.steps.StepsViewModel;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -112,10 +114,22 @@ public class MainActivity extends BaseActivity
 					.addToBackStack("CLOCK")
 					.commit();
 		} else if (id == R.id.nav_alarm) {
+<<<<<<< HEAD
 			getFragmentManager().beginTransaction()
 					.replace(android.R.id.content, new AlarmFragment(), "ALARM")
 					.addToBackStack("ALARM")
 					.commit();
+=======
+			Intent intent = new Intent(this, AlarmActivity.class);
+			startActivity(intent);
+		} else if (id == R.id.nav_nutrition){
+			NutritionViewModel nextFrag= new NutritionViewModel();
+			this.getFragmentManager().beginTransaction()
+					.replace(R.id.content_main_activity, nextFrag)
+					.addToBackStack(null)
+					.commit();
+			//setContentView(R.layout.nutrition_layout);
+>>>>>>> master
 		}
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

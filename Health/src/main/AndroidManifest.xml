@@ -89,6 +89,13 @@
             android:label="@string/title_activity_maps"
             android:exported="true"
             android:screenOrientation="portrait" />
+        </activity>
+
+        <!-- For Nutrition Testing. -->
+        <activity
+            android:name=".nutrition.NutritionViewModel"
+            android:label="@string/nutrition_module"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <!-- For SleepModule to play audio in the background. -->
         <service
