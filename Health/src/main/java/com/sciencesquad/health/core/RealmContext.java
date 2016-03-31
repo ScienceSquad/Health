@@ -6,8 +6,8 @@ import android.app.backup.FileBackupHelper;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.data.DataFailureEvent;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.DataFailureEvent;
+
 import io.realm.*;
 import java8.util.function.Consumer;
 

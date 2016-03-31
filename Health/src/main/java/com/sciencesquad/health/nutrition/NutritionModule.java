@@ -9,11 +9,11 @@ import com.sciencesquad.health.core.RealmContext;
 import android.util.Log;
 
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.data.DataEmptyEvent;
-import com.sciencesquad.health.data.DataFailureEvent;
-import com.sciencesquad.health.data.DataUpdateEvent;
-import com.sciencesquad.health.data.RealmContext;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.DataEmptyEvent;
+import com.sciencesquad.health.core.DataFailureEvent;
+import com.sciencesquad.health.core.DataUpdateEvent;
+import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.BaseApp;
 
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
@@ -53,7 +53,7 @@ public class NutritionModule extends Module {
     */
     public NutritionModule()  {
         this.nutritionRealm = new RealmContext<>();
-        this.nutritionRealm.init(BaseApplication.application(), NutritionModel.class, REALMNAME);
+        this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
 
         // default values
         this.favoriteFoods = new ArrayList<String>();
@@ -189,5 +189,15 @@ public class NutritionModule extends Module {
             hadCaffeine = !hadCaffeine;
             addNutritionRecord();
         }
+    }
+
+    @Override
+    public Pair<String, Integer> identifier() {
+        return null;
+    }
+
+    @Override
+    public void init() {
+
     }
 }

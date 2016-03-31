@@ -8,9 +8,9 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.events.SensorAccuracyEvent;
-import com.sciencesquad.health.events.SensorChangeEvent;
-import com.sciencesquad.health.events.SensorFlushEvent;
+import com.sciencesquad.health.core.SensorAccuracyEvent;
+import com.sciencesquad.health.core.SensorChangeEvent;
+import com.sciencesquad.health.core.SensorFlushEvent;
 import java8.util.Optional;
 import org.immutables.value.Value.Immutable;
 

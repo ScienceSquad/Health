@@ -35,7 +35,7 @@ public class AlarmFragment extends Fragment {
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);

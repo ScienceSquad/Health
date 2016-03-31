@@ -24,7 +24,7 @@ import com.sciencesquad.health.activity.MapsActivity;
 public class ClockFragment extends Fragment {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);

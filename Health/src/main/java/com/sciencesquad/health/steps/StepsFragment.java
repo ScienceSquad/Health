@@ -28,7 +28,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.ui.Stopwatch;
 
 import org.threeten.bp.Duration;
@@ -56,7 +56,7 @@ public class StepsFragment extends Fragment implements SensorEventListener {
     private static final String TAG = StepsFragment.class.getSimpleName();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         stepsModule = new StepsModule();
@@ -116,7 +116,7 @@ public class StepsFragment extends Fragment implements SensorEventListener {
         counterSteps = 0;
 
         // Get the default sensor for the sensor type from the SenorManager
-        sensorManager = (SensorManager) BaseApplication.application().getSystemService(Context.SENSOR_SERVICE);
+        sensorManager = (SensorManager) BaseApp.app().getSystemService(Context.SENSOR_SERVICE);
 
         // sensorType is either Sensor.TYPE_STEP_COUNTER or Sensor.TYPE_STEP_DETECTOR
         Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
@@ -164,7 +164,7 @@ public class StepsFragment extends Fragment implements SensorEventListener {
     };
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         activityRunning = true;
         Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
@@ -176,7 +176,7 @@ public class StepsFragment extends Fragment implements SensorEventListener {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         activityRunning = false;
         // if you unregister the last listener, the hardware will stop detecting step events

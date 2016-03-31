@@ -170,7 +170,7 @@ public class WorkoutFragment extends Fragment {
      * exercises
      */
     void showNewRoutineDialog() {
-        DialogFragment newFragment = NameRoutineFragmentFragment.newInstance(
+        DialogFragment newFragment = NameRoutineFragment.newInstance(
                 R.string.title_new_routine_dialog);
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");

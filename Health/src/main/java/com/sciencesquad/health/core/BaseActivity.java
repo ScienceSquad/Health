@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import com.sciencesquad.health.core.Event.EventType;
-import com.sciencesquad.health.events.*;
 import org.immutables.value.Value.Immutable;
 
 public class BaseActivity extends AppCompatActivity {

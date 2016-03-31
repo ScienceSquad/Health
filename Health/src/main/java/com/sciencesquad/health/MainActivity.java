@@ -21,16 +21,15 @@ import java8.util.stream.StreamSupport;
 import android.widget.Toast;
 import com.sciencesquad.health.activity.MapsActivity;
 import com.sciencesquad.health.alarm.AlarmFragment;
-import com.sciencesquad.health.events.BaseActivity;
+import com.sciencesquad.health.core.BaseActivity;
 import com.sciencesquad.health.workout.WorkoutFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.nutrition.NutritionViewModel;
-import com.sciencesquad.health.workout.WorkoutActivity;
-import com.sciencesquad.health.steps.StepsViewModel;
+
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
-
+	private static final String TAG = MainActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

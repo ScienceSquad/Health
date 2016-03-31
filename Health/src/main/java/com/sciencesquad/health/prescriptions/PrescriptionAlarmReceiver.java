@@ -12,7 +12,7 @@ import android.widget.RemoteViews;
 
 import com.sciencesquad.health.MainActivity;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.events.BaseApplication;
+import com.sciencesquad.health.core.BaseApp;
 
 /**
  * Created by andrew on 3/4/16.
@@ -26,7 +26,7 @@ public class PrescriptionAlarmReceiver extends BroadcastReceiver {
 
 
 	public void doSomethingImportant(String name, int dosage) {
-		Context context = BaseApplication.application();
+		Context context = BaseApp.app();
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
 				.setContentTitle(NOTIFICATION_TITLE)
 				.setContentText("Don't forget to take " + String.valueOf(dosage) + " " + name + "!")

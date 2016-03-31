@@ -5,13 +5,12 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 import com.sciencesquad.health.core.Event.EventType;
-import com.sciencesquad.health.events.*;
+
 import com.jakewharton.threetenabp.AndroidThreeTen;
-import com.sciencesquad.health.events.Event.EventType;
 import org.immutables.value.Value.Immutable;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import org.immutables.value.Value.Immutable;
+
 
 /**
  * The BaseApp connects the monolithic Android Application
