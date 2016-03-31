@@ -9,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.sciencesquad.health.core.BaseActivity;
@@ -24,9 +25,9 @@ import com.sciencesquad.health.workout.WorkoutFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.nutrition.NutritionViewModel;
 
-import com.sciencesquad.health.events.BaseActivity;
-import com.sciencesquad.health.workout.WorkoutActivity;
-import com.sciencesquad.health.steps.StepsViewModel;
+import com.sciencesquad.health.core.BaseActivity;
+import com.sciencesquad.health.workout.WorkoutFragment;
+import com.sciencesquad.health.steps.StepsFragment;
 
 
 public class MainActivity extends BaseActivity
