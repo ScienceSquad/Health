@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<<<<<<< HEAD
+    package="com.sciencesquad.health">
+=======
     package="com.sciencesquad.health" >
+>>>>>>> master
 
-    <!-- For the Steps Module  -->
+    <!-- For the Steps Module -->
     <uses-feature android:name="android.hardware.sensor.stepcounter" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -44,24 +48,25 @@
     <application
         android:name=".events.BaseApplication"
         android:allowBackup="true"
+        android:backupAgent=".data.RealmBackupAgent"
+        android:fullBackupContent="true"
+        android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:backupAgent=".data.RealmBackupAgent"
-        android:fullBackupOnly="true"
-        android:fullBackupContent="true" >
+        android:theme="@style/AppTheme">
 
         <!-- For Google's AutoBackupAgent. -->
-        <meta-data android:name="com.google.android.backup.api_key"
+        <meta-data
+            android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
 
         <!-- Entry point for the application. -->
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" >
+			android:label="@string/app_name"
+			android:theme="@style/AppTheme.NoActionBar"
+			android:screenOrientation="portrait" >
 
             <!-- Can be started from any launcher application. -->
             <intent-filter>
@@ -100,10 +105,26 @@
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
-            android:exported="false"/>
+            android:exported="false" />
 
-        <receiver android:enabled="true"
-            android:name=".prescriptions.PrescriptionAlarmReceiver">
-        </receiver>
-    </application>
+        <activity
+            android:name=".AlarmActivity"
+            android:label="@string/title_activity_alarm"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <receiver
+            android:name=".prescriptions.PrescriptionAlarmReceiver"
+            android:enabled="true"></receiver>
+
+        <activity
+            android:name=".activity.RunTracking"
+            android:label="@string/title_activity_run_tracking"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+	</application>
 </manifest>

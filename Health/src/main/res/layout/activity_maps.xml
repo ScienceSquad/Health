@@ -7,3 +7,5 @@
     android:layout_height="match_parent"
     tools:context="com.sciencesquad.health.activity.MapsActivity"
     tools:layout="@layout/app_bar_main" />
+
+
