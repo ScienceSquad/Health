@@ -1,9 +1,10 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.core;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseActivity;
 
 public class ClockActivity extends BaseActivity {

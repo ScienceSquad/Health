@@ -1,4 +1,4 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.core;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -7,11 +7,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
+import com.sciencesquad.health.R;
 import com.sciencesquad.health.activity.ActivityFragment;
-import com.sciencesquad.health.alarm.AlarmFragment;
+import com.sciencesquad.health.core.alarm.AlarmFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
 import com.sciencesquad.health.steps.StepsFragment;

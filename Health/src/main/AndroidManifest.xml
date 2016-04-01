@@ -59,7 +59,7 @@
 
         <!-- Entry point for the app. -->
         <activity
-            android:name=".MainActivity"
+            android:name=".core.MainActivity"
 			android:label="@string/app_name"
 			android:theme="@style/AppTheme.NoActionBar"
 			android:screenOrientation="portrait" >
@@ -92,7 +92,7 @@
 
         <!-- For Clock testing. -->
         <activity
-            android:name=".ClockActivity"
+            android:name=".core.ClockActivity"
             android:label="@string/title_activity_clock"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>

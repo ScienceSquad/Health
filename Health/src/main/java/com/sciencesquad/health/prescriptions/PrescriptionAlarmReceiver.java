@@ -8,9 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 
-import com.sciencesquad.health.MainActivity;
+import com.sciencesquad.health.core.MainActivity;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 

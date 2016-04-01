@@ -1,29 +1,17 @@
-package com.sciencesquad.health.alarm;
+package com.sciencesquad.health.core.alarm;
 
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 
-import com.sciencesquad.health.ClockFragment;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
 import com.sciencesquad.health.prescriptions.PrescriptionModel;
-import com.sciencesquad.health.steps.StepsFragment;
-import com.sciencesquad.health.workout.WorkoutFragment;
-import com.sciencesquad.health.activity.MapsActivity;
 
 public class AlarmFragment extends Fragment {
 

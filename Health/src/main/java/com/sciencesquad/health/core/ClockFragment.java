@@ -1,4 +1,4 @@
-package com.sciencesquad.health;
+package com.sciencesquad.health.core;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -6,6 +6,7 @@ import android.view.View;
 
 import android.app.Fragment;
 
+import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 
 public class ClockFragment extends Fragment {

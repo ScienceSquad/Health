@@ -13,8 +13,6 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.MenuItem;
 
@@ -33,8 +31,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.sciencesquad.health.alarm.AlarmFragment;
-import com.sciencesquad.health.ClockFragment;
+import com.sciencesquad.health.core.alarm.AlarmFragment;
+import com.sciencesquad.health.core.ClockFragment;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
@@ -44,7 +42,6 @@ import java.util.List;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.mapLibraryName;
 
 
 public class MapsActivity extends FragmentActivity implements

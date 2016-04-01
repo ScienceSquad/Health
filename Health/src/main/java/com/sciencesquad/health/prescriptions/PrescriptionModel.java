@@ -1,7 +1,5 @@
 package com.sciencesquad.health.prescriptions;
 
-import com.sciencesquad.health.alarm.AlarmSender;
-
 import io.realm.RealmObject;
 
 /**
