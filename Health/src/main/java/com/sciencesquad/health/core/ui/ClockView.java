@@ -171,8 +171,7 @@ public class ClockView extends View {
         if (this.stopwatch != null) return;
         this.stopwatch = new Stopwatch();
         this.stopwatch.setOnTimeChange(this::postInvalidate);
-        this.stopwatch.setMode(Stopwatch.WatchMode.DOWN);
-        this.stopwatch.plusSeconds(10);
+        this.stopwatch.setMode(Stopwatch.WatchMode.UP);
     }
 
     private void drawDot(Canvas canvas, float radius, double angle) {
