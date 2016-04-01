@@ -1,7 +1,6 @@
-package com.sciencesquad.health.alarm;
+package com.sciencesquad.health.core.alarm;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.view.GestureDetector;

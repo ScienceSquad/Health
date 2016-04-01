@@ -1,4 +1,4 @@
-package com.sciencesquad.health.util;
+package com.sciencesquad.health.core.util;
 
 import android.os.Handler;
 import android.os.Looper;

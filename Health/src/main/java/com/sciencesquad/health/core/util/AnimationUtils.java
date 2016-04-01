@@ -1,4 +1,4 @@
-package com.sciencesquad.health.util;
+package com.sciencesquad.health.core.util;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;

@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Event;
-import com.sciencesquad.health.util.X;
+import com.sciencesquad.health.core.util.X;
 import java8.util.stream.StreamSupport;
 import org.immutables.value.Value;
 
