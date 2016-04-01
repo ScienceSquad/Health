@@ -2,7 +2,6 @@ package com.sciencesquad.health.steps;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,13 +22,10 @@ import android.widget.TextView;
  */
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.ui.Stopwatch;
+import com.sciencesquad.health.core.ui.Stopwatch;
 
 import org.threeten.bp.Duration;
 

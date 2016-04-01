@@ -7,7 +7,7 @@ import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
-import com.sciencesquad.health.util.X;
+import com.sciencesquad.health.core.util.X;
 import java8.util.stream.StreamSupport;
 import rx.Subscription;
 import rx.functions.Action1;
