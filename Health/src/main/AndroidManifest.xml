@@ -59,7 +59,7 @@
 
         <!-- Entry point for the app. -->
         <activity
-            android:name=".MainActivity"
+            android:name=".core.MainActivity"
 			android:label="@string/app_name"
 			android:theme="@style/AppTheme.NoActionBar"
 			android:screenOrientation="portrait" >
@@ -85,14 +85,14 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.MapsActivity"
+            android:name=".activity.ActivityFragment"
             android:label="@string/title_activity_maps"
             android:exported="true" >
         </activity>
 
         <!-- For Clock testing. -->
         <activity
-            android:name=".ClockActivity"
+            android:name=".core.ClockActivity"
             android:label="@string/title_activity_clock"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>

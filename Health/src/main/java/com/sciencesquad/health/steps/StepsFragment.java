@@ -1,9 +1,11 @@
 package com.sciencesquad.health.steps;
 
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 /**
@@ -23,13 +25,10 @@ import android.widget.TextView;
  */
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.ui.Stopwatch;
+import com.sciencesquad.health.core.ui.Stopwatch;
 
 import org.threeten.bp.Duration;
 
@@ -38,6 +37,7 @@ import org.threeten.bp.Duration;
  * Will write more in a few.
  */
 public class StepsFragment extends Fragment implements SensorEventListener {
+	public static final String TAG = StepsFragment.class.getSimpleName();
 
     private StepsModule stepsModule;
     private Stopwatch stopwatch;
@@ -53,11 +53,21 @@ public class StepsFragment extends Fragment implements SensorEventListener {
     private TextView avg_speed;
     private TextView elapsed_time;
     boolean activityRunning;
-    private static final String TAG = StepsFragment.class.getSimpleName();
+
+
+    @Nullable @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_steps, container, false);
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        num_steps = (TextView) view.findViewById(R.id.num_steps);
+        stride_length = (TextView) view.findViewById(R.id.stride_length);
+        elapsed_time = (TextView) view.findViewById(R.id.elapsed_time);
+        avg_speed = (TextView) view.findViewById(R.id.avg_speed);
 
         stepsModule = new StepsModule();
         numSteps = stepsModule.getNumSteps();
@@ -66,15 +76,12 @@ public class StepsFragment extends Fragment implements SensorEventListener {
 
         registerEventListener(stepsModule.getMaxDelay());
 
-        num_steps = (TextView) getView().findViewById(R.id.num_steps);
         num_steps.setText(String.valueOf(numSteps));
 
         strideLength = Math.round((0.415 * 1.8796)*100d)/100d;
 
-        stride_length = (TextView) getView().findViewById(R.id.stride_length);
         stride_length.setText(String.valueOf(strideLength) + "m");
 
-        elapsed_time = (TextView) getView().findViewById(R.id.elapsed_time);
         stopwatch.start();
         stopwatch.setInterval(51);
         stopwatch.setOnTimeChange(new Runnable() {
@@ -86,20 +93,18 @@ public class StepsFragment extends Fragment implements SensorEventListener {
             }
         });
 
-        avg_speed = (TextView) getView().findViewById(R.id.avg_speed);
         avg_speed.setText(String.valueOf(strideLength) + "m/s");
 
-        FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Spaghett!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+		/*
+        // TODO: Add a FAB!
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(view1 -> Snackbar.make(view1, "Spaghett!", Snackbar.LENGTH_LONG)
+				.setAction("Action", null).show());
+		//*/
 
-        // This IS used -- see content_steps.xml
-        Button reset_steps = (Button) getView().findViewById(R.id.buttonReset);
+        // This IS used -- see fragment_stepss.xml
+        Button reset_steps = (Button) view.findViewById(R.id.buttonReset);
+		reset_steps.setOnClickListener(this::resetSteps);
     }
 
     /**

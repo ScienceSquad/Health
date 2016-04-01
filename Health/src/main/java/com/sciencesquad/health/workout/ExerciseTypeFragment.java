@@ -34,7 +34,7 @@ public class ExerciseTypeFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_workout, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_workout_type, container, false);
 		ListView exerciseListView = (ListView) rootView.findViewById(R.id.exercise_model_list_view);        // create ListView for exercises
 		ArrayAdapter<ExerciseTypeModel> exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
 				android.R.layout.simple_list_item_1, WorkoutFragment.exerciseTypeModelList);

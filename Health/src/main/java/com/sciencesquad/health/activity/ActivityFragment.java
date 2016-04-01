@@ -8,13 +8,14 @@ import android.graphics.Color;
 import android.location.Location;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.view.MenuItem;
 
@@ -33,8 +34,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.sciencesquad.health.alarm.AlarmFragment;
-import com.sciencesquad.health.ClockFragment;
+import com.sciencesquad.health.core.alarm.AlarmFragment;
+import com.sciencesquad.health.core.ClockFragment;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
@@ -44,15 +45,13 @@ import java.util.List;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.mapLibraryName;
 
 
-public class MapsActivity extends FragmentActivity implements
+public class ActivityFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, NavigationView.OnNavigationItemSelectedListener {
-
-    public static final String TAG = MapsActivity.class.getSimpleName();
+        LocationListener {
+    public static final String TAG = ActivityFragment.class.getSimpleName();
 
     /*
      * Define a request code to send to Google Play services
@@ -71,21 +70,23 @@ public class MapsActivity extends FragmentActivity implements
     private TextView myTextViewDistance = null;
     private TextView myTextViewSpeed = null;
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_activity, container, false);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_maps); //old file
-        setContentView(R.layout.maplayout); //new file
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
 
-        this.myTextViewCalories = (TextView)findViewById(R.id.textView_Calories);
-        this.myTextViewDistance = (TextView)findViewById(R.id.textView_Distance);
-        this.myTextViewSpeed = (TextView)findViewById(R.id.textView_Speed);
+        this.myTextViewCalories = (TextView) view.findViewById(R.id.textView_Calories);
+        this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
+        this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
 
         setUpMapIfNeeded();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -99,14 +100,14 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         setUpMapIfNeeded();
         mGoogleApiClient.connect();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
 
         if (mGoogleApiClient.isConnected()) {
@@ -305,8 +306,8 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
@@ -339,7 +340,7 @@ public class MapsActivity extends FragmentActivity implements
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                connectionResult.startResolutionForResult(getActivity(), CONNECTION_FAILURE_RESOLUTION_REQUEST);
                 /*
                  * Thrown if Google Play services canceled the original
                  * PendingIntent
@@ -361,44 +362,5 @@ public class MapsActivity extends FragmentActivity implements
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
 
-    }
-
-    /**
-     * I have not been tested :-)
-     */
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_run) {
-            Intent intent = new Intent(this, MapsActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_sleep) {
-
-        } else if (id == R.id.nav_steps) {
-            Intent intent = new Intent(this, StepsFragment.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        } else if (id == R.id.nav_workout){
-            Intent intent = new Intent(this, WorkoutFragment.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_clock) {
-            Intent intent = new Intent(this, ClockFragment.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_alarm) {
-            Intent intent = new Intent(this, AlarmFragment.class);
-            startActivity(intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }
