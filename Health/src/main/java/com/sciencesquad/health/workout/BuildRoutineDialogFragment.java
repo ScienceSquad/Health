@@ -40,7 +40,7 @@ public class BuildRoutineDialogFragment extends DialogFragment {
 		// Inflate dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View dialogLayout = inflater.inflate(R.layout.build_routine_layout, null);
+		View dialogLayout = inflater.inflate(R.layout.fragment_workout_build_routine_layout, null);
 		builder.setView(dialogLayout);
 		builder.setTitle(title);
 

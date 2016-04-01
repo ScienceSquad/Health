@@ -1,13 +1,22 @@
 package com.sciencesquad.health.nutrition;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
@@ -24,11 +33,11 @@ import io.realm.RealmResults;
 /**
  * ViewModel for the Nutrition Module.
  */
-public class NutritionViewModel extends Fragment {
+public class NutritionFragment extends Fragment {
 
 
     private NutritionModule nutritionModule;
-    private static final String TAG = NutritionViewModel.class.getSimpleName();
+    private static final String TAG = NutritionFragment.class.getSimpleName();
 
 
     /**
@@ -37,7 +46,7 @@ public class NutritionViewModel extends Fragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.nutrition_layout, container, false);
+        return inflater.inflate(R.layout.fragment_nutrition, container, false);
     }
 
     /**
@@ -45,29 +54,27 @@ public class NutritionViewModel extends Fragment {
      * @param savedInstanceState
      */
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        View v = getView();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         nutritionModule = new NutritionModule();
         nutritionModule.createModels();
 
         nutritionModule.generateData();
 
-        Button submitCaloriesButton = (Button) v.findViewById(R.id.submit_calories);
+        Button submitCaloriesButton = (Button) view.findViewById(R.id.submit_calories);
         submitCaloriesButton.setOnClickListener(v1 -> {
             submitCalories();
         });
 
-        Button saveProgress = (Button) v.findViewById(R.id.nutrition_save_progress);
+        Button saveProgress = (Button) view.findViewById(R.id.nutrition_save_progress);
         saveProgress.setOnClickListener(v1 -> saveNutritionProgress(getView()));
 
-        Button editDiet = (Button) v.findViewById(R.id.diet_button);
+        Button editDiet = (Button) view.findViewById(R.id.diet_button);
         editDiet.setOnClickListener(v1 -> createDietDialog());
 
         // setting up the chart.
-        LineChart nutritionChart = (LineChart) v.findViewById(R.id.nutrition_chart);
+        LineChart nutritionChart = (LineChart) view.findViewById(R.id.nutrition_chart);
         nutritionChart.setDescription("Calorie History");
 
         //Gathering and manipulating data.

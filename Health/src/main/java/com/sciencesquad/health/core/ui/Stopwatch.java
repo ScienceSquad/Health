@@ -1,4 +1,4 @@
-package com.sciencesquad.health.ui;
+package com.sciencesquad.health.core.ui;
 
 
 import android.os.SystemClock;
