@@ -30,31 +30,29 @@ public class NutritionFragment extends Fragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.nutrition_layout, container, false);
+        return inflater.inflate(R.layout.fragment_nutrition, container, false);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        View v = getView();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         nutritionModule = new NutritionModule();
         nutritionModule.createModels();
 
         nutritionModule.generateData();
 
-        Button submitCaloriesButton = (Button) v.findViewById(R.id.submit_calories);
+        Button submitCaloriesButton = (Button) view.findViewById(R.id.submit_calories);
         submitCaloriesButton.setOnClickListener(v1 -> {
             submitCalories();
         });
 
-        Button saveProgress = (Button) v.findViewById(R.id.nutrition_save_progress);
+        Button saveProgress = (Button) view.findViewById(R.id.nutrition_save_progress);
         saveProgress.setOnClickListener(v1 -> {
             saveNutritionProgress(getView());
         });
 
-        Button editDiet = (Button) v.findViewById(R.id.diet_button);
+        Button editDiet = (Button) view.findViewById(R.id.diet_button);
         editDiet.setOnClickListener(v1 -> createDietDialog());
 
         //calorieHistory = new LineChartView(getActivity());
@@ -95,7 +93,7 @@ public class NutritionFragment extends Fragment {
         CalorieDialogFragment newFrag = new CalorieDialogFragment();
         newFrag.setTargetFragment(this, 0);
         newFrag.show(getFragmentManager(), "calorie dialog");
-        //getActivity().setContentView(R.layout.calorie_dialog_fragment_layout);
+        //getActivity().setContentView(R.layout.fragment_nutrition_calorie_dialog);
     }
 
     public NutritionModule getNutritionModule(){

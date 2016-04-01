@@ -14,18 +14,16 @@ import android.widget.EditText;
 import com.sciencesquad.health.R;
 
 public class CalorieDialogFragment extends DialogFragment {
-
-    private boolean hadCaffeine;
-
     private static final String TAG = CalorieDialogFragment.class.getSimpleName();
 
+    private boolean hadCaffeine;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         hadCaffeine = false;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View dialogLayout = inflater.inflate(R.layout.calorie_dialog_fragment_layout, null);
+        View dialogLayout = inflater.inflate(R.layout.fragment_nutrition_calorie_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle("Nutrient Menu");
 
