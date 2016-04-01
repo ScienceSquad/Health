@@ -14,8 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -34,10 +36,10 @@ import io.realm.RealmResults;
  * ViewModel for the Nutrition Module.
  */
 public class NutritionFragment extends Fragment {
-
+    public static final String TAG = NutritionFragment.class.getSimpleName();
 
     private NutritionModule nutritionModule;
-    private static final String TAG = NutritionFragment.class.getSimpleName();
+
 
 
     /**
@@ -72,6 +74,14 @@ public class NutritionFragment extends Fragment {
 
         Button editDiet = (Button) view.findViewById(R.id.diet_button);
         editDiet.setOnClickListener(v1 -> createDietDialog());
+
+
+        ListView nutritionLogView = (ListView) view.findViewById(R.id.nutrition_log);
+        ArrayAdapter<String> nutritionLogAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1);
+        nutritionLogAdapter.clear();
+        nutritionLogAdapter.addAll(nutritionModule.createNutritionLog());
+        nutritionLogView.setAdapter(nutritionLogAdapter);
 
         // setting up the chart.
         LineChart nutritionChart = (LineChart) view.findViewById(R.id.nutrition_chart);

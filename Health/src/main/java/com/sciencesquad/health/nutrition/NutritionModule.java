@@ -131,6 +131,15 @@ public class NutritionModule extends Module {
         return nutritionRealm.query().findAll();
     }
 
+    public ArrayList<String> createNutritionLog(){
+        ArrayList<String> log = new ArrayList<>();
+        RealmResults<NutritionModel> results = nutritionRealm.query().findAll();
+        for (int i = 0; i < results.size(); i++){
+            String logEntry = results.get(i).toString();
+            log.add(logEntry);
+        }
+        return log;
+    }
 
     public void setHadCaffeine(boolean hadCaffeine) {
         this.hadCaffeine = hadCaffeine;
