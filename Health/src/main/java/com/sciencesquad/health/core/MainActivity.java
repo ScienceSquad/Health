@@ -51,24 +51,6 @@ public class MainActivity extends AppCompatActivity
 		else super.onBackPressed();
 	}
 
-	/*
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		//getMenuInflater().inflate(R.menu.health_main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	//*/
-
 	@SuppressWarnings("StatementWithEmptyBody")
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
@@ -88,43 +70,46 @@ public class MainActivity extends AppCompatActivity
 		//*/
 
 		if (id == R.id.nav_run) {
-			getFragmentManager().beginTransaction()
-					.replace(android.R.id.content, new ActivityFragment(), "ACTIVITY")
-					.addToBackStack("ACTIVITY")
+			getFragmentManager()
+					.beginTransaction()
+					.replace(R.id.content, new ActivityFragment(), ActivityFragment.TAG)
+					.addToBackStack(ActivityFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_sleep) {
-			getFragmentManager().beginTransaction()
-					.replace(android.R.id.content, new SleepFragment(), "SLEEP")
-					.addToBackStack("SLEEP")
+			getFragmentManager()
+					.beginTransaction()
+					.replace(R.id.content, new SleepFragment(), SleepFragment.TAG)
+					.addToBackStack(SleepFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_steps) {
-			getFragmentManager().beginTransaction()
-					.replace(android.R.id.content, new StepsFragment(), "STEPS")
-					.addToBackStack("STEPS")
+			getFragmentManager()
+					.beginTransaction()
+					.replace(R.id.content, new StepsFragment(), StepsFragment.TAG)
+					.addToBackStack(StepsFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_workout) {
 			getFragmentManager()
 					.beginTransaction()
-					.replace(R.id.content_container, new WorkoutFragment(), "WORKOUT")
-					.addToBackStack("WORKOUT")
+					.replace(R.id.content, new WorkoutFragment(), WorkoutFragment.TAG)
+					.addToBackStack(WorkoutFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_clock) {
 			getFragmentManager()
 					.beginTransaction()
-					.replace(android.R.id.content, new ClockFragment(), "CLOCK")
-					.addToBackStack("CLOCK")
+					.replace(R.id.content, new ClockFragment(), ClockFragment.TAG)
+					.addToBackStack(ClockFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_alarm) {
 			getFragmentManager()
 					.beginTransaction()
-					.replace(android.R.id.content, new AlarmFragment(), "ALARM")
-					.addToBackStack("ALARM")
+					.replace(R.id.content, new AlarmFragment(), AlarmFragment.TAG)
+					.addToBackStack(AlarmFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_nutrition) {
 			this.getFragmentManager()
 					.beginTransaction()
-					.replace(R.id.content_main_activity, new NutritionFragment(), "NUTRITION")
-					.addToBackStack("NUTRITION")
+					.replace(R.id.content, new NutritionFragment(), NutritionFragment.TAG)
+					.addToBackStack(NutritionFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_manage) {
 			// NOTHING HERE

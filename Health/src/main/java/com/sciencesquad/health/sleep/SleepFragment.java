@@ -12,6 +12,7 @@ import com.sciencesquad.health.core.ui.EmergencyNotification;
 
 // TODO: Preference for roommate/partner sleeping in same bed, other room, none.
 public class SleepFragment extends Fragment {
+	public static final String TAG = SleepFragment.class.getSimpleName();
 
 	@Nullable @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

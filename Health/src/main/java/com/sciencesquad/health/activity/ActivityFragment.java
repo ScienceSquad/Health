@@ -51,7 +51,6 @@ public class ActivityFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-
     public static final String TAG = ActivityFragment.class.getSimpleName();
 
     /*

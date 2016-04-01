@@ -17,6 +17,7 @@ import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
 import com.sciencesquad.health.prescriptions.PrescriptionModel;
 
 public class AlarmFragment extends Fragment {
+	public static final String TAG = AlarmFragment.class.getSimpleName();
 
 	private boolean alarmSet = false;
 	AlarmDialog dialog;

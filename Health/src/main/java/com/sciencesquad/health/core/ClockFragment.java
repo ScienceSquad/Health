@@ -13,6 +13,7 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 
 public class ClockFragment extends Fragment {
+	public static final String TAG = ClockFragment.class.getSimpleName();
 
 	@Nullable @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -17,9 +17,9 @@ import com.sciencesquad.health.R;
  * ViewModel for the Nutrition Module.
  */
 public class NutritionFragment extends Fragment {
+	public static final String TAG = NutritionFragment.class.getSimpleName();
 
     private NutritionModule nutritionModule;
-    private static final String TAG = NutritionFragment.class.getSimpleName();
 
     LineChartView calorieHistory;
     LineSet calorieSet;

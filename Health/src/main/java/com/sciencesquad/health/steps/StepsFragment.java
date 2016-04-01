@@ -37,6 +37,7 @@ import org.threeten.bp.Duration;
  * Will write more in a few.
  */
 public class StepsFragment extends Fragment implements SensorEventListener {
+	public static final String TAG = StepsFragment.class.getSimpleName();
 
     private StepsModule stepsModule;
     private Stopwatch stopwatch;
@@ -52,7 +53,6 @@ public class StepsFragment extends Fragment implements SensorEventListener {
     private TextView avg_speed;
     private TextView elapsed_time;
     boolean activityRunning;
-    private static final String TAG = StepsFragment.class.getSimpleName();
 
 
     @Nullable @Override
