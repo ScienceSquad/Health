@@ -1,20 +1,18 @@
-import android.app.AlarmManager;
 import android.test.ApplicationTestCase;
+import android.util.Log;
+
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.nutrition.NutritionModel;
-import com.sciencesquad.health.workout.ExerciseTypeModel;
-import com.sciencesquad.health.workout.WorkoutModule;
-import com.sciencesquad.health.workout.ExerciseKind;
-import com.sciencesquad.health.workout.RoutineModel;
-
-import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
-import com.sciencesquad.health.prescriptions.PrescriptionModel;
+import com.sciencesquad.health.util.DataGetter;
 
 
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;
 import junit.framework.Assert;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import java.util.Calendar;
@@ -98,6 +96,19 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
         }
 
     }
+
+    @Test
+    public void testDataGetter() {
+        try {
+            JSONObject object = DataGetter.getJSON("http://www.recipepuppy.com/api/?i=onions,garlic&q=omelet&p=3");
+            Log.d("testDataGetter:", "Title: " + object.getString("title"));
+            Log.d("testDataGetter:", object.toString(2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /*
     @Test
     public void testWorkout(){
