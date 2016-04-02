@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_workout"
+            android:icon="@drawable/ic_fitness_center_24dp"
+            android:title="Workout" />
+        <item
             android:id="@+id/nav_steps"
             android:icon="@drawable/ic_menu_steps"
             android:title="@string/steps_module" />
@@ -23,10 +27,13 @@
             android:icon="@drawable/ic_menu_clock"
             android:title="Clock" />
         <item
+            android:id="@+id/nav_alarm"
+            android:icon="@drawable/ic_alarm"
+            android:title="Alarm" />
+        <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
-			android:title="@string/action_settings" />
-
+            android:title="@string/action_settings" />
     </group>
 
     <item android:title="@string/communicate">
@@ -41,5 +48,4 @@
                 android:title="@string/send" />
         </menu>
     </item>
-
 </menu>

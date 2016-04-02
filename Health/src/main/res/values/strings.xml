@@ -26,23 +26,31 @@
 
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_clock">ClockActivity</string>
+    <string name="title_activity_workout">WorkoutActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_new_exercise_dialog">New Exercise</string>
+    <string name="title_new_routine_dialog">New Routine</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
     <string name="title_activity_emergency_card">EmergencyCardActivity</string>
 
-	<string name="steps_module">Steps</string>
-	<string name="sleep_module">Sleep</string>
-	<string name="nutrition_module">Nutrition</string>
-	<string name="run_module">Run/Cycle</string>
-	<string name="communicate">Communicate</string>
-	<string name="share">Share</string>
-	<string name="send">Send</string>
+    <string name="steps_module">Steps</string>
+    <string name="sleep_module">Sleep</string>
+    <string name="nutrition_module">Nutrition</string>
+    <string name="run_module">Run/Cycle</string>
+    <string name="communicate">Communicate</string>
+    <string name="share">Share</string>
+    <string name="send">Send</string>
 
-	<string name="user_name">User Person</string>
-	<string name="user_email">user.person@gmail.com</string>
-	
-	<string name="x">X</string>
-	<string name="y">Y</string>
-	<string name="z">Z</string>
-	<string name="dash">---</string>
-	<string name="reset_steps">Reset Steps</string>
-    
+    <string name="user_name">User Person</string>
+    <string name="user_email">user.person@gmail.com</string>
+
+    <string name="x">X</string>
+    <string name="y">Y</string>
+    <string name="z">Z</string>
+    <string name="dash">---</string>
+    <string name="reset_steps">Reset Steps</string>
+    <string name="title_activity_run_tracking">RunTracking</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

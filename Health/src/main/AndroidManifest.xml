@@ -1,40 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.sciencesquad.health">
+<manifest
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.sciencesquad.health">
 
-    <!-- For the Steps Module  -->
+    <!-- For the Steps Module to access the hardware. -->
     <uses-feature android:name="android.hardware.sensor.stepcounter" />
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
+    <!-- For the Activity Module to read GPS data. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- For the Activity Module to read GPS data. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <!-- For SoundService to play audio with the screen off. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- Restricts app to phone-use only; no tablets -->
+    <compatible-screens>
+        <screen android:screenSize="small" android:screenDensity="ldpi" />
+        <screen android:screenSize="small" android:screenDensity="mdpi" />
+        <screen android:screenSize="small" android:screenDensity="hdpi" />
+        <screen android:screenSize="small" android:screenDensity="xhdpi" />
+        <screen android:screenSize="small" android:screenDensity="280" />
+        <screen android:screenSize="small" android:screenDensity="360" />
+        <screen android:screenSize="small" android:screenDensity="420" />
+        <screen android:screenSize="small" android:screenDensity="480" />
+        <screen android:screenSize="small" android:screenDensity="560" />
+        <screen android:screenSize="small" android:screenDensity="640" />
+        <screen android:screenSize="normal" android:screenDensity="ldpi" />
+        <screen android:screenSize="normal" android:screenDensity="mdpi" />
+        <screen android:screenSize="normal" android:screenDensity="hdpi" />
+        <screen android:screenSize="normal" android:screenDensity="xhdpi" />
+        <screen android:screenSize="normal" android:screenDensity="280" />
+        <screen android:screenSize="normal" android:screenDensity="360" />
+        <screen android:screenSize="normal" android:screenDensity="420" />
+        <screen android:screenSize="normal" android:screenDensity="480" />
+        <screen android:screenSize="normal" android:screenDensity="560" />
+        <screen android:screenSize="normal" android:screenDensity="640" />
+    </compatible-screens>
+
     <application
-        android:name=".events.BaseApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:backupAgent=".data.RealmBackupAgent"
-        android:fullBackupOnly="true"
-        android:fullBackupContent="true" >
+            android:name=".core.BaseApp"
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            android:backupAgent=".core.RealmContext$RealmBackupAgent"
+            android:fullBackupOnly="true"
+            android:fullBackupContent="true">
 
         <!-- For Google's AutoBackupAgent. -->
-        <meta-data android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
+        <meta-data
+                android:name="com.google.android.backup.api_key"
+                android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
 
-        <!-- Entry point for the application. -->
+        <!-- For Google's Maps API. -->
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_maps_key" />
+
+        <!-- Entry point for the app. -->
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:name=".core.MainActivity"
+			android:label="@string/app_name"
+			android:theme="@style/AppTheme.NoActionBar"
+			android:screenOrientation="portrait" >
 
             <!-- Can be started from any launcher application. -->
             <intent-filter>
@@ -57,27 +85,26 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.MapsActivity"
+            android:name=".activity.ActivityFragment"
             android:label="@string/title_activity_maps"
             android:exported="true" >
         </activity>
 
         <!-- For Clock testing. -->
         <activity
-            android:name=".ClockActivity"
+            android:name=".core.ClockActivity"
             android:label="@string/title_activity_clock"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
-        <!-- For Steps testing. -->
-        <activity
-            android:name=".steps.StepsViewModel"
-            android:label="@string/steps_module"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
-            android:exported="false" />
-    </application>
+            android:exported="false"/>
+
+        <!-- For PrescriptionsModule to trigger in a timely manner. -->
+        <receiver
+            android:name=".prescriptions.PrescriptionAlarmReceiver"
+            android:enabled="true" />
+	</application>
 </manifest>
