@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <!-- TODO: Dream Type and Discomfort Type -->
+    <TextView
+            android:text="Good morning!"
+            android:textAppearance="@android:style/TextAppearance.Material.Large"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    <android.support.design.widget.TextInputLayout
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <AutoCompleteTextView
+                android:id="@+id/dream_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/TextAppearance.Material.Small"
+                android:hint="What was your dream like?"
+                android:imeOptions="actionDone"
+                android:inputType="textAutoComplete" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <AutoCompleteTextView
+                android:id="@+id/other_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/TextAppearance.Material.Small"
+                android:hint="Was there anything else about your sleep?"
+                android:imeOptions="actionDone"
+                android:inputType="textAutoComplete" />
+    </android.support.design.widget.TextInputLayout>
+</LinearLayout>

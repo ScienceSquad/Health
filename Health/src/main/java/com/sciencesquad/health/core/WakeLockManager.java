@@ -1,4 +1,4 @@
-package com.sciencesquad.health.sleep;
+package com.sciencesquad.health.core;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

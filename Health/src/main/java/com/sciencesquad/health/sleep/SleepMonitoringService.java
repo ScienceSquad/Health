@@ -13,7 +13,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -22,15 +21,13 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Binder;
-import android.os.Build;
-import android.os.Build.VERSION;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.WakeLockManager;
 
 public class SleepMonitoringService extends Service implements SensorEventListener {
 	private static final String TAG = SleepMonitoringService.class.getSimpleName();
