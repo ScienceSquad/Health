@@ -1,23 +1,18 @@
 package com.sciencesquad.health.activity;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -29,18 +24,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.sciencesquad.health.core.alarm.AlarmFragment;
-import com.sciencesquad.health.core.ClockFragment;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.steps.StepsFragment;
-import com.sciencesquad.health.workout.WorkoutFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,8 +89,8 @@ public class ActivityFragment extends Fragment implements
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(3 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+                .setInterval(2000)        // 2 seconds, in milliseconds
+                .setFastestInterval(500); // Half second, in milliseconds
     }
 
     @Override
@@ -140,8 +130,8 @@ public class ActivityFragment extends Fragment implements
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        //float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
-        float minDistResolution = location.getAccuracy()/20; //TEST RESOLUTION
+        float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
+        //float minDistResolution = location.getAccuracy()/20; //TEST RESOLUTION
 
 
         if (lastLoc==null) {
@@ -186,17 +176,15 @@ public class ActivityFragment extends Fragment implements
             double distanceDiff = computeDistanceBetween(pointsLatLng.get(timeStamps.size() - 2), latLng);
             distances.add(distanceDiff);
             totalDistance = totalDistance + distanceDiff;
-            Log.i(TAG, "Distance traveled" + String.valueOf(totalDistance));
             double timeDiff = (timeStamps.get(timeStamps.size()-1)-timeStamps.get(timeStamps.size()-2))/1000; //time difference in seconds
             double speed = distanceDiff/timeDiff; //calculates the speed since the last location update
             totalCalories = totalCalories + calorieBurn(speed,timeDiff,weightKG);
-            //NEW CODE
-            this.myTextViewCalories.setText("Calories Burned: " + totalCalories);
-            this.myTextViewDistance.setText("Distance: " + totalDistance);
-            this.myTextViewSpeed.setText("Pace: " + speed);
-            //END CODE
-            Log.i(TAG, "Burned: " + String.valueOf(totalCalories));
-            Log.i(TAG, "Time since last location update:" + String.valueOf(timeDiff));
+            this.myTextViewCalories.setText("Cal. Burned: " +
+                    String.format("%.1f",totalCalories));
+            this.myTextViewDistance.setText("Distance: " +
+                    String.format("%.1f",totalDistance) + " m");
+            this.myTextViewSpeed.setText("Pace: " +
+                    String.format("%.1f",speed) + " m/s");
         }
 
 
@@ -244,8 +232,7 @@ public class ActivityFragment extends Fragment implements
         if (speedMPH>15)METS=25;
         if (speedMPH>20)METS=0;
 
-        double calories = METS * weightKG * timeDiff/3600;
-        return calories;
+        return METS * weightKG * timeDiff/3600;
     }
 
     @Override
@@ -260,7 +247,6 @@ public class ActivityFragment extends Fragment implements
                 }
             }
             default:
-                return;
         }
     }
 
