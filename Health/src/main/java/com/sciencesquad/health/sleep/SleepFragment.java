@@ -1,6 +1,7 @@
 package com.sciencesquad.health.sleep;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,10 +42,13 @@ public class SleepFragment extends Fragment {
 
 	@Nullable @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		internalDialog = inflater.inflate(R.layout.fragment_sleep_userinput, null);
-		binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sleep, container, false);
-		binding.setModule(new SleepModule()); // TODO: Grab the Module singleton.
-		return binding.getRoot();
+		//final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.yourCustomTheme);
+		//LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
+
+		this.internalDialog = inflater.inflate(R.layout.fragment_sleep_userinput, null);
+		this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sleep, container, false);
+		this.binding.setModule(new SleepModule()); // TODO: Grab the Module singleton.
+		return this.binding.getRoot();
 	}
 
 	@Override

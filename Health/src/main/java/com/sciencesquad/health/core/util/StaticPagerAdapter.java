@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 public class StaticPagerAdapter extends PagerAdapter {
 	private int _resIds[];
+	private String _names[];
 
 	public static void install(ViewPager pager) {
 		pager.setAdapter(new StaticPagerAdapter(pager));
@@ -25,10 +26,14 @@ public class StaticPagerAdapter extends PagerAdapter {
 		}
 
 		_resIds = new int[count];
+		_names = new String[count];
+
 		for(int i = 0, j = 0; i < pager.getChildCount() && j < count; i++) {
 			View next = pager.getChildAt(i);
-			if(next.getId() != View.NO_ID)
-				_resIds[j++] = next.getId();
+			if(next.getId() != View.NO_ID) {
+				_resIds[j] = next.getId();
+				_names[j++] = X.of(next.getTag()).map(Object::toString).either("");
+			}
 		}
 
 		pager.setOffscreenPageLimit(count);
@@ -51,5 +56,9 @@ public class StaticPagerAdapter extends PagerAdapter {
 	@Override
 	public boolean isViewFromObject(View arg0, Object arg1) {
 		return arg0 == arg1;
+	}
+
+	public CharSequence getPageTitle(int position) {
+		return _names[position];
 	}
 }
