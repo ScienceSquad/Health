@@ -1,4 +1,4 @@
-package com.sciencesquad.health.activity;
+    package com.sciencesquad.health.activity;
 
 import android.Manifest;
 import android.content.Intent;
