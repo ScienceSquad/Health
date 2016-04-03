@@ -1,38 +1,24 @@
 package com.sciencesquad.health.nutrition;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.sciencesquad.health.R;
 
 import java.util.ArrayList;
 
-import io.realm.RealmResults;
 
 /**
  * ViewModel for the Nutrition Module.
@@ -41,7 +27,7 @@ public class NutritionFragment extends Fragment {
     public static final String TAG = NutritionFragment.class.getSimpleName();
 
     private NutritionModule nutritionModule;
-
+    private LineChart nutritionChart;
 
 
     /**
@@ -85,7 +71,7 @@ public class NutritionFragment extends Fragment {
 
 
         // setting up the chart.
-        LineChart nutritionChart = (LineChart) view.findViewById(R.id.nutrition_chart);
+        nutritionChart = (LineChart) view.findViewById(R.id.nutrition_chart);
         nutritionChart.setDescription("Calorie History");
 
         //Gathering and manipulating data.
@@ -103,6 +89,7 @@ public class NutritionFragment extends Fragment {
     }
 
     /**
+     * Creates the Diet Dialog where all things Diet related will go.
      * TODO: Do things that set up and create a Diet Dialog Fragment.
      */
 
@@ -110,12 +97,23 @@ public class NutritionFragment extends Fragment {
 
     }
 
+    /**
+     * Creates the Nutrient Menu which was originally the Calorie Menu.
+     */
+
     public void submitCalories(){
         createCalorieDialog();
     }
 
+    /**
+     * Saves the progress in Nutrition
+     * TODO: Make the graph update after database update.
+     * @param view
+     */
+
     public void saveNutritionProgress(View view){
         nutritionModule.addNutritionRecord();
+        nutritionChart.invalidate();
         Snackbar snackbar = Snackbar.make(view, "Nutrition Info saved.", Snackbar.LENGTH_SHORT);
         snackbar.show();
     }
@@ -129,17 +127,6 @@ public class NutritionFragment extends Fragment {
 
     public NutritionModule getNutritionModule(){
         return nutritionModule;
-    }
-
-    private void cancelButtonAction() {
-        // Do other things that exit out of the action.
-        Log.i(TAG, "Cancelling action");
-    }
-
-    private void okayButtonAction() {
-        // do things that are considered an okay.
-        Log.i(TAG, "Saving action");
-
     }
 
     /**

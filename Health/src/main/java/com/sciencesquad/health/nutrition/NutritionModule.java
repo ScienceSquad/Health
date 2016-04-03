@@ -1,31 +1,21 @@
 package com.sciencesquad.health.nutrition;
 
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.util.Pair;
-import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import android.util.Log;
 
-import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.DataEmptyEvent;
 import com.sciencesquad.health.core.DataFailureEvent;
 import com.sciencesquad.health.core.DataUpdateEvent;
-import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.BaseApp;
 
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 
@@ -140,8 +130,8 @@ public class NutritionModule extends Module {
             NutritionModel model = results.get(i);
             String logEntry = "Calories: " + model.getCalorieIntake() + ", Date: " +
                     LocalDateTime.now().getDayOfWeek().toString() + " "
-                    + LocalDateTime.now().getMonth().toString() + "/"
-                    + LocalDateTime.now().getDayOfMonth() + "/"
+                    + LocalDateTime.now().getMonth().toString() + " "
+                    + LocalDateTime.now().getDayOfMonth() + " "
                     + LocalDateTime.now().getYear();
             log.add(logEntry);
         }
