@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +16,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.BottomBarBadge;
+import com.roughike.bottombar.OnMenuTabClickListener;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
@@ -27,6 +31,7 @@ public class SleepFragment extends Fragment {
 
 	private View internalDialog;
 	private Subscription stopEvent;
+	private BottomBar mBottomBar;
 
 	@Nullable @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,5 +72,35 @@ public class SleepFragment extends Fragment {
 				SoundService.startSoundService();
 			else SoundService.stopSoundService();
 		});
+
+		// TODO: Use attachShy...
+		mBottomBar = BottomBar.attach(view, savedInstanceState);
+		mBottomBar.setItemsFromMenu(R.menu.menu_sleep_nav, new OnMenuTabClickListener() {
+			@Override
+			public void onMenuTabSelected(@IdRes int menuItemId) {
+				if (menuItemId == R.id.item1) {
+					// The user selected item number one.
+				}
+			}
+
+			@Override
+			public void onMenuTabReSelected(@IdRes int menuItemId) {
+				if (menuItemId == R.id.item1) {
+					// The user reselected item number one, scroll your content to top.
+				}
+			}
+		});
+
+		mBottomBar.mapColorForTab(0, 0xFF0000FF);
+		mBottomBar.mapColorForTab(1, 0xFF5D40FF);
+		mBottomBar.mapColorForTab(2, 0x7B1FA2FF);
+		mBottomBar.mapColorForTab(3, 0xFF5D40FF);
+		mBottomBar.mapColorForTab(4, 0x7B1FA2FF);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		mBottomBar.onSaveInstanceState(outState); // eww
 	}
 }
