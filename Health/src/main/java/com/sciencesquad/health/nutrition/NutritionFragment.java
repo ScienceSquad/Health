@@ -28,7 +28,7 @@ public class NutritionFragment extends Fragment {
 
     private NutritionModule nutritionModule;
     private LineChart nutritionChart;
-
+    private RecyclerView recycleList;
 
     /**
      * Creates the Nutrition View.
@@ -64,7 +64,7 @@ public class NutritionFragment extends Fragment {
         editDiet.setOnClickListener(v1 -> createDietDialog());
 
         ArrayList<String> nutritionLog = nutritionModule.createNutritionLog();
-        RecyclerView recycleList = (RecyclerView) view.findViewById(R.id.nutrition_recycler_view);
+        recycleList = (RecyclerView) view.findViewById(R.id.nutrition_recycler_view);
         NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(nutritionLog);
         recycleList.setAdapter(adapter);
         recycleList.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -94,6 +94,10 @@ public class NutritionFragment extends Fragment {
      */
 
     public void createDietDialog() {
+        Log.v(TAG, "Creating Diet Dialog");
+        DietDialogFragment newFrag = new DietDialogFragment();
+        newFrag.setTargetFragment(this, 0);
+        newFrag.show(getFragmentManager(), "diet dialog");
 
     }
 
@@ -113,6 +117,8 @@ public class NutritionFragment extends Fragment {
 
     public void saveNutritionProgress(View view){
         nutritionModule.addNutritionRecord();
+        recycleList.getAdapter().notifyDataSetChanged();
+        nutritionChart.notifyDataSetChanged();
         nutritionChart.invalidate();
         Snackbar snackbar = Snackbar.make(view, "Nutrition Info saved.", Snackbar.LENGTH_SHORT);
         snackbar.show();
