@@ -1,13 +1,16 @@
 package com.sciencesquad.health.sleep;
 
 import android.app.Fragment;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +25,9 @@ import com.roughike.bottombar.OnMenuTabClickListener;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
+import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.X;
+import com.sciencesquad.health.databinding.FragmentSleepBinding;
 import rx.Subscription;
 
 // TODO: Preference for roommate/partner sleeping in same bed, other room, none.
@@ -31,12 +36,14 @@ public class SleepFragment extends Fragment {
 
 	private View internalDialog;
 	private Subscription stopEvent;
-	private BottomBar mBottomBar;
+	private FragmentSleepBinding binding;
 
 	@Nullable @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		internalDialog = inflater.inflate(R.layout.fragment_sleep_userinput, null);
-		return inflater.inflate(R.layout.fragment_sleep, container, false);
+		binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sleep, container, false);
+		binding.setModule(new SleepModule()); // TODO: Grab the Module singleton.
+		return binding.getRoot();
 	}
 
 	@Override
@@ -65,42 +72,14 @@ public class SleepFragment extends Fragment {
 		});
 
 		// Configure the FAB.
-		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-		fab.setImageDrawable(zzz);
-		fab.setOnClickListener(view2 -> {
+		this.binding.fab.setImageDrawable(zzz);
+		this.binding.fab.setOnClickListener(view2 -> {
 			if (!SoundService.isSoundServiceActive())
 				SoundService.startSoundService();
 			else SoundService.stopSoundService();
 		});
 
-		// TODO: Use attachShy...
-		mBottomBar = BottomBar.attach(view, savedInstanceState);
-		mBottomBar.setItemsFromMenu(R.menu.menu_sleep_nav, new OnMenuTabClickListener() {
-			@Override
-			public void onMenuTabSelected(@IdRes int menuItemId) {
-				if (menuItemId == R.id.item1) {
-					// The user selected item number one.
-				}
-			}
-
-			@Override
-			public void onMenuTabReSelected(@IdRes int menuItemId) {
-				if (menuItemId == R.id.item1) {
-					// The user reselected item number one, scroll your content to top.
-				}
-			}
-		});
-
-		mBottomBar.mapColorForTab(0, 0xFF0000FF);
-		mBottomBar.mapColorForTab(1, 0xFF5D40FF);
-		mBottomBar.mapColorForTab(2, 0x7B1FA2FF);
-		mBottomBar.mapColorForTab(3, 0xFF5D40FF);
-		mBottomBar.mapColorForTab(4, 0x7B1FA2FF);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		mBottomBar.onSaveInstanceState(outState); // eww
+		StaticPagerAdapter.install(this.binding.pager);
+		this.binding.tabs.setupWithViewPager(this.binding.pager);
 	}
 }
