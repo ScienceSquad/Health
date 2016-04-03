@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
@@ -75,13 +77,12 @@ public class NutritionFragment extends Fragment {
         Button editDiet = (Button) view.findViewById(R.id.diet_button);
         editDiet.setOnClickListener(v1 -> createDietDialog());
 
+        ArrayList<String> nutritionLog = nutritionModule.createNutritionLog();
+        RecyclerView recycleList = (RecyclerView) view.findViewById(R.id.nutrition_recycler_view);
+        NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(nutritionLog);
+        recycleList.setAdapter(adapter);
+        recycleList.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        ListView nutritionLogView = (ListView) view.findViewById(R.id.nutrition_log);
-        ArrayAdapter<String> nutritionLogAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1);
-        nutritionLogAdapter.clear();
-        nutritionLogAdapter.addAll(nutritionModule.createNutritionLog());
-        nutritionLogView.setAdapter(nutritionLogAdapter);
 
         // setting up the chart.
         LineChart nutritionChart = (LineChart) view.findViewById(R.id.nutrition_chart);

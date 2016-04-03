@@ -1,5 +1,7 @@
 package com.sciencesquad.health.nutrition;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.util.Pair;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
@@ -135,7 +137,12 @@ public class NutritionModule extends Module {
         ArrayList<String> log = new ArrayList<>();
         RealmResults<NutritionModel> results = nutritionRealm.query().findAll();
         for (int i = 0; i < results.size(); i++){
-            String logEntry = results.get(i).toString();
+            NutritionModel model = results.get(i);
+            String logEntry = "Calories: " + model.getCalorieIntake() + ", Date: " +
+                    LocalDateTime.now().getDayOfWeek().toString() + " "
+                    + LocalDateTime.now().getMonth().toString() + "/"
+                    + LocalDateTime.now().getDayOfMonth() + "/"
+                    + LocalDateTime.now().getYear();
             log.add(logEntry);
         }
         return log;

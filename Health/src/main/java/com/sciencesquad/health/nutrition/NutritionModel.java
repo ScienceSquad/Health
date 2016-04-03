@@ -27,13 +27,6 @@ public class NutritionModel extends RealmObject {
 	private Date date;
 	private String dateString;
 
-	public String toString(){
-		String modelString = "";
-		modelString = modelString + "Calories: " + calorieIntake + ". Had Caffeine: " + hadCaffeine
-				+ "Date: " + dateString;
-		return modelString;
-	}
-
 	//
 	// GENERATED METHODS FOLLOW
 	// DO NOT MODIFY -- REALM ONLY
