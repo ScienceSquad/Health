@@ -42,11 +42,11 @@ public class SleepFragment extends Fragment {
 
 	@Nullable @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		//final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.yourCustomTheme);
-		//LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
-
-		this.internalDialog = inflater.inflate(R.layout.fragment_sleep_userinput, null);
-		this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sleep, container, false);
+		final Context theme = new ContextThemeWrapper(container.getContext(), R.style.AppTheme_Sleep);
+		final LayoutInflater local = inflater.cloneInContext(theme);
+		// FIXME: Don't do this here.
+		  this.internalDialog = local.inflate(R.layout.fragment_sleep_userinput, null);
+		this.binding = DataBindingUtil.inflate(local, R.layout.fragment_sleep, container, false);
 		this.binding.setModule(new SleepModule()); // TODO: Grab the Module singleton.
 		return this.binding.getRoot();
 	}
