@@ -35,7 +35,7 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
-    <!-- Overlay app themes for the AppBar and Popup. -->
+    <!-- Compatibility themes for AppCompat elements like AppBar and Popup. -->
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

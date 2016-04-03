@@ -12,11 +12,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
@@ -40,16 +38,45 @@ public class SleepFragment extends Fragment {
 	private Subscription stopEvent;
 	private FragmentSleepBinding binding;
 
+	//
+
+	private Drawable oldC_s;
+	private int oldC_n;
+
 	@Nullable @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final Context theme = new ContextThemeWrapper(container.getContext(), R.style.AppTheme_Sleep);
 		final LayoutInflater local = inflater.cloneInContext(theme);
+
+		// FIXME: Test
+		DrawerLayout d = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
+		int c = getResources().getColor(R.color.indigo_200);
+		oldC_s = d.getStatusBarBackgroundDrawable();
+		oldC_n = getActivity().getWindow().getNavigationBarColor();
+		d.setStatusBarBackgroundColor(c);
+		getActivity().getWindow().setNavigationBarColor(c);
+
+		// TODO: Support Status and Navigation Bar.
 		// FIXME: Don't do this here.
-		  this.internalDialog = local.inflate(R.layout.fragment_sleep_userinput, null);
+		  this.internalDialog = inflater.inflate(R.layout.fragment_sleep_userinput, null);
 		this.binding = DataBindingUtil.inflate(local, R.layout.fragment_sleep, container, false);
 		this.binding.setModule(new SleepModule()); // TODO: Grab the Module singleton.
 		return this.binding.getRoot();
 	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		DrawerLayout d = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
+		d.setStatusBarBackground(oldC_s);
+		getActivity().getWindow().setNavigationBarColor(oldC_n);
+	}
+
+	//
+
+
+
+
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
