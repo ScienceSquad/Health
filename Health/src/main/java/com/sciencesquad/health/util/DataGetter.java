@@ -73,33 +73,25 @@ public class DataGetter {
 	 * If necessary, call the parser functions to get parsed versions of data
 	 */
 
-	public static String getString(String urlString) {
+	public static String getString(String urlString) throws MalformedURLException, IOException {
 		URL url;
 
 		String resultString = "";
 
-		try {
-			url = new URL(urlString);
-			Scanner s = new Scanner(url.openStream());
-			while (s.hasNextLine()) {
-				resultString += s.nextLine() + "\n";
-			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return "";
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "";
+		url = new URL(urlString);
+		Scanner s = new Scanner(url.openStream());
+		while (s.hasNextLine()) {
+			resultString += s.nextLine() + "\n";
 		}
 
 		return resultString;
 	}
 
-	public static JSONObject getJSON(String urlString) throws JSONException {
+	public static JSONObject getJSON(String urlString) throws JSONException, MalformedURLException, IOException {
 		return parseJSON(getString(urlString));
 	}
 
-	public static void getXML(String urlString) {
+	public static void getXML(String urlString) throws MalformedURLException, IOException, XmlPullParserException {
 		parseXML(getString(urlString));
 	}
 }
