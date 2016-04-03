@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.activity.ActivityFragment;
+import com.sciencesquad.health.activity.ActivityLandingFragment;
 import com.sciencesquad.health.core.alarm.AlarmFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity
 		if (id == R.id.nav_run) {
 			getFragmentManager()
 					.beginTransaction()
-					.replace(R.id.content, new ActivityFragment(), ActivityFragment.TAG)
+					.replace(R.id.content, new ActivityLandingFragment(), ActivityLandingFragment.TAG)
 					.addToBackStack(ActivityFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_sleep) {

@@ -1,0 +1,39 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sciencesquad.health.activity.ActivityLandingFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Free Run"
+        android:id="@+id/buttonFreeRun"
+        android:layout_gravity="left|center_vertical"
+        android:layout_margin="10dp"
+        android:clickable="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Build a Route"
+        android:id="@+id/buttonBuildRoute"
+        android:layout_gravity="center"
+        android:layout_margin="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Training Programs"
+        android:id="@+id/buttonTrainingProgram"
+        android:layout_gravity="right|center_vertical"
+        android:textSize="9dp"
+        android:layout_margin="10dp" />
+
+</FrameLayout>
