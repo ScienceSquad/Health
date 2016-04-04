@@ -111,6 +111,21 @@ public abstract class Module implements Observable {
 	}
 
 	/**
+	 * Get the registered Module for the given Class.
+	 *
+	 * @param module the Class of Module that was registered
+	 * @param <T> a Module subclass
+	 * @return the registered Module for the given Class
+	 */
+	@Nullable
+	@SuppressWarnings("unchecked")
+	public static <T extends Module> T moduleForClass(@NonNull Class<T> module) {
+		return (T)StreamSupport.stream(Module.registeredModules())
+				.filter(a -> module.isAssignableFrom(a.getClass()))
+				.findFirst().orElse(null);
+	}
+
+	/**
 	 * A Module's identifier provides the name and icon of a Module for
 	 * implementations where the user interacts with available Modules.
 	 *

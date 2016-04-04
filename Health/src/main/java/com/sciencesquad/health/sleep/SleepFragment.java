@@ -25,6 +25,7 @@ import com.roughike.bottombar.OnMenuTabClickListener;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.X;
@@ -55,7 +56,8 @@ public class SleepFragment extends BaseFragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		xml().setModule(new SleepModule()); // FIXME: oops...
+		internalDialog = getInflater().inflate(R.layout.fragment_sleep_userinput, null);
+		xml().setModule(Module.moduleForClass(SleepModule.class));
 
 		// Grab a white-tinted sleep icon.
 		Drawable zzz = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);

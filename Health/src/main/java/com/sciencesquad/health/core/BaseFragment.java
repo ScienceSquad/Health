@@ -57,6 +57,11 @@ public abstract class BaseFragment extends Fragment {
 	private ViewDataBinding savedBinding;
 
 	/**
+	 * The saved themed LayoutInflater for internal usage.
+	 */
+	private LayoutInflater layoutInflater;
+
+	/**
 	 * The Configuration class is used to create a BaseFragment.
 	 * It allows the Activity to infer more metadata as well.
 	 */
@@ -142,6 +147,15 @@ public abstract class BaseFragment extends Fragment {
 	@SuppressWarnings("unchecked")
 	protected <T extends ViewDataBinding> T xml() {
 		return (T)this.savedBinding;
+	}
+
+	/**
+	 * Return the themed LayoutInflater for this Fragment.
+	 *
+	 * @return the themed LayoutInflater for this Fragment
+	 */
+	protected LayoutInflater getInflater() {
+		return this.layoutInflater;
 	}
 
 	/**
