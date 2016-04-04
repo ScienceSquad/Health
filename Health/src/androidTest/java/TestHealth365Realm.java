@@ -4,7 +4,7 @@ import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.nutrition.NutritionModel;
-ddimport com.sciencesquad.health.nutrition.RecipeQuery;
+import com.sciencesquad.health.nutrition.RecipeQuery;
 import com.sciencesquad.health.util.DataGetter;
 
 
