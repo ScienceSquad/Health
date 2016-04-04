@@ -1,5 +1,7 @@
 package com.sciencesquad.health.core;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Fragment;
@@ -13,16 +15,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.*;
+import android.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Property;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.sciencesquad.health.R;
-import java8.util.stream.StreamSupport;
-
-import java.lang.reflect.Method;
 
 /**
  * A styled Fragment class with support for DataBinding and easy configuration.
@@ -35,9 +36,24 @@ import java.lang.reflect.Method;
 public abstract class BaseFragment extends Fragment {
 	public static final String TAG = BaseFragment.class.getSimpleName();
 
-	@IdRes private int drawerRes;
+	/**
+	 * The DrawerLayout ID, if it exists. Used to custom-style the Status Bar.
+	 */
+	@IdRes private int drawerRes = View.NO_ID;
+
+	/**
+	 * The previous Status Bar color to restore later.
+	 */
 	private int previousStatus;
+
+	/**
+	 * The previous Navigation Bar color to restore later.
+	 */
 	private int previousNavigation;
+
+	/**
+	 * The saved Binding object for internal usage.
+	 */
 	private ViewDataBinding savedBinding;
 
 	/**
@@ -48,7 +64,7 @@ public abstract class BaseFragment extends Fragment {
 		private String id;
 		private String name;
 		Class<? extends Module> moduleClass;
-		private Drawable icon;
+		@DrawableRes private int icon;
 		@StyleRes private int theme;
 		@LayoutRes private int layout;
 
@@ -62,7 +78,7 @@ public abstract class BaseFragment extends Fragment {
 		 * @param layout the Fragment layout to inflate
 		 */
 		public Configuration(String id, String name, Class<? extends Module> moduleClass,
-							 Drawable icon, int theme, int layout) {
+							 int icon, int theme, int layout) {
 			this.id = id;
 			this.name = name;
 			this.moduleClass = moduleClass;
@@ -111,23 +127,6 @@ public abstract class BaseFragment extends Fragment {
 	}
 
 	/**
-	 * Instantiate this Fragment.
-	 */
-	public BaseFragment() {
-		this(View.NO_ID);
-	}
-
-	/**
-	 * Instantiate this Fragment with support for coloring the Status Bar.
-	 *
-	 * @param drawerRes the DrawerLayout of the Activity, if it exists
-	 */
-	@SuppressLint("ValidFragment")
-	public BaseFragment(@IdRes int drawerRes) {
-		this.drawerRes = drawerRes;
-	}
-
-	/**
 	 * Obtain this Fragment's configuration.
 	 *
 	 * @return the configuration for this fragment
@@ -143,6 +142,25 @@ public abstract class BaseFragment extends Fragment {
 	@SuppressWarnings("unchecked")
 	protected <T extends ViewDataBinding> T xml() {
 		return (T)this.savedBinding;
+	}
+
+	/**
+	 * Show this Fragment from FragmentTransaction.
+	 * If the drawerRes is provided, it is used to style a transparent
+	 * status bar above a NavigationView, else, the status bar itself.
+	 *
+	 * @param transaction the FragmentTransaction
+	 * @param drawerRes the DrawerLayout of the Activity, if it exists
+	 * @return the FragmentTransaction used
+	 */
+	public FragmentTransaction open(FragmentTransaction transaction, @IdRes int drawerRes) {
+		Configuration config = this.getConfiguration();
+		this.drawerRes = drawerRes;
+		return transaction
+				.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+				.replace(R.id.content, this, config.id)
+				.addToBackStack(config.id)
+				.setBreadCrumbTitle(config.name);
 	}
 
 	/**
@@ -175,7 +193,7 @@ public abstract class BaseFragment extends Fragment {
 		getActivity().getWindow().setNavigationBarColor(colors[1]);
 
 		// Set the current Overview Task Description.
-		Bitmap b = drawableToBitmap(config.icon);
+		Bitmap b = drawableToBitmap(theme.getDrawable(config.icon));
 		getActivity().setTaskDescription(new ActivityManager.TaskDescription(config.name, b, colors[0]));
 
 		// Return the inflated view and grab our binding.

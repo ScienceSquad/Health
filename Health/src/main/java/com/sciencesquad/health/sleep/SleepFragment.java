@@ -41,13 +41,13 @@ public class SleepFragment extends BaseFragment {
 	@Override
 	protected Configuration getConfiguration() {
 		return new Configuration(
-				TAG, "Sleep", SleepModule.class,
-				getResources().getDrawable(R.drawable.ic_menu_sleep),
+				TAG, "Sleep", SleepModule.class, R.drawable.ic_menu_sleep,
 				R.style.AppTheme_Sleep, R.layout.fragment_sleep
 		);
 	}
 
-	@SuppressWarnings("unchecked")
+	// Our generated binding class is different...
+	@Override @SuppressWarnings("unchecked")
 	protected FragmentSleepBinding xml() {
 		return super.xml();
 	}
@@ -55,6 +55,7 @@ public class SleepFragment extends BaseFragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		xml().setModule(new SleepModule()); // FIXME: oops...
 
 		// Grab a white-tinted sleep icon.
 		Drawable zzz = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);

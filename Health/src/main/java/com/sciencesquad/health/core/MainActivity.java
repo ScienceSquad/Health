@@ -2,6 +2,7 @@ package com.sciencesquad.health.core;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -76,11 +77,8 @@ public class MainActivity extends AppCompatActivity
 					.addToBackStack(ActivityFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_sleep) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new SleepFragment(), SleepFragment.TAG)
-					.addToBackStack(SleepFragment.TAG)
-					.commit();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new SleepFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_steps) {
 			getFragmentManager()
 					.beginTransaction()
