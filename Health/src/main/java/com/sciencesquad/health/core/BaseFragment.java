@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.annotation.*;
 import android.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.util.Property;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
@@ -24,6 +25,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.sciencesquad.health.R;
+
+import java.lang.reflect.Method;
 
 /**
  * A styled Fragment class with support for DataBinding and easy configuration.
@@ -186,7 +189,7 @@ public abstract class BaseFragment extends Fragment {
 
 		// Obtain a new LayoutInflater for the theme specified.
 		Context theme = new ContextThemeWrapper(container.getContext(), config.theme);
-		LayoutInflater local = inflater.cloneInContext(theme);
+		this.layoutInflater = inflater.cloneInContext(theme);
 		int colors[] = getThemeColors(theme); // primary, primarydark, accent
 
 		if (this.drawerRes != View.NO_ID) {
@@ -211,9 +214,18 @@ public abstract class BaseFragment extends Fragment {
 		getActivity().setTaskDescription(new ActivityManager.TaskDescription(config.name, b, colors[0]));
 
 		// Return the inflated view and grab our binding.
-		this.savedBinding = DataBindingUtil.inflate(local, config.layout, container, false);
+		this.savedBinding = DataBindingUtil.inflate(this.layoutInflater, config.layout, container, false);
 		View root = this.savedBinding.getRoot();
-		// FIXME: Assign Module here.
+
+		// Attempt to find the `setModule` method by reflection and invoke it.
+		// Note that a "module" variable must be specified in the layout XML.
+		try {
+			Method m = this.savedBinding.getClass().getMethod("setModule", Object.class);
+			m.invoke(this.savedBinding, Module.moduleForClass(config.moduleClass));
+		} catch(Exception e) {
+			Log.e(TAG, "Cannot setModule on binding: " + e.getLocalizedMessage());
+		}
+
 		return root;
 	}
 
@@ -234,5 +246,10 @@ public abstract class BaseFragment extends Fragment {
 
 		// Restore the correct Navigation Bar color.
 		getActivity().getWindow().setNavigationBarColor(this.previousNavigation);
+
+		// Restore the previous Activity TaskDescription.
+		int c = getThemeColors(getActivity())[0];
+		ActivityManager.TaskDescription v = new ActivityManager.TaskDescription(null, null, c);
+		getActivity().setTaskDescription(v);
 	}
 }

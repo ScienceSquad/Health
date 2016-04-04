@@ -57,19 +57,6 @@ public class MainActivity extends AppCompatActivity
 	public boolean onNavigationItemSelected(MenuItem item) {
 		int id = item.getItemId();
 
-		/*
-		// TODO: Experimental code...
-		StreamSupport.stream(Module.registeredModules())
-		.filter(a -> a.identifier().second == id)
-		.findFirst()
-		.ifPresent(module -> {
-			// code here
-			ContextBinder.bind(this, null, module, R.layout.sleep_layout, 0, () -> {
-				Log.d(TAG, "Module bound!");
-			});
-		});
-		//*/
-
 		if (id == R.id.nav_run) {
 			getFragmentManager()
 					.beginTransaction()

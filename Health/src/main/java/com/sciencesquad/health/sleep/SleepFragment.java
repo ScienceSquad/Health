@@ -57,7 +57,6 @@ public class SleepFragment extends BaseFragment {
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		internalDialog = getInflater().inflate(R.layout.fragment_sleep_userinput, null);
-		xml().setModule(Module.moduleForClass(SleepModule.class));
 
 		// Grab a white-tinted sleep icon.
 		Drawable zzz = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
