@@ -4,6 +4,7 @@ import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.nutrition.NutritionModel;
+ddimport com.sciencesquad.health.nutrition.RecipeQuery;
 import com.sciencesquad.health.util.DataGetter;
 
 
@@ -14,6 +15,9 @@ import junit.framework.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.Calendar;
 
@@ -97,15 +101,27 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
 
     }
 
+    private String nodeToString(Node node) {
+        String result = node.getNodeName() + ": " + node.getTextContent() + "\n" + childrenToString(node);
+        return result;
+    }
+
+    private String childrenToString(Node node) {
+        String result = "";
+        NodeList nodes = node.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            result += nodeToString(nodes.item(i)) + "\n";
+        }
+        return result;
+    }
+
     @Test
     public void testDataGetter() {
-        try {
-            JSONObject object = DataGetter.getJSON("http://www.recipepuppy.com/api/?i=onions,garlic&q=omelet&p=3");
-            Log.d("testDataGetter:", "Title: " + object.getString("title"));
-            Log.d("testDataGetter:", object.toString(2));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        Document results = new RecipeQuery()
+                .setName("omelet")
+                .setIngredients("onions,garlic")
+                .getXMLResults();
+        Log.d("testDataGetter", nodeToString(results));
     }
 
 

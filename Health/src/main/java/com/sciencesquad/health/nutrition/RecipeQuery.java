@@ -50,15 +50,16 @@ public class RecipeQuery {
 	 * Gets recipes by ingredients
 	 * Comma-separated
 	 */
-	public void setIngredients(String ingredients) {
+	public RecipeQuery setIngredients(String ingredients) {
 		this.ingredients = ingredients;
+		return this;
 	}
 
 	/**
 	 * Pass in ingredients as ArrayList
 	 * Converts into listString and passes to other function
 	 */
-	public void setIngredients(ArrayList<String> ingredients) {
+	public RecipeQuery setIngredients(ArrayList<String> ingredients) {
 		String listString = "";
 
 		boolean comma = false;
@@ -69,15 +70,17 @@ public class RecipeQuery {
 			listString += i;
 		}
 
-		this.setIngredients(listString);
+		return this.setIngredients(listString);
 	}
 
-	public void setName(String name) {
+	public RecipeQuery setName(String name) {
 		this.name = name;
+		return this;
 	}
 
-	public void setPage(int page) {
+	public RecipeQuery setPage(int page) {
 		this.page = page;
+		return this;
 	}
 
 	public Document getXMLResults() {
