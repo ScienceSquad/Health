@@ -24,6 +24,7 @@ import com.roughike.bottombar.BottomBarBadge;
 import com.roughike.bottombar.OnMenuTabClickListener;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.X;
@@ -31,52 +32,25 @@ import com.sciencesquad.health.databinding.FragmentSleepBinding;
 import rx.Subscription;
 
 // TODO: Preference for roommate/partner sleeping in same bed, other room, none.
-public class SleepFragment extends Fragment {
+public class SleepFragment extends BaseFragment {
 	public static final String TAG = SleepFragment.class.getSimpleName();
 
 	private View internalDialog;
 	private Subscription stopEvent;
-	private FragmentSleepBinding binding;
-
-	//
-
-	private Drawable oldC_s;
-	private int oldC_n;
-
-	@Nullable @Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final Context theme = new ContextThemeWrapper(container.getContext(), R.style.AppTheme_Sleep);
-		final LayoutInflater local = inflater.cloneInContext(theme);
-
-		// FIXME: Test
-		DrawerLayout d = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
-		int c = getResources().getColor(R.color.indigo_200);
-		oldC_s = d.getStatusBarBackgroundDrawable();
-		oldC_n = getActivity().getWindow().getNavigationBarColor();
-		d.setStatusBarBackgroundColor(c);
-		getActivity().getWindow().setNavigationBarColor(c);
-
-		// TODO: Support Status and Navigation Bar.
-		// FIXME: Don't do this here.
-		  this.internalDialog = inflater.inflate(R.layout.fragment_sleep_userinput, null);
-		this.binding = DataBindingUtil.inflate(local, R.layout.fragment_sleep, container, false);
-		this.binding.setModule(new SleepModule()); // TODO: Grab the Module singleton.
-		return this.binding.getRoot();
-	}
 
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		DrawerLayout d = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
-		d.setStatusBarBackground(oldC_s);
-		getActivity().getWindow().setNavigationBarColor(oldC_n);
+	protected Configuration getConfiguration() {
+		return new Configuration(
+				TAG, "Sleep", SleepModule.class,
+				getResources().getDrawable(R.drawable.ic_menu_sleep),
+				R.style.AppTheme_Sleep, R.layout.fragment_sleep
+		);
 	}
 
-	//
-
-
-
-
+	@SuppressWarnings("unchecked")
+	protected FragmentSleepBinding xml() {
+		return super.xml();
+	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -104,14 +78,14 @@ public class SleepFragment extends Fragment {
 		});
 
 		// Configure the FAB.
-		this.binding.fab.setImageDrawable(zzz);
-		this.binding.fab.setOnClickListener(view2 -> {
+		xml().fab.setImageDrawable(zzz);
+		xml().fab.setOnClickListener(view2 -> {
 			if (!SoundService.isSoundServiceActive())
 				SoundService.startSoundService();
 			else SoundService.stopSoundService();
 		});
 
-		StaticPagerAdapter.install(this.binding.pager);
-		this.binding.tabs.setupWithViewPager(this.binding.pager);
+		StaticPagerAdapter.install(xml().pager);
+		xml().tabs.setupWithViewPager(xml().pager);
 	}
 }
