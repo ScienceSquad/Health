@@ -41,6 +41,7 @@ public class SleepFragment extends BaseFragment {
 
 	@Override
 	protected Configuration getConfiguration() {
+		String _ = SleepModule.TAG; // instantiates the Module...
 		return new Configuration(
 				TAG, "Sleep", SleepModule.class, R.drawable.ic_menu_sleep,
 				R.style.AppTheme_Sleep, R.layout.fragment_sleep
@@ -65,6 +66,7 @@ public class SleepFragment extends BaseFragment {
 		// Prepare the sleep dialog.
 		// FIXME: Just a demo.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
+			Log.i(TAG, "Event fired!");
 			stopEvent = bus.subscribe(SoundServiceStopEvent.class, null, ev -> {
 				new MaterialStyledDialog(getActivity())
 						.setIcon(zzz)

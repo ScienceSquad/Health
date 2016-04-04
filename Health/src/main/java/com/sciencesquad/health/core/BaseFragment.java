@@ -219,9 +219,17 @@ public abstract class BaseFragment extends Fragment {
 
 		// Attempt to find the `setModule` method by reflection and invoke it.
 		// Note that a "module" variable must be specified in the layout XML.
+		// This reflection method is hideous because of generic type erasure.
 		try {
-			Method m = this.savedBinding.getClass().getMethod("setModule", Object.class);
-			m.invoke(this.savedBinding, Module.moduleForClass(config.moduleClass));
+			for(Method m : this.savedBinding.getClass().getDeclaredMethods()) {
+				if(m.getName().equals("setModule")) {
+					Class<?> parameters[] = m.getParameterTypes();
+					if(parameters.length == 1 && Module.class.isAssignableFrom(parameters[0])) {
+						m.invoke(this.savedBinding, Module.moduleForClass(config.moduleClass));
+						break;
+					}
+				}
+			}
 		} catch(Exception e) {
 			Log.e(TAG, "Cannot setModule on binding: " + e.getLocalizedMessage());
 		}

@@ -6,6 +6,7 @@ import android.databinding.PropertyChangeRegistry;
 import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.Pair;
 import com.sciencesquad.health.core.util.X;
 import java8.util.stream.StreamSupport;
@@ -86,6 +87,7 @@ public abstract class Module implements Observable {
 			T instance = module.newInstance();
 			return _modules.add(instance);
 		} catch (Exception e) {
+			Log.e(TAG, "Unable to register Module class! " + e.getLocalizedMessage());
 			return false;
 		}
 	}
