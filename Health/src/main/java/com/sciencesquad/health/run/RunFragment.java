@@ -1,6 +1,7 @@
 package com.sciencesquad.health.run;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.speech.tts.TextToSpeech;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,9 +33,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
@@ -66,7 +70,11 @@ public class RunFragment extends Fragment implements
 	Marker currentPos = null; // used to display current position
 	Circle accuracyCircle = null;
 
-    @Override
+    //int split = 800; // split distance in meters (NORMAL SPLIT)
+    int split = 5; // TEST SPLIT
+    int splitNumber = 1; // number of times user has traveled split distance
+
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_run, container, false);
     }
@@ -92,6 +100,10 @@ public class RunFragment extends Fragment implements
                 .setInterval(2000)        // 2 seconds, in milliseconds
                 .setFastestInterval(500); // Half second, in milliseconds
     }
+
+
+
+
 
     @Override
     public void onResume() {
@@ -158,6 +170,10 @@ public class RunFragment extends Fragment implements
             pointsLatLng.add(latLng);
             timeStamps.add(currentTimeMillis());
 
+            // TTS
+            String textToSpeak = "Activity Started. I will let you know how you're doing every half mile. Enjoy your run!";
+            MainActivity.ttsManager.initQueue(textToSpeak);
+
             firstLoc = false;
         }
 
@@ -166,6 +182,7 @@ public class RunFragment extends Fragment implements
 
         lastLoc = latLng;
 
+        double speed = 0;
         pointsLatLng.add(latLng);
         timeStamps.add(currentTimeMillis());
         if (timeStamps.size()>2) {
@@ -173,17 +190,23 @@ public class RunFragment extends Fragment implements
             distances.add(distanceDiff);
             totalDistance = totalDistance + distanceDiff;
             double timeDiff = (timeStamps.get(timeStamps.size()-1)-timeStamps.get(timeStamps.size()-2))/1000; //time difference in seconds
-            double speed = distanceDiff/timeDiff; //calculates the speed since the last location update
+            speed = distanceDiff/timeDiff; //calculates the speed since the last location update
             totalCalories = totalCalories + calorieBurn(speed,timeDiff,weightKG);
             this.myTextViewCalories.setText("Cal. Burned: " +
                     String.format("%.1f",totalCalories));
             this.myTextViewDistance.setText("Distance: " +
                     String.format("%.1f",totalDistance) + " m");
             this.myTextViewSpeed.setText("Pace: " +
-                    String.format("%.1f",speed) + " m/s");
+                    String.format("%.1f", speed) + " m/s");
         }
 
-
+        // TextToSpeech - Split Data
+        if (totalDistance>split*splitNumber) {
+            String textToSpeech = "Distance traveled, " + String.format("%.0f",totalDistance) +
+                    " meters. Current pace is " + String.format("%.1f",speed) + "meters per second";
+            MainActivity.ttsManager.initQueue(textToSpeech);
+            splitNumber = splitNumber + 1;
+        }
 
         currentPos.setPosition(latLng);
         accuracyCircle.setCenter(latLng);

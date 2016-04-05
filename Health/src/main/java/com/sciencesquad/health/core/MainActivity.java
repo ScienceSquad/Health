@@ -14,6 +14,7 @@ import com.sciencesquad.health.run.RunFragment;
 import com.sciencesquad.health.run.RunLandingFragment;
 import com.sciencesquad.health.core.alarm.AlarmFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
+import com.sciencesquad.health.run.TTSManager;
 import com.sciencesquad.health.sleep.SleepFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity
 	private Toolbar toolbar;
 	private DrawerLayout drawer;
 	private NavigationView navigationView;
+
+	public static TTSManager ttsManager = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity
 		drawer.addDrawerListener(toggle);
 		toggle.syncState();
 		navigationView.setNavigationItemSelectedListener(this);
+
+		// TextToSpeech Initialization
+		ttsManager = new TTSManager();
+		ttsManager.init(this);
 	}
 
 	@Override
