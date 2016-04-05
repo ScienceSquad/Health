@@ -4,11 +4,13 @@
         xmlns:tools="http://schemas.android.com/tools"
         tools:context=".sleep.SleepFragment">
     <data>
+        <variable name="fragment" type="com.sciencesquad.health.sleep.SleepFragment"/>
         <variable name="module" type="com.sciencesquad.health.sleep.SleepModule"/>
     </data>
     <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:transitionGroup="true"
             android:fitsSystemWindows="true">
         <android.support.design.widget.AppBarLayout
                 android:id="@+id/appbar"

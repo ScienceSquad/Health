@@ -36,9 +36,6 @@ import rx.Subscription;
 public class SleepFragment extends BaseFragment {
 	public static final String TAG = SleepFragment.class.getSimpleName();
 
-	private View internalDialog;
-	private Subscription stopEvent;
-
 	@Override
 	protected Configuration getConfiguration() {
 		String _ = SleepModule.TAG; // instantiates the Module...
@@ -57,28 +54,23 @@ public class SleepFragment extends BaseFragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		internalDialog = getInflater().inflate(R.layout.fragment_sleep_userinput, null);
 
 		// Grab a white-tinted sleep icon.
 		Drawable zzz = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
 		zzz.setTint(Color.WHITE);
 
 		// Prepare the sleep dialog.
-		// FIXME: Just a demo.
-		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
-			Log.i(TAG, "Event fired!");
-			stopEvent = bus.subscribe(SoundServiceStopEvent.class, null, ev -> {
-				new MaterialStyledDialog(getActivity())
-						.setIcon(zzz)
-						.setCustomView(internalDialog)
-						.withDialogAnimation(true, Duration.FAST)
-						.setCancelable(false)
-						.setPositive(getResources().getString(R.string.accept),
-								(dialog, which) -> Log.d(TAG, "Accepted!"))
-						.setNegative(getResources().getString(R.string.decline),
-								(dialog, which) -> Log.d(TAG, "Declined!"))
-						.show();
-			});
+		this.subscribe(SoundServiceStopEvent.class, null, ev -> {
+			new MaterialStyledDialog(getActivity())
+					.setIcon(zzz)
+					.setCustomView(getInflater().inflate(R.layout.fragment_sleep_userinput, null))
+					.withDialogAnimation(true, Duration.FAST)
+					.setCancelable(false)
+					.setPositive(getResources().getString(R.string.accept),
+							(dialog, which) -> Log.d(TAG, "Accepted!"))
+					.setNegative(getResources().getString(R.string.decline),
+							(dialog, which) -> Log.d(TAG, "Declined!"))
+					.show();
 		});
 
 		// Configure the FAB.
