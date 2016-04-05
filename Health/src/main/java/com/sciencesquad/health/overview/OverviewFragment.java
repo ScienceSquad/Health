@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.ui.EmergencyNotification;
 
 public class OverviewFragment extends Fragment {
     public static final String TAG = OverviewFragment.class.getSimpleName();
@@ -23,6 +24,11 @@ public class OverviewFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.overviewFab);
+        fab.setOnClickListener(view1 -> {
+
+        });
     }
 }

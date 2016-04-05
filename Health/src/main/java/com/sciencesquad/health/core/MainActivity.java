@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.overview.OverviewFragment;
 import com.sciencesquad.health.activity.ActivityFragment;
 import com.sciencesquad.health.core.alarm.AlarmFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
@@ -69,7 +70,13 @@ public class MainActivity extends AppCompatActivity
 		});
 		//*/
 
-		if (id == R.id.nav_run) {
+		if (id == R.id.nav_overview) {
+			getFragmentManager()
+					.beginTransaction()
+					.replace(R.id.content, new OverviewFragment(), OverviewFragment.TAG)
+					.addToBackStack(OverviewFragment.TAG)
+					.commit();
+		} else if (id == R.id.nav_run) {
 			getFragmentManager()
 					.beginTransaction()
 					.replace(R.id.content, new ActivityFragment(), ActivityFragment.TAG)
