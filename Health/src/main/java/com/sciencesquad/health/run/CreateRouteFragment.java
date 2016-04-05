@@ -3,6 +3,7 @@ package com.sciencesquad.health.run;
 import android.Manifest;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.app.Fragment;
@@ -18,6 +19,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -37,7 +39,7 @@ import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 
 public class CreateRouteFragment extends Fragment implements
-        ConnectionCallbacks,  OnConnectionFailedListener, LocationListener {
+        ConnectionCallbacks,  OnConnectionFailedListener, OnMarkerDragListener, LocationListener {
     public static final String TAG = CreateRouteFragment.class.getSimpleName();
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -52,10 +54,14 @@ public class CreateRouteFragment extends Fragment implements
 
     List<LatLng> pointsLatLng = new ArrayList<>();
     private static List<Double> distances = new ArrayList<>();
-    static double totalDistance = 0;
+    //static double totalDistance = 0;
     private LatLng latLng;
 
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
+
+    PolylineOptions polylineoptions = new PolylineOptions()
+            .width(8)
+            .color(Color.BLUE);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,7 +76,6 @@ public class CreateRouteFragment extends Fragment implements
                 buttonClicked(v);
             }
         });
-
         return view;
     }
 
@@ -117,16 +122,12 @@ public class CreateRouteFragment extends Fragment implements
                     .getMapAsync(googleMap -> {
                         mMap = googleMap;
                     });
-
         }
     }
 
     private void handleNewLocation(Location location) {
-        Log.d(TAG, location.toString());
-
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
-
         latLng = new LatLng(currentLatitude, currentLongitude);
 
         // Disconnects Location Services once location is found with sufficient accuracy.
@@ -137,28 +138,11 @@ public class CreateRouteFragment extends Fragment implements
         }
 
         // Creates starting marker
-
         if (firstLoc) {
             newStartingMarker(mMap, latLng);
             pointsLatLng.add(latLng);
             firstLoc = false;
         }
-
-        /* //TODO: Take what's needed, put into new methods, and delete the rest
-
-
-        currentPos.setPosition(latLng);
-
-
-        PolylineOptions polylineoptions = new PolylineOptions()
-                .width(8)
-                .color(Color.BLUE);
-
-        mMap.addPolyline((polylineoptions)
-                .addAll(pointsLatLng));
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        */
     }
 
     public void newStartingMarker(GoogleMap mMap, LatLng latLng) {
@@ -178,13 +162,31 @@ public class CreateRouteFragment extends Fragment implements
         mMap.addMarker(options);
         pointsLatLng.add(latLng);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+        mMap.addPolyline((polylineoptions)
+                .addAll(pointsLatLng));
     }
 
-
+    // Button push triggers new marker (dragable)
     public void buttonClicked(View view) {
-        //TODO: Button push triggers new marker (dragable)
-        newMarker(mMap, latLng);
+        newMarker(mMap, pointsLatLng.get(pointsLatLng.size()-1));
         distanceCalculate(latLng, pointsLatLng);
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+        // Nothing, but necessary to have this here.
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+        LatLng dragPosition = marker.getPosition();
+        pointsLatLng.set(pointsLatLng.size()-1, dragPosition);
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+        LatLng dragPosition = marker.getPosition();
+        pointsLatLng.set(pointsLatLng.size()-1, dragPosition);
     }
 
     //TODO: Adds location information for marker to location list
@@ -192,13 +194,14 @@ public class CreateRouteFragment extends Fragment implements
     //TODO: Calculate distance between new marker and previous
 
     // Calculates distance and adds to the distances list
-    public static void distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {
-        if (pointsLatLng.size() > 2) {
-            double distanceDiff = computeDistanceBetween(pointsLatLng.get(pointsLatLng.size() - 2), latLng);
-            distances.add(distanceDiff);
-            totalDistance = totalDistance + distanceDiff;
-            mTextViewDistance.setText("Distance: " + String.format("%.1f", totalDistance) + " m");
+    public static double distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {
+        double totalDistance = 0;
+        for (int i = 2; i<pointsLatLng.size(); i++) {
+            totalDistance = totalDistance + computeDistanceBetween(pointsLatLng.get(i-2),
+                    pointsLatLng.get(i-1));
         }
+        mTextViewDistance.setText("Distance: " + String.format("%.1f", totalDistance) + " m");
+        return totalDistance;
     }
 
     @Override
