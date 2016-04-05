@@ -36,6 +36,13 @@ public class MainActivity extends AppCompatActivity
 		this.drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		this.navigationView = (NavigationView) findViewById(R.id.nav_view);
 
+		// Automatically displays Overview Fragment
+		getFragmentManager()
+				.beginTransaction()
+				.replace(R.id.content, new OverviewFragment(), OverviewFragment.TAG)
+				.addToBackStack(OverviewFragment.TAG)
+				.commit();
+
 		// Configure things the way we want.
 		setSupportActionBar(toolbar);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer,
