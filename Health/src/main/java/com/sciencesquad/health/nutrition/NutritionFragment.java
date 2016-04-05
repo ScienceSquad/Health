@@ -17,6 +17,8 @@ import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.sciencesquad.health.R;
 
+import org.threeten.bp.LocalDateTime;
+
 import java.util.ArrayList;
 
 
@@ -29,6 +31,7 @@ public class NutritionFragment extends Fragment {
     private NutritionModule nutritionModule;
     private LineChart nutritionChart;
     private RecyclerView recycleList;
+    private ArrayList<String> nutritionLog;
 
     /**
      * Creates the Nutrition View.
@@ -58,12 +61,12 @@ public class NutritionFragment extends Fragment {
         });
 
         Button saveProgress = (Button) view.findViewById(R.id.nutrition_save_progress);
-        saveProgress.setOnClickListener(v1 -> saveNutritionProgress(getView()));
+        saveProgress.setOnClickListener((view1) -> saveNutritionProgress(view1));
 
         Button editDiet = (Button) view.findViewById(R.id.diet_button);
         editDiet.setOnClickListener(v1 -> createDietDialog());
 
-        ArrayList<String> nutritionLog = nutritionModule.createNutritionLog();
+        nutritionLog = nutritionModule.createNutritionLog();
         recycleList = (RecyclerView) view.findViewById(R.id.nutrition_recycler_view);
         NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(nutritionLog);
         recycleList.setAdapter(adapter);
@@ -74,15 +77,8 @@ public class NutritionFragment extends Fragment {
         nutritionChart = (LineChart) view.findViewById(R.id.nutrition_chart);
         nutritionChart.setDescription("Calorie History");
 
-        //Gathering and manipulating data.
-        RealmLineDataSet<NutritionModel> nutritionDataSet = new RealmLineDataSet<NutritionModel>(
-                nutritionModule.queryNutrition(), "calorieIntake");
-        ArrayList<ILineDataSet> dataSetList = new ArrayList<ILineDataSet>();
-        dataSetList.add(nutritionDataSet);
-        RealmLineData data = new RealmLineData(nutritionModule.queryNutrition(), "dateString", dataSetList);
-
         // getting the data to display.
-        nutritionChart.setData(data);
+        nutritionChart.setData(createLineData());
         nutritionChart.invalidate();
 
 
@@ -90,7 +86,6 @@ public class NutritionFragment extends Fragment {
 
     /**
      * Creates the Diet Dialog where all things Diet related will go.
-     * TODO: Do things that set up and create a Diet Dialog Fragment.
      */
 
     public void createDietDialog() {
@@ -110,18 +105,41 @@ public class NutritionFragment extends Fragment {
     }
 
     /**
-     * Saves the progress in Nutrition
-     * TODO: Make the graph update after database update.
+     * Saves the progress in Nutrition in the dirtiest way possible.
+     * This entire function needs a major sponge bath.
      * @param view
      */
 
     public void saveNutritionProgress(View view){
+        String logEntry = "Calories: " + nutritionModule.getCalorieIntake() + ", Date: " +
+                LocalDateTime.now().getDayOfWeek().toString() + " "
+                + LocalDateTime.now().getMonth().toString() + " "
+                + LocalDateTime.now().getDayOfMonth() + " "
+                + LocalDateTime.now().getYear();
+        nutritionLog.add(logEntry);
         nutritionModule.addNutritionRecord();
         recycleList.getAdapter().notifyDataSetChanged();
-        nutritionChart.notifyDataSetChanged();
+
+        nutritionChart.setData(createLineData());
         nutritionChart.invalidate();
         Snackbar snackbar = Snackbar.make(view, "Nutrition Info saved.", Snackbar.LENGTH_SHORT);
         snackbar.show();
+    }
+
+    /**
+     * Because Realm doesn't cooperate as well with MPAndroid chart as I like it to be.
+     * I need to remake the data set it works with and redraw it.
+     * Because my life doesn't like me enough.
+     * @return
+     */
+
+    private RealmLineData createLineData(){
+        RealmLineDataSet<NutritionModel> nutritionDataSet = new RealmLineDataSet<NutritionModel>(
+                nutritionModule.queryNutrition(), "calorieIntake");
+        ArrayList<ILineDataSet> dataSetList = new ArrayList<ILineDataSet>();
+        dataSetList.add(nutritionDataSet);
+        RealmLineData data = new RealmLineData(nutritionModule.queryNutrition(), "dateString", dataSetList);
+        return data;
     }
 
     private void createCalorieDialog() {
@@ -130,6 +148,11 @@ public class NutritionFragment extends Fragment {
         newFrag.setTargetFragment(this, 0);
         newFrag.show(getFragmentManager(), "calorie dialog");
     }
+
+    /**
+     * Used for Dialogs.
+     * @return
+     */
 
     public NutritionModule getNutritionModule(){
         return nutritionModule;

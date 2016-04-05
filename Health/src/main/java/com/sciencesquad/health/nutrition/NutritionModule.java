@@ -1,6 +1,8 @@
 package com.sciencesquad.health.nutrition;
 
 import android.util.Pair;
+
+import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
@@ -45,6 +47,7 @@ public class NutritionModule extends Module {
      * Subscribes to events necessary to maintaining its own model.
     */
     public NutritionModule()  {
+
         this.nutritionRealm = new RealmContext<>();
         this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
         this.nutritionRealm.clear();
@@ -184,11 +187,12 @@ public class NutritionModule extends Module {
 
     @Override
     public Pair<String, Integer> identifier() {
-        return null;
+        return new Pair<>("Nutrition", R.drawable.ic_menu_nutrition);
     }
 
     @Override
     public void init() {
+        this.registerModule(this.getClass());
 
     }
 }
