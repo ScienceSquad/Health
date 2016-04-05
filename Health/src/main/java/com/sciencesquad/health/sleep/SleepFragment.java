@@ -73,6 +73,9 @@ public class SleepFragment extends BaseFragment {
 					.show();
 		});
 
+		// Setup the Toolbar.
+		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
+
 		// Configure the FAB.
 		xml().fab.setImageDrawable(zzz);
 		xml().fab.setOnClickListener(view2 -> {

@@ -3,11 +3,10 @@ package com.sciencesquad.health.core;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.app.FragmentTransaction;
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.sciencesquad.health.R;
@@ -18,30 +17,17 @@ import com.sciencesquad.health.sleep.SleepFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
 
-public class MainActivity extends AppCompatActivity
-		implements NavigationView.OnNavigationItemSelectedListener {
-	private static final String TAG = MainActivity.class.getSimpleName();
+public class HostActivity extends AppCompatActivity implements OnNavigationItemSelectedListener {
+	private static final String TAG = HostActivity.class.getSimpleName();
 
-	private Toolbar toolbar;
 	private DrawerLayout drawer;
-	private NavigationView navigationView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		// Obtain all the view references.
-		this.toolbar = (Toolbar) findViewById(R.id.toolbar);
 		this.drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-		this.navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-		// Configure things the way we want.
-		setSupportActionBar(toolbar);
-		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer,
-				toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-		drawer.addDrawerListener(toggle);
-		toggle.syncState();
+		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
 	}
 
@@ -56,7 +42,6 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
 		int id = item.getItemId();
-
 		if (id == R.id.nav_run) {
 			getFragmentManager()
 					.beginTransaction()
@@ -103,7 +88,6 @@ public class MainActivity extends AppCompatActivity
 		} else if (id == R.id.nav_send) {
 			// NOTHING HERE
 		}
-
 		this.drawer.closeDrawer(GravityCompat.START);
 		return true;
 	}

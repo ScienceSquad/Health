@@ -59,7 +59,7 @@
 
         <!-- Entry point for the app. -->
         <activity
-            android:name=".core.MainActivity"
+            android:name=".core.HostActivity"
 			android:label="@string/app_name"
 			android:theme="@style/AppTheme.Grey"
 			android:screenOrientation="portrait" >

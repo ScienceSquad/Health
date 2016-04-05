@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.*;
 import android.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.transition.Visibility;
 import android.util.Log;
@@ -32,8 +33,6 @@ import java.util.Set;
 /**
  * A styled Fragment class with support for DataBinding and easy configuration.
  * Also provides a managed app() and eventBus interface.
- *
- * FIXME: Memory analysis shows 0.2MB memory leak per onCreateView().
  *
  * Requirements:
  * 	- Support DataBinding in the layout XML file.
@@ -168,6 +167,23 @@ public abstract class BaseFragment extends Fragment {
 	 */
 	protected LayoutInflater getInflater() {
 		return this._layoutInflater;
+	}
+
+	/**
+	 * Returns an Activity-compatible OnClickListener for a Toolbar
+	 * to hook into the DrawerLayout above its hierarchy.
+	 *
+	 * @return an OnClickListener to toggle a DrawerLayout, if available
+	 */
+	protected View.OnClickListener drawerToggleListener() {
+		return v -> {
+			if (this._drawerRes != View.NO_ID) {
+				DrawerLayout d = (DrawerLayout)getActivity().findViewById(this._drawerRes);
+				if (d.isDrawerOpen(GravityCompat.START))
+					d.closeDrawer(GravityCompat.START);
+				else d.openDrawer(GravityCompat.START);
+			}
+		};
 	}
 
 	/**
