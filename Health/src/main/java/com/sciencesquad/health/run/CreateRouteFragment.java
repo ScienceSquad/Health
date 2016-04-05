@@ -3,7 +3,6 @@ package com.sciencesquad.health.run;
 import android.Manifest;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.app.Fragment;
@@ -12,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -24,8 +24,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -50,27 +48,37 @@ public class CreateRouteFragment extends Fragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    private TextView myTextViewDistance = null;
+    static TextView mTextViewDistance;
 
     List<LatLng> pointsLatLng = new ArrayList<>();
-    List<Double> distances = new ArrayList<>();
+    private static List<Double> distances = new ArrayList<>();
     static double totalDistance = 0;
-    LatLng lastLoc = null;
+    private LatLng latLng;
 
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
-    Marker currentPos = null; // used to display current position
-    Circle accuracyCircle = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_create_route, container, false);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_create_route, container, false);
+        mTextViewDistance = (TextView) view.findViewById(R.id.textView_RouteDistance);
+        // Button
+        final Button button = (Button) view.findViewById(R.id.buttonNewMarker);
+        //Button Click
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                buttonClicked(v);
+            }
+        });
+
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
+
 
         setUpMapIfNeeded();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -119,63 +127,27 @@ public class CreateRouteFragment extends Fragment implements
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
 
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        latLng = new LatLng(currentLatitude, currentLongitude);
 
-        // Sets the minimum distance needed to trigger a change in location
-        // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
-        //float minDistResolution = location.getAccuracy()/20; //TEST RESOLUTION
-
-
-        if (lastLoc==null) {
-            lastLoc = latLng;
+        // Disconnects Location Services once location is found with sufficient accuracy.
+        double accThreshold = 25; // Accuracy threshold in meters
+        if (location.getAccuracy()<=accThreshold) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
         }
 
-        // Creates a marker at the starting point.
+        // Creates starting marker
 
         if (firstLoc) {
-            MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title("Starting Place");
-            mMap.addMarker(options);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
-
-            MarkerOptions currentPosOptions = new MarkerOptions()
-                    .position(latLng)
-                    .title("Current Position");
-
-            CircleOptions accuracyCircleOptions = new CircleOptions()
-                    .center(latLng)
-                    .radius((double) location.getAccuracy())
-                    .strokeColor(0xaf00bfff)
-                    .fillColor(0x3f00bfff);
-            currentPos = mMap.addMarker(currentPosOptions);
-            accuracyCircle = mMap.addCircle(accuracyCircleOptions);
-
+            newStartingMarker(mMap, latLng);
             pointsLatLng.add(latLng);
-
             firstLoc = false;
         }
 
-        if (computeDistanceBetween(lastLoc,latLng)<minDistResolution)
-            return; //stops running the method if distance is inconsequential.
-
-        lastLoc = latLng;
-
-        pointsLatLng.add(latLng);
-        if (pointsLatLng.size()>2) {
-            double distanceDiff = computeDistanceBetween(pointsLatLng.get(pointsLatLng.size() - 2), latLng);
-            distances.add(distanceDiff);
-            totalDistance = totalDistance + distanceDiff;
-            this.myTextViewDistance.setText("Distance: " +
-                    String.format("%.1f",totalDistance) + " m");
-        }
-
+        /* //TODO: Take what's needed, put into new methods, and delete the rest
 
 
         currentPos.setPosition(latLng);
-        accuracyCircle.setCenter(latLng);
-        accuracyCircle.setRadius((double)location.getAccuracy());
 
 
         PolylineOptions polylineoptions = new PolylineOptions()
@@ -186,6 +158,47 @@ public class CreateRouteFragment extends Fragment implements
                 .addAll(pointsLatLng));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        */
+    }
+
+    public void newStartingMarker(GoogleMap mMap, LatLng latLng) {
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .draggable(true)
+                .title("Starting Place");
+        mMap.addMarker(options);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+    }
+
+    public void newMarker(GoogleMap mMap, LatLng lastLatLng) {
+        latLng = new LatLng(lastLatLng.latitude, lastLatLng.longitude+0.001);
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .draggable(true);
+        mMap.addMarker(options);
+        pointsLatLng.add(latLng);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+    }
+
+
+    public void buttonClicked(View view) {
+        //TODO: Button push triggers new marker (dragable)
+        newMarker(mMap, latLng);
+        distanceCalculate(latLng, pointsLatLng);
+    }
+
+    //TODO: Adds location information for marker to location list
+
+    //TODO: Calculate distance between new marker and previous
+
+    // Calculates distance and adds to the distances list
+    public static void distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {
+        if (pointsLatLng.size() > 2) {
+            double distanceDiff = computeDistanceBetween(pointsLatLng.get(pointsLatLng.size() - 2), latLng);
+            distances.add(distanceDiff);
+            totalDistance = totalDistance + distanceDiff;
+            mTextViewDistance.setText("Distance: " + String.format("%.1f", totalDistance) + " m");
+        }
     }
 
     @Override

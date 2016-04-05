@@ -141,11 +141,7 @@ public class RunFragment extends Fragment implements
         // Creates a marker at the starting point.
 
         if (firstLoc) {
-            MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title("Starting Place");
-            mMap.addMarker(options);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+            newStartingMarker(mMap, latLng);
 
             MarkerOptions currentPosOptions = new MarkerOptions()
                     .position(latLng)
@@ -204,10 +200,18 @@ public class RunFragment extends Fragment implements
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 
+    public static void newStartingMarker(GoogleMap mMap, LatLng latLng) {
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("Starting Place");
+        mMap.addMarker(options);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+    }
+
     // DEFAULT WEIGHT (To be changed later)
     double weightKG = 70;
 
-    public double calorieBurn(double speed, double timeDiff, double weightKG) {
+    public static double calorieBurn(double speed, double timeDiff, double weightKG) {
         // METS List (Metric for the exertion for each exercise)
         double METS = 0;
         double speedMPH = speed*2.23694; //converting speed from m/s to MPH
