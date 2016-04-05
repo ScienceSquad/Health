@@ -56,7 +56,11 @@ public class RunLandingFragment extends Fragment{
                 .commit();
     }
     public void button3Clicked(View view) {
-        //TODO: Link to TrainingProgramsFragment
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new RunTrainingFragment(), RunTrainingFragment.TAG)
+                .addToBackStack(RunTrainingFragment.TAG)
+                .commit();
     }
 
 }
