@@ -192,7 +192,10 @@ public class CreateRouteFragment extends Fragment implements
         int id = Integer.valueOf(marker.getId().substring(1));
         LatLng dragPosition = marker.getPosition();
         pointsLatLng.set(id, dragPosition);
-        if (!firstMarker) polyline.setPoints(pointsLatLng);
+        if (!firstMarker) {
+            polyline.setPoints(pointsLatLng);
+            distanceCalculate(dragPosition, pointsLatLng);
+        }
     }
 
     @Override
@@ -212,9 +215,9 @@ public class CreateRouteFragment extends Fragment implements
     // Calculates distance and adds to the distances list
     public static double distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {
         double totalDistance = 0;
-        for (int i = 2; i<pointsLatLng.size(); i++) {
-            totalDistance = totalDistance + computeDistanceBetween(pointsLatLng.get(i-2),
-                    pointsLatLng.get(i-1));
+        for (int i = 1; i<pointsLatLng.size(); i++) {
+            totalDistance = totalDistance + computeDistanceBetween(pointsLatLng.get(i-1),
+                    pointsLatLng.get(i));
         }
         mTextViewDistance.setText("Distance: " + String.format("%.1f", totalDistance) + " m");
         return totalDistance;
