@@ -192,7 +192,7 @@ public class NutritionModule extends Module {
 
     @Override
     public void init() {
-        this.registerModule(this.getClass());
+        Module.registerModule(this.getClass());
 
     }
 }
