@@ -49,7 +49,11 @@ public class ActivityLandingFragment extends Fragment{
                 .commit();
     }
     public void button2Clicked(View view) {
-        //TODO: Link to BuildRouteFragment
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, new CreateRouteFragment(), CreateRouteFragment.TAG)
+                .addToBackStack(CreateRouteFragment.TAG)
+                .commit();
     }
     public void button3Clicked(View view) {
         //TODO: Link to TrainingProgramsFragment
