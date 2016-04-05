@@ -1,6 +1,8 @@
 package com.sciencesquad.health.overview;
 
 import android.app.Fragment;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -27,8 +29,16 @@ public class OverviewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.overviewFab);
-        fab.setOnClickListener(view1 -> {
-
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fab.setSelected(!fab.isSelected());
+                fab.setImageResource(R.drawable.animated_plus);
+                Drawable drawable = fab.getDrawable();
+                if (drawable instanceof Animatable) {
+                    ((Animatable) drawable).start();
+                }
+            }
         });
     }
 }

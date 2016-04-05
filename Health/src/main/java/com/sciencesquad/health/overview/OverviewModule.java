@@ -8,4 +8,5 @@ import com.sciencesquad.health.workout.WorkoutModule;
 import com.sciencesquad.health.prescriptions.PrescriptionModule;
 
 public class OverviewModule {
+
 }
