@@ -1,4 +1,4 @@
-package com.sciencesquad.health.activity;
+package com.sciencesquad.health.run;
 
 import android.Manifest;
 import android.content.IntentSender;
@@ -36,12 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
-import static java.lang.System.currentTimeMillis;
 
 
-public class ActivityFragment extends Fragment implements
+public class CreateRouteFragment extends Fragment implements
         ConnectionCallbacks,  OnConnectionFailedListener, LocationListener {
-    public static final String TAG = ActivityFragment.class.getSimpleName();
+    public static final String TAG = CreateRouteFragment.class.getSimpleName();
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final static int REQUEST_LOCATION_PERMISSION = 8;
@@ -51,33 +50,27 @@ public class ActivityFragment extends Fragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    private TextView myTextViewCalories = null;
     private TextView myTextViewDistance = null;
-    private TextView myTextViewSpeed = null;
 
-	List<LatLng> pointsLatLng = new ArrayList<>();
-	List<Long> timeStamps = new ArrayList<>();
-	List<Double> distances = new ArrayList<>();
-	static double totalDistance = 0;
-	static double totalCalories = 0;
-	LatLng lastLoc = null;
+    List<LatLng> pointsLatLng = new ArrayList<>();
+    List<Double> distances = new ArrayList<>();
+    static double totalDistance = 0;
+    LatLng lastLoc = null;
 
-	boolean firstLoc = true; // used to ensure that only one starting marker is created.
-	Marker currentPos = null; // used to display current position
-	Circle accuracyCircle = null;
+    boolean firstLoc = true; // used to ensure that only one starting marker is created.
+    Marker currentPos = null; // used to display current position
+    Circle accuracyCircle = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_activity, container, false);
+        return inflater.inflate(R.layout.fragment_create_route, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.myTextViewCalories = (TextView) view.findViewById(R.id.textView_Calories);
         this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
-        this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
 
         setUpMapIfNeeded();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -112,7 +105,7 @@ public class ActivityFragment extends Fragment implements
     private void setUpMapIfNeeded() {
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-                ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map))
+            ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map))
                     .getMapAsync(googleMap -> {
                         mMap = googleMap;
                     });
@@ -160,7 +153,6 @@ public class ActivityFragment extends Fragment implements
             accuracyCircle = mMap.addCircle(accuracyCircleOptions);
 
             pointsLatLng.add(latLng);
-            timeStamps.add(currentTimeMillis());
 
             firstLoc = false;
         }
@@ -171,20 +163,12 @@ public class ActivityFragment extends Fragment implements
         lastLoc = latLng;
 
         pointsLatLng.add(latLng);
-        timeStamps.add(currentTimeMillis());
-        if (timeStamps.size()>2) {
-            double distanceDiff = computeDistanceBetween(pointsLatLng.get(timeStamps.size() - 2), latLng);
+        if (pointsLatLng.size()>2) {
+            double distanceDiff = computeDistanceBetween(pointsLatLng.get(pointsLatLng.size() - 2), latLng);
             distances.add(distanceDiff);
             totalDistance = totalDistance + distanceDiff;
-            double timeDiff = (timeStamps.get(timeStamps.size()-1)-timeStamps.get(timeStamps.size()-2))/1000; //time difference in seconds
-            double speed = distanceDiff/timeDiff; //calculates the speed since the last location update
-            totalCalories = totalCalories + calorieBurn(speed,timeDiff,weightKG);
-            this.myTextViewCalories.setText("Cal. Burned: " +
-                    String.format("%.1f",totalCalories));
             this.myTextViewDistance.setText("Distance: " +
                     String.format("%.1f",totalDistance) + " m");
-            this.myTextViewSpeed.setText("Pace: " +
-                    String.format("%.1f",speed) + " m/s");
         }
 
 
@@ -202,37 +186,6 @@ public class ActivityFragment extends Fragment implements
                 .addAll(pointsLatLng));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-    }
-
-    // DEFAULT WEIGHT (To be changed later)
-    double weightKG = 70;
-
-    public double calorieBurn(double speed, double timeDiff, double weightKG) {
-        // METS List (Metric for the exertion for each exercise)
-        double METS = 0;
-        double speedMPH = speed*2.23694; //converting speed from m/s to MPH
-        if (speedMPH>1)METS = 2.0;
-        if (speedMPH>2)METS=2.8;
-        if (speedMPH>3)METS=4.5;
-        if (speedMPH>4)METS=6;
-        if (speedMPH>5)METS=8.3;
-        if (speedMPH>5.2)METS=9;
-        if (speedMPH>6)METS=9.8;
-        if (speedMPH>6.7)METS=10.5;
-        if (speedMPH>7)METS=11;
-        if (speedMPH>7.5)METS=11.5;
-        if (speedMPH>8)METS=11.8;
-        if (speedMPH>8.6)METS=12.3;
-        if (speedMPH>9)METS=12.8;
-        if (speedMPH>10)METS=14.5;
-        if (speedMPH>11)METS=16;
-        if (speedMPH>12)METS=19;
-        if (speedMPH>13)METS=19.8;
-        if (speedMPH>14)METS=23;
-        if (speedMPH>15)METS=25;
-        if (speedMPH>20)METS=0;
-
-        return METS * weightKG * timeDiff/3600;
     }
 
     @Override
