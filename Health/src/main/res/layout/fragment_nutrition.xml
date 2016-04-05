@@ -15,37 +15,9 @@
         android:id="@+id/nutrition_chart"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/max_nutrition_chart_height"
-        android:layout_above="@+id/submit_calories"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@+id/submit_calories"
-        android:onClick="submitCalories"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save Progress"
-        android:id="@+id/nutrition_save_progress"
-        android:onClick="saveNutritionProgress"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit Diet"
-        android:id="@+id/diet_button"
-        android:singleLine="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/nutrition_recycler_view"
@@ -56,7 +28,57 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_nutrition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/ic_add_white"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/ic_add_white"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        app:fabSize="mini"
+        app:backgroundTint="@color/purple"
+        android:layout_below="@+id/nutrition_recycler_view"
+        android:layout_alignParentEnd="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_nutrient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/ic_add_white"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        app:fabSize="mini"
+        app:backgroundTint="@color/green"
+        android:layout_alignTop="@+id/nutrition_chart"
+        android:layout_alignEnd="@+id/nutrition_chart"
+        android:layout_marginTop="74dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_diet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/ic_add_white"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        app:fabSize="mini"
+        app:backgroundTint="@color/blue"
+        android:layout_marginTop="34dp"
+        android:layout_alignTop="@+id/nutrition_chart"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

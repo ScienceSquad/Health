@@ -1,5 +1,6 @@
 package com.sciencesquad.health.nutrition;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -33,6 +34,11 @@ public class NutritionFragment extends Fragment {
     private RecyclerView recycleList;
     private ArrayList<String> nutritionLog;
 
+    private FloatingActionButton fab; // overall
+    private FloatingActionButton fab2; // diet
+    private FloatingActionButton fab3; // nutrient
+    private FloatingActionButton fab4; // submit
+
     /**
      * Creates the Nutrition View.
      * @param savedInstanceState
@@ -55,16 +61,46 @@ public class NutritionFragment extends Fragment {
 
         nutritionModule.generateData();
 
-        Button submitCaloriesButton = (Button) view.findViewById(R.id.submit_calories);
-        submitCaloriesButton.setOnClickListener(v1 -> {
-            submitCalories();
+        // create FABs.
+        fab = (FloatingActionButton) view.findViewById(R.id.fab_nutrition);
+        fab2 = (FloatingActionButton) view.findViewById(R.id.fab_diet);
+        fab2.hide();
+        fab3 = (FloatingActionButton) view.findViewById(R.id.fab_nutrient);
+        fab3.hide();
+        fab4 = (FloatingActionButton) view.findViewById(R.id.fab_submit);
+        fab4.hide();
+
+        // set FABs listeners.
+        fab.setOnClickListener(v -> {
+            fab.hide();
+            fab2.show();
+            fab3.show();
+            fab4.show();
         });
 
-        Button saveProgress = (Button) view.findViewById(R.id.nutrition_save_progress);
-        saveProgress.setOnClickListener((view1) -> saveNutritionProgress(view1));
+        fab2.setOnClickListener(v -> {
+            fab.show();
+            fab2.hide();
+            fab3.hide();
+            fab4.hide();
+            createDietDialog();
+        });
 
-        Button editDiet = (Button) view.findViewById(R.id.diet_button);
-        editDiet.setOnClickListener(v1 -> createDietDialog());
+        fab3.setOnClickListener(v -> {
+            fab.show();
+            fab2.hide();
+            fab3.hide();
+            fab4.hide();
+            createCalorieDialog();
+        });
+
+        fab4.setOnClickListener(v -> {
+            fab.show();
+            fab2.hide();
+            fab3.hide();
+            fab4.hide();
+            saveNutritionProgress(v);
+        });
 
         nutritionLog = nutritionModule.createNutritionLog();
         recycleList = (RecyclerView) view.findViewById(R.id.nutrition_recycler_view);
