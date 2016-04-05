@@ -29,6 +29,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
 
@@ -52,12 +53,16 @@ public class CreateRouteFragment extends Fragment implements
 
     static TextView mTextViewDistance;
 
+    private Polyline polyline;
+
+
     List<LatLng> pointsLatLng = new ArrayList<>();
     private static List<Double> distances = new ArrayList<>();
     //static double totalDistance = 0;
     private LatLng latLng;
 
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
+    boolean firstMarker = true;
 
     PolylineOptions polylineoptions = new PolylineOptions()
             .width(8)
@@ -121,6 +126,7 @@ public class CreateRouteFragment extends Fragment implements
             ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map))
                     .getMapAsync(googleMap -> {
                         mMap = googleMap;
+                        mMap.setOnMarkerDragListener(this);
                     });
         }
     }
@@ -162,13 +168,17 @@ public class CreateRouteFragment extends Fragment implements
         mMap.addMarker(options);
         pointsLatLng.add(latLng);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
-        mMap.addPolyline((polylineoptions)
-                .addAll(pointsLatLng));
+        if (firstMarker) {
+            polyline = mMap.addPolyline(polylineoptions.addAll(pointsLatLng));
+            firstMarker = false;
+        } else {
+            polyline.setPoints(pointsLatLng);
+        }
     }
 
     // Button push triggers new marker (dragable)
     public void buttonClicked(View view) {
-        newMarker(mMap, pointsLatLng.get(pointsLatLng.size()-1));
+        newMarker(mMap, pointsLatLng.get(pointsLatLng.size() - 1));
         distanceCalculate(latLng, pointsLatLng);
     }
 
@@ -179,14 +189,20 @@ public class CreateRouteFragment extends Fragment implements
 
     @Override
     public void onMarkerDrag(Marker marker) {
+        int id = Integer.valueOf(marker.getId().substring(1));
         LatLng dragPosition = marker.getPosition();
-        pointsLatLng.set(pointsLatLng.size()-1, dragPosition);
+        pointsLatLng.set(id, dragPosition);
+        if (!firstMarker) polyline.setPoints(pointsLatLng);
     }
 
     @Override
     public void onMarkerDragEnd(Marker marker) {
+        /*
+        int id = Integer.valueOf(marker.getId().substring(1));
         LatLng dragPosition = marker.getPosition();
-        pointsLatLng.set(pointsLatLng.size()-1, dragPosition);
+        pointsLatLng.set(id, dragPosition);
+        if (!firstMarker) polyline.setPoints(pointsLatLng);
+        */
     }
 
     //TODO: Adds location information for marker to location list
