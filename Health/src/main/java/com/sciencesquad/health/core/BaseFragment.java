@@ -31,7 +31,6 @@ import java.util.Set;
 
 /**
  * A styled Fragment class with support for DataBinding and easy configuration.
- * Dual inheritance from Fragment as well as BaseObservable, by effect.
  * Also provides a managed app() and eventBus interface.
  *
  * FIXME: Memory analysis shows 0.2MB memory leak per onCreateView().
@@ -41,7 +40,7 @@ import java.util.Set;
  * 	- Provide a custom theme extending one of AppCompat's themes.
  * 	- Provide a Module class to service the backend.
  */
-public abstract class BaseFragment extends Fragment implements Observable {
+public abstract class BaseFragment extends Fragment {
 	public static final String TAG = BaseFragment.class.getSimpleName();
 
 	/**
@@ -73,11 +72,6 @@ public abstract class BaseFragment extends Fragment implements Observable {
 	 * The internal set of Subscriptions to auto-unsubscribe from.
 	 */
 	private transient Set<Subscription> _subscriptions = new HashSet<>();
-
-	/**
-	 * Allows the Fragment subclass to act as an Observable.
-	 */
-	private transient PropertyChangeRegistry _callbacks;
 
 	/**
 	 * The Configuration class is used to create a BaseFragment.
@@ -295,23 +289,6 @@ public abstract class BaseFragment extends Fragment implements Observable {
 			Log.e(TAG, "Cannot setModule on binding: " + e.getLocalizedMessage());
 		}
 
-		// Attempt to find the `setFragment` method by reflection and invoke it.
-		// Note that a "fragment" variable must be specified in the layout XML.
-		// This reflection method is hideous because of generic type erasure.
-		try {
-			for(Method m : this._savedBinding.getClass().getDeclaredMethods()) {
-				if(m.getName().equals("setFragment")) {
-					Class<?> parameters[] = m.getParameterTypes();
-					if(parameters.length == 1 && BaseFragment.class.isAssignableFrom(parameters[0])) {
-						m.invoke(this._savedBinding, this);
-						break;
-					}
-				}
-			}
-		} catch(Exception e) {
-			Log.e(TAG, "Cannot setFragment on binding: " + e.getLocalizedMessage());
-		}
-
 		return root;
 	}
 
@@ -341,52 +318,5 @@ public abstract class BaseFragment extends Fragment implements Observable {
 		// Clear out any saved Subscriptions.
 		StreamSupport.stream(this._subscriptions).forEach(Subscription::unsubscribe);
 		this._subscriptions.clear();
-	}
-
-	/**
-	 * Support for Observable.
-	 * @see android.databinding.BaseObservable
-	 * @param callback the OnPropertyChangedCallback callback
-	 */
-	@Override
-	public synchronized void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-		if (_callbacks == null) {
-			_callbacks = new PropertyChangeRegistry();
-		}
-		_callbacks.add(callback);
-	}
-
-	/**
-	 * Support for Observable.
-	 * @see android.databinding.BaseObservable
-	 * @param callback the OnPropertyChangedCallback callback
-	 */
-	@Override
-	public synchronized void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-		if (_callbacks != null) {
-			_callbacks.remove(callback);
-		}
-	}
-
-	/**
-	 * Notifies listeners that all properties of this instance have changed.
-	 */
-	public synchronized void notifyChange() {
-		if (_callbacks != null) {
-			_callbacks.notifyCallbacks(this, 0, null);
-		}
-	}
-
-	/**
-	 * Notifies listeners that a specific property has changed. The getter for the property
-	 * that changes should be marked with {@link Bindable} to generate a field in
-	 * `BR` to be used as `fieldId`.
-	 *
-	 * @param fieldId The generated BR id for the Bindable field.
-	 */
-	public void notifyPropertyChanged(int fieldId) {
-		if (_callbacks != null) {
-			_callbacks.notifyCallbacks(this, fieldId, null);
-		}
 	}
 }
