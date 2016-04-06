@@ -77,6 +77,9 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+	dexOptions {
+		preDexLibraries = false
+	}
 }
 
 dependencies {
