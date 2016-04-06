@@ -49,7 +49,7 @@ public enum Dispatcher {
 	 * Currently only SERIAL and CONCURRENT execution is supported.
 	 */
 	public enum ExecutionMode {
-		SERIAL, CONCURRENT;
+		SERIAL, CONCURRENT
 	}
 
 	/**

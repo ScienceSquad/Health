@@ -1,7 +1,6 @@
 package com.sciencesquad.health.run;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.speech.tts.TextToSpeech;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,11 +31,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.MainActivity;
+import com.sciencesquad.health.core.util.TTSManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
@@ -74,6 +71,7 @@ public class RunFragment extends Fragment implements
     int split = 5; // TEST SPLIT
     int splitNumber = 1; // number of times user has traveled split distance
 
+    private TTSManager ttsManager;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_run, container, false);
@@ -82,6 +80,10 @@ public class RunFragment extends Fragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // TextToSpeech Initialization
+        ttsManager = new TTSManager();
+        ttsManager.init(getActivity());
 
         this.myTextViewCalories = (TextView) view.findViewById(R.id.textView_Calories);
         this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
@@ -100,10 +102,6 @@ public class RunFragment extends Fragment implements
                 .setInterval(2000)        // 2 seconds, in milliseconds
                 .setFastestInterval(500); // Half second, in milliseconds
     }
-
-
-
-
 
     @Override
     public void onResume() {
@@ -172,7 +170,7 @@ public class RunFragment extends Fragment implements
 
             // TTS
             String textToSpeak = "Activity Started. I will let you know how you're doing every half mile. Enjoy your run!";
-            MainActivity.ttsManager.initQueue(textToSpeak);
+            this.ttsManager.initQueue(textToSpeak);
 
             firstLoc = false;
         }
@@ -204,7 +202,7 @@ public class RunFragment extends Fragment implements
         if (totalDistance>split*splitNumber) {
             String textToSpeech = "Distance traveled, " + String.format("%.0f",totalDistance) +
                     " meters. Current pace is " + String.format("%.1f",speed) + "meters per second";
-            MainActivity.ttsManager.initQueue(textToSpeech);
+            this.ttsManager.initQueue(textToSpeech);
             splitNumber = splitNumber + 1;
         }
 

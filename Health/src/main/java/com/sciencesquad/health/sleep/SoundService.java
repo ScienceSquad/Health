@@ -17,6 +17,7 @@ import com.sciencesquad.health.core.Event;
 import com.sciencesquad.health.core.util.X;
 import java8.util.stream.StreamSupport;
 import org.immutables.value.Value;
+import rx.Subscription;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,11 @@ public class SoundService extends Service {
 	private static final int NOTE_ID = 0xDEADFA11;
 
 	/**
+	 * Has the SoundService been started or stopped?
+	 */
+	private static boolean isStarted = false;
+
+	/**
 	 * Loads all Sleep-specific RawRes sounds into MediaPlayers.
 	 * Each player is encoded in the Map by its name as a String.
 	 *
@@ -83,8 +89,8 @@ public class SoundService extends Service {
 	 */
 	public static void startSoundService() {
 		X.of(BaseApp.app()).let(app -> {
-			Intent startIntent = new Intent(app, SoundService.class);
-			app.startService(startIntent);
+			app.startService(new Intent(app, SoundService.class));
+			isStarted = true;
 		}).or(() -> {
 			Log.d(TAG, "SoundService could not be started.");
 		});
@@ -96,11 +102,29 @@ public class SoundService extends Service {
 	 */
 	public static void stopSoundService() {
 		X.of(BaseApp.app()).let(app -> {
-			Intent stopIntent = new Intent(app, SoundService.class);
-			app.stopService(stopIntent);
+			app.stopService(new Intent(app, SoundService.class));
+			isStarted = false;
 		}).or(() -> {
 			Log.d(TAG, "SoundService could not be stopped.");
 		});
+	}
+
+	/**
+	 * Has the SoundService become active?
+	 *
+	 * @return whether the SoundService is active or not
+	 */
+	public static boolean isSoundServiceActive() {
+		return isStarted;
+	}
+
+	/**
+	 * Shorthand to toggle the activity of the SoundService.
+	 */
+	public static void toggleSoundService() {
+		if (!isStarted)
+			startSoundService();
+		else stopSoundService();
 	}
 
 	/**
@@ -109,6 +133,8 @@ public class SoundService extends Service {
 	 */
 	private Map<String, MediaPlayer> players = defaultPlayers();
 	private Map<String, ValueAnimator> animators = new HashMap<>();
+
+	private Subscription test;
 
 	/**
 	 * @see Service
@@ -151,6 +177,9 @@ public class SoundService extends Service {
 		// Broadcast an event to say that we started up.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
 			bus.publish(SoundServiceStartEvent.from(this).create());
+			this.test = bus.subscribe(SoundServiceStartEvent.class, null, ev -> {
+				Log.i(TAG, "Dolphins! " + ev);
+			});
 		});
 
 		// Start the notification and keep us alive.
