@@ -347,7 +347,7 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 
 	private int testModeRate = Integer.MIN_VALUE;
 
-	private int updateInterval = INTERVAL;;
+	private int updateInterval = INTERVAL;
 
 	Timer updateTimer;
 

@@ -13,6 +13,7 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.run.RunFragment;
 import com.sciencesquad.health.core.alarm.AlarmFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
+import com.sciencesquad.health.run.RunLandingFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
@@ -45,8 +46,8 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 		if (id == R.id.nav_run) {
 			getFragmentManager()
 					.beginTransaction()
-					.replace(R.id.content, new RunFragment(), RunFragment.TAG)
-					.addToBackStack(RunFragment.TAG)
+					.replace(R.id.content, new RunLandingFragment(), RunLandingFragment.TAG)
+					.addToBackStack(RunLandingFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_sleep) {
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
