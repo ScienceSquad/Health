@@ -17,6 +17,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.transition.Visibility;
 import android.util.Log;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.*;
 import com.sciencesquad.health.R;
@@ -79,7 +80,6 @@ public abstract class BaseFragment extends Fragment {
 	public static class Configuration {
 		private String id;
 		private String name;
-		Class<? extends Module> moduleClass;
 		@DrawableRes private int icon;
 		@StyleRes private int theme;
 		@LayoutRes private int layout;
@@ -93,11 +93,9 @@ public abstract class BaseFragment extends Fragment {
 		 * @param theme the Fragment theme to apply
 		 * @param layout the Fragment layout to inflate
 		 */
-		public Configuration(String id, String name, Class<? extends Module> moduleClass,
-							 int icon, int theme, int layout) {
+		public Configuration(String id, String name, int icon, int theme, int layout) {
 			this.id = id;
 			this.name = name;
-			this.moduleClass = moduleClass;
 			this.icon = icon;
 			this.theme = theme;
 			this.layout = layout;
@@ -240,8 +238,7 @@ public abstract class BaseFragment extends Fragment {
 		// TODO: Move animation stuff somewhere else...
 		Configuration config = this.getConfiguration();
 		this._drawerRes = drawerRes;
-		this.setEnterTransition(new RevealTransition(Visibility.MODE_IN));
-		this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
+		this.onSetupTransition();
 
 		// Return a modified FragmentTransaction for quick usage.
 		return transaction
@@ -249,6 +246,13 @@ public abstract class BaseFragment extends Fragment {
 				.replace(R.id.content, this, config.id)
 				.addToBackStack(config.id)
 				.setBreadCrumbTitle(config.name);
+	}
+
+	/**
+	 * Override to set up Fragment transitions properly.
+	 */
+	public void onSetupTransition() {
+
 	}
 
 	/**
@@ -286,26 +290,7 @@ public abstract class BaseFragment extends Fragment {
 
 		// Return the inflated view and grab our binding.
 		this._savedBinding = DataBindingUtil.inflate(this._layoutInflater, config.layout, container, false);
-		View root = this._savedBinding.getRoot();
-
-		// Attempt to find the `setModule` method by reflection and invoke it.
-		// Note that a "module" variable must be specified in the layout XML.
-		// This reflection method is hideous because of generic type erasure.
-		try {
-			for(Method m : this._savedBinding.getClass().getDeclaredMethods()) {
-				if(m.getName().equals("setModule")) {
-					Class<?> parameters[] = m.getParameterTypes();
-					if(parameters.length == 1 && Module.class.isAssignableFrom(parameters[0])) {
-						m.invoke(this._savedBinding, Module.moduleForClass(config.moduleClass));
-						break;
-					}
-				}
-			}
-		} catch(Exception e) {
-			Log.e(TAG, "Cannot setModule on binding: " + e.getLocalizedMessage());
-		}
-
-		return root;
+		return this._savedBinding.getRoot();
 	}
 
 	/**

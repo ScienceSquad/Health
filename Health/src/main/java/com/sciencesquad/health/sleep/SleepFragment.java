@@ -13,6 +13,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.transition.Visibility;
 import android.util.Log;
 import android.view.*;
 import com.afollestad.materialdialogs.DialogAction;
@@ -27,6 +28,7 @@ import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
+import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.X;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
@@ -40,7 +42,7 @@ public class SleepFragment extends BaseFragment {
 	protected Configuration getConfiguration() {
 		String _ = SleepModule.TAG; // instantiates the Module...
 		return new Configuration(
-				TAG, "Sleep", SleepModule.class, R.drawable.ic_menu_sleep,
+				TAG, "Sleep", R.drawable.ic_menu_sleep,
 				R.style.AppTheme_Sleep, R.layout.fragment_sleep
 		);
 	}
@@ -52,8 +54,15 @@ public class SleepFragment extends BaseFragment {
 	}
 
 	@Override
+	public void onSetupTransition() {
+		this.setEnterTransition(new RevealTransition(Visibility.MODE_IN));
+		this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
+	}
+
+	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		xml().setModule(Module.moduleForClass(SleepModule.class));
 
 		// Grab a white-tinted sleep icon.
 		Drawable zzz = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
