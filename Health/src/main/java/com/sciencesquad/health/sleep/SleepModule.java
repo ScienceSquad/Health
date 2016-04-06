@@ -15,14 +15,11 @@ public class SleepModule extends Module {
 	public static final String TAG = SleepModule.class.getSimpleName();
 	static { Module.registerModule(SleepModule.class); }
 
-	private DataContext<NutritionModel> dataContext;
+	private DataContext<SleepDataModel> dataContext;
 
 	public void init() {
 		this.dataContext = new RealmContext<>();
-		this.dataContext.init(BaseApp.app(), NutritionModel.class, "nutrition.realm");
-
-		// FIXME: Put this in a unit test or hook it up to the UI.
-		//SoundService.startSoundService();
+		this.dataContext.init(BaseApp.app(), SleepDataModel.class, "sleep.realm");
 	}
 
 	@Override
