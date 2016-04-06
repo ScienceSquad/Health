@@ -1,16 +1,17 @@
 package com.sciencesquad.health.core;
 
+import android.content.BroadcastReceiver;
 import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
 import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.Pair;
 import com.sciencesquad.health.core.util.X;
+import java8.util.function.Consumer;
 import java8.util.stream.StreamSupport;
-import rx.Subscription;
-import rx.functions.Action1;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,7 +39,7 @@ public abstract class Module implements Observable {
 	/**
 	 * The internal set of Subscriptions to auto-unsubscribe from.
 	 */
-	private transient Set<Subscription> _subscriptions = new HashSet<>();
+	private transient Set<BroadcastReceiver> _subscriptions = new HashSet<>();
 
 	/**
 	 * Allows the Module subclass to act as an Observable, and
@@ -86,6 +87,7 @@ public abstract class Module implements Observable {
 			T instance = module.newInstance();
 			return _modules.add(instance);
 		} catch (Exception e) {
+			Log.e(TAG, "Unable to register Module class! " + e.getLocalizedMessage());
 			return false;
 		}
 	}
@@ -108,6 +110,21 @@ public abstract class Module implements Observable {
 	@NonNull
 	public static Set<Module> registeredModules() {
 		return _modules;
+	}
+
+	/**
+	 * Get the registered Module for the given Class.
+	 *
+	 * @param module the Class of Module that was registered
+	 * @param <T> a Module subclass
+	 * @return the registered Module for the given Class
+	 */
+	@Nullable
+	@SuppressWarnings("unchecked")
+	public static <T extends Module> T moduleForClass(@NonNull Class<T> module) {
+		return (T)StreamSupport.stream(Module.registeredModules())
+				.filter(a -> module.isAssignableFrom(a.getClass()))
+				.findFirst().orElse(null);
 	}
 
 	/**
@@ -161,31 +178,12 @@ public abstract class Module implements Observable {
 	}
 
 	/**
-	 * Publishes any Events to the shared app EventBus.
+	 * Tracks any receivers for removal when this Fragment dies.
 	 *
-	 * @param event the event to publish
-	 * @param <E> the type of Event being published
+	 * @param receiver the receiver for removal
 	 */
-	public synchronized <E extends Event> void publish(@NonNull E event) {
-		this.app().map(BaseApp::eventBus).let(bus -> bus.publish(event));
-	}
-
-	/**
-	 * Subscribes and auto-manage a Subscription to an Event.
-	 * Automatically uses the shared app EventBus.
-	 *
-	 * @implNote Relies on the invocation of finalize() to clean up.
-	 *
-	 * @param eventClass the type of Event subscribed to
-	 * @param handler the action to perform upon notification
-	 * @param <E> the type of Event being subscribed to
-	 */
-	public synchronized <E extends Event> void subscribe(@NonNull final Class<E> eventClass,
-														 @Nullable final Object source, @NonNull final Action1<E> handler) {
-		this.app().map(BaseApp::eventBus).let(bus -> {
-			Subscription sub = bus.subscribe(eventClass, source, handler);
-			this._subscriptions.add(sub);
-		});
+	protected synchronized void track(@NonNull final BroadcastReceiver receiver) {
+		this._subscriptions.add(receiver);
 	}
 
 	/**
@@ -198,7 +196,8 @@ public abstract class Module implements Observable {
 	@Override
 	protected synchronized void finalize() throws Throwable {
 		super.finalize();
-		StreamSupport.stream(this._subscriptions).forEach(Subscription::unsubscribe);
+		StreamSupport.stream(this._subscriptions)
+				.forEach(r -> this.app().map(BaseApp::eventBus).let(bus -> bus.unsubscribe(r)));
 		this._subscriptions.clear();
 	}
 
@@ -211,6 +210,17 @@ public abstract class Module implements Observable {
 	@NonNull
 	protected X<BaseApp> app() {
 		return X.of(BaseApp.app());
+	}
+
+	/**
+	 * Helper to wrap the Application EventBus as an Optional type.
+	 *
+	 * @param handler the context in which the EventBus is used.
+	 * @return the EventBus as a nullable Optional
+	 */
+	@NonNull
+	protected X<EventBus> bus(Consumer<EventBus> handler) {
+		return this.app().map(BaseApp::eventBus).let(handler);
 	}
 
 	/**

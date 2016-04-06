@@ -1,44 +1,37 @@
-package com.sciencesquad.health.activity;
+package com.sciencesquad.health.run;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.sciencesquad.health.core.alarm.AlarmFragment;
-import com.sciencesquad.health.core.ClockFragment;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.steps.StepsFragment;
-import com.sciencesquad.health.workout.WorkoutFragment;
+import com.sciencesquad.health.core.util.TTSManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,18 +40,11 @@ import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
 
 
-public class ActivityFragment extends Fragment implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
-    public static final String TAG = ActivityFragment.class.getSimpleName();
+public class RunFragment extends Fragment implements
+        ConnectionCallbacks,  OnConnectionFailedListener, LocationListener {
+    public static final String TAG = RunFragment.class.getSimpleName();
 
-    /*
-     * Define a request code to send to Google Play services
-     * This code is returned in Activity.onActivityResult
-     */
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-
     private final static int REQUEST_LOCATION_PERMISSION = 8;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -70,22 +56,40 @@ public class ActivityFragment extends Fragment implements
     private TextView myTextViewDistance = null;
     private TextView myTextViewSpeed = null;
 
-    @Override
+	List<LatLng> pointsLatLng = new ArrayList<>();
+	List<Long> timeStamps = new ArrayList<>();
+	List<Double> distances = new ArrayList<>();
+	static double totalDistance = 0;
+	static double totalCalories = 0;
+	LatLng lastLoc = null;
+
+	boolean firstLoc = true; // used to ensure that only one starting marker is created.
+	Marker currentPos = null; // used to display current position
+	Circle accuracyCircle = null;
+
+    //int split = 800; // split distance in meters (NORMAL SPLIT)
+    int split = 5; // TEST SPLIT
+    int splitNumber = 1; // number of times user has traveled split distance
+
+    private TTSManager ttsManager;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_activity, container, false);
+        return inflater.inflate(R.layout.fragment_run, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // TextToSpeech Initialization
+        ttsManager = new TTSManager();
+        ttsManager.init(getActivity());
 
         this.myTextViewCalories = (TextView) view.findViewById(R.id.textView_Calories);
         this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
         this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
 
         setUpMapIfNeeded();
-
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -95,8 +99,8 @@ public class ActivityFragment extends Fragment implements
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(3 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+                .setInterval(2000)        // 2 seconds, in milliseconds
+                .setFastestInterval(500); // Half second, in milliseconds
     }
 
     @Override
@@ -109,68 +113,24 @@ public class ActivityFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
-
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
     }
 
-    /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
-     */
     private void setUpMapIfNeeded() {
-        // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-                ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+                ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map))
                     .getMapAsync(googleMap -> {
                         mMap = googleMap;
-                        setUpMap();
                     });
 
         }
     }
 
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
-    private void setUpMap() {
-        // Could probably delete this method.
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-    }
-
-    List<LatLng> pointsLatLng = new ArrayList<>();
-    List<Long> timeStamps = new ArrayList<>();
-    List<Double> distances = new ArrayList<>();
-    static double totalDistance = 0;
-    static double totalCalories = 0;
-    LatLng lastLoc = null;
-
-
-    boolean firstLoc = true; // used to ensure that only one starting marker is created.
-    Marker currentPos = null; // used to display current position
-    Circle accuracyCircle = null;
-
-
-
     private void handleNewLocation(Location location) {
-
         Log.d(TAG, location.toString());
 
         double currentLatitude = location.getLatitude();
@@ -180,8 +140,8 @@ public class ActivityFragment extends Fragment implements
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        //float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
-        float minDistResolution = location.getAccuracy()/20; //TEST RESOLUTION
+        float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
+        //float minDistResolution = location.getAccuracy()/20; //TEST RESOLUTION
 
 
         if (lastLoc==null) {
@@ -191,11 +151,7 @@ public class ActivityFragment extends Fragment implements
         // Creates a marker at the starting point.
 
         if (firstLoc) {
-            MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title("Starting Place");
-            mMap.addMarker(options);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+            newStartingMarker(mMap, latLng);
 
             MarkerOptions currentPosOptions = new MarkerOptions()
                     .position(latLng)
@@ -212,34 +168,43 @@ public class ActivityFragment extends Fragment implements
             pointsLatLng.add(latLng);
             timeStamps.add(currentTimeMillis());
 
+            // TTS
+            String textToSpeak = "Activity Started. I will let you know how you're doing every half mile. Enjoy your run!";
+            this.ttsManager.initQueue(textToSpeak);
+
             firstLoc = false;
         }
 
-        if (computeDistanceBetween(lastLoc,latLng)<minDistResolution) {
+        if (computeDistanceBetween(lastLoc,latLng)<minDistResolution)
             return; //stops running the method if distance is inconsequential.
-        }
+
         lastLoc = latLng;
 
+        double speed = 0;
         pointsLatLng.add(latLng);
         timeStamps.add(currentTimeMillis());
         if (timeStamps.size()>2) {
             double distanceDiff = computeDistanceBetween(pointsLatLng.get(timeStamps.size() - 2), latLng);
             distances.add(distanceDiff);
             totalDistance = totalDistance + distanceDiff;
-            Log.i(TAG, "Distance traveled" + String.valueOf(totalDistance));
             double timeDiff = (timeStamps.get(timeStamps.size()-1)-timeStamps.get(timeStamps.size()-2))/1000; //time difference in seconds
-            double speed = distanceDiff/timeDiff; //calculates the speed since the last location update
+            speed = distanceDiff/timeDiff; //calculates the speed since the last location update
             totalCalories = totalCalories + calorieBurn(speed,timeDiff,weightKG);
-            //NEW CODE
-            this.myTextViewCalories.setText("Calories Burned: " + totalCalories);
-            this.myTextViewDistance.setText("Distance: " + totalDistance);
-            this.myTextViewSpeed.setText("Pace: " + speed);
-            //END CODE
-            Log.i(TAG, "Burned: " + String.valueOf(totalCalories));
-            Log.i(TAG, "Time since last location update:" + String.valueOf(timeDiff));
+            this.myTextViewCalories.setText("Cal. Burned: " +
+                    String.format("%.1f",totalCalories));
+            this.myTextViewDistance.setText("Distance: " +
+                    String.format("%.1f",totalDistance) + " m");
+            this.myTextViewSpeed.setText("Pace: " +
+                    String.format("%.1f", speed) + " m/s");
         }
 
-
+        // TextToSpeech - Split Data
+        if (totalDistance>split*splitNumber) {
+            String textToSpeech = "Distance traveled, " + String.format("%.0f",totalDistance) +
+                    " meters. Current pace is " + String.format("%.1f",speed) + "meters per second";
+            this.ttsManager.initQueue(textToSpeech);
+            splitNumber = splitNumber + 1;
+        }
 
         currentPos.setPosition(latLng);
         accuracyCircle.setCenter(latLng);
@@ -256,10 +221,18 @@ public class ActivityFragment extends Fragment implements
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 
+    public static void newStartingMarker(GoogleMap mMap, LatLng latLng) {
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("Starting Place");
+        mMap.addMarker(options);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+    }
+
     // DEFAULT WEIGHT (To be changed later)
     double weightKG = 70;
 
-    public double calorieBurn(double speed, double timeDiff, double weightKG) {
+    public static double calorieBurn(double speed, double timeDiff, double weightKG) {
         // METS List (Metric for the exertion for each exercise)
         double METS = 0;
         double speedMPH = speed*2.23694; //converting speed from m/s to MPH
@@ -284,8 +257,7 @@ public class ActivityFragment extends Fragment implements
         if (speedMPH>15)METS=25;
         if (speedMPH>20)METS=0;
 
-        double calories = METS * weightKG * timeDiff/3600;
-        return calories;
+        return METS * weightKG * timeDiff/3600;
     }
 
     @Override
@@ -300,7 +272,6 @@ public class ActivityFragment extends Fragment implements
                 }
             }
             default:
-                return;
         }
     }
 
@@ -361,6 +332,5 @@ public class ActivityFragment extends Fragment implements
     @Override
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
-
     }
 }

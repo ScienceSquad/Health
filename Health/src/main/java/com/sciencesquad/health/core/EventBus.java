@@ -1,15 +1,19 @@
 package com.sciencesquad.health.core;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import rx.Observable;
-import rx.Subscription;
-import rx.functions.Action1;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+import android.support.v4.content.LocalBroadcastManager;
+import com.sciencesquad.health.core.util.X;
+import java8.util.function.Consumer;
 
 import java.lang.ref.WeakReference;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * The EventBus that publishes all Events and notifies any subscribers
@@ -18,27 +22,67 @@ import java.lang.ref.WeakReference;
 public class EventBus {
 	private static final String TAG = EventBus.class.getSimpleName();
 
-	/*
-	// In case we switch away from RxJava:
-	public interface Subscription {
-		void unsubscribe();
-		boolean isUnsubscribed();
-	}
-	*/
-
 	/**
-	 * The internal RxJava PublishSubject representation of the EventBus.
+	 *
 	 */
-	private final Subject<Event, Event> _bus = new SerializedSubject<>(PublishSubject.create());
+	public static final class Entry extends SimpleImmutableEntry<String, Object> {
+		public Entry(String theKey, Object theValue) {
+			super(theKey, theValue);
+		}
+	}
+
+	private final LocalBroadcastManager _lbm = LocalBroadcastManager.getInstance(BaseApp.app());
+	private final HashMap<UUID, WeakReference<Object>> _registry = new HashMap<>();
 
 	/**
 	 * Publishes an Event to all subscribers interested that are listening.
 	 *
-	 * @param event the event to be published
-	 * @param <E> the event class conforming to the Event interface
+	 * @param name
+	 * @param source
 	 */
-	public <E extends Event> void publish(@NonNull E event) {
-		_bus.onNext(event);
+	public void publish(@NonNull String name, @Nullable final Object source) {
+		this.publish(name, source, (HashMap<String, Object>) null);
+	}
+
+	/**
+	 * Publishes an Event to all subscribers interested that are listening.
+	 *
+	 * @param name
+	 * @param source
+	 */
+	public void publish(@NonNull String name, @Nullable final Object source,
+						@NonNull SimpleImmutableEntry<String, Object>... entries) {
+		Intent intent = new Intent(name);
+		X.of(source).let(s -> {
+			UUID id = UUID.randomUUID();
+			_registry.put(id, new WeakReference<>(source));
+			intent.putExtra("registry", id);
+		});
+		X.of(entries).let(d -> {
+			HashMap<String, Object> map = new HashMap<>();
+			for (SimpleImmutableEntry<String, Object> e : entries)
+				map.put(e.getKey(), e.getValue());
+			intent.putExtra("data", map);
+		});
+		this._lbm.sendBroadcast(intent);
+	}
+
+	/**
+	 * Publishes an Event to all subscribers interested that are listening.
+	 *
+	 * @param name
+	 * @param source
+	 */
+	public void publish(@NonNull String name, @Nullable final Object source,
+						@Nullable HashMap<String, Object> data) {
+		Intent intent = new Intent(name);
+		X.of(source).let(s -> {
+			UUID id = UUID.randomUUID();
+			_registry.put(id, new WeakReference<>(source));
+			intent.putExtra("registry", id);
+		});
+		X.of(data).let(d -> intent.putExtra("data", d));
+		this._lbm.sendBroadcast(intent);
 	}
 
 	/**
@@ -52,44 +96,38 @@ public class EventBus {
 	 * @apiNote if `this` is strongly referred to within the handler, it runs the
 	 * risk of the object not properly being deallocated.
 	 *
-	 * @param eventClass the class of Event to listen for
+	 * @param name the class of Event to listen for
 	 * @param source the object source to specifically listen to events from, or null
 	 * @param handler the action handler to be executed
-	 * @param <E> the event class conforming to the Event interface
 	 * @return a Subscription that may be cancelled later.
 	 */
 	@NonNull
 	@SuppressWarnings("unchecked")
-	public <E extends Event> Subscription subscribe(@NonNull final Class<E> eventClass,
-						@Nullable final Object source, @NonNull final Action1<E> handler) {
-		/* TODO: Ensure all object references in Events are weak! */
+	public BroadcastReceiver subscribe(@NonNull final String name, @Nullable final Object source,
+							@NonNull final Consumer<HashMap<String, Object>> handler) {
 		final WeakReference<Object> ref = new WeakReference<>(source);
-		return _bus
-				.filter(event -> event.getClass().equals(eventClass))
-				.filter(event -> (ref.get() == null) || (event.source().equals(ref.get())))
-				.map(obj -> (E)obj)
-				.subscribe(handler);
+		final BroadcastReceiver receiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				HashMap<String, Object> data = (HashMap<String, Object>)intent.getSerializableExtra("data");
+				X.of(intent.getSerializableExtra("registry")).let(r -> {
+					WeakReference<Object> registry = _registry.get(r);
+					if (ref.get() == null || ref.get().equals(registry.get()))
+						handler.accept(data);
+				}).or(() -> handler.accept(data));
+			}
+		};
+		this._lbm.registerReceiver(receiver, new IntentFilter(name));
+		return receiver;
 	}
 
 	/**
 	 * Unsubscribe from the Event originally being listened to.
 	 *
 	 * @implNote equivalent to calling `subscription.unsubscribe()`
-	 * @param subscription the subscription to cancel
+	 * @param receiver the subscription to cancel
 	 */
-	public void unsubscribe(@NonNull Subscription subscription) {
-		subscription.unsubscribe();
-	}
-
-	/**
-	 * Convert the EventBus to a raw RxJava Observable.
-	 * This may be desired in cases the EventBus class's simplicity hinders
-	 * the user from attaining a desired subscriber or publisher effect.
-	 *
-	 * @return an Observable representation of this EventBus.
-	 */
-	@NonNull
-	public Observable<Event> asObservable() {
-		return _bus;
+	public void unsubscribe(@NonNull BroadcastReceiver receiver) {
+		this._lbm.unregisterReceiver(receiver);
 	}
 }

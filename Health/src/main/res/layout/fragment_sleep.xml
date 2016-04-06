@@ -1,20 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/main_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         tools:context=".sleep.SleepFragment">
-
-    <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_add_white" />
-
-</android.support.design.widget.CoordinatorLayout>
+    <data>
+        <variable name="fragment" type="com.sciencesquad.health.sleep.SleepFragment"/>
+        <variable name="module" type="com.sciencesquad.health.sleep.SleepModule"/>
+    </data>
+    <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transitionGroup="true"
+            android:fitsSystemWindows="true">
+        <android.support.design.widget.AppBarLayout
+                android:id="@+id/appbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:navigationIcon="@drawable/ic_menu"
+                    app:title="Sleep"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <android.support.design.widget.TabLayout
+                        android:id="@+id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+        <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?colorPrimary"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+            <RelativeLayout
+                    android:id="@+id/page1"
+                    android:tag="Thing 1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                <TextView
+                        android:id="@+id/a"
+                        android:text="Hi!"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_centerInParent="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="56sp"
+                        android:singleLine="true"
+                        android:textStyle="normal"
+                        android:textAllCaps="false"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textColor="@android:color/black"
+                        android:shadowColor="@android:color/black"
+                        android:minHeight="38sp"
+                        android:shadowDy="1"
+                        android:shadowRadius="1" />
+                <TextView
+                        android:text="Tap to begin using app >"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@id/a"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:singleLine="true"
+                        android:textStyle="normal"
+                        android:textAllCaps="true"
+                        android:shadowColor="@android:color/black"
+                        android:shadowDy="1"
+                        android:shadowRadius="1"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textColor="@android:color/black"
+                        android:minHeight="12sp" />
+            </RelativeLayout>
+            <RelativeLayout
+                    android:id="@+id/page2"
+                    android:tag="Thing 2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                <TextView
+                        android:id="@+id/setup_complete"
+                        android:text="Hola!"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_centerInParent="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="56sp"
+                        android:singleLine="true"
+                        android:textStyle="normal"
+                        android:textAllCaps="false"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textColor="@android:color/black"
+                        android:shadowColor="@android:color/black"
+                        android:minHeight="38sp"
+                        android:shadowDy="1"
+                        android:shadowRadius="1" />
+                <TextView
+                        android:text="Tap to begin using app >"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@id/setup_complete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:singleLine="true"
+                        android:textStyle="normal"
+                        android:textAllCaps="true"
+                        android:shadowColor="@android:color/black"
+                        android:shadowDy="1"
+                        android:shadowRadius="1"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textColor="@android:color/black"
+                        android:minHeight="12sp" />
+            </RelativeLayout>
+        </android.support.v4.view.ViewPager>
+        <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/ic_menu_sleep" />
+    </android.support.design.widget.CoordinatorLayout>
+</layout>
