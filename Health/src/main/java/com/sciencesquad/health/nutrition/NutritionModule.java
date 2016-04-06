@@ -1,7 +1,9 @@
 package com.sciencesquad.health.nutrition;
 
-import android.nfc.Tag;
+import android.util.Log;
 import android.util.Pair;
+
+import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
@@ -67,8 +69,7 @@ public class NutritionModule extends Module {
                 // maybe use the key as the realm name?
                 if (e.get("key").equals(REALMNAME)) {
                     Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
-                }
-                else {
+                } else {
                     // do something about it.
                 }
             });

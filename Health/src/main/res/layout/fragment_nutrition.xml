@@ -48,7 +48,7 @@
         android:layout_marginLeft="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin"
         app:fabSize="mini"
-        app:backgroundTint="@color/purple"
+        app:backgroundTint="@color/dark_purple_900"
         android:layout_below="@+id/nutrition_recycler_view"
         android:layout_alignParentEnd="true" />
 
@@ -61,7 +61,7 @@
         android:layout_marginLeft="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin"
         app:fabSize="mini"
-        app:backgroundTint="@color/green"
+        app:backgroundTint="@color/green_900"
         android:layout_alignTop="@+id/nutrition_chart"
         android:layout_alignEnd="@+id/nutrition_chart"
         android:layout_marginTop="74dp" />
