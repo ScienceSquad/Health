@@ -17,6 +17,8 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class RecipeQuery {
 
+	private final String API_URL = "http://www.recipepuppy.com/api/";
+
 	private String ingredients;
 	private String name;
 	private int page;
@@ -30,7 +32,7 @@ public class RecipeQuery {
 	}
 
 	public String getURLString() {
-		String urlString = "http://www.recipepuppy.com/api/";
+		String urlString = this.API_URL;
 		if (this.ingredients != null) {
 			urlString = DataGetter.addURLParameter(urlString, "i", this.ingredients);
 		}

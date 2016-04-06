@@ -3,6 +3,7 @@ import android.util.Log;
 
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.nutrition.NutrientQuery;
 import com.sciencesquad.health.nutrition.NutritionModel;
 import com.sciencesquad.health.nutrition.RecipeQuery;
 import com.sciencesquad.health.util.DataGetter;
@@ -117,11 +118,9 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
 
     @Test
     public void testDataGetter() {
-        Document results = new RecipeQuery()
-                .setName("omelet")
-                .setIngredients("onions,garlic")
-                .getXMLResults();
-        Log.d("testDataGetter", nodeToString(results));
+        String urlString = new NutrientQuery()
+                .getURLString();
+        Log.d("testDataGetter", urlString);
     }
 
 
