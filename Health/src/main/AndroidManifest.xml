@@ -67,9 +67,13 @@
             <!-- Can be started from any launcher application. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- The initial Fragment to launch from the HostActivity. -->
+            <meta-data
+                    android:name="fragment"
+                    android:value="com.sciencesquad.health.sleep.SleepFragment" />
         </activity>
 
         <!--
