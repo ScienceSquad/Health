@@ -10,9 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.activity.ActivityFragment;
+import com.sciencesquad.health.run.RunFragment;
+import com.sciencesquad.health.run.RunLandingFragment;
 import com.sciencesquad.health.core.alarm.AlarmFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
+import com.sciencesquad.health.run.TTSManager;
 import com.sciencesquad.health.sleep.SleepFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity
 	private Toolbar toolbar;
 	private DrawerLayout drawer;
 	private NavigationView navigationView;
+
+	public static TTSManager ttsManager = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,10 @@ public class MainActivity extends AppCompatActivity
 		drawer.addDrawerListener(toggle);
 		toggle.syncState();
 		navigationView.setNavigationItemSelectedListener(this);
+
+		// TextToSpeech Initialization
+		ttsManager = new TTSManager();
+		ttsManager.init(this);
 	}
 
 	@Override
@@ -72,8 +80,8 @@ public class MainActivity extends AppCompatActivity
 		if (id == R.id.nav_run) {
 			getFragmentManager()
 					.beginTransaction()
-					.replace(R.id.content, new ActivityFragment(), ActivityFragment.TAG)
-					.addToBackStack(ActivityFragment.TAG)
+					.replace(R.id.content, new RunLandingFragment(), RunLandingFragment.TAG)
+					.addToBackStack(RunFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_sleep) {
 			getFragmentManager()
