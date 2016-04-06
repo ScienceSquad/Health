@@ -31,8 +31,12 @@ public class EventBus {
 		}
 	}
 
-	private final LocalBroadcastManager _lbm = LocalBroadcastManager.getInstance(BaseApp.app());
+	private final LocalBroadcastManager _lbm;
 	private final HashMap<UUID, WeakReference<Object>> _registry = new HashMap<>();
+
+	public EventBus(Context ctx) {
+		_lbm = LocalBroadcastManager.getInstance(ctx);
+	}
 
 	/**
 	 * Publishes an Event to all subscribers interested that are listening.
