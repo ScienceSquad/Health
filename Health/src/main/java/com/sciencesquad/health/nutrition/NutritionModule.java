@@ -7,7 +7,9 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
+
 import io.realm.RealmResults;
+
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
@@ -115,10 +117,14 @@ public class NutritionModule extends Module {
         newNutritionModel.setMineralModel(minerals);
         newNutritionModel.setDate(DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
         newNutritionModel.setDateString("Date: " + LocalDateTime.now().getYear() + "-"
-                         + LocalDateTime.now().getMonth().getValue() + "-"
-                         + LocalDateTime.now().getDayOfMonth());
+                + LocalDateTime.now().getMonth().getValue() + "-"
+                + LocalDateTime.now().getDayOfMonth());
         nutritionRealm.add(newNutritionModel);
+
+        // reset values
         clearModels();
+        this.hadCaffeine = false;
+        this.calorieIntake = 0;
         createModels();
     }
 

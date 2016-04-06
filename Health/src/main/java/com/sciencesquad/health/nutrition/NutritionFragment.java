@@ -116,7 +116,6 @@ public class NutritionFragment extends Fragment {
         nutritionChart.setData(createLineData());
         nutritionChart.invalidate();
 
-
     }
 
     /**
@@ -146,6 +145,11 @@ public class NutritionFragment extends Fragment {
      */
 
     public void saveNutritionProgress(View view){
+        if (nutritionModule.getCalorieIntake() == 0){
+            Snackbar snackbar = Snackbar.make(view, "No info submitted. Input calories", Snackbar.LENGTH_SHORT);
+            snackbar.show();
+            return;
+        }
         String logEntry = "Calories: " + nutritionModule.getCalorieIntake() + ", Date: " +
                 LocalDateTime.now().getDayOfWeek().toString() + " "
                 + LocalDateTime.now().getMonth().toString() + " "
