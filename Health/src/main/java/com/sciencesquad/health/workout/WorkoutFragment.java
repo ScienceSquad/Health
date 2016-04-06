@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +23,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.databinding.FragmentSleepBinding;
+import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
+import com.sciencesquad.health.sleep.SleepModule;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class WorkoutFragment extends Fragment {
+public class WorkoutFragment extends BaseFragment {
     public static final String TAG = WorkoutFragment.class.getSimpleName();
 
     // FIXME: Should be switched out for a database later.
@@ -54,15 +61,31 @@ public class WorkoutFragment extends Fragment {
      */
     private ViewPager mViewPager;
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_workout, container, false);
-    }
+	@Override
+	protected Configuration getConfiguration() {
+		String _ = WorkoutModule.TAG; // instantiates the Module...
+		return new Configuration(
+				TAG, "Workout", R.drawable.ic_fitness_center_24dp,
+				R.style.AppTheme_Workout, R.layout.fragment_workout
+		);
+	}
+
+	// Our generated binding class is different...
+	@Override @SuppressWarnings("unchecked")
+	protected FragmentWorkoutBinding xml() {
+		return super.xml();
+	}
+
+	@Override
+	public void onSetupTransition() {
+		this.setEnterTransition(new RevealTransition(Visibility.MODE_IN));
+		this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
+	}
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+		xml().setModule(Module.moduleForClass(WorkoutModule.class));
 
         //ExerciseTypeModel newExerciseA = new ExerciseTypeModel("Bench Press", "Strength", "Chest");
         //exerciseTypeModelList.add(newExerciseA);
@@ -72,12 +95,12 @@ public class WorkoutFragment extends Fragment {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager)view.findViewById(R.id.container);
+        mViewPager = xml().pager; //(ViewPager)view.findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout)view.findViewById(R.id.tabs);
+        TabLayout tabLayout = xml().tabs; //(TabLayout)view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.workoutFab);
+        FloatingActionButton fab = xml().fab; //(FloatingActionButton)view.findViewById(R.id.workoutFab);
         fab.setOnClickListener(view1 -> {
             //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             //      .setAction("Action", null).show();
@@ -203,13 +226,14 @@ public class WorkoutFragment extends Fragment {
     public void saveNewExerciseType() {
         Log.i("FragmentAlertDialog", "Positive click!" + "Name: " + name + " Category: " + category + " Target: " + target);
         if(name.equals("")){
-            Snackbar.make(getView().findViewById(android.R.id.content), "Not added: Exercise name field blank!", Snackbar.LENGTH_LONG)
+            Snackbar.make(getView(), "Not added: Exercise name field blank!", Snackbar.LENGTH_LONG)
                   .setAction("Action", null).show();
         }else{
 
             ExerciseTypeModel newExercise = new ExerciseTypeModel(name, category, target);
             exerciseTargets.add(target);
             exerciseTypeModelList.add(newExercise);
+			// FIXME: THIS ID DOES NOT EXIST, CALL WILL RETURN NULL
             ListView exerciseListView = (ListView)getView().findViewById(R.id.exercise_model_list_view);
             ArrayAdapter<ExerciseTypeModel> exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_1);
@@ -233,11 +257,12 @@ public class WorkoutFragment extends Fragment {
     public void saveRoutine() {
         // Do stuff here.
         if (routineName.equals("")) {
-            Snackbar.make(getView().findViewById(android.R.id.content), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
+            Snackbar.make(getView(), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
             RoutineModel newRoutine = new RoutineModel(routineName);
             routineModelList.add(newRoutine);
+			// FIXME: THIS ID DOES NOT EXIST, CALL WILL RETURN NULL
             ListView routineListView = (ListView)getView().findViewById(R.id.routine_model_list_view);
             ArrayAdapter<RoutineModel> routineModelArrayAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_1);
