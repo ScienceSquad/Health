@@ -69,7 +69,7 @@ public class SleepFragment extends BaseFragment {
 		zzz.setTint(Color.WHITE);
 
 		// Prepare the sleep dialog.
-		this.subscribe(SoundServiceStopEvent.class, null, ev -> {
+		bus(b -> track(b.subscribe("SoundServiceStopEvent", null, ev -> {
 			new MaterialStyledDialog(getActivity())
 					.setIcon(zzz)
 					.setCustomView(getInflater().inflate(R.layout.fragment_sleep_userinput, null))
@@ -80,7 +80,7 @@ public class SleepFragment extends BaseFragment {
 					.setNegative(getResources().getString(R.string.decline),
 							(dialog, which) -> Log.d(TAG, "Declined!"))
 					.show();
-		});
+		})));
 
 		// Setup the Toolbar.
 		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());

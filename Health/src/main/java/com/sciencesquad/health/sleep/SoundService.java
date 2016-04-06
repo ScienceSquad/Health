@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
@@ -13,11 +14,8 @@ import android.util.Log;
 import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.Event;
 import com.sciencesquad.health.core.util.X;
 import java8.util.stream.StreamSupport;
-import org.immutables.value.Value;
-import rx.Subscription;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,22 +29,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class SoundService extends Service {
 	private static final String TAG = SoundService.class.getSimpleName();
-
-	/**
-	 * The event sent when the SoundService is started.
-	 */
-	@Value.Immutable @Event.EventType
-	public interface SoundServiceStart extends Event {
-		//
-	}
-
-	/**
-	 * The event sent when the SoundService is stopped.
-	 */
-	@Value.Immutable @Event.EventType
-	public interface SoundServiceStop extends Event {
-		//
-	}
 
 	/**
 	 * The action to send this Service if it should be stopped.
@@ -134,7 +116,7 @@ public class SoundService extends Service {
 	private Map<String, MediaPlayer> players = defaultPlayers();
 	private Map<String, ValueAnimator> animators = new HashMap<>();
 
-	private Subscription test;
+	private BroadcastReceiver test;
 
 	/**
 	 * @see Service
@@ -176,8 +158,8 @@ public class SoundService extends Service {
 
 		// Broadcast an event to say that we started up.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
-			bus.publish(SoundServiceStartEvent.from(this).create());
-			this.test = bus.subscribe(SoundServiceStartEvent.class, null, ev -> {
+			bus.publish("SoundServiceStartEvent", this);
+			this.test = bus.subscribe("SoundServiceStartEvent", null, ev -> {
 				Log.i(TAG, "Dolphins! " + ev);
 			});
 		});
@@ -212,7 +194,7 @@ public class SoundService extends Service {
 
 		// Broadcast an event to say that we stopped.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
-			bus.publish(SoundServiceStopEvent.from(this).create());
+			bus.publish("SoundServiceStopEvent", this);
 		});
 	}
 

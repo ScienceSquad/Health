@@ -1,30 +1,16 @@
 package com.sciencesquad.health.nutrition;
 
-import android.util.Pair;
-import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.DataContext;
-import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.core.RealmContext;
 import android.util.Log;
-
-import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.core.DataEmptyEvent;
-import com.sciencesquad.health.core.DataFailureEvent;
-import com.sciencesquad.health.core.DataUpdateEvent;
-import com.sciencesquad.health.core.RealmContext;
+import android.util.Pair;
 import com.sciencesquad.health.core.BaseApp;
-
+import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.RealmContext;
+import io.realm.RealmResults;
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 /**
  * Nutrition Module
@@ -62,25 +48,27 @@ public class    NutritionModule extends Module {
         this.numCheatDays = 5;
         createModels();
 
-        this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> Log.d(TAG, "Some realm was empty."));
-        this.subscribe(DataFailureEvent.class, this, (DataFailureEvent dataFailureEvent1) -> {
-            Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
+        bus(b -> {
+            b.subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
+            b.subscribe("DataFailureEvent", this, e -> {
+                Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
 
-        });
-        this.subscribe(DataFailureEvent.class, null, (DataFailureEvent dataFailureEvent) -> {
-            Log.d(TAG, "Data failed somewhere.");
+            });
+            b.subscribe("DataFailureEvent", null, e -> {
+                Log.d(TAG, "Data failed somewhere.");
 
-        });
-        this.subscribe(DataUpdateEvent.class, null, (DataUpdateEvent dataUpdateEvent) -> {
-            Log.d(TAG, "There was an update to a realm.");
+            });
+            b.subscribe("DataUpdateEvent", null, e -> {
+                Log.d(TAG, "There was an update to a realm.");
 
-            // maybe use the key as the realm name?
-            if (dataUpdateEvent.key().equals(REALMNAME)){
-                Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
-            }
-            else {
-                // do something about it.
-            }
+                // maybe use the key as the realm name?
+                if (e.get("key").equals(REALMNAME)) {
+                    Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
+                }
+                else {
+                    // do something about it.
+                }
+            });
         });
     }
 

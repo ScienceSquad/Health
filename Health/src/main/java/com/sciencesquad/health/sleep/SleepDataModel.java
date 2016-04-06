@@ -1,14 +1,8 @@
 package com.sciencesquad.health.sleep;
 
-import android.util.Pair;
 import io.realm.RealmObject;
-import org.immutables.value.Value;
-import org.threeten.bp.Duration;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalTime;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * The model that records the user's sleep through a period of time,
