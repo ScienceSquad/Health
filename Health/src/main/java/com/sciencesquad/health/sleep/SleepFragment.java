@@ -1,40 +1,35 @@
 package com.sciencesquad.health.sleep;
 
-import android.app.Fragment;
-import android.content.Context;
-import android.databinding.DataBindingUtil;
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.CardView;
 import android.transition.Visibility;
 import android.util.Log;
-import android.view.*;
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
+import android.util.Property;
+import android.view.View;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.BottomBarBadge;
-import com.roughike.bottombar.OnMenuTabClickListener;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.core.util.AnimationUtils;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
-import com.sciencesquad.health.core.util.X;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
-import rx.Subscription;
+import java8.util.stream.Stream;
+import java8.util.stream.StreamSupport;
 
-// TODO: Preference for roommate/partner sleeping in same bed, other room, none.
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class SleepFragment extends BaseFragment {
 	public static final String TAG = SleepFragment.class.getSimpleName();
 
@@ -95,5 +90,49 @@ public class SleepFragment extends BaseFragment {
 
 		StaticPagerAdapter.install(xml().pager);
 		xml().tabs.setupWithViewPager(xml().pager);
+
+		// Disgusting code for cool animations!
+		// Use a view tag to keep track of activation state,
+		// and animate the card's background when long-pressed.
+		// TODO: Use 5 volume levels (25% step) triggered by onClick
+		// TODO: Blend off and on colors and animate when tapped
+		int colors[] = getThemeColors(getInflater().getContext());
+		Stream<CardView> tiles = StreamSupport
+				.of(xml().tile1, xml().tile2, xml().tile3, xml().tile4,
+					xml().tile5, xml().tile6, xml().tile7, xml().tile8);
+		tiles.forEach(c -> {
+			c.setTag(R.string.accept, false);
+			c.setOnLongClickListener(v -> {
+				if((Boolean)c.getTag(R.string.accept)) {
+					animateCardView(c, colors[2], colors[1]).start();
+					c.setTag(R.string.accept, false);
+				} else {
+					animateCardView(c, colors[1], colors[2]).start();
+					c.setTag(R.string.accept, true);
+				}
+				return true;
+			});
+		});
+	}
+
+	//
+	// ---
+	//
+
+	// fancy animation!!
+	private static Animator animateCardView(final CardView ctx, final int oldColor, final int newColor) {
+		ObjectAnimator animator = ObjectAnimator.ofInt(ctx, new Property<CardView, Integer>(int.class, "cardBackgroundColor") {
+			int prevColor = oldColor;
+			public Integer get(CardView ctx) {
+				return prevColor;
+			}
+			public void set(CardView ctx, Integer value) {
+				ctx.setCardBackgroundColor((prevColor = value));
+			}
+		}, newColor);
+		animator.setDuration(350L);
+		animator.setEvaluator(new ArgbEvaluator());
+		animator.setInterpolator(AnimationUtils.MaterialInterpolator.getInstance());
+		return animator;
 	}
 }
