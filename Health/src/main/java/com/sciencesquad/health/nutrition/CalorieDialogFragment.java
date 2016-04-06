@@ -45,7 +45,7 @@ public class CalorieDialogFragment extends DialogFragment {
                     && !usedCheatDay)
             {
                 usedCheatDay = true;
-                Snackbar snackbar = Snackbar.make(v, "You've used a cheat day.",
+                Snackbar snackbar = Snackbar.make(v, "Success: You've used a cheat day.",
                         Snackbar.LENGTH_SHORT);
                 snackbar.show();
             }

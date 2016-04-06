@@ -1,5 +1,6 @@
 package com.sciencesquad.health.nutrition;
 
+import android.nfc.Tag;
 import android.util.Pair;
 
 import com.sciencesquad.health.R;
@@ -110,15 +111,19 @@ public class NutritionModule extends Module {
      * Will be changed to fit the Dispatcher Pattern later.
      */
     public void addNutritionRecord(){
+
         NutritionModel newNutritionModel = new NutritionModel();
         newNutritionModel.setHadCaffeine(hadCaffeine);
         newNutritionModel.setCalorieIntake(calorieIntake);
         newNutritionModel.setNutrientModel(nutrients);
+        newNutritionModel.setCheated(cheated);
+        newNutritionModel.setNumCheatDays(numCheatDays);
         newNutritionModel.setVitaminModel(vitamins);
         newNutritionModel.setMineralModel(minerals);
         newNutritionModel.setDate(DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
-        newNutritionModel.setDateString(
-                DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)).toString());
+        newNutritionModel.setDateString("Date: " + LocalDateTime.now().getYear() + "-"
+                         + LocalDateTime.now().getMonth().getValue() + "-"
+                         + LocalDateTime.now().getDayOfMonth());
         nutritionRealm.add(newNutritionModel);
         clearModels();
         createModels();
@@ -199,6 +204,17 @@ public class NutritionModule extends Module {
     }
 
     public boolean checkCheatDays() {
+        RealmResults<NutritionModel> results = nutritionRealm.query().findAllSorted("dateString");
+        NutritionModel mostRecentModel = results.last();
+
+        String testString = "Date: " + LocalDateTime.now().getYear() + "-"
+                + LocalDateTime.now().getMonth().getValue() + "-"
+                + LocalDateTime.now().getDayOfMonth();
+
+        if (testString.equals(mostRecentModel.getDateString()) && mostRecentModel.isCheated()){
+            return false;
+
+        }
         return numCheatDays > 0 && !cheated;
     }
 
