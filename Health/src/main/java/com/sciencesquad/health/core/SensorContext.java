@@ -8,15 +8,9 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.core.SensorAccuracyEvent;
-import com.sciencesquad.health.core.SensorChangeEvent;
-import com.sciencesquad.health.core.SensorFlushEvent;
 import java8.util.Optional;
-import org.immutables.value.Value.Immutable;
 
 import java.util.HashMap;
-
-import static com.sciencesquad.health.core.Event.EventType;
 
 /**
  * The SensorContext is a transparent entity bound to the app
@@ -39,47 +33,6 @@ public class SensorContext {
 			super(message);
 		}
  	}
-
-	/**
-	 * The sensor specified by sensorEvent has changed value.
-	 */
-	@Immutable @EventType
-	public interface SensorChange extends Event {
-
-		/**
-		 * The underlying SensorEvent.
-		 */
-		SensorEvent sensorEvent();
-	}
-
-	/**
-	 * The sensor specified by sensor has changed accuracy.
-	 */
-	@Immutable @EventType
-	public interface SensorAccuracy extends Event {
-
-		/**
-		 * The underlying Sensor.
-		 */
-		Sensor sensor();
-
-		/**
-		 * The new accuracy level.
-		 */
-		int accuracy();
-	}
-
-	/**
-	 * The sensor specified by sensor flushed its data.
-	 */
-	@Immutable @EventType
-	public interface SensorFlush extends Event {
-
-		/**
-		 * The underlying Sensor.
-		 */
-		Sensor sensor();
-	}
 
 	/**
 	 * The underlying SensorManager.
@@ -134,34 +87,34 @@ public class SensorContext {
 
 		final SensorEventListener2 listener = new SensorEventListener2() {
 			@Override public void onSensorChanged(SensorEvent sensorEvent) {
-				Optional.ofNullable(BaseApp.app())
+				/*Optional.ofNullable(BaseApp.app())
 						.map(BaseApp::eventBus)
 						.ifPresent(e -> {
 							e.publish(SensorChangeEvent.from(this)
 									.sensorEvent(sensorEvent)
 									.create());
-						});
+						});*/
 			}
 
 			@Override public void onAccuracyChanged(Sensor sensor, int accuracy) {
-				Optional.ofNullable(BaseApp.app())
+				/*Optional.ofNullable(BaseApp.app())
 						.map(BaseApp::eventBus)
 						.ifPresent(e -> {
 							e.publish(SensorAccuracyEvent.from(this)
 									.sensor(sensor)
 									.accuracy(accuracy)
 									.create());
-						});
+						});*/
 			}
 
 			@Override public void onFlushCompleted(Sensor sensor) {
-				Optional.ofNullable(BaseApp.app())
+				/*Optional.ofNullable(BaseApp.app())
 						.map(BaseApp::eventBus)
 						.ifPresent(e -> {
 							e.publish(SensorFlushEvent.from(this)
 									.sensor(sensor)
 									.create());
-						});
+						});*/
 			}
 		};
 

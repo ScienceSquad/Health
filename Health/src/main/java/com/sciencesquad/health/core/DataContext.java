@@ -1,7 +1,6 @@
 package com.sciencesquad.health.core;
 
 import android.content.Context;
-import org.immutables.value.Value;
 
 import java.util.Collection;
 
@@ -12,30 +11,6 @@ import java.util.Collection;
  *  - Query the database
  */
 public interface DataContext<E> extends Collection<E>, AutoCloseable {
-
-	/**
-	 * Event for clearing a DataContext (aka the database has been wiped).
-	 */
-	@Value.Immutable @Event.EventType
-	interface DataEmpty extends Event {
-		String realmName();
-	}
-
-	/**
-	 * Event for updating a DataContext in any abstract way.
-	 */
-	@Value.Immutable @Event.EventType
-	interface DataUpdate extends Event {
-		String key();
-	}
-
-	/**
-	 * Event in case of a data failure.
-	 */
-	@Value.Immutable @Event.EventType
-	interface DataFailure extends Event {
-		String operation();
-	}
 
 	/**
 	 * Initialize the context.
