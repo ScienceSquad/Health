@@ -33,6 +33,7 @@ public class NutritionModule extends Module {
     private float calorieIntake;
     private boolean hadCaffeine;
     private int numCheatDays;
+    private boolean cheated;
     private NutrientModel nutrients;
     private MineralModel minerals;
     private VitaminModel vitamins;
@@ -57,6 +58,7 @@ public class NutritionModule extends Module {
         this.hadCaffeine = false;
         this.calorieIntake = 0;
         this.numCheatDays = 5;
+        this.cheated = false; // being positive and assuming no cheating :)
 
         this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> Log.d(TAG, "Some realm was empty."));
         this.subscribe(DataFailureEvent.class, this, (DataFailureEvent dataFailureEvent1) -> {
@@ -194,5 +196,17 @@ public class NutritionModule extends Module {
     public void init() {
         Module.registerModule(this.getClass());
 
+    }
+
+    public boolean checkCheatDays() {
+        return numCheatDays > 0 && !cheated;
+    }
+
+    public boolean isCheated() {
+        return cheated;
+    }
+
+    public void setCheated(boolean cheated) {
+        this.cheated = cheated;
     }
 }

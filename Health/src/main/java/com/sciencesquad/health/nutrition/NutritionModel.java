@@ -15,6 +15,8 @@ public class NutritionModel extends RealmObject {
 	 */
 	private float calorieIntake;
 	private boolean hadCaffeine;
+	private boolean cheated;
+	private int numCheatDays;
 
 	private NutrientModel nutrientModel;
 	private VitaminModel vitaminModel;
@@ -91,5 +93,21 @@ public class NutritionModel extends RealmObject {
 
 	public void setDateString(String dateString) {
 		this.dateString = dateString;
+	}
+
+	public int getNumCheatDays() {
+		return numCheatDays;
+	}
+
+	public void setNumCheatDays(int numCheatDays) {
+		this.numCheatDays = numCheatDays;
+	}
+
+	public boolean isCheated() {
+		return cheated;
+	}
+
+	public void setCheated(boolean cheated) {
+		this.cheated = cheated;
 	}
 }

@@ -22,5 +22,12 @@
         android:id="@+id/caffeine_button"
         android:clickable="true" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use Cheat Day"
+        android:id="@+id/cheat_button" />
+
 
 </LinearLayout>
