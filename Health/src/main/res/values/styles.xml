@@ -147,9 +147,9 @@
     </style>
 
     <style name="AppTheme.Workout" parent="AppTheme">
-        <item name="colorAccent">@color/purple_700</item>
-        <item name="colorPrimary">@color/green_700</item>
-        <item name="colorPrimaryDark">@color/green_900</item>
+        <item name="colorAccent">@color/amber_700</item>
+        <item name="colorPrimary">@color/blue_grey_700</item>
+        <item name="colorPrimaryDark">@color/blue_grey_900</item>
     </style>
 
 </resources>

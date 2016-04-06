@@ -1,15 +1,22 @@
 package com.sciencesquad.health.workout;
 
 import android.support.annotation.NonNull;
+
+import io.realm.RealmList;
+import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.Required;
+
+
+
+import java.util.Date;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ExerciseTypeModel {
+public class ExerciseTypeModel extends RealmObject{
 
     private String name;
     private String category;    // Strength or Cardio
@@ -18,10 +25,10 @@ public class ExerciseTypeModel {
     private Integer maxWeight;
     private long maxDuration;
 
-    public List<List<ExerciseSetModel>> instances = new ArrayList<>();
+    //public RealmList<RealmList<ExerciseSetModel>> instances = new RealmList<>();
 
     @Ignore
-    private ExerciseKind enumb;
+    //private ExerciseKind enumb;
 
     /**
      * Calendar date where this model was created.
@@ -32,6 +39,7 @@ public class ExerciseTypeModel {
     // GENERATED METHODS FOLLOW
     // DO NOT MODIFY -- REALM ONLY
     //
+    /*
     public void setEnumb(ExerciseKind kind) {
         setCategory(kind.toString());
     }
@@ -39,6 +47,7 @@ public class ExerciseTypeModel {
     public ExerciseKind getEnumb() {
         return ExerciseKind.valueOf(getCategory());
     }
+    */
 
     public String getName() { return name; }
 
@@ -84,6 +93,7 @@ public class ExerciseTypeModel {
         this.date = date;
     }
 
+    /*
     public ExerciseTypeModel(String name, String category, String target){
         setName(name);
         setCategory(category);
@@ -94,4 +104,13 @@ public class ExerciseTypeModel {
         Calendar rightNow = Calendar.getInstance();
         setDate(rightNow.getTime());
     }
+
+    public ExerciseTypeModel(){
+        setMaxDistance(0.0);
+        setMaxDuration((long) 0);
+        setMaxWeight(0);
+        Calendar rightNow = Calendar.getInstance();
+        setDate(rightNow.getTime());
+    }
+    */
 }

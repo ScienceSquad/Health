@@ -1,14 +1,15 @@
 package com.sciencesquad.health.workout;
 
-import android.support.annotation.NonNull;
 
+import io.realm.annotations.Required;
+import android.support.annotation.NonNull;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
-
 import java.util.Date;
 
 
-public class ExerciseSetModel {
+
+public class ExerciseSetModel extends RealmObject{
 
     private int reps;               // number of repetitions
     private Integer weight;         // amount of weight
@@ -44,7 +45,13 @@ public class ExerciseSetModel {
         this.weight = weight;
         this.duration = (long)0;
         this.distance = 0.0;
+    }
 
+    public ExerciseSetModel(){
+        this.reps = 0;
+        this.weight = 0;
+        this.duration = (long)0;
+        this.distance = 0.0;
     }
 
     @Override

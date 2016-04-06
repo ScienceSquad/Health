@@ -31,6 +31,7 @@ import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
 import com.sciencesquad.health.sleep.SleepModule;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 
@@ -230,7 +231,15 @@ public class WorkoutFragment extends BaseFragment {
                   .setAction("Action", null).show();
         }else{
 
-            ExerciseTypeModel newExercise = new ExerciseTypeModel(name, category, target);
+            ExerciseTypeModel newExercise = new ExerciseTypeModel();
+            newExercise.setName(name);
+            newExercise.setCategory(category);
+            newExercise.setTarget(target);
+            newExercise.setMaxDistance(0.0);
+            newExercise.setMaxDuration((long) 0);
+            newExercise.setMaxWeight(0);
+            Calendar rightNow = Calendar.getInstance();
+            newExercise.setDate(rightNow.getTime());
             exerciseTargets.add(target);
             exerciseTypeModelList.add(newExercise);
 			// FIXME: THIS ID DOES NOT EXIST, CALL WILL RETURN NULL
