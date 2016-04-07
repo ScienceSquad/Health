@@ -26,7 +26,7 @@ public class CalorieDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         hadCaffeine = false;
         usedCheatDay = false;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Sleep);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Nutrient);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.fragment_nutrition_calorie_dialog, null);
         builder.setView(dialogLayout);

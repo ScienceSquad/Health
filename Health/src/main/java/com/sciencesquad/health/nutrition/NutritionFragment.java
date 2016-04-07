@@ -43,7 +43,7 @@ public class NutritionFragment extends BaseFragment {
     @Override
     protected Configuration getConfiguration() {
         return new Configuration(TAG, "Nutrition", R.drawable.ic_menu_nutrition,
-                R.style.AppTheme_Sleep, R.layout.fragment_nutrition);
+                R.style.AppTheme_Nutrition, R.layout.fragment_nutrition);
     }
 
     // Our generated binding class is different...
