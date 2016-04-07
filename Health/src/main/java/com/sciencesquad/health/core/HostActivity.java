@@ -11,8 +11,7 @@ import android.view.MenuItem;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.nutrition.DatabaseFragment;
-import com.sciencesquad.health.run.RunFragment;
-import com.sciencesquad.health.core.alarm.AlarmFragment;
+import com.sciencesquad.health.prescriptions.PrescriptionFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
 import com.sciencesquad.health.run.RunLandingFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
@@ -65,17 +64,11 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 					.replace(R.id.content, new WorkoutFragment(), WorkoutFragment.TAG)
 					.addToBackStack(WorkoutFragment.TAG)
 					.commit();
-		} else if (id == R.id.nav_clock) {
+		} else if (id == R.id.nav_prescription) {
 			getFragmentManager()
 					.beginTransaction()
-					.replace(R.id.content, new ClockFragment(), ClockFragment.TAG)
-					.addToBackStack(ClockFragment.TAG)
-					.commit();
-		} else if (id == R.id.nav_alarm) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new AlarmFragment(), AlarmFragment.TAG)
-					.addToBackStack(AlarmFragment.TAG)
+					.replace(R.id.content, new PrescriptionFragment(), PrescriptionFragment.TAG)
+					.addToBackStack(PrescriptionFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_nutrition) {
 			this.getFragmentManager()

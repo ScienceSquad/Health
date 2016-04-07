@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".prescriptions.PrescriptionFragment">
+    <data>
+        <variable name="fragment" type="com.sciencesquad.health.prescriptions.PrescriptionFragment"/>
+        <variable name="module" type="com.sciencesquad.health.prescriptions.PrescriptionModule"/>
+    </data>
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionGroup="true"
+        android:fitsSystemWindows="true">
+
+        <com.sciencesquad.health.core.ui.ClockView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            app:backgroundColor="#FFF"
+            app:textColor="#000"
+            app:textHeight="50dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_alarms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_alarm"
+            app:backgroundTint="@color/red_900"
+            android:layout_marginLeft="@dimen/fab_margin"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginBottom="34dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_emergency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_alert"
+            app:backgroundTint="@color/green_900"
+            android:layout_marginLeft="@dimen/fab_margin"
+            android:layout_marginRight="102dp"
+            android:layout_marginBottom="34dp"/>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>
