@@ -18,8 +18,6 @@ public class OverviewModel extends RealmObject {
     private int stepCoefficient;
     private int workoutCoefficient;
 
-
-
     public int getOverviewCoefficient() {
         return overviewCoefficient;
     }

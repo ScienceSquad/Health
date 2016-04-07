@@ -27,6 +27,6 @@ public class OverviewModule extends Module {
 
     @Override
     public Pair<String, Integer> identifier() {
-        return new Pair<>("Overview", R.drawable.ic_music_circle);
+        return new Pair<>("Overview", R.drawable.ic_menu_overview);
     }
 }

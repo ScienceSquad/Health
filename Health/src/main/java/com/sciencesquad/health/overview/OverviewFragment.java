@@ -10,6 +10,8 @@ import android.transition.Visibility;
 import android.view.View;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
@@ -18,7 +20,10 @@ import com.sciencesquad.health.databinding.FragmentOverviewBinding;
 
 public class OverviewFragment extends BaseFragment {
     public static final String TAG = OverviewFragment.class.getSimpleName();
-    PieChart chart;
+
+    PieChart mPieChart;
+    private float[] yData = {5, 10, 15, 20, 25};
+    private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
 
     @Override
     protected BaseFragment.Configuration getConfiguration() {
@@ -47,8 +52,14 @@ public class OverviewFragment extends BaseFragment {
         //xml().setModule(Module.moduleForClass(OverviewModule.class));
 
         // Temporary code. This grabs the pie chart easily thanks to the xml() method
-        chart = (PieChart) xml().overviewChart;
-        chart.setBackgroundColor(Color.RED);
+        mPieChart = (PieChart) xml().overviewChart;
+        mPieChart.setBackgroundColor(Color.RED);
+        mPieChart.setDescription("Daily Overview");
+        mPieChart.setDescriptionColor(R.color.amber_50);
+        mPieChart.setTouchEnabled(true);
+        PieData data;
+        mPieChart.setCenterText("78");
+        mPieChart.invalidate();
 
 
         // FABulous!!!
