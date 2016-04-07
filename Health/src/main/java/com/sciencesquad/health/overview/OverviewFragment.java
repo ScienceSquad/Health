@@ -1,37 +1,38 @@
 package com.sciencesquad.health.overview;
 
-import android.app.Fragment;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.transition.Visibility;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
-import com.sciencesquad.health.databinding.FragmentSleepBinding;
-import com.sciencesquad.health.sleep.SleepModule;
+import com.sciencesquad.health.databinding.FragmentOverviewBinding;
 
 public class OverviewFragment extends BaseFragment {
     public static final String TAG = OverviewFragment.class.getSimpleName();
+    PieChart chart;
 
     @Override
     protected BaseFragment.Configuration getConfiguration() {
-        String _ = OverviewModule.TAG; // instantiates the Module...
+        String overviewTag = OverviewModule.TAG; // instantiates the Module...
         return new BaseFragment.Configuration(
                 TAG, "Overview", R.drawable.ic_menu_overview,
                 R.style.AppTheme_Overview, R.layout.fragment_overview
         );
+    }
+
+    // Our generated binding class is different...
+    @Override @SuppressWarnings("unchecked")
+    protected FragmentOverviewBinding xml() {
+        return super.xml();
     }
 
     @Override
@@ -45,8 +46,10 @@ public class OverviewFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         //xml().setModule(Module.moduleForClass(OverviewModule.class));
 
-        // view or getView()?
-        PieChart chart = (PieChart) view.findViewById(R.id.overviewChart);
+        // Temporary code. This grabs the pie chart easily thanks to the xml() method
+        chart = (PieChart) xml().overviewChart;
+        chart.setBackgroundColor(Color.RED);
+
 
         // FABulous!!!
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.overviewFab);

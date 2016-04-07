@@ -18,6 +18,8 @@ public class OverviewModel extends RealmObject {
     private int stepCoefficient;
     private int workoutCoefficient;
 
+
+
     public int getOverviewCoefficient() {
         return overviewCoefficient;
     }
@@ -48,6 +50,30 @@ public class OverviewModel extends RealmObject {
 
     public void setRunCoefficient(int runCoefficient) {
         this.runCoefficient = runCoefficient;
+    }
+
+    public int getSleepCoefficient() {
+        return sleepCoefficient;
+    }
+
+    public void setSleepCoefficient(int sleepCoefficient) {
+        this.sleepCoefficient = sleepCoefficient;
+    }
+
+    public int getStepCoefficient() {
+        return runCoefficient;
+    }
+
+    public void setStepCoefficient(int stepoefficient) {
+        this.stepCoefficient = stepCoefficient;
+    }
+
+    public int getWorkoutCoefficient() {
+        return workoutCoefficient;
+    }
+
+    public void setWorkoutCoefficient(int workoutCoefficient) {
+        this.workoutCoefficient = workoutCoefficient;
     }
 
     @NonNull

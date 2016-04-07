@@ -40,7 +40,7 @@
         android:orientation="horizontal"
         android:id="@+id/content" />
 
-    <com.github.mikephil.charting.charts.LineChart
+    <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/overviewChart"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
