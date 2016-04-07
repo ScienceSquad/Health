@@ -253,7 +253,8 @@ public class NutrientQuery {
 		// 		nutrients
 		if (this.nutrients.size() > 0) {
 			for (int i = 0; i < 20; i++) {
-				urlString = DataGetter.addURLParameter(urlString, "nutrients", String.valueOf(this.nutrients.get(i)));
+				urlString = DataGetter.addURLParameter(urlString, "nutrients",
+						String.valueOf(this.nutrients.get(i)));
 			}
 		}
 		else {
