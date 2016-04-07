@@ -3,8 +3,11 @@ package com.sciencesquad.health.core;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.databinding.*;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,22 +15,18 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.*;
-import android.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.transition.Visibility;
-import android.util.Log;
-import android.util.Pair;
 import android.util.TypedValue;
-import android.view.*;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.X;
+import java8.util.function.Consumer;
 import java8.util.stream.StreamSupport;
-import rx.Subscription;
-import rx.functions.Action1;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,7 +70,7 @@ public abstract class BaseFragment extends Fragment {
 	/**
 	 * The internal set of Subscriptions to auto-unsubscribe from.
 	 */
-	private transient Set<Subscription> _subscriptions = new HashSet<>();
+	private transient Set<BroadcastReceiver> _subscriptions = new HashSet<>();
 
 	/**
 	 * The Configuration class is used to create a BaseFragment.
@@ -196,31 +195,23 @@ public abstract class BaseFragment extends Fragment {
 	}
 
 	/**
-	 * Publishes any Events to the shared app EventBus.
+	 * Helper to wrap the Application EventBus as an Optional type.
 	 *
-	 * @param event the event to publish
-	 * @param <E> the type of Event being published
+	 * @param handler the context in which the EventBus is used.
+	 * @return the EventBus as a nullable Optional
 	 */
-	public synchronized <E extends Event> void publish(@NonNull E event) {
-		this.app().map(BaseApp::eventBus).let(bus -> bus.publish(event));
+	@NonNull
+	protected X<EventBus> bus(Consumer<EventBus> handler) {
+		return this.app().map(BaseApp::eventBus).let(handler);
 	}
 
 	/**
-	 * Subscribes and auto-manage a Subscription to an Event.
-	 * Automatically uses the shared app EventBus.
+	 * Tracks any receivers for removal when this Fragment dies.
 	 *
-	 * @implNote Relies on the invocation of finalize() to clean up.
-	 *
-	 * @param eventClass the type of Event subscribed to
-	 * @param handler the action to perform upon notification
-	 * @param <E> the type of Event being subscribed to
+	 * @param receiver the receiver for removal
 	 */
-	public synchronized <E extends Event> void subscribe(@NonNull final Class<E> eventClass,
-														 @Nullable final Object source, @NonNull final Action1<E> handler) {
-		this.app().map(BaseApp::eventBus).let(bus -> {
-			Subscription sub = bus.subscribe(eventClass, source, handler);
-			this._subscriptions.add(sub);
-		});
+	protected synchronized void track(@NonNull final BroadcastReceiver receiver) {
+		this._subscriptions.add(receiver);
 	}
 
 	/**
@@ -317,7 +308,8 @@ public abstract class BaseFragment extends Fragment {
 		getActivity().setTaskDescription(v);
 
 		// Clear out any saved Subscriptions.
-		StreamSupport.stream(this._subscriptions).forEach(Subscription::unsubscribe);
+		StreamSupport.stream(this._subscriptions)
+				.forEach(r -> this.app().map(BaseApp::eventBus).let(bus -> bus.unsubscribe(r)));
 		this._subscriptions.clear();
 	}
 }

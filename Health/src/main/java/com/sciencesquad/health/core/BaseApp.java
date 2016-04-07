@@ -4,13 +4,10 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.core.Event.EventType;
-
 import com.jakewharton.threetenabp.AndroidThreeTen;
-import org.immutables.value.Value.Immutable;
+import com.sciencesquad.health.core.EventBus.Entry;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-
 
 /**
  * The BaseApp connects the monolithic Android Application
@@ -22,68 +19,6 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	private static final String TAG = BaseApp.class.getSimpleName();
 
 	/**
-	 * The Application was created.
-	 */
-	@Immutable @EventType
-	public interface AppCreate extends Event {
-		// EMPTY
-	}
-
-	/**
-	 * The Application was destroyed.
-	 */
-	@Immutable @EventType
-	public interface AppDestroy extends Event {
-		// EMPTY
-	}
-
-	/**
-	 * The Application was given a low-memory warning.
-	 */
-	@Immutable @EventType
-	public interface AppLowMemory extends Event {
-		// EMPTY
-	}
-
-	/**
-	 * The Application's memory level was trimmed.
-	 */
-	@Immutable @EventType
-	public interface AppTrimMemory extends Event {
-
-		/**
-		 * The memory level to which the Application was trimmed.
-		 */
-		int level();
-	}
-
-	/**
-	 * The Application configuration changed.
-	 */
-	@Immutable @EventType
-	public interface AppConfigurationChanged extends Event {
-
-		/**
-		 * The new configuration for which the Application was updated.
-		 */
-		Configuration configuration();
-	}
-
-	/**
-	 * The Application preferences were updated.
-	 */
-	@Immutable @EventType
-	public interface AppPreferencesChanged extends Event {
-
-		/**
-		 * The key of the preference entry that was changed.
-		 * @implNote this should be used when accessing the preference entry
-		 * from SharedPreferences.
-		 */
-		String key();
-	}
-
-	/**
 	 * The private app-wide BaseApp singleton instance.
 	 */
 	private static BaseApp _application = null;
@@ -91,7 +26,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	/**
 	 * The private app-wide instance of the EventBus.
 	 */
-	private final EventBus _eventBus = new EventBus();
+	private EventBus _eventBus;
 
 	/**
 	 * Returns the global shared BaseApp.
@@ -134,8 +69,8 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 		AndroidThreeTen.init(this);
 
 		_application = this;
-		this.eventBus().publish(AppCreateEvent.from(this)
-				.create());
+		_eventBus = new EventBus(this);
+		this.eventBus().publish("AppCreateEvent", this);
 	}
 
 	/**
@@ -144,8 +79,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	@Override
 	public void onTerminate() {
 		super.onTerminate();
-		this.eventBus().publish(AppDestroyEvent.from(this)
-				.create());
+		this.eventBus().publish("AppDestroyEvent", this);
 	}
 
 	/**
@@ -154,8 +88,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
-		this.eventBus().publish(AppLowMemoryEvent.from(this)
-				.create());
+		this.eventBus().publish("AppLowMemoryEvent", this);
 	}
 
 	/**
@@ -164,9 +97,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	@Override
 	public void onTrimMemory(int level) {
 		super.onTrimMemory(level);
-		this.eventBus().publish(AppTrimMemoryEvent.from(this)
-				.level(level)
-				.create());
+		this.eventBus().publish("AppTrimMemoryEvent", this);
 	}
 
 	/**
@@ -175,9 +106,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		this.eventBus().publish(AppConfigurationChangedEvent.from(this)
-				.configuration(newConfig)
-				.create());
+		this.eventBus().publish("AppConfigurationChangedEvent", this, new Entry("configuration", newConfig));
 	}
 
 	/**
@@ -185,8 +114,6 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 */
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		this.eventBus().publish(AppPreferencesChangedEvent.from(this)
-				.key(key)
-				.create());
+		this.eventBus().publish("AppPreferencesChangedEvent", this, new Entry("key", key));
 	}
 }
