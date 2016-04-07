@@ -16,6 +16,8 @@ import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.databinding.FragmentNutritionBinding;
 
 import org.threeten.bp.LocalDateTime;
 
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 /**
  * ViewModel for the Nutrition Module.
  */
-public class NutritionFragment extends Fragment {
+public class NutritionFragment extends BaseFragment {
     public static final String TAG = NutritionFragment.class.getSimpleName();
 
     private NutritionModule nutritionModule;
@@ -38,15 +40,17 @@ public class NutritionFragment extends Fragment {
     private FloatingActionButton fab3; // nutrient
     private FloatingActionButton fab4; // submit
 
-    /**
-     * Creates the Nutrition View.
-     * @param savedInstanceState
-     */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_nutrition, container, false);
+    protected Configuration getConfiguration() {
+        return new Configuration(TAG, "Nutrition", R.drawable.ic_menu_nutrition,
+                R.style.AppTheme_Sleep, R.layout.fragment_nutrition);
     }
 
+    // Our generated binding class is different...
+    @Override @SuppressWarnings("unchecked")
+    protected FragmentNutritionBinding xml() {
+        return super.xml();
+    }
     /**
      * Further creating the UI and setting up buttons and their listeners.
      * @param savedInstanceState
