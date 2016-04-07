@@ -88,26 +88,11 @@ public class WorkoutFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 		xml().setModule(Module.moduleForClass(WorkoutModule.class));
 
-
-
-        //ExerciseTypeModel newExerciseA = new ExerciseTypeModel("Bench Press", "Strength", "Chest");
-        //exerciseTypeModelList.add(newExerciseA);
-
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        // mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), this);
-
-        // Set up the ViewPager with the sections adapter.
-        // mViewPager = xml().pager; //(ViewPager)view.findViewById(R.id.container);
-        //mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = xml().tabs; //(TabLayout)view.findViewById(R.id.tabs);
-        //tabLayout.setupWithViewPager(mViewPager);
+        TabLayout tabLayout = xml().tabs;
         StaticPagerAdapter.install(xml().pager);
         xml().tabs.setupWithViewPager(xml().pager);
 
         FloatingActionButton fab = xml().fab; //(FloatingActionButton)view.findViewById(R.id.workoutFab);
-
         fab.setOnClickListener(view1 -> {
             //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             //      .setAction("Action", null).show();
@@ -123,7 +108,7 @@ public class WorkoutFragment extends BaseFragment {
 
         xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
-        // Bind data to view
+        // Bind data to view (ExerciseTypeModels)
         WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         ArrayAdapter<String> exerciseTypeAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
@@ -141,6 +126,17 @@ public class WorkoutFragment extends BaseFragment {
             ((WorkoutFragment) getTargetFragment()).showSetDialog(exerciseTypeAdapter.getItem(position));
         }));
         */
+
+        // Bind data to view (RoutineModels)
+        ArrayAdapter<String> routineModelAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
+                android.R.layout.simple_list_item_1);
+        routineModelAdapter.clear();                // first clear adapter
+        for (RoutineModel m : mod.getAllRoutineModels())
+            routineModelAdapter.add(m.getName());
+
+        xml().routineModelListView.setAdapter(routineModelAdapter);
+
+
     }
 
 
@@ -315,13 +311,26 @@ public class WorkoutFragment extends BaseFragment {
             RoutineModel newRoutine = new RoutineModel();
             newRoutine.setName(routineName);
             routineModelList.add(newRoutine);
+
+            WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+            mod.addRoutineModel(newRoutine);
+
 			// FIXME: THIS ID DOES NOT EXIST, CALL WILL RETURN NULL
+            /*
             ListView routineListView = (ListView)getView().findViewById(R.id.routine_model_list_view);
             ArrayAdapter<RoutineModel> routineModelArrayAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_1);
             routineModelArrayAdapter.clear();
             routineModelArrayAdapter.addAll(routineModelList);
             routineListView.setAdapter(routineModelArrayAdapter);
+            */
+            // Bind data to view (RoutineModels)
+            ArrayAdapter<String> routineModelAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
+                    android.R.layout.simple_list_item_1);
+            routineModelAdapter.clear();                // first clear adapter
+            for (RoutineModel m : mod.getAllRoutineModels())
+                routineModelAdapter.add(m.getName());
+            xml().routineModelListView.setAdapter(routineModelAdapter);
         }
     }
 

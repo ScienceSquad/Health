@@ -97,7 +97,6 @@ public class WorkoutModule extends Module {
         for (ExerciseTypeModel m : sLBExercises)
             addExerciseTypeModel(m);
 
-        this.workoutRealm.init(BaseApp.app(), RoutineModel.class, "WorkoutRealm");
 
         RealmList<RealmString> exerciseNames = new RealmList<>();
         for(ExerciseTypeModel m : sLAExercises){
@@ -106,16 +105,16 @@ public class WorkoutModule extends Module {
             exerciseNames.add(newName);
         }
         RoutineModel strongLiftsA = createNewRoutine("StrongLifts 5x5: A", exerciseNames);
-        //addRoutineModel(strongLiftsA);
+        addRoutineModel(strongLiftsA);
 
-        exerciseNames.clear();
+        RealmList<RealmString> exerciseNamesB = new RealmList<>();
         for(ExerciseTypeModel m : sLAExercises){
             RealmString newName = new RealmString();
             newName.setName(m.getName());
-            exerciseNames.add(newName);
+            exerciseNamesB.add(newName);
         }
-        RoutineModel strongLiftsB = createNewRoutine("StrongLifts 5x5: B", exerciseNames);
-        //addRoutineModel(strongLiftsB);
+        RoutineModel strongLiftsB = createNewRoutine("StrongLifts 5x5: B", exerciseNamesB);
+        addRoutineModel(strongLiftsB);
     }
 
 
@@ -137,7 +136,12 @@ public class WorkoutModule extends Module {
     public boolean addExerciseTypeModel(ExerciseTypeModel newExercise){
         this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
         if(!isDuplicateExerciseType(newExercise)){
-            workoutRealm.add(newExercise);
+            try {
+                workoutRealm.add(newExercise);
+            } catch (Exception e) {
+                Log.i(TAG, "Error adding ExerciseTypeModel to Realm!");
+                return false;
+            }
             return true;
         } else {
             return false;
@@ -147,7 +151,6 @@ public class WorkoutModule extends Module {
 
 
     public boolean isDuplicateExerciseType(ExerciseTypeModel newExercise){
-        this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
         RealmQuery<ExerciseTypeModel> query = this.workoutRealm.query(ExerciseTypeModel.class);
         query.equalTo("name", newExercise.getName());
 
@@ -185,6 +188,19 @@ public class WorkoutModule extends Module {
         return newRoutine;
     }
 
+    public ArrayList<RoutineModel> getAllRoutineModels() {
+        ArrayList<RoutineModel> routines = new ArrayList<>();
+        try {
+            RealmResults<RoutineModel> results = workoutRealm.query(RoutineModel.class).findAll();
+            Log.i(TAG, "Routine Results size " + results.size());
+            routines.addAll(results);
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting routines from Realm");
+        }
+
+        return routines;
+    }
+
 
     public boolean isDuplicateRoutineType(RoutineModel newRoutine){
         try {
@@ -194,6 +210,7 @@ public class WorkoutModule extends Module {
             if(query.findAll().size() == 0){
                 return false;       // This exercise has NOT been previously added
             } else {
+                Log.i(TAG, "Duplicate Routine");
                 return true;        // This exercise has been previously added
             }
         } catch (Exception e) {
@@ -211,9 +228,13 @@ public class WorkoutModule extends Module {
      */
 
     public boolean addRoutineModel(RoutineModel newRoutine){
-        this.workoutRealm.init(BaseApp.app(), RoutineModel.class, "WorkoutRealm");
         if(!isDuplicateRoutineType(newRoutine)){
-            workoutRealm.add(newRoutine);
+            try {
+                workoutRealm.add(newRoutine);
+            } catch (Exception e){
+                Log.e(TAG, "Error adding RoutineModel to Realm");
+                return false;
+            }
             return true;
         } else {
             return false;
