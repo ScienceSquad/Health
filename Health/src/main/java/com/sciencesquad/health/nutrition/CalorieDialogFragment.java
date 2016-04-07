@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.sciencesquad.health.R;
 
@@ -38,6 +39,10 @@ public class CalorieDialogFragment extends DialogFragment {
             hadCaffeine = true;
         });
 
+        TextView numCheatDaysView = (TextView) dialogLayout.findViewById(R.id.cheat_view);
+        numCheatDaysView.setText("Cheat days left: " +
+                (((NutritionFragment) getTargetFragment()).getNutritionModule().getNumCheatDays()));
+
         Button cheatButton = (Button) dialogLayout.findViewById(R.id.cheat_button);
         cheatButton.setOnClickListener(v -> {
 
@@ -48,6 +53,8 @@ public class CalorieDialogFragment extends DialogFragment {
                 Snackbar snackbar = Snackbar.make(v, "Success: You've used a cheat day.",
                         Snackbar.LENGTH_SHORT);
                 snackbar.show();
+                numCheatDaysView.setText("Cheat days left: " + (((NutritionFragment)
+                        getTargetFragment()).getNutritionModule().getNumCheatDays()-1));
             }
             else {
                 Snackbar snackbar = Snackbar.make(v, "You can't use more cheat days today.",
@@ -58,6 +65,9 @@ public class CalorieDialogFragment extends DialogFragment {
 
         builder.setPositiveButton("Save",
                 (dialog, whichButton) -> {
+                    if (calorieField.getText().toString().equals("")){
+                        return;
+                    }
                     ((NutritionFragment) getTargetFragment()).getNutritionModule().setCalorieIntake(
                             Integer.parseInt(calorieField.getText().toString()));
                     ((NutritionFragment) getTargetFragment()).getNutritionModule().

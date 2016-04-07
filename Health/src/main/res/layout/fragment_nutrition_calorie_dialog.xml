@@ -22,6 +22,12 @@
         android:id="@+id/caffeine_button"
         android:clickable="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cheat Days Left: "
+        android:id="@+id/cheat_view" />
+
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"

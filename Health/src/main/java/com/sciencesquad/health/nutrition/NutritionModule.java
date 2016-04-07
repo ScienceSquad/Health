@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Nutrition Module
  */
 public class NutritionModule extends Module {
-    private static final String TAG = NutritionModule.class.getSimpleName();
+    public static final String TAG = NutritionModule.class.getSimpleName();
 
     private static final String REALMNAME = "nutrition.realm";
 
