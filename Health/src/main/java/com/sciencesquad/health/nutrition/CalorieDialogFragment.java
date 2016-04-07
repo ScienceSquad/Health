@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.text.InputType;
@@ -25,7 +26,7 @@ public class CalorieDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         hadCaffeine = false;
         usedCheatDay = false;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Sleep);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.fragment_nutrition_calorie_dialog, null);
         builder.setView(dialogLayout);
@@ -46,17 +47,15 @@ public class CalorieDialogFragment extends DialogFragment {
         Button cheatButton = (Button) dialogLayout.findViewById(R.id.cheat_button);
         cheatButton.setOnClickListener(v -> {
 
-            if(((NutritionFragment) getTargetFragment()).getNutritionModule().checkCheatDays()
-                    && !usedCheatDay)
-            {
+            if (((NutritionFragment) getTargetFragment()).getNutritionModule().checkCheatDays()
+                    && !usedCheatDay) {
                 usedCheatDay = true;
                 Snackbar snackbar = Snackbar.make(v, "Success: You've used a cheat day.",
                         Snackbar.LENGTH_SHORT);
                 snackbar.show();
                 numCheatDaysView.setText("Cheat days left: " + (((NutritionFragment)
-                        getTargetFragment()).getNutritionModule().getNumCheatDays()-1));
-            }
-            else {
+                        getTargetFragment()).getNutritionModule().getNumCheatDays() - 1));
+            } else {
                 Snackbar snackbar = Snackbar.make(v, "You can't use more cheat days today.",
                         Snackbar.LENGTH_SHORT);
                 snackbar.show();
@@ -65,18 +64,18 @@ public class CalorieDialogFragment extends DialogFragment {
 
         builder.setPositiveButton("Save",
                 (dialog, whichButton) -> {
-                    if (calorieField.getText().toString().equals("")){
+                    if (calorieField.getText().toString().equals("")) {
                         return;
                     }
-                    ((NutritionFragment) getTargetFragment()).getNutritionModule().setCalorieIntake(
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().setCalorieIntake(
                             Integer.parseInt(calorieField.getText().toString()));
-                    ((NutritionFragment) getTargetFragment()).getNutritionModule().
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
                             setHadCaffeine(hadCaffeine);
-                    ((NutritionFragment) getTargetFragment()).getNutritionModule().
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
                             setCheated(usedCheatDay);
-                    int numCheats = ((NutritionFragment) getTargetFragment()).getNutritionModule().
+                    int numCheats = ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
                             getNumCheatDays();
-                    ((NutritionFragment) getTargetFragment()).getNutritionModule().
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
                             setNumCheatDays(numCheats--);
                 }
         );
