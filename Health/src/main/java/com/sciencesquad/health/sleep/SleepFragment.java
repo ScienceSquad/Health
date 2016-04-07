@@ -32,7 +32,6 @@ import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.X;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
-import rx.Subscription;
 
 // TODO: Preference for roommate/partner sleeping in same bed, other room, none.
 public class SleepFragment extends BaseFragment {
