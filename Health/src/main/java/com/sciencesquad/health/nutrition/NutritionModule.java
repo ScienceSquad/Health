@@ -137,7 +137,7 @@ public class NutritionModule extends Module {
         RealmResults<NutritionModel> results = nutritionRealm.query().findAll();
         for (int i = 0; i < results.size(); i++){
             NutritionModel model = results.get(i);
-            String logEntry = "Calories: " + model.getCalorieIntake() + ", Date: " +
+            String logEntry = "Calories: " + model.getCalorieIntake() + ", " +
                     LocalDateTime.now().getDayOfWeek().toString() + " "
                     + LocalDateTime.now().getMonth().toString() + " "
                     + LocalDateTime.now().getDayOfMonth() + " "

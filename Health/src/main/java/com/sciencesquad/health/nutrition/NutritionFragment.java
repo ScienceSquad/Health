@@ -154,7 +154,7 @@ public class NutritionFragment extends BaseFragment {
             snackbar.show();
             return;
         }
-        String logEntry = "Calories: " + nutritionModule.getCalorieIntake() + ", Date: " +
+        String logEntry = "Calories: " + nutritionModule.getCalorieIntake() + ", " +
                 LocalDateTime.now().getDayOfWeek().toString() + " "
                 + LocalDateTime.now().getMonth().toString() + " "
                 + LocalDateTime.now().getDayOfMonth() + " "

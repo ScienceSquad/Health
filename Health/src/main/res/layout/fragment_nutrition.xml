@@ -47,18 +47,20 @@
                     android:id="@+id/nutrition_chart"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/max_nutrition_chart_height"
+                    android:layout_above="@+id/textView3"
                     android:layout_alignParentStart="true"
-                    android:layout_alignEnd="@+id/nutrition_recycler_view"
-                    android:layout_below="@+id/nutrition_recycler_view" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/textView4" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/nutrition_recycler_view"
                     android:scrollbars="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/max_nutrition_log_height"
-                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_marginBottom="42dp"
+                    android:layout_alignEnd="@+id/nutrition_chart" />
 
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/fab_nutrition"
@@ -69,8 +71,8 @@
                     app:backgroundTint="@color/red_900"
                     android:layout_marginLeft="@dimen/fab_margin"
                     android:layout_marginRight="@dimen/fab_margin"
-                    android:layout_marginBottom="36dp"
-                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="34dp"
+                    android:layout_alignBottom="@+id/nutrition_recycler_view"
                     android:layout_alignParentEnd="true" />
 
                 <android.support.design.widget.FloatingActionButton
@@ -84,7 +86,7 @@
                     app:fabSize="mini"
                     app:backgroundTint="@color/dark_purple_900"
                     android:layout_above="@+id/fab_diet"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignEnd="@+id/nutrition_chart" />
 
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/fab_nutrient"
@@ -96,7 +98,7 @@
                     android:layout_marginRight="@dimen/fab_margin"
                     app:fabSize="mini"
                     app:backgroundTint="@color/green_900"
-                    android:layout_alignBottom="@+id/nutrition_chart"
+                    android:layout_below="@+id/nutrition_chart"
                     android:layout_alignEnd="@+id/nutrition_chart" />
 
                 <android.support.design.widget.FloatingActionButton
@@ -109,8 +111,26 @@
                     android:layout_marginRight="@dimen/fab_margin"
                     app:fabSize="mini"
                     app:backgroundTint="@color/blue"
-                    android:layout_above="@+id/fab_nutrient"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignBottom="@+id/nutrition_chart"
+                    android:layout_alignEnd="@+id/nutrition_chart" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Calorie Log"
+                    android:id="@+id/textView3"
+                    android:layout_above="@+id/nutrition_recycler_view"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Calorie Chart"
+                    android:id="@+id/textView4"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true" />
 
 
             </RelativeLayout>
