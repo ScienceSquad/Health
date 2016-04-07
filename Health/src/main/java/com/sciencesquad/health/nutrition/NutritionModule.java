@@ -64,8 +64,7 @@ public class    NutritionModule extends Module {
                 // maybe use the key as the realm name?
                 if (e.get("key").equals(REALMNAME)) {
                     Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
-                }
-                else {
+                } else {
                     // do something about it.
                 }
             });
@@ -113,7 +112,7 @@ public class    NutritionModule extends Module {
     }
 
     public float[] queryCalories(){
-        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
+        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query(NutritionModel.class).findAll();
         float[] calorieSet = new float[nutritionQueryResults.size()];
 
         for (int index = 0; index < nutritionQueryResults.size(); index++){
@@ -125,7 +124,7 @@ public class    NutritionModule extends Module {
     }
 
     public String[] queryDates(){
-        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
+        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query(NutritionModel.class).findAll();
         String[] dateSet = new String[nutritionQueryResults.size()];
 
         for (int index = 0; index < nutritionQueryResults.size(); index++){

@@ -56,7 +56,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             Calendar rightNow = Calendar.getInstance();
             testModel.setDate(rightNow.getTime());
             testRealm.add(testModel);
-            RealmQuery<NutritionModel> testQuery = testRealm.query();
+            RealmQuery<NutritionModel> testQuery = testRealm.query(NutritionModel.class);
 
             Assert.assertEquals(testQuery.findAll().size(), 1);
             Assert.assertEquals(testQuery.findAll().first().getCalorieIntake(), 50);
@@ -119,7 +119,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             */
             ExerciseTypeModel benchPress = WorkoutModule.createNewExercise("Bench Press", "Strength", "Chest");
             testRealm.add(benchPress);
-            RealmQuery<ExerciseTypeModel> testQuery = testRealm.query();
+            RealmQuery<ExerciseTypeModel> testQuery = testRealm.query(ExerciseTypeModel.class);
 
             Assert.assertEquals(testQuery.findAll().size(), 1);
             Assert.assertEquals(testQuery.findAll().first().getName(), "Bench Press");

@@ -41,6 +41,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		public static final String OBJECT_CANNOT_CHECK_ISEMPTY = "OBJECT_CANNOT_CHECK_ISEMPTY";
 		public static final String OBJECT_HAS_NO_SIZE = "OBJECT_HAS_NO_SIZE";
 		public static final String COULD_NOT_PRODUCE_ARRAY = "COULD_NOT_PRODUCE_ARRAY";
+		public static final String COULD_NOT_SWITCH_REALM = "COULD_NOT_SWITCH_REALM";
 	}
 
 	private Realm realm;
@@ -93,10 +94,10 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 * @see Collection
 	 */
     @Override
-    public boolean add(M object) {
+    public boolean add(RealmObject object) {
 		try {
 			realm.beginTransaction();
-			this.realm.copyToRealm(object);
+			realm.copyToRealm(object);
 			realm.commitTransaction();
 		} catch (Exception e) {
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
@@ -349,9 +350,9 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
      * which is pertinent to that query.
      */
 	@Nullable
-    public RealmQuery<M> query() {
+    public RealmQuery query(Class realmClass) {
 		try {
-			return realm.where(this.realmClass);
+			return realm.where(realmClass);
 		} catch (Exception e) {
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_PRODUCE_QUERY));

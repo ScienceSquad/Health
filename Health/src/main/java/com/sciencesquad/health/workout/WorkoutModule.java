@@ -65,7 +65,7 @@ public class WorkoutModule extends Module {
 
     public ArrayList<ExerciseTypeModel> getAllExerciseTypeModels() {
         ArrayList<ExerciseTypeModel> exercises = new ArrayList<>();
-        RealmResults<ExerciseTypeModel> results = workoutRealm.query().findAll();
+        RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).findAll();
         exercises.addAll(results);
 
         return exercises;
@@ -148,7 +148,7 @@ public class WorkoutModule extends Module {
 
     public boolean isDuplicateExerciseType(ExerciseTypeModel newExercise){
         this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
-        RealmQuery<ExerciseTypeModel> query = this.workoutRealm.query();
+        RealmQuery<ExerciseTypeModel> query = this.workoutRealm.query(ExerciseTypeModel.class);
         query.equalTo("name", newExercise.getName());
 
         if(query.findAll().size() == 0){
@@ -185,26 +185,31 @@ public class WorkoutModule extends Module {
         return newRoutine;
     }
 
-    /*
-    public boolean isDuplicateRoutineType(RoutineModel newRoutine){
-        this.workoutRealm.init(BaseApp.app(), RoutineModel.class, "WorkoutRealm");
-        RealmQuery<RoutineModel> query = this.workoutRealm.query();
-        query.equalTo("name", newRoutine.getName());
 
-        if(query.findAll().size() == 0){
-            return false;       // This exercise has NOT been previously added
-        } else {
-            return true;        // This exercise has been previously added
+    public boolean isDuplicateRoutineType(RoutineModel newRoutine){
+        try {
+            RealmQuery<RoutineModel> query = this.workoutRealm.query(RoutineModel.class);
+            query.equalTo("name", newRoutine.getName());
+
+            if(query.findAll().size() == 0){
+                return false;       // This exercise has NOT been previously added
+            } else {
+                return true;        // This exercise has been previously added
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
+
     }
-    */
+
 
     /**
      *
      * @param newRoutine
      * @return true on success, false on failure (duplicate)
      */
-    /*
+
     public boolean addRoutineModel(RoutineModel newRoutine){
         this.workoutRealm.init(BaseApp.app(), RoutineModel.class, "WorkoutRealm");
         if(!isDuplicateRoutineType(newRoutine)){
@@ -215,7 +220,6 @@ public class WorkoutModule extends Module {
         }
 
     }
-    */
 
 
 
