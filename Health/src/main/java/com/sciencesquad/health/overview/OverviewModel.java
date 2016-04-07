@@ -1,47 +1,53 @@
 package com.sciencesquad.health.overview;
 
-
 import android.support.annotation.NonNull;
 
 import java.util.Date;
 
 import io.realm.RealmObject;
 
-import android.support.annotation.NonNull;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.Required;
-
-import java.util.Date;
-
-
-/**
- * Realm Model for Overview database.
- * Things that are relevant to store for the Overview Module go here.
- * TODO: Improve upon this garbage
- */
 public class OverviewModel extends RealmObject {
-
-    /**
-     * Date and step count. Date should always be Primary Key
-     */
-    // we can set up the primary key to something else if need be.
 
     private Date date;
 
-    private int number;
+    private int overviewCoefficient;
+    private int nutritionCoefficient;
+    private int prescriptionCoefficient;
+    private int runCoefficient;
+    private int sleepCoefficient;
+    private int stepCoefficient;
+    private int workoutCoefficient;
 
-    //
-    // GENERATED METHODS FOLLOW
-    // DO NOT MODIFY -- REALM ONLY
-    //
-
-    public int getNumber() {
-        return number;
+    public int getOverviewCoefficient() {
+        return overviewCoefficient;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void setOverviewCoefficient(int overviewCoefficient) {
+        this.overviewCoefficient = overviewCoefficient;
+    }
+
+    public int getNutritionCoefficient() {
+        return nutritionCoefficient;
+    }
+
+    public void setNutritionCoefficient(int nutritionCoefficient) {
+        this.nutritionCoefficient = nutritionCoefficient;
+    }
+
+    public int getPrescriptionCoefficient() {
+        return prescriptionCoefficient;
+    }
+
+    public void setPrescriptionCoefficient(int prescriptionCoefficient) {
+        this.prescriptionCoefficient = prescriptionCoefficient;
+    }
+
+    public int getRunCoefficient() {
+        return runCoefficient;
+    }
+
+    public void setRunCoefficient(int runCoefficient) {
+        this.runCoefficient = runCoefficient;
     }
 
     @NonNull

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.charts.PieChart;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
@@ -44,13 +45,15 @@ public class OverviewFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         //xml().setModule(Module.moduleForClass(OverviewModule.class));
 
+        // view or getView()?
+        PieChart chart = (PieChart) view.findViewById(R.id.overviewChart);
 
         // FABulous!!!
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.overviewFab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fab.setSelected(!fab.isSelected());
+                fab.setSelected(fab.isSelected());
                 fab.setImageResource(R.drawable.ic_plus);
                 Drawable drawable = fab.getDrawable();
                 if (drawable instanceof Animatable) {

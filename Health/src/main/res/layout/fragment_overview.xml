@@ -40,6 +40,11 @@
         android:orientation="horizontal"
         android:id="@+id/content" />
 
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/overviewChart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/overviewFab"
         android:layout_width="wrap_content"
