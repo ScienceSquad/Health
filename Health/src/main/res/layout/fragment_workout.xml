@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         tools:context=".workout.WorkoutFragment">
     <data>
+        <variable name="fragment" type="com.sciencesquad.health.workout.WorkoutFragment"/>
         <variable name="module" type="com.sciencesquad.health.workout.WorkoutModule"/>
     </data>
     <android.support.design.widget.CoordinatorLayout
@@ -22,7 +23,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
                     app:navigationIcon="@drawable/ic_menu"
-                    app:title="Sleep"
+                    app:title="Workouts"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
                 <android.support.design.widget.TabLayout
                         android:id="@+id/tabs"
@@ -35,7 +36,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?colorPrimary"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/exercise_type_view"
+                android:tag="Exercises"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/exercise_model_list_view"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true" />
+            </RelativeLayout>
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/routine_list_view"
+                android:tag="Routines"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/routine_model_list_view"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true" />
+            </RelativeLayout>
+
+        </android.support.v4.view.ViewPager>
         <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"

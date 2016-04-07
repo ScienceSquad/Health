@@ -8,6 +8,7 @@ import com.sciencesquad.health.workout.WorkoutModule;
 import com.sciencesquad.health.workout.ExerciseKind;
 import com.sciencesquad.health.workout.RoutineModel;
 
+
 import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
 import com.sciencesquad.health.prescriptions.PrescriptionModel;
 
@@ -108,12 +109,15 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             testRealm.clear();
             ExerciseKind kind = ExerciseKind.valueOf("STRENGTH");
             //ExerciseTypeModel newExerciseType = new ExerciseTypeModel("Bench Press", "Strength", "Chest");
+            /*
             ExerciseTypeModel benchPress = new ExerciseTypeModel();
             benchPress.setName("Bench Press");
             benchPress.setCategory("Strength");
             benchPress.setTarget("Chest");
             Calendar rightNow = Calendar.getInstance();
             benchPress.setDate(rightNow.getTime());
+            */
+            ExerciseTypeModel benchPress = WorkoutModule.createNewExercise("Bench Press", "Strength", "Chest");
             testRealm.add(benchPress);
             RealmQuery<ExerciseTypeModel> testQuery = testRealm.query();
 

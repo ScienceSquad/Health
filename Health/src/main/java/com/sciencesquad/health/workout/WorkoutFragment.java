@@ -26,9 +26,9 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.RevealTransition;
-import com.sciencesquad.health.databinding.FragmentSleepBinding;
+import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
-import com.sciencesquad.health.sleep.SleepModule;
+
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,12 +55,12 @@ public class WorkoutFragment extends BaseFragment {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+   // private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+  //  private ViewPager mViewPager;
 
 	@Override
 	protected Configuration getConfiguration() {
@@ -88,38 +88,68 @@ public class WorkoutFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 		xml().setModule(Module.moduleForClass(WorkoutModule.class));
 
+
+
         //ExerciseTypeModel newExerciseA = new ExerciseTypeModel("Bench Press", "Strength", "Chest");
         //exerciseTypeModelList.add(newExerciseA);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), this);
+        // mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = xml().pager; //(ViewPager)view.findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        // mViewPager = xml().pager; //(ViewPager)view.findViewById(R.id.container);
+        //mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = xml().tabs; //(TabLayout)view.findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        //tabLayout.setupWithViewPager(mViewPager);
+        StaticPagerAdapter.install(xml().pager);
+        xml().tabs.setupWithViewPager(xml().pager);
+
         FloatingActionButton fab = xml().fab; //(FloatingActionButton)view.findViewById(R.id.workoutFab);
+
         fab.setOnClickListener(view1 -> {
             //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             //      .setAction("Action", null).show();
             int selectedTab = tabLayout.getSelectedTabPosition();
-            if(selectedTab == 0){
+            if (selectedTab == 0) {
                 // in exercise tab
                 showNewExerciseDialog();
-            }else if(selectedTab == 1){
+            } else if (selectedTab == 1) {
                 // in routine tab
                 showNewRoutineDialog();
             }
         });
+
+        xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
+
+        // Bind data to view
+        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        ArrayAdapter<String> exerciseTypeAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
+                android.R.layout.simple_list_item_1);
+
+        exerciseTypeAdapter.clear();                // first clear adapter
+        //exerciseTypeAdapter.addAll(mod.getAllExerciseTypeModels());        // add all exercises created by user to the adapter
+        for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
+            exerciseTypeAdapter.add(m.getName());
+        xml().exerciseModelListView.setAdapter(exerciseTypeAdapter);
+
+
+        //xml().exerciseModelListView.setOnItemClickListener(this, );
+        /*
+        xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {
+            ((WorkoutFragment) getTargetFragment()).showSetDialog(exerciseTypeAdapter.getItem(position));
+        }));
+        */
     }
+
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
+    /*
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         Fragment source = null;
 
@@ -166,7 +196,7 @@ public class WorkoutFragment extends BaseFragment {
             return null;
         }
     }
-
+    */
     /**
      * @showNewExerciseDialog
      * This method launches a DialogFragment that allows
@@ -231,6 +261,7 @@ public class WorkoutFragment extends BaseFragment {
                   .setAction("Action", null).show();
         }else{
 
+            /*
             ExerciseTypeModel newExercise = new ExerciseTypeModel();
             newExercise.setName(name);
             newExercise.setCategory(category);
@@ -241,14 +272,26 @@ public class WorkoutFragment extends BaseFragment {
             Calendar rightNow = Calendar.getInstance();
             newExercise.setDate(rightNow.getTime());
             exerciseTargets.add(target);
+            */
+
+            ExerciseTypeModel newExercise = WorkoutModule.createNewExercise(name, category, target);
+            //Add to Realm
             exerciseTypeModelList.add(newExercise);
+            WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+            mod.addExerciseTypeModel(newExercise);
+
+
 			// FIXME: THIS ID DOES NOT EXIST, CALL WILL RETURN NULL
-            ListView exerciseListView = (ListView)getView().findViewById(R.id.exercise_model_list_view);
-            ArrayAdapter<ExerciseTypeModel> exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),
+
+            //ListView exerciseListView = (ListView)getView().findViewById(R.id.exercise_model_list_view);
+
+            ArrayAdapter<String> exerciseTypeModelAdapter = new ArrayAdapter<>(getContext(),
                     android.R.layout.simple_list_item_1);
-            exerciseTypeAdapter.clear();
-            exerciseTypeAdapter.addAll(exerciseTypeModelList);
-            exerciseListView.setAdapter(exerciseTypeAdapter);
+            exerciseTypeModelAdapter.clear();
+            //exerciseTypeModelAdapter.addAll(mod.getAllExerciseTypeModels());
+            for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
+                exerciseTypeModelAdapter.add(m.getName());
+            xml().exerciseModelListView.setAdapter(exerciseTypeModelAdapter);
         }
     }
 
