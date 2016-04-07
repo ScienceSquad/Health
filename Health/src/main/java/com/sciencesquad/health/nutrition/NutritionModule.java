@@ -129,12 +129,12 @@ public class NutritionModule extends Module {
     }
 
     public RealmResults<NutritionModel> queryNutrition(){
-        return nutritionRealm.query().findAll();
+        return nutritionRealm.query(NutritionModel.class).findAll();
     }
 
     public ArrayList<String> createNutritionLog(){
         ArrayList<String> log = new ArrayList<>();
-        RealmResults<NutritionModel> results = nutritionRealm.query().findAll();
+        RealmResults<NutritionModel> results = nutritionRealm.query(NutritionModel.class).findAll();
         for (int i = 0; i < results.size(); i++){
             NutritionModel model = results.get(i);
             String logEntry = "Calories: " + model.getCalorieIntake() + ", " +
@@ -203,7 +203,7 @@ public class NutritionModule extends Module {
     }
 
     public boolean checkCheatDays() {
-        RealmResults<NutritionModel> results = nutritionRealm.query().findAllSorted("dateString");
+        RealmResults<NutritionModel> results = nutritionRealm.query(NutritionModel.class).findAllSorted("dateString");
         NutritionModel mostRecentModel = results.last();
 
         String testString = "Date: " + LocalDateTime.now().getYear() + "-"
