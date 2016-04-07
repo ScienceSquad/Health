@@ -2,19 +2,12 @@ package com.sciencesquad.health.workout;
 
 import android.support.annotation.NonNull;
 
-import com.sciencesquad.health.workout.ExerciseSetModel;
-import com.sciencesquad.health.workout.ExerciseTypeModel;
-
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 
 public class RoutineModel extends RealmObject {
@@ -24,7 +17,8 @@ public class RoutineModel extends RealmObject {
     /**
      * Calendar date where this model was created.
      */
-    @Required private Date date;
+    @Required
+    private Date date;
 
     //
     // GENERATED METHODS FOLLOW

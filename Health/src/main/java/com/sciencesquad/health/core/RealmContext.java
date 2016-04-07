@@ -6,6 +6,8 @@ import android.app.backup.FileBackupHelper;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
 import com.sciencesquad.health.core.EventBus.Entry;
 import io.realm.*;
 import java8.util.function.Consumer;
@@ -100,6 +102,9 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.copyToRealm(object);
 			realm.commitTransaction();
 		} catch (Exception e) {
+			realm.cancelTransaction();
+			Log.e(TAG, "Failed to add a model!");
+			Log.e(TAG, e.getMessage());
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_ADD_SINGLE_OBJECT));
 			return false;
@@ -117,6 +122,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			this.realm.copyToRealm(collection);
 			realm.commitTransaction();
 		} catch (Exception e) {
+			realm.cancelTransaction();
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_ADD_COLLECTION_OBJECT));
 			return false;
@@ -227,6 +233,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.commitTransaction();
 			return true;
 		} catch (Exception e) {
+			realm.cancelTransaction();
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_REMOVE_SINGLE_OBJECT));
 			return false;
@@ -253,6 +260,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.commitTransaction();
 			return true;
 		} catch (Exception e) {
+			realm.cancelTransaction();
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_REMOVE_COLLECTION_OBJECT));
 			return false;
@@ -306,6 +314,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.clear(this.realmClass);
 			realm.commitTransaction();
 		} catch (Exception e) {
+			realm.cancelTransaction();
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_CLEAR_REALM));
 		}
@@ -373,6 +382,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			handler.accept(items().get(index));
 			realm.commitTransaction();
 		} catch (Exception e) {
+			realm.cancelTransaction();
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_UPDATE_REALM_AT_INDEX));
 		}

@@ -7,8 +7,13 @@ import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.BaseApp;
 
+import org.threeten.bp.DateTimeUtils;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneOffset;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -37,6 +42,11 @@ public class WorkoutModule extends Module {
     public WorkoutModule()  {
         this.workoutRealm = new RealmContext<>();
         this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
+
+        this.workoutRealm.getRealm().beginTransaction();
+        this.workoutRealm.getRealm().deleteAll();
+        this.workoutRealm.getRealm().commitTransaction();
+        this.workoutRealm.getRealm().refresh();
 
         addRecommendedWorkouts();
 
@@ -80,7 +90,7 @@ public class WorkoutModule extends Module {
         ExerciseTypeModel overHeadPress = createNewExercise("Overhead Press", "Strength", "Shoulders");
         ExerciseTypeModel deadLift = createNewExercise("Deadlift", "Strength", "Core");
 
-        this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
+        //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
         RealmList<ExerciseTypeModel> sLAExercises = new RealmList<>();
         sLAExercises.add(squat);
         sLAExercises.add(benchPress);
@@ -104,6 +114,7 @@ public class WorkoutModule extends Module {
             newName.setName(m.getName());
             exerciseNames.add(newName);
         }
+
         RoutineModel strongLiftsA = createNewRoutine("StrongLifts 5x5: A", exerciseNames);
         addRoutineModel(strongLiftsA);
 
@@ -113,8 +124,10 @@ public class WorkoutModule extends Module {
             newName.setName(m.getName());
             exerciseNamesB.add(newName);
         }
+
         RoutineModel strongLiftsB = createNewRoutine("StrongLifts 5x5: B", exerciseNamesB);
         addRoutineModel(strongLiftsB);
+
     }
 
 
@@ -134,7 +147,6 @@ public class WorkoutModule extends Module {
      * @return true on success, false on failure (duplicate)
      */
     public boolean addExerciseTypeModel(ExerciseTypeModel newExercise){
-        this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
         if(!isDuplicateExerciseType(newExercise)){
             try {
                 workoutRealm.add(newExercise);
@@ -179,8 +191,9 @@ public class WorkoutModule extends Module {
 
     public static RoutineModel createNewRoutine(String name, RealmList<RealmString> exerciseList){
         RoutineModel newRoutine = new RoutineModel();
-        Calendar rightNow = Calendar.getInstance();
-        newRoutine.setDate(rightNow.getTime());
+        //Calendar rightNow = Calendar.getInstance();
+        Date d = Calendar.getInstance().getTime();
+        newRoutine.setDate(d);
         newRoutine.setName(name);
 
         newRoutine.setExercises(exerciseList);
@@ -230,9 +243,20 @@ public class WorkoutModule extends Module {
     public boolean addRoutineModel(RoutineModel newRoutine){
         if(!isDuplicateRoutineType(newRoutine)){
             try {
-                workoutRealm.add(newRoutine);
+                workoutRealm.getRealm().beginTransaction();
+                workoutRealm.getRealm().copyToRealm(newRoutine);
+                workoutRealm.getRealm().commitTransaction();
+                //workoutRealm.add(newRoutine);
             } catch (Exception e){
+                if (e.getMessage().contains("Trying to set non-nullable field date to null.")){
+                    Log.w(TAG, "Continuing to add routine anyway");
+                    workoutRealm.getRealm().commitTransaction();
+                    return true;
+                }
+                else
+                    workoutRealm.getRealm().cancelTransaction();
                 Log.e(TAG, "Error adding RoutineModel to Realm");
+                Log.e(TAG, e.getMessage());
                 return false;
             }
             return true;
@@ -242,7 +266,8 @@ public class WorkoutModule extends Module {
 
     }
 
-
-
+    public RealmContext<ExerciseTypeModel> getWorkoutRealm(){
+        return this.workoutRealm;
+    }
 
 }
