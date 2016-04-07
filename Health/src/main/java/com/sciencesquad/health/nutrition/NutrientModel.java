@@ -10,87 +10,87 @@ import io.realm.RealmObject;
 public class NutrientModel extends RealmObject {
 
     // in grams
-    private int totalFat;
-    private int saturatedFats;
-    private int transFats;
-    private int totalCarbs;
-    private int dietaryFiber;
-    private int sugars;
-    private int protein;
+    private float totalFat;
+    private float saturatedFats;
+    private float transFats;
+    private float totalCarbs;
+    private float dietaryFiber;
+    private float sugars;
+    private float protein;
 
     // in milligrams
-    private int cholesterol;
-    private int sodium;
+    private float cholesterol;
+    private float sodium;
 
-    public int getTotalFat() {
+    public float getTotalFat() {
         return totalFat;
     }
 
-    public void setTotalFat(int totalFat) {
+    public void setTotalFat(float totalFat) {
         this.totalFat = totalFat;
     }
 
-    public int getSaturatedFats() {
+    public float getSaturatedFats() {
         return saturatedFats;
     }
 
-    public void setSaturatedFats(int saturatedFats) {
+    public void setSaturatedFats(float saturatedFats) {
         this.saturatedFats = saturatedFats;
     }
 
-    public int getTransFats() {
+    public float getTransFats() {
         return transFats;
     }
 
-    public void setTransFats(int transFats) {
+    public void setTransFats(float transFats) {
         this.transFats = transFats;
     }
 
-    public int getTotalCarbs() {
+    public float getTotalCarbs() {
         return totalCarbs;
     }
 
-    public void setTotalCarbs(int totalCarbs) {
+    public void setTotalCarbs(float totalCarbs) {
         this.totalCarbs = totalCarbs;
     }
 
-    public int getDietaryFiber() {
+    public float getDietaryFiber() {
         return dietaryFiber;
     }
 
-    public void setDietaryFiber(int dietaryFiber) {
+    public void setDietaryFiber(float dietaryFiber) {
         this.dietaryFiber = dietaryFiber;
     }
 
-    public int getSugars() {
+    public float getSugars() {
         return sugars;
     }
 
-    public void setSugars(int sugars) {
+    public void setSugars(float sugars) {
         this.sugars = sugars;
     }
 
-    public int getProtein() {
+    public float getProtein() {
         return protein;
     }
 
-    public void setProtein(int protein) {
+    public void setProtein(float protein) {
         this.protein = protein;
     }
 
-    public int getCholesterol() {
+    public float getCholesterol() {
         return cholesterol;
     }
 
-    public void setCholesterol(int cholesterol) {
+    public void setCholesterol(float cholesterol) {
         this.cholesterol = cholesterol;
     }
 
-    public int getSodium() {
+    public float getSodium() {
         return sodium;
     }
 
-    public void setSodium(int sodium) {
+    public void setSodium(float sodium) {
         this.sodium = sodium;
     }
 }
