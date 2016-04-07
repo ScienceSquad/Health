@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -64,8 +65,24 @@ public class RunFragment extends Fragment implements
 	LatLng lastLoc = null;
 
 	boolean firstLoc = true; // used to ensure that only one starting marker is created.
+    boolean isRunStarted = false; // only starts on button press.
 	Marker currentPos = null; // used to display current position
 	Circle accuracyCircle = null;
+    float currentAcc;
+
+    MarkerOptions currentPosOptions = new MarkerOptions()
+            .position(new LatLng(40,40))
+            .title("Current Position");
+
+    CircleOptions accuracyCircleOptions = new CircleOptions()
+            .center(new LatLng(40,40))
+            .radius((double) currentAcc)
+            .strokeColor(0xaf00bfff)
+            .fillColor(0x3f00bfff);
+
+    PolylineOptions polylineoptions = new PolylineOptions()
+            .width(8)
+            .color(Color.BLUE);
 
     //int split = 800; // split distance in meters (NORMAL SPLIT)
     int split = 5; // TEST SPLIT
@@ -74,7 +91,21 @@ public class RunFragment extends Fragment implements
     private TTSManager ttsManager;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_run, container, false);
+        View view = inflater.inflate(R.layout.fragment_run, container, false);
+
+        final Button buttonStartRun = (Button) view.findViewById(R.id.buttonStartRun);
+
+        buttonStartRun.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                buttonStartRunClicked(v);
+            }
+        });
+        return view;
+    }
+
+    public void buttonStartRunClicked(View view) {
+        isRunStarted = true;
+        startRun(lastLoc);
     }
 
     @Override
@@ -135,45 +166,30 @@ public class RunFragment extends Fragment implements
 
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
+        currentAcc = location.getAccuracy();
 
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        float minDistResolution = location.getAccuracy()/2; //NORMAL RESOLUTION
-        //float minDistResolution = location.getAccuracy()/20; //TEST RESOLUTION
+        float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
+        //float minDistResolution = currentAcc/20; //TEST RESOLUTION
 
 
         if (lastLoc==null) {
             lastLoc = latLng;
-        }
-
-        // Creates a marker at the starting point.
-
-        if (firstLoc) {
-            newStartingMarker(mMap, latLng);
-
-            MarkerOptions currentPosOptions = new MarkerOptions()
-                    .position(latLng)
-                    .title("Current Position");
-
-            CircleOptions accuracyCircleOptions = new CircleOptions()
-                    .center(latLng)
-                    .radius((double) location.getAccuracy())
-                    .strokeColor(0xaf00bfff)
-                    .fillColor(0x3f00bfff);
             currentPos = mMap.addMarker(currentPosOptions);
             accuracyCircle = mMap.addCircle(accuracyCircleOptions);
-
-            pointsLatLng.add(latLng);
-            timeStamps.add(currentTimeMillis());
-
-            // TTS
-            String textToSpeak = "Activity Started. I will let you know how you're doing every half mile. Enjoy your run!";
-            this.ttsManager.initQueue(textToSpeak);
-
-            firstLoc = false;
         }
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+
+
+        accuracyCircle.setCenter(latLng);
+        accuracyCircle.setRadius((double) currentAcc);
+
+        if (!isRunStarted) return; // stops method if button has not been pressed.
 
         if (computeDistanceBetween(lastLoc,latLng)<minDistResolution)
             return; //stops running the method if distance is inconsequential.
@@ -207,18 +223,27 @@ public class RunFragment extends Fragment implements
         }
 
         currentPos.setPosition(latLng);
-        accuracyCircle.setCenter(latLng);
-        accuracyCircle.setRadius((double)location.getAccuracy());
-
-
-        PolylineOptions polylineoptions = new PolylineOptions()
-                .width(8)
-                .color(Color.BLUE);
 
         mMap.addPolyline((polylineoptions)
                 .addAll(pointsLatLng));
+    }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+    public void startRun(LatLng latLng) {
+        if (firstLoc && isRunStarted) {
+            newStartingMarker(mMap, latLng);
+
+
+
+
+            pointsLatLng.add(latLng);
+            timeStamps.add(currentTimeMillis());
+
+            // TTS
+            String textToSpeak = "Activity Started. I will let you know how you're doing every half mile. Enjoy your run!";
+            this.ttsManager.initQueue(textToSpeak);
+
+            firstLoc = false;
+        }
     }
 
     public static void newStartingMarker(GoogleMap mMap, LatLng latLng) {

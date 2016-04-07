@@ -1,38 +1,22 @@
 package com.sciencesquad.health.sleep;
 
-import android.app.Fragment;
-import android.content.Context;
-import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.transition.Visibility;
 import android.util.Log;
-import android.view.*;
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
+import android.view.View;
+
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.BottomBarBadge;
-import com.roughike.bottombar.OnMenuTabClickListener;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
-import com.sciencesquad.health.core.util.X;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
-import rx.Subscription;
 
 // TODO: Preference for roommate/partner sleeping in same bed, other room, none.
 public class SleepFragment extends BaseFragment {
@@ -40,7 +24,7 @@ public class SleepFragment extends BaseFragment {
 
 	@Override
 	protected Configuration getConfiguration() {
-		String _ = SleepModule.TAG; // instantiates the Module...
+		String notUnderscore = SleepModule.TAG; // instantiates the Module...
 		return new Configuration(
 				TAG, "Sleep", R.drawable.ic_menu_sleep,
 				R.style.AppTheme_Sleep, R.layout.fragment_sleep
