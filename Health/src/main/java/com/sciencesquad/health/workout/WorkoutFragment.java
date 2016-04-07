@@ -312,7 +312,8 @@ public class WorkoutFragment extends BaseFragment {
             Snackbar.make(getView(), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
-            RoutineModel newRoutine = new RoutineModel(routineName);
+            RoutineModel newRoutine = new RoutineModel();
+            newRoutine.setName(routineName);
             routineModelList.add(newRoutine);
 			// FIXME: THIS ID DOES NOT EXIST, CALL WILL RETURN NULL
             ListView routineListView = (ListView)getView().findViewById(R.id.routine_model_list_view);

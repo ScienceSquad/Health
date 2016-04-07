@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
 
@@ -17,8 +18,9 @@ import java.util.Date;
 import java.util.List;
 
 public class ExerciseTypeModel extends RealmObject{
-
+    @PrimaryKey
     private String name;
+
     private String category;    // Strength or Cardio
     private String target;          // Part of body
     private Double maxDistance;

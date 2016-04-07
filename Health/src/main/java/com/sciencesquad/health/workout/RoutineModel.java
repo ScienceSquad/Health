@@ -8,6 +8,7 @@ import com.sciencesquad.health.workout.ExerciseTypeModel;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
 import java.util.ArrayList;
@@ -16,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class RoutineModel{
-
+public class RoutineModel extends RealmObject {
+    @PrimaryKey
     private String name;
-    private List<ExerciseModel> exercises;
+    private RealmList<RealmString> exercises;
     /**
      * Calendar date where this model was created.
      */
@@ -30,7 +31,7 @@ public class RoutineModel{
     // DO NOT MODIFY -- REALM ONLY
     //
 
-    public List<ExerciseModel> getExercises() {
+    public RealmList<RealmString> getExercises() {
         return exercises;
     }
 
@@ -38,7 +39,7 @@ public class RoutineModel{
         return name;
     }
 
-    public void setExercises(List<ExerciseModel> exercises){
+    public void setExercises(RealmList<RealmString> exercises){
         this.exercises = exercises;
     }
 
@@ -60,9 +61,14 @@ public class RoutineModel{
         return getName();
     }
 
+    /*
     public RoutineModel(String name){
         this.name = name;
         exercises = new ArrayList<ExerciseModel>();
     }
 
+    public RoutineModel(){
+
+    }
+    */
 }
