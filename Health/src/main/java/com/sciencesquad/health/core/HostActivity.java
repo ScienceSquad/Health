@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.nutrition.DatabaseFragment;
 import com.sciencesquad.health.run.RunFragment;
 import com.sciencesquad.health.core.alarm.AlarmFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
@@ -83,7 +84,11 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 					.addToBackStack(NutritionFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_manage) {
-			// NOTHING HERE
+			this.getFragmentManager()
+					.beginTransaction()
+					.replace(R.id.content, new DatabaseFragment(), DatabaseFragment.TAG)
+					.addToBackStack(DatabaseFragment.TAG)
+					.commit();
 		} else if (id == R.id.nav_share) {
 			// NOTHING HERE
 		} else if (id == R.id.nav_send) {

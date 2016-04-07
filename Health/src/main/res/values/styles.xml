@@ -146,4 +146,10 @@
         <item name="colorPrimaryDark">@color/blue_grey_900</item>
     </style>
 
+    <style name="AppTheme.Nutrition" parent="AppTheme">
+        <item name="colorAccent">@color/light_green_700</item>
+        <item name="colorPrimary">@color/green_700</item>
+        <item name="colorPrimaryDark">@color/green_900</item>
+    </style>
+
 </resources>
