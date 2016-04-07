@@ -13,13 +13,26 @@
         android:transitionGroup="true"
         android:fitsSystemWindows="true">
 
-        <com.sciencesquad.health.core.ui.ClockView
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_centerHorizontal="true"
-            app:backgroundColor="#FFF"
-            app:textColor="#000"
-            app:textHeight="50dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.sciencesquad.health.core.ui.ClockView
+                android:id="@+id/stopwatch"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_centerHorizontal="true"
+                app:backgroundColor="#FFF"
+                app:textColor="#000"
+                app:textHeight="50dp" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/alarm_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/stopwatch">
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
+
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_alarms"
