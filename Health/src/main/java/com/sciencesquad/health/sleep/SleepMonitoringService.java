@@ -16,9 +16,11 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.WakeLockManager;
 import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.Point;
+import com.sciencesquad.health.core.util.X;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -136,6 +138,29 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 		}
 	};
 
+	/**
+	 * Convenience method to start the SoundService.
+	 */
+	public static void startMonitoringService() {
+		X.of(BaseApp.app()).let(app -> {
+			app.startService(new Intent(app, SleepMonitoringService.class));
+		}).or(() -> {
+			Log.d(TAG, "SoundService could not be started.");
+		});
+	}
+
+	/**
+	 * Convenience method to stop the SoundService.
+	 * Note that this cannot be invoked by the user directly.
+	 */
+	public static void stopMonitoringService() {
+		X.of(BaseApp.app()).let(app -> {
+			app.stopService(new Intent(app, SleepMonitoringService.class));
+		}).or(() -> {
+			Log.d(TAG, "SoundService could not be stopped.");
+		});
+	}
+
 	private Intent addExtrasToSaveSleepIntent(final Intent saveIntent) {
 		saveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
 				| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
@@ -157,6 +182,20 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 	}
 
 	private void createSaveSleepNotification() {
+		Intent intent = new Intent(this, SleepMonitoringService.class);
+		intent.setAction("STOP");
+		PendingIntent pending = PendingIntent.getService(this, 0, intent, 0);
+		Notification n = new Notification.Builder(this)
+				.setSmallIcon(R.drawable.ic_menu_manage)
+				.setContentTitle(getText(R.string.notification_sleep_title))
+				.setContentText(getText(R.string.notification_sleep_text))
+				.setContentIntent(pending)
+				.setDeleteIntent(pending)
+				.setAutoCancel(true)
+				.setOngoing(true)
+				.build();
+		return n;
+
 		final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		final int icon = R.drawable.ic_menu_manage;
@@ -183,34 +222,19 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 	}
 
 	private Notification createServiceNotification() {
-		final int icon = R.drawable.ic_menu_manage;
-		final CharSequence tickerText = getText(R.string.notification_sleep_ticker);
-		final long when = System.currentTimeMillis();
-
-		final Notification notification = new Notification(icon, tickerText, when);
-
-		notification.flags = Notification.FLAG_ONGOING_EVENT;
-
-		final CharSequence contentTitle = getText(R.string.notification_sleep_title);
-		final CharSequence contentText = getText(R.string.notification_sleep_text);
-		Intent notificationIntent = null;
-
-		// prevents the user from entering SleepActivity from the notification
-		// when in test mode FIXME
-		/*if (this.testModeRate == Integer.MIN_VALUE) {
-			notificationIntent = new Intent(this, SleepActivity.class);
-		} else {
-			notificationIntent =  new Intent(this, CalibrationWizardActivity.class);
-		}*/
-		//notificationIntent
-		//		.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
-		final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
-				0);
-
-		//notification.setLatestEventInfo(this, contentTitle, contentText, contentIntent);
-
-		return notification;
+		Intent intent = new Intent(this, SleepMonitoringService.class);
+		intent.setAction("STOP");
+		PendingIntent pending = PendingIntent.getService(this, 0, intent, 0);
+		Notification n = new Notification.Builder(this)
+				.setSmallIcon(R.drawable.ic_menu_manage)
+				.setContentTitle(getText(R.string.notification_sleep_title))
+				.setContentText(getText(R.string.notification_sleep_text))
+				.setContentIntent(pending)
+				.setDeleteIntent(pending)
+				.setAutoCancel(true)
+				.setOngoing(true)
+				.build();
+		return n;
 	}
 
 	@Override public void onAccuracyChanged(final Sensor sensor, final int accuracy) {}
@@ -270,8 +294,8 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 									public void run() {
 										final long currentTime = System.currentTimeMillis();
 
-										final double y = java.lang.Math
-												.min(MAX_ALARM_SENSITIVITY, maxNetForce);
+										final double x = currentTime;
+										final double y = java.lang.Math.min(MAX_ALARM_SENSITIVITY, maxNetForce);
 
 										final Point sleepPoint = new Point((double) currentTime, y);
 										if (sleepData.size() >= MAX_POINTS_IN_A_GRAPH) {
@@ -298,7 +322,8 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 
 										//TODO: ensure that this isn't needed anymore.
 										//i.putExtra(SleepStartReceiver.EXTRA_ALARM, alarmTriggerSensitivity);
-										sendBroadcast(i);
+										//sendBroadcast(i);
+										Log.i(TAG, "Update " + x + " | " + y);
 
 										maxNetForce = 0;
 
@@ -338,6 +363,7 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {
 		if (intent == null || !mRunning.compareAndSet(false, true))
 			return START_STICKY;
+		Log.i(TAG, "Started monitoring service...");
 
 		// Configure the monitoring service.
 		int testModeRate = intent.getIntExtra("testModeRate", Integer.MIN_VALUE);
@@ -359,9 +385,13 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 				: PowerManager.PARTIAL_WAKE_LOCK;
 		WakeLockManager.acquire(this, "sleepMonitoring", wakeLockType);
 
+		Log.i(TAG, "Wakelock acquired!");
+
 		// Register SensorListener
 		final SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), sensorDelay);
+
+		Log.i(TAG, "Sensors established.");
 
 		// Prepare for start in the background.
 		Dispatcher.UTILITY.run(() -> {
@@ -376,6 +406,8 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 					.edit()
 					.putBoolean(SERVICE_IS_RUNNING, true)
 					.apply();
+
+			Log.i(TAG, "Configuration done!");
 		});
 		return START_STICKY;
 	}

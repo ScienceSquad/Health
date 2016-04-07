@@ -85,6 +85,11 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
 
+        <!-- For SleepModule to monitor data in the background. -->
+        <service
+                android:name=".sleep.SleepMonitoringService"
+                android:exported="false"/>
+
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"

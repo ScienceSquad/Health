@@ -1,12 +1,12 @@
 package com.sciencesquad.health.sleep;
 
+import android.util.Log;
 import android.util.Pair;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.nutrition.NutritionModel;
 
 /**
  * Sleep Module
@@ -20,6 +20,11 @@ public class SleepModule extends Module {
 	public void init() {
 		this.dataContext = new RealmContext<>();
 		this.dataContext.init(BaseApp.app(), SleepDataModel.class, "sleep.realm");
+
+		Log.i(TAG, "SleepModule initializing...");
+
+		SleepMonitoringService.startMonitoringService();
+		//BaseApp.app().sendBroadcast(new Intent(BaseApp.app(), SleepStartReceiver.class));
 	}
 
 	@Override

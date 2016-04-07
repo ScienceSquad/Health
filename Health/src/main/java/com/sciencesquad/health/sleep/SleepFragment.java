@@ -17,7 +17,6 @@ import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
-import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.AnimationUtils;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
@@ -52,7 +51,9 @@ public class SleepFragment extends BaseFragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		xml().setModule(Module.moduleForClass(SleepModule.class));
+		SleepModule m = new SleepModule();
+		m.init();
+		xml().setModule(m); // FIXME
 
 		// Grab a white-tinted sleep icon.
 		Drawable zzz = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
