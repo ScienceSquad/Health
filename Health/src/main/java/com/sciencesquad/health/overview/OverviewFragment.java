@@ -29,14 +29,8 @@ public class OverviewFragment extends BaseFragment {
         String _ = OverviewModule.TAG; // instantiates the Module...
         return new BaseFragment.Configuration(
                 TAG, "Overview", R.drawable.ic_menu_overview,
-                R.style.AppTheme_Sleep, R.layout.fragment_overview
+                R.style.AppTheme_Overview, R.layout.fragment_overview
         );
-    }
-
-    // This MUST change at some point. Or go away.
-    @Override @SuppressWarnings("unchecked")
-    protected FragmentSleepBinding xml() {
-        return super.xml();
     }
 
     @Override
