@@ -357,6 +357,8 @@ public class NutrientQuery {
 			e.printStackTrace();
 		} catch (SAXException e) {
 			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		return xmlObject;
 	}

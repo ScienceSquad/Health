@@ -1,5 +1,7 @@
 package com.sciencesquad.health.util;
 
+import android.os.AsyncTask;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -11,6 +13,7 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -81,11 +84,31 @@ public class DataGetter {
 	}
 
 	public static JSONObject getJSON(String urlString) throws JSONException, MalformedURLException, IOException {
-		return parseJSON(getString(urlString));
+		DataGetterTask task = new DataGetterTask();
+		task.execute(urlString);
+		String resultString = "";
+		try {
+			resultString = task.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return parseJSON(resultString);
 	}
 
-	public static Document getXML(String urlString) throws IOException, ParserConfigurationException, SAXException {
-		return parseXML(getString(urlString));
+	public static Document getXML(String urlString) throws IOException, ParserConfigurationException, SAXException, JSONException {
+		DataGetterTask task = new DataGetterTask();
+		task.execute(urlString);
+		String resultString = "";
+		try {
+			resultString = task.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return parseXML(resultString);
 	}
 
 	public static String addURLParameter(String url, String key, String value) {
