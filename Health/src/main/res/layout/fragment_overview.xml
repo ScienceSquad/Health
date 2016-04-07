@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".overview.OverviewFragment">
+    <data>
+        <variable name="fragment" type="com.sciencesquad.health.overview.OverviewFragment"/>
+        <variable name="module" type="com.sciencesquad.health.overview.OverviewModule"/>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionGroup="true"
+        android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -39,4 +48,5 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_plus" />
 
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>
