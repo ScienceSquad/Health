@@ -76,6 +76,17 @@
                     android:layout_alignParentEnd="true" />
 
                 <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_zxing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:src="@drawable/ic_add_white"
+                    app:fabSize="mini"
+                    app:backgroundTint="@color/amber_900"
+                    android:layout_above="@+id/fab_submit"
+                    android:layout_alignStart="@+id/fab_submit" />
+
+                <android.support.design.widget.FloatingActionButton
                     android:id="@+id/fab_submit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

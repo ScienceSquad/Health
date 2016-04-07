@@ -1,5 +1,6 @@
 package com.sciencesquad.health.nutrition;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.databinding.FragmentNutritionBinding;
@@ -39,6 +42,7 @@ public class NutritionFragment extends BaseFragment {
     private FloatingActionButton fab2; // diet
     private FloatingActionButton fab3; // nutrient
     private FloatingActionButton fab4; // submit
+    private FloatingActionButton fab5; // ZXing.
 
     @Override
     protected Configuration getConfiguration() {
@@ -65,13 +69,15 @@ public class NutritionFragment extends BaseFragment {
         nutritionModule.generateData();
 
         // create FABs.
-        fab = (FloatingActionButton) view.findViewById(R.id.fab_nutrition);
-        fab2 = (FloatingActionButton) view.findViewById(R.id.fab_diet);
+        fab = xml().fabNutrition;
+        fab2 = xml().fabDiet;
         fab2.hide();
-        fab3 = (FloatingActionButton) view.findViewById(R.id.fab_nutrient);
+        fab3 = xml().fabNutrient;
         fab3.hide();
-        fab4 = (FloatingActionButton) view.findViewById(R.id.fab_submit);
+        fab4 = xml().fabSubmit;
         fab4.hide();
+        fab5 = xml().fabZxing;
+        fab5.hide();
 
         // set FABs listeners.
         fab.setOnClickListener(v -> {
@@ -79,6 +85,7 @@ public class NutritionFragment extends BaseFragment {
             fab2.show();
             fab3.show();
             fab4.show();
+            fab5.show();
         });
 
         fab2.setOnClickListener(v -> {
@@ -86,6 +93,7 @@ public class NutritionFragment extends BaseFragment {
             fab2.hide();
             fab3.hide();
             fab4.hide();
+            fab5.hide();
             createDietDialog();
         });
 
@@ -94,6 +102,7 @@ public class NutritionFragment extends BaseFragment {
             fab2.hide();
             fab3.hide();
             fab4.hide();
+            fab5.hide();
             createCalorieDialog();
         });
 
@@ -102,7 +111,17 @@ public class NutritionFragment extends BaseFragment {
             fab2.hide();
             fab3.hide();
             fab4.hide();
+            fab5.hide();
             saveNutritionProgress(v);
+        });
+
+        fab5.setOnClickListener(v -> {
+            fab.show();
+            fab2.hide();
+            fab3.hide();
+            fab4.hide();
+            fab5.hide();
+            useZxing();
         });
 
         nutritionLog = nutritionModule.createNutritionLog();
@@ -119,6 +138,26 @@ public class NutritionFragment extends BaseFragment {
         // getting the data to display.
         nutritionChart.setData(createLineData());
         nutritionChart.invalidate();
+
+    }
+
+    private void useZxing() {
+        IntentIntegrator.forFragment(this).initiateScan();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        IntentResult result= IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null){
+            if (result.getContents() != null){
+                Snackbar snackbar = Snackbar.make(xml().getRoot(),
+                        "Scanned: " + result.getContents(), Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+        }
+        else {
+            // shit broke.
+        }
 
     }
 
