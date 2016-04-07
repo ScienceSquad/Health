@@ -26,7 +26,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	/**
 	 * The private app-wide instance of the EventBus.
 	 */
-	private final EventBus _eventBus = new EventBus();
+	private EventBus _eventBus;
 
 	/**
 	 * Returns the global shared BaseApp.
@@ -69,6 +69,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 		AndroidThreeTen.init(this);
 
 		_application = this;
+		_eventBus = new EventBus(this);
 		this.eventBus().publish("AppCreateEvent", this);
 	}
 
