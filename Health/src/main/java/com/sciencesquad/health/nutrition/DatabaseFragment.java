@@ -1,7 +1,9 @@
 package com.sciencesquad.health.nutrition;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -73,8 +75,11 @@ public class DatabaseFragment extends BaseFragment {
 				title.setText(itemContent.title);
 				content.setText(itemContent.content);
 				if (URLUtil.isValidUrl(itemContent.url)) {
-					url.setText(Html.fromHtml("<a href=\"" + itemContent.url + "\">View Recipe</a>"));
-					url.setMovementMethod(LinkMovementMethod.getInstance());
+					url.setVisibility(View.GONE);
+					mLinearLayout.setOnClickListener((view) -> {
+						Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(itemContent.url));
+						startActivity(browserIntent);
+					});
 				}
 				else {
 					url.setText(itemContent.url);

@@ -8,7 +8,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorPrimaryDark"
+        android:background="?attr/colorAccent"
         android:elevation="2dp"
         android:layout_margin="8dp"
         android:padding="8dp">
@@ -34,8 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textColorLink="?attr/colorAccent"
-            android:linksClickable="true"
             android:text="URL"/>
     </LinearLayout>
 
