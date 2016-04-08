@@ -15,7 +15,10 @@ import android.widget.ListView;
 import com.sciencesquad.health.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
+import io.realm.RealmList;
 
 /**
  * SetDialogFragment
@@ -25,7 +28,7 @@ import java.util.List;
 public class SetDialogFragment extends DialogFragment {
 
 	public String titleThing;
-	public List<ExerciseSetModel> set = new ArrayList<>();
+	public RealmList<ExerciseSetModel> set = new RealmList<>();
 
 	public static SetDialogFragment newInstance(int title) {
 		SetDialogFragment frag = new SetDialogFragment();
@@ -60,17 +63,27 @@ public class SetDialogFragment extends DialogFragment {
 		button.setOnClickListener(butt -> {
 			int numReps = new Integer(numRepsField.getText().toString());
 			int weight = new Integer(weightField.getText().toString());
-
-			ExerciseSetModel newSet = new ExerciseSetModel(numReps, weight);
+			ExerciseSetModel newSet = new ExerciseSetModel();
+			newSet.setReps(numReps);
+			newSet.setWeight(weight);
+			newSet.setDate(Calendar.getInstance().getTime());
 			set.add(newSet);        // add set to the list of sets
 
 			completedSetAdapter.clear();
 			completedSetAdapter.addAll(set);        //repopulate the adapter
 		});
 
+
+
 		builder.setPositiveButton("Save",
 				(dialog, whichButton) -> {
-					// TODO: create list of sets and store them somewhere useful
+					// TODO: create list of sets and store them somewhere
+                    CompletedExerciseModel completedExercise = new CompletedExerciseModel();
+                    completedExercise.setExerciseName(title);
+                    completedExercise.setSets(set);
+                    Calendar rightNow = Calendar.getInstance();
+                    completedExercise.setDate(rightNow.getTime());
+                    ((WorkoutFragment)getTargetFragment()).saveCompletedExercise(completedExercise);
 				}
 		);
 		builder.setNegativeButton("Cancel",

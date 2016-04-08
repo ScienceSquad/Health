@@ -95,8 +95,9 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	/**
 	 * @see Collection
 	 */
-	@Override
-	public boolean add(RealmObject object) {
+
+    @Override
+    public boolean add(RealmObject object) {
 		try {
 			realm.beginTransaction();
 			realm.copyToRealm(object);
@@ -359,7 +360,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 * which is pertinent to that query.
 	 */
 	@Nullable
-	public RealmQuery query(Class realmClass) {
+    public RealmQuery query(Class realmClass) {
+
 		try {
 			return realm.where(realmClass);
 		} catch (Exception e) {
