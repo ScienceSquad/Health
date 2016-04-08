@@ -7,8 +7,10 @@ import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.util.Dispatcher;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Sleep Module
@@ -24,7 +26,11 @@ public class SleepModule extends Module {
 		this.dataContext = new RealmContext<>();
 		this.dataContext.init(BaseApp.app(), SleepDataModel.class, "sleep.realm");
 
+		// Run the sleep monitor for a minute.
 		SleepMonitoringService.startMonitoringService();
+		Dispatcher.BACKGROUND.run(() -> {
+			SleepMonitoringService.stopMonitoringService();
+		}, 5L, TimeUnit.MINUTES);
 	}
 
 	public void setTileCycle(int tile, int cycle) {

@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.WakeLockManager;
@@ -23,12 +24,16 @@ import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.Point;
 import com.sciencesquad.health.core.util.X;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
 
 public class SleepMonitoringService extends Service implements SensorEventListener {
 	private static final String TAG = SleepMonitoringService.class.getSimpleName();
@@ -261,36 +266,27 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 								new TimerTask() {
 									@Override
 									public void run() {
-										final long currentTime = System.currentTimeMillis();
-
-										final long x = currentTime;
-										final double y = min(MAX_ALARM_SENSITIVITY, maxNetForce);
-
-										final Point sleepPoint = new Point((double) currentTime, y);
-										if (sleepData.size() >= MAX_POINTS_IN_A_GRAPH) {
+										final long time = System.currentTimeMillis();
+										final Point sleepPoint = new Point((double)time, maxNetForce);
+										if (sleepData.size() >= MAX_POINTS_IN_A_GRAPH)
 											sleepData.remove(0);
-										}
 										sleepData.add(sleepPoint);
 
-										// append the two doubles in sleepPoint to file
-										try { synchronized (DATA_LOCK) {
-											final FileOutputStream fos = openFileOutput(SLEEP_DATA, Context.MODE_APPEND);
-											fos.write(Point.toByteArray(sleepPoint));
-											fos.close();
-										}} catch (Exception ignored) {}
+										// Rudimentary sound-stuff.
+										/*new SoundMeter().start()
+												.withAmplitude(d -> {
+													Log.i(TAG, "METER " + d);
+												}).stop();
+										//*/
+										//AudioFlinger could not create record track, status: -1
 
-										final Intent i = null;//new Intent(SleepActivity.UPDATE_CHART);
-										//i.putExtra(EXTRA_X, x);
-										//i.putExtra(EXTRA_Y, y);
-
-										//TODO: ensure that this isn't needed anymore.
-										//i.putExtra(SleepStartReceiver.EXTRA_ALARM, alarmTriggerSensitivity);
-										//sendBroadcast(i);
-										Log.i(TAG, "Update " + x + " | " + y);
-
+										Dispatcher.UI.run(() -> {
+											Log.i(TAG, "Update " + maxNetForce);
+											Toast.makeText(getApplicationContext(), "Update " +
+													maxNetForce, Toast.LENGTH_SHORT).show();
+										});
+										triggerAlarm(time, maxNetForce);
 										maxNetForce = 0;
-
-										triggerAlarm(currentTime, y);
 									}
 								},
 								updateInterval, updateInterval);
