@@ -36,9 +36,10 @@ public class AlarmFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 
 		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+		/*
 		fab.setOnClickListener(view2 -> {
 			/* PrescriptionAlarmReceiver receiver = new PrescriptionAlarmReceiver();
-			receiver.doSomethingImportant("Tylenol", 5); */
+			receiver.doSomethingImportant("Tylenol", 5);
 			if (dialog == null) {
 				dialog = new AlarmDialog(view2.getContext());
 			}
@@ -60,6 +61,8 @@ public class AlarmFragment extends Fragment {
 				PrescriptionAlarm.setAlarm(prescriptionModel, view2.getContext());
 			}
 		});
+		*/
 	}
+
 
 }

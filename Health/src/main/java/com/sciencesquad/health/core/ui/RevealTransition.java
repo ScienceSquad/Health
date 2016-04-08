@@ -225,16 +225,4 @@ public class RevealTransition extends Visibility {
 			mListener.onAnimationRepeat(mAnimator);
 		}
 	}
-
-	public static class MaterialInterpolator implements Interpolator {
-		private static final MaterialInterpolator INSTANCE = new MaterialInterpolator();
-		public static MaterialInterpolator getInstance() {
-			return INSTANCE;
-		}
-
-		@Override
-		public float getInterpolation(float x) {
-			return (float) (6 * Math.pow(x, 2) - 8 * Math.pow(x, 3) + 3 * Math.pow(x, 4));
-		}
-	}
 }

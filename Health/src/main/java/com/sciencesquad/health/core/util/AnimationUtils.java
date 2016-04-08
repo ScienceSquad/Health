@@ -6,10 +6,15 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Property;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -86,6 +91,22 @@ public class AnimationUtils {
 		return animator;
 	}
 
+	public static Animator animateCardViewColor(final CardView ctx, final int oldColor, final int newColor) {
+		ObjectAnimator animator = ObjectAnimator.ofInt(ctx, new Property<CardView, Integer>(int.class, "cardBackgroundColor") {
+			int prevColor = oldColor;
+			public Integer get(CardView ctx) {
+				return prevColor;
+			}
+			public void set(CardView ctx, Integer value) {
+				ctx.setCardBackgroundColor((prevColor = value));
+			}
+		}, newColor);
+		animator.setDuration(350L);
+		animator.setEvaluator(new ArgbEvaluator());
+		animator.setInterpolator(MaterialInterpolator.getInstance());
+		return animator;
+	}
+
 	public static Animator animateCircularReveal(View v, int cx, int cy, float sr, float er) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 			return ViewAnimationUtils.createCircularReveal(v, cx, cy, sr, er);
@@ -119,6 +140,17 @@ public class AnimationUtils {
 		ActivityOptions opts = ActivityOptions.makeThumbnailScaleUpAnimation(view, bitmap, 0, 0);
 		view.setDrawingCacheEnabled(false);
 		return opts;
+	}
+
+	public static int interpolate(int color1, int color2, float proportion) {
+		return (Integer)new ArgbEvaluator().evaluate(proportion, color1, color2);
+	}
+
+	public static Drawable getTintedDrawable(Fragment f, @DrawableRes int res, int color) {
+		Drawable drawable = ContextCompat.getDrawable(f.getActivity(), res);
+		if (color != Color.TRANSPARENT)
+			drawable.setTint(color);
+		return drawable;
 	}
 
 	public static class MaterialInterpolator implements Interpolator {
