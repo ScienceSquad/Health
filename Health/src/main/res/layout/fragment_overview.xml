@@ -87,7 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_menu_overview"
+        android:src="@drawable/ic_plus"
         app:pressedTranslationZ="12dp" />
 
     <android.support.design.widget.FloatingActionButton
@@ -142,7 +142,7 @@
         android:src="@drawable/ic_plus"
         app:layout_anchor="@id/overviewFab"
         app:fabSize="mini"
-        app:backgroundTint="@color/yellow_400"
+        app:backgroundTint="@color/red_400"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"
         app:layout_anchorGravity="top" />

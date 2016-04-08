@@ -1,8 +1,11 @@
 package com.sciencesquad.health.steps;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -28,7 +31,11 @@ import android.app.Fragment;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.Stopwatch;
+import com.sciencesquad.health.databinding.FragmentOverviewBinding;
+import com.sciencesquad.health.databinding.FragmentStepsBinding;
+import com.sciencesquad.health.overview.OverviewModule;
 
 import org.threeten.bp.Duration;
 
@@ -36,7 +43,7 @@ import org.threeten.bp.Duration;
  * This is the only way I know how to do this as of right now. Should this be in my Model instead?
  * Will write more in a few.
  */
-public class StepsFragment extends Fragment implements SensorEventListener {
+public class StepsFragment extends BaseFragment implements SensorEventListener {
 	public static final String TAG = StepsFragment.class.getSimpleName();
 
     private StepsModule stepsModule;
@@ -54,34 +61,57 @@ public class StepsFragment extends Fragment implements SensorEventListener {
     private TextView elapsed_time;
     boolean activityRunning;
 
+	private FloatingActionButton fab;
+	private FloatingActionButton fab2;
+	private FloatingActionButton fab3;
 
-    @Nullable @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_steps, container, false);
-    }
+	@Override
+	protected BaseFragment.Configuration getConfiguration() {
+		String stepsTag = StepsModule.TAG; // instantiates the Module...
+		return new BaseFragment.Configuration(
+				TAG, "Overview", R.drawable.ic_menu_steps,
+				R.style.AppTheme_Overview, R.layout.fragment_steps
+		);
+	}
+
+	// Our generated binding class is different...
+	@Override @SuppressWarnings("unchecked")
+	protected FragmentStepsBinding xml() {
+		return super.xml();
+	}
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
+		plus.setTint(Color.DKGRAY);
+		Drawable reset = ContextCompat.getDrawable(getActivity(), R.drawable.ic_reset);
+		reset.setTint(Color.DKGRAY);
+		Drawable pause = ContextCompat.getDrawable(getActivity(), R.drawable.ic_pause);
+		pause.setTint(Color.DKGRAY);
+
+		// Create text views
         num_steps = (TextView) view.findViewById(R.id.num_steps);
         stride_length = (TextView) view.findViewById(R.id.stride_length);
         elapsed_time = (TextView) view.findViewById(R.id.elapsed_time);
         avg_speed = (TextView) view.findViewById(R.id.avg_speed);
 
+		// Create stuff needed to count steps
         stepsModule = new StepsModule();
         numSteps = stepsModule.getNumSteps();
         counterSteps = stepsModule.getCounterSteps();
         stopwatch = new Stopwatch();
 
+		// Initiate step counter
         registerEventListener(stepsModule.getMaxDelay());
 
+		// Populate
         num_steps.setText(String.valueOf(numSteps));
-
         strideLength = Math.round((0.415 * 1.8796)*100d)/100d;
-
         stride_length.setText(String.valueOf(strideLength) + "m");
 
+		// Begin stopwatch
         stopwatch.start();
         stopwatch.setInterval(51);
         stopwatch.setOnTimeChange(new Runnable() {
@@ -95,14 +125,18 @@ public class StepsFragment extends Fragment implements SensorEventListener {
 
         avg_speed.setText(String.valueOf(strideLength) + "m/s");
 
-		/*
-        // TODO: Add a FAB!
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(view1 -> Snackbar.make(view1, "Spaghett!", Snackbar.LENGTH_LONG)
-				.setAction("Action", null).show());
-		//*/
 
-        // This IS used -- see fragment_stepss.xml
+		fab = xml().stepsFab;
+		fab.setImageDrawable(plus);
+		fab2 = xml().buttonReset;
+		fab2.setImageDrawable(reset);
+		fab2.hide();
+		fab3 = xml().stepsFab3;
+		fab3.setImageDrawable(pause);
+		fab3.hide();
+
+
+        // This IS used -- see fragment_steps.xml
         Button reset_steps = (Button) view.findViewById(R.id.buttonReset);
 		reset_steps.setOnClickListener(this::resetSteps);
     }
