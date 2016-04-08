@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
+import com.sciencesquad.health.core.util.AlarmSender;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;

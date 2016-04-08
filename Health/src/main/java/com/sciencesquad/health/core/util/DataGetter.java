@@ -1,6 +1,4 @@
-package com.sciencesquad.health.util;
-
-import android.os.AsyncTask;
+package com.sciencesquad.health.core.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +11,6 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -84,31 +81,11 @@ public class DataGetter {
 	}
 
 	public static JSONObject getJSON(String urlString) throws JSONException, MalformedURLException, IOException {
-		DataGetterTask task = new DataGetterTask();
-		task.execute(urlString);
-		String resultString = "";
-		try {
-			resultString = task.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-		return parseJSON(resultString);
+		return parseJSON(getString(urlString));
 	}
 
 	public static Document getXML(String urlString) throws IOException, ParserConfigurationException, SAXException, JSONException {
-		DataGetterTask task = new DataGetterTask();
-		task.execute(urlString);
-		String resultString = "";
-		try {
-			resultString = task.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-		return parseXML(resultString);
+		return parseXML(getString(urlString));
 	}
 
 	public static String addURLParameter(String url, String key, String value) {
