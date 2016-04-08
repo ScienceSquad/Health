@@ -286,10 +286,9 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 										//TODO: ensure that this isn't needed anymore.
 										//i.putExtra(SleepStartReceiver.EXTRA_ALARM, alarmTriggerSensitivity);
 										//sendBroadcast(i);
-										//Log.i(TAG, "Update " + x + " | " + y);
+										Log.i(TAG, "Update " + x + " | " + y);
 
 										maxNetForce = 0;
-										Log.i(TAG, "MaxNetForce: " + maxNetForce);
 
 										triggerAlarm(currentTime, y);
 									}

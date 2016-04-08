@@ -86,6 +86,7 @@ public abstract class Module implements Observable {
 	public static <T extends Module> T registerModule(@NonNull Class<T> module) {
 		try {
 			T instance = module.newInstance();
+			instance.init();
 			return _modules.add(instance) ? instance : null;
 		} catch (Exception e) {
 			Log.e(TAG, "Unable to register Module class! " + e.getLocalizedMessage());
@@ -117,19 +118,20 @@ public abstract class Module implements Observable {
 
 	/**
 	 * Get the registered Module for the given Class.
+	 * Note: will create one if it does not exist.
 	 *
 	 * @param module the Class of Module that was registered
 	 * @param <T> a Module subclass
 	 * @return the registered Module for the given Class
 	 */
-	@Nullable
+	@NonNull
 	@SuppressWarnings("unchecked")
 	public static <T extends Module> T moduleForClass(@NonNull Class<T> module) {
 		T item =  (T)StreamSupport.stream(_modules)
 				.filter(a -> module.isAssignableFrom(a.getClass()))
-				.findFirst().orElse(null);
-		if (item == null)
-			item = Module.registerModule(module);
+				.findFirst()
+				.orElse(Module.registerModule(module));
+		Log.i(TAG, "TEST WITH " + item);
 		return item;
 	}
 

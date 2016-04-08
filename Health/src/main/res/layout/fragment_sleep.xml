@@ -4,7 +4,6 @@
         xmlns:tools="http://schemas.android.com/tools"
         tools:context=".sleep.SleepFragment">
     <data>
-        <variable name="fragment" type="com.sciencesquad.health.sleep.SleepFragment"/>
         <variable name="module" type="com.sciencesquad.health.sleep.SleepModule"/>
     </data>
     <android.support.design.widget.CoordinatorLayout
@@ -94,16 +93,15 @@
                         android:layout_rowWeight="1"
                         android:layout_gravity="fill"
                         android:gravity="center"
-
                         android:foreground="?attr/selectableItemBackground"
                         android:stateListAnimator="@anim/lift_on_touch"
                         android:clickable="true"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
+                        android:tag="1"
                         android:id="@+id/tile1">
                     <TextView
                             android:layout_width="match_parent"
@@ -114,6 +112,7 @@
                             android:textSize="24sp"
                             android:fontFamily="sans-serif-condensed"
                             android:textColor="?android:attr/textColorPrimary"
+                            android:tag="text"
                             android:text="tile one"/>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
@@ -123,16 +122,15 @@
                         android:layout_rowWeight="1"
                         android:layout_gravity="fill"
                         android:gravity="center"
-
                         android:foreground="?attr/selectableItemBackground"
                         android:stateListAnimator="@anim/lift_on_touch"
                         android:clickable="true"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
+                        android:tag="2"
                         android:id="@+id/tile2">
                     <TextView
                             android:layout_width="match_parent"
@@ -143,6 +141,7 @@
                             android:textSize="24sp"
                             android:fontFamily="sans-serif-condensed"
                             android:textColor="?android:attr/textColorPrimary"
+                            android:tag="text"
                             android:text="tile two"/>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
@@ -152,16 +151,15 @@
                         android:layout_rowWeight="1"
                         android:layout_gravity="fill"
                         android:gravity="center"
-
                         android:foreground="?attr/selectableItemBackground"
                         android:stateListAnimator="@anim/lift_on_touch"
                         android:clickable="true"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
+                        android:tag="3"
                         android:id="@+id/tile3">
                     <TextView
                             android:layout_width="match_parent"
@@ -172,6 +170,7 @@
                             android:textSize="24sp"
                             android:fontFamily="sans-serif-condensed"
                             android:textColor="?android:attr/textColorPrimary"
+                            android:tag="text"
                             android:text="tile three"/>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
@@ -181,16 +180,15 @@
                         android:layout_rowWeight="1"
                         android:layout_gravity="fill"
                         android:gravity="center"
-
                         android:foreground="?attr/selectableItemBackground"
                         android:stateListAnimator="@anim/lift_on_touch"
                         android:clickable="true"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
+                        android:tag="4"
                         android:id="@+id/tile4">
                     <TextView
                             android:layout_width="match_parent"
@@ -201,6 +199,7 @@
                             android:textSize="24sp"
                             android:fontFamily="sans-serif-condensed"
                             android:textColor="?android:attr/textColorPrimary"
+                            android:tag="text"
                             android:text="tile four"/>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
@@ -210,16 +209,15 @@
                         android:layout_rowWeight="1"
                         android:layout_gravity="fill"
                         android:gravity="center"
-
                         android:foreground="?attr/selectableItemBackground"
                         android:stateListAnimator="@anim/lift_on_touch"
                         android:clickable="true"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
+                        android:tag="5"
                         android:id="@+id/tile5">
                     <TextView
                             android:layout_width="match_parent"
@@ -230,6 +228,7 @@
                             android:textSize="24sp"
                             android:fontFamily="sans-serif-condensed"
                             android:textColor="?android:attr/textColorPrimary"
+                            android:tag="text"
                             android:text="tile five"/>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
@@ -239,16 +238,15 @@
                         android:layout_rowWeight="1"
                         android:layout_gravity="fill"
                         android:gravity="center"
-
                         android:foreground="?attr/selectableItemBackground"
                         android:stateListAnimator="@anim/lift_on_touch"
                         android:clickable="true"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
+                        android:tag="6"
                         android:id="@+id/tile6">
                     <TextView
                             android:layout_width="match_parent"
@@ -259,6 +257,7 @@
                             android:textSize="24sp"
                             android:fontFamily="sans-serif-condensed"
                             android:textColor="?android:attr/textColorPrimary"
+                            android:tag="text"
                             android:text="tile six"/>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
@@ -268,16 +267,15 @@
                         android:layout_rowWeight="1"
                         android:layout_gravity="fill"
                         android:gravity="center"
-
                         android:foreground="?attr/selectableItemBackground"
                         android:stateListAnimator="@anim/lift_on_touch"
                         android:clickable="true"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
+                        android:tag="7"
                         android:id="@+id/tile7">
                     <TextView
                             android:layout_width="match_parent"
@@ -288,6 +286,7 @@
                             android:textSize="24sp"
                             android:fontFamily="sans-serif-condensed"
                             android:textColor="?android:attr/textColorPrimary"
+                            android:tag="text"
                             android:text="tile seven"/>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
@@ -297,16 +296,15 @@
                         android:layout_rowWeight="1"
                         android:layout_gravity="fill"
                         android:gravity="center"
-
                         android:foreground="?attr/selectableItemBackground"
                         android:stateListAnimator="@anim/lift_on_touch"
                         android:clickable="true"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
+                        android:tag="8"
                         android:id="@+id/tile8">
                     <TextView
                             android:layout_width="match_parent"
@@ -317,6 +315,7 @@
                             android:textSize="24sp"
                             android:fontFamily="sans-serif-condensed"
                             android:textColor="?android:attr/textColorPrimary"
+                            android:tag="text"
                             android:text="tile eight"/>
                 </android.support.v7.widget.CardView>
             </GridLayout>

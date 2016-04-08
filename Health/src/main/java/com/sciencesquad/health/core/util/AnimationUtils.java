@@ -6,10 +6,14 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Property;
 import android.view.View;
@@ -140,6 +144,13 @@ public class AnimationUtils {
 
 	public static int interpolate(int color1, int color2, float proportion) {
 		return (Integer)new ArgbEvaluator().evaluate(proportion, color1, color2);
+	}
+
+	public static Drawable getTintedDrawable(Fragment f, @DrawableRes int res, int color) {
+		Drawable drawable = ContextCompat.getDrawable(f.getActivity(), res);
+		if (color != Color.TRANSPARENT)
+			drawable.setTint(color);
+		return drawable;
 	}
 
 	public static class MaterialInterpolator implements Interpolator {
