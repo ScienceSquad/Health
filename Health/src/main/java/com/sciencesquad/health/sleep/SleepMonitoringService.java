@@ -10,6 +10,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -22,11 +23,12 @@ import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.Point;
 import com.sciencesquad.health.core.util.X;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.DateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static java.lang.Math.*;
 
 public class SleepMonitoringService extends Service implements SensorEventListener {
 	private static final String TAG = SleepMonitoringService.class.getSimpleName();
@@ -58,6 +60,12 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 	public static final String SLEEP_START = "SLEEP_START";
 	public static final String SLEEP_STOPPED = "SLEEP_STOPPED";
 	public static final String STOP_AND_SAVE_SLEEP = "STOP_AND_SAVE_SLEEP";
+	public static final String EXTRA_IO_EXCEPTION = "IOException";
+	public static final String EXTRA_NOTE = "note";
+	public static final String EXTRA_RATING = "rating";
+	public static final String EXTRA_URI = "uri";
+	public static final String EXTRA_SUCCESS = "success";
+	public static final String SAVE_SLEEP_COMPLETED = "SAVE_SLEEP_COMPLETED";
 	public static final int MAX_POINTS_IN_A_GRAPH = 200;
 	public static final float DEFAULT_ALARM_SENSITIVITY = 0.33F;
 	public static final float DEFAULT_MIN_SENSITIVITY = 0.0F;
@@ -161,64 +169,22 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 		});
 	}
 
-	private Intent addExtrasToSaveSleepIntent(final Intent saveIntent) {
-		saveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-		saveIntent.putExtra(EXTRA_ID, hashCode());
-		saveIntent.putExtra(EXTRA_ALARM, alarmTriggerSensitivity);
-
-		// send start/end time as well
-		final DateFormat sdf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
-				Locale.getDefault());
-		DateFormat sdf2 = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
-				Locale.getDefault());
-		final Date now = new Date();
-		if (dateStarted.getDate() == now.getDate()) {
-			sdf2 = DateFormat.getTimeInstance(DateFormat.SHORT);
-		}
-		saveIntent.putExtra(EXTRA_NAME, sdf.format(dateStarted) + " " + getText(R.string.to) + " "
-				+ sdf2.format(now));
-		return saveIntent;
-	}
-
 	private void createSaveSleepNotification() {
 		Intent intent = new Intent(this, SleepMonitoringService.class);
-		intent.setAction("STOP");
+		intent.setAction("SAVE");
 		PendingIntent pending = PendingIntent.getService(this, 0, intent, 0);
 		Notification n = new Notification.Builder(this)
 				.setSmallIcon(R.drawable.ic_menu_manage)
-				.setContentTitle(getText(R.string.notification_sleep_title))
-				.setContentText(getText(R.string.notification_sleep_text))
+				.setContentTitle(getText(R.string.notification_save_sleep_title))
+				.setContentText(getText(R.string.notification_save_sleep_text))
 				.setContentIntent(pending)
 				.setDeleteIntent(pending)
 				.setAutoCancel(true)
 				.setOngoing(true)
 				.build();
-		return n;
 
-		final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-		final int icon = R.drawable.ic_menu_manage;
-		final CharSequence tickerText = getText(R.string.notification_save_sleep_ticker);
-		final long when = System.currentTimeMillis();
-
-		final Notification notification = new Notification(icon, tickerText, when);
-
-		//notification.flags = Notification.FLAG_AUTO_CANCEL;
-		// FIXME
-
-		final Context context = getApplicationContext();
-		final CharSequence contentTitle = getText(R.string.notification_save_sleep_title);
-		final CharSequence contentText = getText(R.string.notification_save_sleep_text);
-		//final Intent notificationIntent = addExtrasToSaveSleepIntent(new Intent(this,
-		//		SaveSleepActivity.class));
-		//final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
-		//		0);
-
-		//notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-
-		notificationManager.notify(hashCode(), notification);
-		//startActivity(notificationIntent);
+		NotificationManager m = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		m.notify(343, n);
 	}
 
 	private Notification createServiceNotification() {
@@ -237,7 +203,10 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 		return n;
 	}
 
-	@Override public void onAccuracyChanged(final Sensor sensor, final int accuracy) {}
+	@Override
+	public void onAccuracyChanged(final Sensor sensor, final int accuracy) {
+		// ignored
+	}
 
 	/**
 	 * Handle that allows others to access the sleep monitoring
@@ -294,27 +263,21 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 									public void run() {
 										final long currentTime = System.currentTimeMillis();
 
-										final double x = currentTime;
-										final double y = java.lang.Math.min(MAX_ALARM_SENSITIVITY, maxNetForce);
+										final long x = currentTime;
+										final double y = min(MAX_ALARM_SENSITIVITY, maxNetForce);
 
 										final Point sleepPoint = new Point((double) currentTime, y);
 										if (sleepData.size() >= MAX_POINTS_IN_A_GRAPH) {
 											sleepData.remove(0);
 										}
-
 										sleepData.add(sleepPoint);
 
 										// append the two doubles in sleepPoint to file
-										try {
-											synchronized (DATA_LOCK) {
-												final FileOutputStream fos = openFileOutput(SLEEP_DATA, Context.MODE_APPEND);
-												fos.write(Point.toByteArray(sleepPoint));
-												fos.close();
-											}
-										} catch (final IOException e) {
-											//GoogleAnalyticsTracker.getInstance().trackEvent(Integer.toString(VERSION.SDK_INT),
-											//		Build.MODEL, "sleepMonitorCacheFailWrite : " + e.getMessage(), 0);
-										}
+										try { synchronized (DATA_LOCK) {
+											final FileOutputStream fos = openFileOutput(SLEEP_DATA, Context.MODE_APPEND);
+											fos.write(Point.toByteArray(sleepPoint));
+											fos.close();
+										}} catch (Exception ignored) {}
 
 										final Intent i = null;//new Intent(SleepActivity.UPDATE_CHART);
 										//i.putExtra(EXTRA_X, x);
@@ -323,9 +286,10 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 										//TODO: ensure that this isn't needed anymore.
 										//i.putExtra(SleepStartReceiver.EXTRA_ALARM, alarmTriggerSensitivity);
 										//sendBroadcast(i);
-										Log.i(TAG, "Update " + x + " | " + y);
+										//Log.i(TAG, "Update " + x + " | " + y);
 
 										maxNetForce = 0;
+										Log.i(TAG, "MaxNetForce: " + maxNetForce);
 
 										triggerAlarm(currentTime, y);
 									}
@@ -352,9 +316,9 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 			final double curY = event.values[1] - gravity[1];
 			final double curZ = event.values[2] - gravity[2];
 
-			final double mAccelCurrent = Math.sqrt(curX * curX + curY * curY + curZ * curZ);
+			final double mAccelCurrent = sqrt(curX * curX + curY * curY + curZ * curZ);
 
-			final double absAccel = Math.abs(mAccelCurrent);
+			final double absAccel = abs(mAccelCurrent);
 			maxNetForce = absAccel > maxNetForce ? absAccel : maxNetForce;
 		}}).start();
 	}
@@ -469,5 +433,220 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 				//Alarms.enableAlert(this, alarm, System.currentTimeMillis() + 1000);
 			}
 		}
+	}
+
+	private void startSleeping() {
+		Context context = this; // FIXME
+		final SharedPreferences userPrefs = context.getSharedPreferences(
+				SleepMonitoringService.PREFERENCES, 0);
+		final float alarmTriggerSensitivity = userPrefs.getFloat(
+				context.getString(R.string.pref_alarm_trigger_sensitivity),
+				SleepMonitoringService.DEFAULT_ALARM_SENSITIVITY);
+		final int sensorDelay = Integer.parseInt(userPrefs.getString(
+				context.getString(R.string.pref_sensor_delay), ""
+						+ SensorManager.SENSOR_DELAY_NORMAL));
+		final boolean useAlarm = userPrefs.getBoolean(
+				context.getString(R.string.pref_use_alarm), false);
+		final int alarmWindow = Integer.parseInt(userPrefs.getString(
+				context.getString(R.string.pref_alarm_window), "-1"));
+		final boolean airplaneMode = userPrefs.getBoolean(
+				context.getString(R.string.pref_airplane_mode), false);
+		final boolean silentMode = userPrefs.getBoolean(
+				context.getString(R.string.pref_silent_mode), false);
+		final boolean forceScreenOn = userPrefs.getBoolean(
+				context.getString(R.string.pref_force_screen), false);
+
+		Intent serviceIntent = new Intent(context, SleepMonitoringService.class);
+		serviceIntent.putExtra(SleepMonitoringService.EXTRA_ALARM, alarmTriggerSensitivity);
+		serviceIntent.putExtra(SleepMonitoringService.EXTRA_SENSOR_DELAY, sensorDelay);
+		serviceIntent.putExtra(SleepMonitoringService.EXTRA_USE_ALARM, useAlarm);
+		serviceIntent.putExtra(SleepMonitoringService.EXTRA_ALARM_WINDOW, alarmWindow);
+		serviceIntent.putExtra(SleepMonitoringService.EXTRA_AIRPLANE_MODE, airplaneMode);
+		serviceIntent.putExtra(SleepMonitoringService.EXTRA_SILENT_MODE, silentMode);
+		serviceIntent.putExtra(SleepMonitoringService.EXTRA_FORCE_SCREEN_ON, forceScreenOn);
+
+	}
+
+	private void finishSleep(Intent intent) {
+		Context context = this; // FIXME
+		final double alarm = 0.0;//intent.getDoubleExtra(SleepStartReceiver.EXTRA_ALARM, SettingsActivity.DEFAULT_ALARM_SENSITIVITY);
+
+		final String name = intent.getStringExtra(SleepMonitoringService.EXTRA_NAME);
+		final int rating = intent.getIntExtra(EXTRA_RATING, 5);
+		final String note = intent.getStringExtra(EXTRA_NOTE);
+
+		FileInputStream fis;
+		// RandomAccessFile raFile;
+		List<Point> originalData = null;
+		try {
+			final File dataFile = context
+					.getFileStreamPath(SleepMonitoringService.SLEEP_DATA);
+			// raFile = new RandomAccessFile(dataFile, "r");
+			fis = context.openFileInput(SleepMonitoringService.SLEEP_DATA);
+			final long length = dataFile.length();
+			final int chunkSize = 16;
+			if (length % chunkSize != 0) {
+				context.sendBroadcast(new Intent(SAVE_SLEEP_COMPLETED).putExtra(
+						EXTRA_IO_EXCEPTION, "corrupt file"));
+				return;
+			}
+			originalData = new ArrayList<Point>((int) (length / chunkSize / 2));
+			if (length >= chunkSize) {
+				final byte[] wholeFile = new byte[(int) length];
+				final byte[] buffer = new byte[8192];
+				int bytesRead = 0;
+				int dstPos = 0;
+				while ((bytesRead = fis.read(buffer)) != -1) {
+					System.arraycopy(buffer, 0, wholeFile, dstPos, bytesRead);
+					dstPos += bytesRead;
+				}
+				fis.close();
+				final byte[] chunk = new byte[chunkSize];
+				for (int i = 0; i < wholeFile.length; i += chunkSize) {
+					System.arraycopy(wholeFile, i, chunk, 0, chunkSize);
+					originalData.add(Point.fromByteArray(chunk));
+				}
+			}
+		} catch (final FileNotFoundException e) {
+			context.sendBroadcast(new Intent(SAVE_SLEEP_COMPLETED).putExtra(
+					EXTRA_IO_EXCEPTION, e.getMessage()));
+			return;
+		} catch (final IOException e) {
+			context.sendBroadcast(new Intent(SAVE_SLEEP_COMPLETED).putExtra(
+					EXTRA_IO_EXCEPTION, e.getMessage()));
+			return;
+		}
+
+		context.deleteFile(SleepMonitoringService.SLEEP_DATA);
+
+		final int numberOfPointsOriginal = originalData.size();
+
+		// List<Double> mX = (List<Double>) intent
+		// .getSerializableExtra("currentSeriesX");
+		// List<Double> mY = (List<Double>) intent
+		// .getSerializableExtra("currentSeriesY");
+
+		if (numberOfPointsOriginal == 0) {
+			context.sendBroadcast(new Intent(SAVE_SLEEP_COMPLETED));
+			return;
+		}
+
+		final int numberOfDesiredGroupedPoints = SleepMonitoringService.MAX_POINTS_IN_A_GRAPH;
+		// numberOfDesiredGroupedPoints = numberOfPointsOriginal >
+		// numberOfDesiredGroupedPoints ? numberOfDesiredGroupedPoints
+		// : numberOfPointsOriginal;
+		Uri createdUri = null;
+		if (numberOfDesiredGroupedPoints <= numberOfPointsOriginal) {
+			final int pointsPerGroup = numberOfPointsOriginal
+					/ numberOfDesiredGroupedPoints + 1;
+			final List<Point> lessDetailedData = new ArrayList<>(
+					numberOfDesiredGroupedPoints);
+			int numberOfPointsInThisGroup = pointsPerGroup;
+			double maxYForThisGroup;
+			double totalForThisGroup;
+			int numberOfSpikes = 0;
+			int numberOfConsecutiveNonSpikes = 0;
+			long timeOfFirstSleep = 0;
+			for (int i = 0; i < numberOfDesiredGroupedPoints; i++) {
+				maxYForThisGroup = 0;
+				totalForThisGroup = 0;
+				final int startIndexForThisGroup = i * pointsPerGroup;
+				for (int j = 0; j < pointsPerGroup; j++) {
+					try {
+						final double currentY = originalData
+								.get(startIndexForThisGroup + j).y;
+						if (currentY > maxYForThisGroup) {
+							maxYForThisGroup = currentY;
+						}
+						totalForThisGroup += currentY;
+					} catch (final IndexOutOfBoundsException ioobe) {
+						// lower the number of points
+						// (and thereby signify that we are done)
+						numberOfPointsInThisGroup = j - 1;
+						break;
+					}
+				}
+				final double averageForThisGroup = totalForThisGroup
+						/ numberOfPointsInThisGroup;
+				if (numberOfPointsInThisGroup < pointsPerGroup) {
+					// we are done
+					final int lastIndex = numberOfPointsOriginal - 1;
+					lessDetailedData.add(originalData.get(lastIndex));
+					break;
+				} else {
+					if (maxYForThisGroup < alarm) {
+						maxYForThisGroup = averageForThisGroup;
+						if (timeOfFirstSleep == 0 && ++numberOfConsecutiveNonSpikes > 4) {
+							final int lastIndex = lessDetailedData.size() - 1;
+
+							timeOfFirstSleep = Math.round(lessDetailedData.get(lastIndex).x);
+						}
+					} else {
+						numberOfConsecutiveNonSpikes = 0;
+						numberOfSpikes++;
+					}
+					lessDetailedData.add(new Point(originalData
+							.get(startIndexForThisGroup).x, maxYForThisGroup));
+				}
+			}
+
+			final long endTime = Math.round(lessDetailedData.get(lessDetailedData.size() - 1).x);
+			final long startTime = Math.round(lessDetailedData.get(0).x);
+
+			//final SleepSession session = new SleepSession(name, lessDetailedData,
+			//		SettingsActivity.DEFAULT_MIN_SENSITIVITY, alarm, rating, endTime
+			//		- startTime, numberOfSpikes, timeOfFirstSleep, note);
+			//createdUri = SleepSessions.createSession(context, session);
+		} else {
+
+			final long endTime = Math.round(originalData.get(numberOfPointsOriginal - 1).x);
+			final long startTime = Math.round(originalData.get(0).x);
+
+			int numberOfSpikes = 0;
+			int numberOfConsecutiveNonSpikes = 0;
+			long timeOfFirstSleep = endTime;
+			for (int i = 0; i < numberOfPointsOriginal; i++) {
+				final double currentY = originalData.get(i).y;
+				if (currentY < alarm) {
+					if (timeOfFirstSleep == endTime && ++numberOfConsecutiveNonSpikes > 4) {
+						final int lastIndex = originalData.size() - 1;
+
+						timeOfFirstSleep = Math.round(originalData.get(lastIndex).x);
+					}
+				} else {
+					numberOfConsecutiveNonSpikes = 0;
+					numberOfSpikes++;
+				}
+			}
+			//final SleepSession session = new SleepSession(name, originalData,
+			//		SettingsActivity.DEFAULT_MIN_SENSITIVITY, alarm, rating, endTime
+			//		- startTime, numberOfSpikes, timeOfFirstSleep, note);
+			//createdUri = SleepSessions.createSession(context, session);
+		}
+
+		final Intent saveSleepCompletedIntent = new Intent(SAVE_SLEEP_COMPLETED);
+		saveSleepCompletedIntent.putExtra(EXTRA_SUCCESS, true);
+		saveSleepCompletedIntent.putExtra(EXTRA_URI, createdUri.toString());
+		context.sendBroadcast(saveSleepCompletedIntent);
+	}
+
+	private Intent addExtrasToSaveSleepIntent(final Intent saveIntent) {
+		saveIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
+				| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+		saveIntent.putExtra(EXTRA_ID, hashCode());
+		saveIntent.putExtra(EXTRA_ALARM, alarmTriggerSensitivity);
+
+		// send start/end time as well
+		final DateFormat sdf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
+				Locale.getDefault());
+		DateFormat sdf2 = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
+				Locale.getDefault());
+		final Date now = new Date();
+		if (dateStarted.getDate() == now.getDate()) {
+			sdf2 = DateFormat.getTimeInstance(DateFormat.SHORT);
+		}
+		saveIntent.putExtra(EXTRA_NAME, sdf.format(dateStarted) + " " + getText(R.string.to) + " "
+				+ sdf2.format(now));
+		return saveIntent;
 	}
 }
