@@ -58,7 +58,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             Calendar rightNow = Calendar.getInstance();
             testModel.setDate(rightNow.getTime());
             testRealm.add(testModel);
-            RealmQuery<NutritionModel> testQuery = testRealm.query();
+            RealmQuery<NutritionModel> testQuery = testRealm.query(NutritionModel.class);
 
             Assert.assertEquals(testQuery.findAll().size(), 1);
             Assert.assertEquals(testQuery.findAll().first().getCalorieIntake(), 50);

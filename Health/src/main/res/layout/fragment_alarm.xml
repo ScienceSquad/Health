@@ -1,0 +1,37 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sciencesquad.health.prescriptions.PrescriptionFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_gravity="center_horizontal|top"
+        android:editable="true"
+        android:hint="Medication Name"
+        android:textSize="40dp"
+        android:paddingTop="30dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText2"
+        android:layout_gravity="center_horizontal|top"
+        android:textSize="40dp"
+        android:paddingTop="100dp"
+        android:hint="Dosage (in mg)" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText3"
+        android:layout_gravity="center_horizontal|top"
+        android:textSize="40dp"
+        android:paddingTop="180dp"
+        android:hint="Repeat Duration" />
+
+</FrameLayout>
