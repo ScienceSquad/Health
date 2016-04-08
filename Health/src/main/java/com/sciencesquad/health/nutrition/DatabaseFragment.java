@@ -7,11 +7,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -61,8 +64,16 @@ public class DatabaseFragment extends BaseFragment {
 			public void setContent(ItemContent itemContent) {
 				TextView title = (TextView) mLinearLayout.findViewById(R.id.db_item_title);
 				TextView content = (TextView) mLinearLayout.findViewById(R.id.db_item_content);
+				TextView url = (TextView) mLinearLayout.findViewById(R.id.db_item_url);
 				title.setText(itemContent.title);
-				content.setText(itemContent.url + "\n" + itemContent.content);
+				content.setText(itemContent.content);
+				if (URLUtil.isValidUrl(itemContent.url)) {
+					url.setText(Html.fromHtml("<a href=\"" + itemContent.url + "\">View Recipe</a>"));
+					url.setMovementMethod(LinkMovementMethod.getInstance());
+				}
+				else {
+					url.setText(itemContent.url);
+				}
 			}
 		}
 
