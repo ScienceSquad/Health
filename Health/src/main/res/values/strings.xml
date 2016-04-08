@@ -71,4 +71,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="prescription_module">Prescription</string>
+    <string name="database_module">Databases</string>
 </resources>
