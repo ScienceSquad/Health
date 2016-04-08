@@ -2,18 +2,20 @@ package com.sciencesquad.health.workout;
 
 import android.support.annotation.NonNull;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.Required;
-
+import java.util.Calendar;
 import java.util.Date;
 
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Required;
 
-public class RoutineModel extends RealmObject {
-    @PrimaryKey
+/**
+ * Created by mrjohnson on 4/7/16.
+ */
+public class RealmString extends RealmObject {
+
     private String name;
-    private RealmList<RealmString> exercises;
+
     /**
      * Calendar date where this model was created.
      */
@@ -25,16 +27,16 @@ public class RoutineModel extends RealmObject {
     // DO NOT MODIFY -- REALM ONLY
     //
 
-    public RealmList<RealmString> getExercises() {
-        return exercises;
+    /*
+    public RealmString(){
+        Calendar rightNow = Calendar.getInstance();
+        this.setDate(rightNow.getTime());
     }
+    */
+
 
     public String getName(){
         return name;
-    }
-
-    public void setExercises(RealmList<RealmString> exercises){
-        this.exercises = exercises;
     }
 
     public void setName(String name) {
@@ -55,16 +57,4 @@ public class RoutineModel extends RealmObject {
         return getName();
     }
 
-
-
-    /*
-    public RoutineModel(String name){
-        this.name = name;
-        exercises = new ArrayList<ExerciseModel>();
-    }
-
-    public RoutineModel(){
-
-    }
-    */
 }
