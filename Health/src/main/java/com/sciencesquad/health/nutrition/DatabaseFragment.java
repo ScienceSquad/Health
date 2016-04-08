@@ -286,7 +286,6 @@ public class DatabaseFragment extends BaseFragment {
 		conditionModule = new ConditionModule();
 		conditionModule.clearAllConditions();
 
-		// TODO get nav open working
 		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
 		// Configure the FAB.

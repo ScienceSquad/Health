@@ -223,6 +223,8 @@ public class PrescriptionFragment extends BaseFragment {
 		xml().alarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
 		updateAlarmList();
 
+		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
+
 		Drawable emergency = ContextCompat.getDrawable(getActivity(), R.drawable.ic_alert);
 		emergency.setTint(Color.WHITE);
 		Drawable alarms = ContextCompat.getDrawable(getActivity(), R.drawable.ic_alarm);
