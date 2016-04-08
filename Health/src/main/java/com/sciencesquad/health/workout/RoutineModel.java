@@ -55,6 +55,8 @@ public class RoutineModel extends RealmObject {
         return getName();
     }
 
+
+
     /*
     public RoutineModel(String name){
         this.name = name;
