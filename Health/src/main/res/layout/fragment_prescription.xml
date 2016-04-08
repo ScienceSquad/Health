@@ -29,7 +29,9 @@
                 android:id="@+id/alarm_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/stopwatch">
+                android:layout_below="@+id/stopwatch"
+                android:clipToPadding="false"
+                android:paddingBottom="100dp">
             </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
 

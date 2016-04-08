@@ -3,39 +3,69 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:padding="16dp">
+              android:background="@color/background_material_light">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@color/background_material_light"
+        android:elevation="2dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="1:50"
-            android:id="@+id/textView4"
-            android:textSize="50dp"
-            android:textStyle="bold"
-            android:layout_marginRight="8dp"
-            />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="AM"
-            android:id="@+id/textView5"
-            android:textSize="30dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="1:50"
+                android:id="@+id/textView4"
+                android:textSize="50dp"
+                android:textStyle="bold"
+                android:layout_marginRight="8dp"
+                />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="AM"
+                android:id="@+id/textView5"
+                android:textSize="30dp"/>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/abc_ic_clear_mtrl_alpha"
+                    android:backgroundTint="@color/abc_secondary_text_material_light"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="4dp">
+                </FrameLayout>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="5 tylenol every day"
+                android:id="@+id/textView6"/>
+        </LinearLayout>
     </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:minHeight="5dp"
-        android:background="@color/bb_darkBackgroundColor">
-    </RelativeLayout>
 
 </LinearLayout>
