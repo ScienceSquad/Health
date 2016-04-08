@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -82,6 +83,14 @@ public class WorkoutModule extends Module {
         return exercises;
     }
 
+    public ArrayList<ExerciseTypeModel> getFilteredExerciseTypeModels(String target) {
+        ArrayList<ExerciseTypeModel> exercises = new ArrayList<>();
+        RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).equalTo("target", target).findAll();
+        exercises.addAll(results);
+
+        return exercises;
+    }
+
     void addRecommendedWorkouts(){
 
         //StrongLifts 5x5
@@ -110,8 +119,10 @@ public class WorkoutModule extends Module {
 
 
         RealmList<RealmString> exerciseNames = new RealmList<>();
+        Calendar rightNow = Calendar.getInstance();
         for(ExerciseTypeModel m : sLAExercises){
             RealmString newName = new RealmString();
+            newName.setDate(rightNow.getTime());
             newName.setName(m.getName());
             exerciseNames.add(newName);
         }
@@ -122,6 +133,7 @@ public class WorkoutModule extends Module {
         RealmList<RealmString> exerciseNamesB = new RealmList<>();
         for(ExerciseTypeModel m : sLAExercises){
             RealmString newName = new RealmString();
+            newName.setDate(rightNow.getTime());
             newName.setName(m.getName());
             exerciseNamesB.add(newName);
         }
@@ -155,18 +167,32 @@ public class WorkoutModule extends Module {
                 Log.i(TAG, "Error adding ExerciseTypeModel to Realm!");
                 return false;
             }
+            try {
+                //Add exercise target
+                ExerciseTargetModel newTarget = new ExerciseTargetModel();
+                newTarget.setTarget(newExercise.getTarget());
+                Calendar rightNow = Calendar.getInstance();
+                newTarget.setDate(rightNow.getTime());
+                workoutRealm.add(newTarget);
+            } catch (Exception e){
+                if(e.getMessage().contains("UNIQUE constraint failed")){
+                    Log.e(TAG, "Existing target");
+                } else {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
             return true;
         } else {
             return false;
         }
-
     }
+
+
 
 
     public boolean isDuplicateExerciseType(ExerciseTypeModel newExercise){
         RealmQuery<ExerciseTypeModel> query = this.workoutRealm.query(ExerciseTypeModel.class);
         query.equalTo("name", newExercise.getName());
-
         if(query.findAll().size() == 0){
             return false;       // This exercise has NOT been previously added
         } else {
@@ -195,12 +221,24 @@ public class WorkoutModule extends Module {
         //Calendar rightNow = Calendar.getInstance();
         Date d = Calendar.getInstance().getTime();
         newRoutine.setDate(d);
+        //Calendar rightNow = Calendar.getInstance();
+        //newRoutine.setDate(rightNow.getTime());
         newRoutine.setName(name);
         newRoutine.setExercises(exerciseList);
 
         return newRoutine;
     }
 
+    public ArrayList<ExerciseTargetModel> getAllTargets() {
+        ArrayList<ExerciseTargetModel> targets = new ArrayList<>();
+        try {
+            RealmResults<ExerciseTargetModel> results = workoutRealm.query(ExerciseTargetModel.class).findAll();
+            targets.addAll(results);
+        } catch (Exception e) {
+            Log.e(TAG, "Error retrieving targets from Realm");
+        }
+        return targets;
+    }
 
     public ArrayList<RoutineModel> getAllRoutineModels() {
         ArrayList<RoutineModel> routines = new ArrayList<>();
@@ -228,6 +266,22 @@ public class WorkoutModule extends Module {
         }
         return null;
     }
+
+    /*
+    public void updateRoutineExercises(String routineName, RealmList<RealmString> exercises){
+        RoutineModel
+        workoutRealm.getRealm().executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                // begin & end transcation calls are done for you
+                RoutineModel routine = workoutRealm.getRealm().where(RoutineModel.class).equalTo("name", routineName).findFirst();
+                routine.setExercises(exercises);
+            }
+        }, new Realm.Transaction.Callback() {
+
+        });
+    }
+    */
 
 
     public boolean isDuplicateRoutineType(RoutineModel newRoutine){

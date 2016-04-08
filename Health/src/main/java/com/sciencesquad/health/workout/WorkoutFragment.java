@@ -1,6 +1,9 @@
 package com.sciencesquad.health.workout;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -20,8 +23,13 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
@@ -35,6 +43,8 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 
+import io.realm.RealmList;
+
 public class WorkoutFragment extends BaseFragment {
     public static final String TAG = WorkoutFragment.class.getSimpleName();
 
@@ -47,6 +57,7 @@ public class WorkoutFragment extends BaseFragment {
     public static List<RoutineModel> routineModelList = new ArrayList<>();           // list of routines created by user
     public static HashSet<String> exerciseTargets = new HashSet<>();            // contains all exercise targets
     public static CompletedExerciseModel completedExercise;
+    public static ArrayAdapter<String> routineModelAdapter;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -122,7 +133,7 @@ public class WorkoutFragment extends BaseFragment {
 
 
         // Bind data to view (RoutineModels)
-        ArrayAdapter<String> routineModelAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
+        routineModelAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
         routineModelAdapter.clear();                // first clear adapter
         for (RoutineModel m : mod.getAllRoutineModels())
@@ -148,6 +159,8 @@ public class WorkoutFragment extends BaseFragment {
 
         }));
 
+
+
     }
 
     public void updateCurrentWorkout(RoutineModel currentRoutine){
@@ -158,7 +171,7 @@ public class WorkoutFragment extends BaseFragment {
         for (RealmString m : currentRoutine.getExercises())
             exerciseTypeAdapter.add(m.getName());
         xml().currentRoutineListView.setAdapter(exerciseTypeAdapter);
-        xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {
+        xml().currentRoutineListView.setOnItemClickListener(((parent, views, position, id) -> {
             this.showSetDialog(exerciseTypeAdapter.getItem(position));
         }));
     }
@@ -236,8 +249,7 @@ public class WorkoutFragment extends BaseFragment {
      * exercises
      */
     void showNewRoutineDialog() {
-        DialogFragment newFragment = NameRoutineFragmentFragment.newInstance(
-                R.string.title_new_routine_dialog);
+        DialogFragment newFragment = NameRoutineFragment.newInstance();
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -263,11 +275,97 @@ public class WorkoutFragment extends BaseFragment {
      * a select exercises to add to a routine
      */
     void showRoutineBuilder(String name) {
+        /*
         BuildRoutineDialogFragment newFragment = BuildRoutineDialogFragment.newInstance(getString(R.string.title_new_exercise_dialog));
         //newFragment.titleThing = name; // FIXME: Is this what we pass in?
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");
+        */
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogLayout = inflater.inflate(R.layout.fragment_workout_build_routine_layout, null);
+        builder.setView(dialogLayout);
+        builder.setTitle(name);
+
+    /*
+        AlertDialog newDialog = new AlertDialog()
+            .setCancelable(false)
+            .setTitle(name)
+            .setPositive(getResources().getString(R.string.accept), (dialog, which) -> Log.d(TAG, "Accepted!"))
+            .setNegative(getResources().getString(R.string.decline), (dialog, which) -> Log.d(TAG, "Declined!"));
+        View dialogLayout = getInflater().inflate(R.layout.fragment_workout_build_routine_layout, null);
+        newDialog.setCustomView(dialogLayout);
+    */
+        // fill spinner with all different workout "targets" with which a user can filter exercises
+        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        List<ExerciseTargetModel> filters = mod.getAllTargets();
+        Spinner filterSpinner = (Spinner) dialogLayout.findViewById(R.id.filter_spinner);
+        ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+        filterSpinner.setAdapter((filterAdapter));
+        filterAdapter.clear();
+        filterAdapter.add("None");
+        for(ExerciseTargetModel m : filters)
+            filterAdapter.add(m.getTarget());
+
+        // list all user-created exercises in Dialog
+        ListView exerciseListView = (ListView) dialogLayout.findViewById(R.id.choose_exercises_view);
+        ArrayAdapter<String> exerciseListAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.select_dialog_multichoice);
+        exerciseListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        exerciseListView.setAdapter(exerciseListAdapter);
+        exerciseListAdapter.clear();
+
+        for(ExerciseTypeModel m : mod.getAllExerciseTypeModels())
+            exerciseListAdapter.addAll(m.getName());
+
+        // Create button that filters listed exercises based on "target"
+        Button button = (Button) dialogLayout.findViewById(R.id.filter_button);
+        button.setOnClickListener(_button -> {
+            String f = filterSpinner.getSelectedItem().toString();
+            exerciseListAdapter.clear();
+            if(f.equals("None")){
+                // Remove any applied filters (i.e., show all exercises)
+                for(ExerciseTypeModel m : mod.getAllExerciseTypeModels())
+                    exerciseListAdapter.add(m.getName());
+            } else {
+                for(ExerciseTypeModel m : mod.getFilteredExerciseTypeModels(f))
+                    exerciseListAdapter.add(m.getName());
+            }
+        });
+
+        // Add Dialog buttons
+        builder.setPositiveButton("Save", (dialog, whichButton) -> {
+            // Get items selected and update Routine Model
+            Calendar rightNow = Calendar.getInstance();
+            RealmList<RealmString> exercises = new RealmList<RealmString>();
+            if(exerciseListAdapter.getCount() > 0){
+                for(int i = 0; i < exerciseListAdapter.getCount(); i++){
+                    if(exerciseListView.isItemChecked(i)){
+                        RealmString newExercise = new RealmString();
+                        newExercise.setName(exerciseListAdapter.getItem(i).toString());
+                        rightNow = Calendar.getInstance();
+                        newExercise.setDate(rightNow.getTime());
+                        exercises.add(newExercise);
+                    }
+                }
+                RoutineModel newRoutine = mod.createNewRoutine(name, exercises);
+                mod.addRoutineModel(newRoutine);
+                routineModelAdapter.clear();                // first clear adapter
+                for (RoutineModel m : mod.getAllRoutineModels())
+                    routineModelAdapter.add(m.getName());
+            } else {
+                Snackbar.make(getView(), "No exercises selected!", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+
+        });
+        builder.setNegativeButton("Cancel", (dialog, whichButton) -> {
+        });
+        builder.create().show();
     }
+
+
 
     /**
      * @saveNewExerciseType
@@ -310,6 +408,7 @@ public class WorkoutFragment extends BaseFragment {
             for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
                 exerciseTypeModelAdapter.add(m.getName());
             xml().exerciseModelListView.setAdapter(exerciseTypeModelAdapter);
+
         }
     }
 
@@ -331,29 +430,14 @@ public class WorkoutFragment extends BaseFragment {
             Snackbar.make(getView(), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
-            RoutineModel newRoutine = new RoutineModel();
-            newRoutine.setName(routineName);
-            routineModelList.add(newRoutine);
-
             WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
-            mod.addRoutineModel(newRoutine);
+            showRoutineBuilder(routineName);
 
-			// FIXME: THIS ID DOES NOT EXIST, CALL WILL RETURN NULL
-            /*
-            ListView routineListView = (ListView)getView().findViewById(R.id.routine_model_list_view);
-            ArrayAdapter<RoutineModel> routineModelArrayAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_list_item_1);
-            routineModelArrayAdapter.clear();
-            routineModelArrayAdapter.addAll(routineModelList);
-            routineListView.setAdapter(routineModelArrayAdapter);
-            */
             // Bind data to view (RoutineModels)
-            ArrayAdapter<String> routineModelAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
-                    android.R.layout.simple_list_item_1);
             routineModelAdapter.clear();                // first clear adapter
             for (RoutineModel m : mod.getAllRoutineModels())
                 routineModelAdapter.add(m.getName());
-            xml().routineModelListView.setAdapter(routineModelAdapter);
+            //xml().routineModelListView.setAdapter(routineModelAdapter);
         }
     }
 
