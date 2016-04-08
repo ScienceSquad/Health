@@ -1,8 +1,5 @@
 package com.sciencesquad.health.sleep;
 
-import android.animation.Animator;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,21 +8,24 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.transition.Visibility;
 import android.util.Log;
-import android.util.Property;
 import android.view.View;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.RevealTransition;
-import com.sciencesquad.health.core.util.AnimationUtils;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
 import java8.util.stream.Stream;
 import java8.util.stream.StreamSupport;
 
+import static com.sciencesquad.health.core.util.AnimationUtils.animateCardViewColor;
+import static com.sciencesquad.health.core.util.AnimationUtils.interpolate;
+
 public class SleepFragment extends BaseFragment {
 	public static final String TAG = SleepFragment.class.getSimpleName();
+
+	private static final int TILE_ID = R.string.accept;
 
 	@Override
 	protected Configuration getConfiguration() {
@@ -78,57 +78,61 @@ public class SleepFragment extends BaseFragment {
 
 		// Configure the FAB.
 		xml().fab.setImageDrawable(zzz);
-		xml().fab.setOnClickListener(view2 -> {
-			if (!SoundService.isSoundServiceActive())
-				SoundService.startSoundService();
-			else SoundService.stopSoundService();
+		xml().fab.setOnClickListener(v -> {
+			// other thing here now.
 		});
 
 		StaticPagerAdapter.install(xml().pager);
 		xml().tabs.setupWithViewPager(xml().pager);
 
-		// Disgusting code for cool animations!
-		// Use a view tag to keep track of activation state,
-		// and animate the card's background when long-pressed.
-		// TODO: Use 5 volume levels (25% step) triggered by onClick
-		// TODO: Blend off and on colors and animate when tapped
+		// Set up a list of tiles for the ambience mixer.
 		int colors[] = getThemeColors(getInflater().getContext());
 		Stream<CardView> tiles = StreamSupport
 				.of(xml().tile1, xml().tile2, xml().tile3, xml().tile4,
 					xml().tile5, xml().tile6, xml().tile7, xml().tile8);
+
+		// For each tile, configure the behavior like so:
+		// 1. Snap between range [0%, 25%, 50%, 75%, 100%]
+		// 2. Save and load this cycle from the tile's tag.
+		// 3. Interpolate the colorPrimaryDark and colorAccent.
+		// 4. Determine proportion using cycle and animate it.
+		// 5. Keep track of tile cycles and control volume levels.
 		tiles.forEach(c -> {
-			c.setTag(R.string.accept, false);
+			c.setTag(TILE_ID, 0);
+			c.setOnClickListener(v -> {
+				int cycle = (Integer)c.getTag(TILE_ID);
+
+				// Interpolate the previous cycle into the next cycle color.
+				// Then animate a transition to that color.
+				// Snaps the color cycle range: [0%, 25%, 50%, 75%, 100%]
+				int color1 = interpolate(colors[1], colors[2], cycle / 4.0f);
+				cycle = cycle >= 4 ? 0 : cycle + 1;
+				int color2 = interpolate(colors[1], colors[2], cycle / 4.0f);
+				animateCardViewColor(c, color1, color2).start();
+
+				c.setTag(TILE_ID, cycle);
+			});
 			c.setOnLongClickListener(v -> {
-				if((Boolean)c.getTag(R.string.accept)) {
-					animateCardView(c, colors[2], colors[1]).start();
-					c.setTag(R.string.accept, false);
-				} else {
-					animateCardView(c, colors[1], colors[2]).start();
-					c.setTag(R.string.accept, true);
-				}
+				int cycle = (Integer)c.getTag(TILE_ID);
+
+				// Interpolate the previous cycle into the next cycle color.
+				// Then animate a transition to that color.
+				// Snaps the color cycle range: [0%, 25%, 50%, 75%, 100%]
+				int color1 = interpolate(colors[1], colors[2], cycle / 4.0f);
+				cycle = cycle > 0 ? 0 : 4;
+				int color2 = interpolate(colors[1], colors[2], cycle / 4.0f);
+				animateCardViewColor(c, color1, color2).start();
+
+				c.setTag(TILE_ID, cycle);
 				return true;
 			});
 		});
 	}
 
-	//
-	// ---
-	//
+	private void poo() {
 
-	// fancy animation!!
-	private static Animator animateCardView(final CardView ctx, final int oldColor, final int newColor) {
-		ObjectAnimator animator = ObjectAnimator.ofInt(ctx, new Property<CardView, Integer>(int.class, "cardBackgroundColor") {
-			int prevColor = oldColor;
-			public Integer get(CardView ctx) {
-				return prevColor;
-			}
-			public void set(CardView ctx, Integer value) {
-				ctx.setCardBackgroundColor((prevColor = value));
-			}
-		}, newColor);
-		animator.setDuration(350L);
-		animator.setEvaluator(new ArgbEvaluator());
-		animator.setInterpolator(AnimationUtils.MaterialInterpolator.getInstance());
-		return animator;
+		//if (!SoundService.isSoundServiceActive())
+		//	SoundService.startSoundService();
+		//else SoundService.stopSoundService();
 	}
 }
