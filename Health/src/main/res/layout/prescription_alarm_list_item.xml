@@ -38,7 +38,8 @@
 
             <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:id="@+id/alarm_remove">
 
                 <FrameLayout
                     android:layout_width="30dp"

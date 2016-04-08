@@ -60,6 +60,12 @@ public class PrescriptionModule extends Module {
 		return prescriptionRealm.query(PrescriptionModel.class).findAll();
 	}
 
+	public void removePrescription(PrescriptionModel item) {
+		prescriptionRealm.getRealm().beginTransaction();
+		item.removeFromRealm();
+		prescriptionRealm.getRealm().commitTransaction();
+	}
+
 	public void clearAllPrescriptions() {
 		prescriptionRealm.clear();
 	}

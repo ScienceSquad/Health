@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
@@ -79,6 +80,12 @@ public class PrescriptionFragment extends BaseFragment {
 				TextView alarmTime = (TextView) mLinearLayout.findViewById(R.id.alarm_time);
 				TextView alarmPeriod = (TextView) mLinearLayout.findViewById(R.id.alarm_time_period);
 				TextView alarmDosage = (TextView) mLinearLayout.findViewById(R.id.alarm_dosage);
+				RelativeLayout removeButton = (RelativeLayout) mLinearLayout.findViewById(R.id.alarm_remove);
+				removeButton.setOnClickListener((view) -> {
+					Log.d(TAG, "Should remove alarm");
+					removeAlarm(item);
+					updateAlarmList();
+				});
 				alarmTime.setText(time);
 				alarmPeriod.setText(timePeriod);
 				alarmDosage.setText(String.valueOf(dosage) + " " + name + " every day");
@@ -144,6 +151,10 @@ public class PrescriptionFragment extends BaseFragment {
 
 	public void scrollAlarmListToBottom() {
 		xml().alarmList.scrollToPosition(xml().alarmList.getAdapter().getItemCount() - 1);
+	}
+
+	private void removeAlarm(PrescriptionModel item) {
+		prescriptionModule.removePrescription(item);
 	}
 
 	private void setPrescriptionAlarm(View view) {
