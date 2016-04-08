@@ -2,6 +2,7 @@ package com.sciencesquad.health.core.alarm;
 
 
 import android.app.AlarmManager;
+import android.app.Fragment;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +45,11 @@ public class AlarmSender {
 		this.time.set(Calendar.SECOND, 0);
 		this.time.set(Calendar.MILLISECOND, 0);
 		this.repeatInterval = AlarmManager.INTERVAL_DAY * DEFAULT_REPEAT;
+	}
+
+	// Convenience...
+	public void setAlarm(Fragment fragment, Intent intent) {
+		this.setAlarm(fragment.getActivity(), intent);
 	}
 
 	/**
