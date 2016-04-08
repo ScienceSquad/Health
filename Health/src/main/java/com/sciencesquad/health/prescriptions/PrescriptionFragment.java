@@ -25,6 +25,7 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
 
 import java.util.ArrayList;
@@ -62,11 +63,14 @@ public class PrescriptionFragment extends BaseFragment {
 				AlarmSender alarmSender = new AlarmSender();
 				alarmSender.setTimeInMillis(startDate);
 				String minute = alarmSender.getFieldString(AlarmSender.MINUTE, false);
+				int hour = alarmSender.get(AlarmSender.HOUR);
+				if (hour == 0) {
+					hour = 12;
+				}
 				if (minute.length() < 2) {
 					minute = "0" + minute;
 				}
-				String time = alarmSender.getFieldString(AlarmSender.HOUR, false)
-						+ ":" + minute;
+				String time = String.valueOf(hour) + ":" + minute;
 				String timePeriod = "AM";
 				int hourOfDay = alarmSender.get(AlarmSender.HOUR_OF_DAY);
 				if (hourOfDay > 11) {
@@ -228,6 +232,9 @@ public class PrescriptionFragment extends BaseFragment {
 		xml().fabEmergency.setOnClickListener(view2 -> {
 			sendEmergencyNotification();
 		});
+
+		StaticPagerAdapter.install(xml().pager);
+		xml().tabs.setupWithViewPager(xml().pager);
 
 		xml().fabAlarms.setImageDrawable(alarms);
 		xml().fabAlarms.setOnClickListener(view2 -> {

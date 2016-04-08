@@ -3,6 +3,7 @@ package com.sciencesquad.health.core.ui;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -23,6 +24,7 @@ public class ClockView extends View {
 	private static final String TAG = ClockView.class.getSimpleName();
 
 	private Paint mCirclePaint;
+	private Paint mBGPaint;
     private Paint mDotPaint;
     private Paint mTimePaint;
     private Paint mMsPaint;
@@ -90,6 +92,7 @@ public class ClockView extends View {
         mMsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mDotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mBGPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     private void setPaints() {
@@ -112,19 +115,20 @@ public class ClockView extends View {
 			mCirclePaint.setStyle(Paint.Style.STROKE);
 			mCirclePaint.setColor(mTextColor);
 		}
+
+		if (mBGPaint != null) {
+			mBGPaint.setStyle(Paint.Style.FILL);
+			mBGPaint.setColor(mBackgroundColor);
+		}
     }
 
     private void init(Context context, AttributeSet attrs) {
-        mDetector = new GestureDetector(this.getContext(), new mListener());
-		TypedArray a = context.getTheme().obtainStyledAttributes(
-				attrs,
-				R.styleable.ClockView,
-				0, 0);
-
+        mDetector = new GestureDetector(context, new mListener());
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ClockView);
 		try {
-			mTextColor = a.getInteger(R.styleable.ClockView_textColor, 0);
-			mBackgroundColor = a.getInteger(R.styleable.ClockView_backgroundColor, 0);
-			mTextHeight = a.getDimension(R.styleable.ClockView_textHeight, 0);
+			mTextColor = a.getColor(R.styleable.ClockView_textColor, Color.BLACK);
+			mBackgroundColor = a.getColor(R.styleable.ClockView_backgroundColor, Color.TRANSPARENT);
+			mTextHeight = a.getDimension(R.styleable.ClockView_textHeight, 24);
 		} finally {
 			a.recycle();
 		}
@@ -209,15 +213,17 @@ public class ClockView extends View {
 			maxTextWidth = totalTextWidth;
 		else totalTextWidth = maxTextWidth;
 
-        canvas.drawText(timeText, this.PADDING + radius - (totalTextWidth / 2),
-                this.PADDING + radius + (mTextHeight / 2), mTimePaint);
-        canvas.drawText(milliText, (2 * this.PADDING) + radius - (totalTextWidth / 2) + textWidth,
-                this.PADDING + radius + (mTextHeight / 2), mMsPaint);
-
 		double angle = this.stopwatch.getDotAngle(); // (Math.PI / 2)
 
-        this.drawDot(canvas, radius, angle);
+		canvas.drawCircle(this.PADDING + radius, this.PADDING + radius, radius, this.mBGPaint);
         canvas.drawCircle(this.PADDING + radius, this.PADDING + radius, radius, this.mCirclePaint);
+
+		this.drawDot(canvas, radius, angle);
+
+		canvas.drawText(timeText, this.PADDING + radius - (totalTextWidth / 2),
+				this.PADDING + radius + (mTextHeight / 2), mTimePaint);
+		canvas.drawText(milliText, (2 * this.PADDING) + radius - (totalTextWidth / 2) + textWidth,
+				this.PADDING + radius + (mTextHeight / 2), mMsPaint);
     }
 
 }

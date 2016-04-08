@@ -2,15 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/background_material_light">
+              android:layout_height="wrap_content">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:background="@color/background_material_light"
+        android:background="?attr/colorAccent"
         android:elevation="2dp">
 
         <LinearLayout
@@ -45,7 +44,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/abc_ic_clear_mtrl_alpha"
-                    android:backgroundTint="@color/abc_secondary_text_material_light"
+                    android:backgroundTint="?attr/colorPrimaryDark"
                     android:layout_alignParentRight="true"
                     android:layout_margin="4dp">
                 </FrameLayout>
