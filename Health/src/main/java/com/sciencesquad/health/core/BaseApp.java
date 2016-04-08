@@ -1,8 +1,10 @@
 package com.sciencesquad.health.core;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.sciencesquad.health.core.EventBus.Entry;
@@ -48,6 +50,26 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 */
 	public EventBus eventBus() {
 		return _eventBus;
+	}
+
+	/**
+	 * Convenience method to access vibration functions.
+	 *
+	 * @see Vibrator
+	 */
+	public void vibrate(long milliseconds) {
+		Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(milliseconds);
+	}
+
+	/**
+	 * Convenience method to access vibration functions.
+	 *
+	 * @see Vibrator
+	 */
+	public void vibrate(long[] pattern, int repeat) {
+		Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(pattern, repeat);
 	}
 
 	/**

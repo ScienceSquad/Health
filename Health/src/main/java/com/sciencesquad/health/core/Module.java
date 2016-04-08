@@ -82,13 +82,15 @@ public abstract class Module implements Observable {
 	 * @param module the module to register
 	 * @return true if registration successful, false otherwise
 	 */
-	public static <T extends Module> boolean registerModule(@NonNull Class<T> module) {
+	@Nullable
+	public static <T extends Module> T registerModule(@NonNull Class<T> module) {
 		try {
 			T instance = module.newInstance();
-			return _modules.add(instance);
+			instance.init();
+			return _modules.add(instance) ? instance : null;
 		} catch (Exception e) {
 			Log.e(TAG, "Unable to register Module class! " + e.getLocalizedMessage());
-			return false;
+			return null;
 		}
 	}
 
@@ -98,8 +100,10 @@ public abstract class Module implements Observable {
 	 * @param module the module to unregister
 	 * @return true if unregistration successful, false otherwise
 	 */
-	public static <T extends Module> boolean unregisterModule(@NonNull Class<T> module) {
-		return _modules.remove(module);
+	public static <T extends Module> void unregisterModule(@NonNull Class<T> module) {
+		StreamSupport.stream(_modules)
+				.filter(a -> module.isAssignableFrom(a.getClass()))
+				.forEach(v -> _modules.remove(v));
 	}
 
 	/**
@@ -114,17 +118,21 @@ public abstract class Module implements Observable {
 
 	/**
 	 * Get the registered Module for the given Class.
+	 * Note: will create one if it does not exist.
 	 *
 	 * @param module the Class of Module that was registered
 	 * @param <T> a Module subclass
 	 * @return the registered Module for the given Class
 	 */
-	@Nullable
+	@NonNull
 	@SuppressWarnings("unchecked")
 	public static <T extends Module> T moduleForClass(@NonNull Class<T> module) {
-		return (T)StreamSupport.stream(Module.registeredModules())
+		T item =  (T)StreamSupport.stream(_modules)
 				.filter(a -> module.isAssignableFrom(a.getClass()))
-				.findFirst().orElse(null);
+				.findFirst()
+				.orElse(Module.registerModule(module));
+		Log.i(TAG, "TEST WITH " + item);
+		return item;
 	}
 
 	/**
