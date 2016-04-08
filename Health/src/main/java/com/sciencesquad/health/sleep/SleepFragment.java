@@ -6,18 +6,26 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.alarm.AlarmSender;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
+import java8.util.stream.Stream;
+import java8.util.stream.StreamSupport;
 
 import static com.sciencesquad.health.core.util.AnimationUtils.*;
 
@@ -119,7 +127,7 @@ public class SleepFragment extends BaseFragment {
 		int colors[] = getThemeColors(getInflater().getContext());
 		Stream<CardView> tiles = StreamSupport
 				.of(xml().tile1, xml().tile2, xml().tile3, xml().tile4,
-					xml().tile5, xml().tile6, xml().tile7, xml().tile8);
+						xml().tile5, xml().tile6, xml().tile7, xml().tile8);
 
 		// For each tile, configure the behavior like so:
 		// 1. Snap between range [0%, (25%, 50%, 75%,) 100%]
@@ -130,17 +138,17 @@ public class SleepFragment extends BaseFragment {
 		tiles.forEach(c -> {
 
 			// Configure tags and text.
-			int _id = Integer.valueOf((String)c.getTag());
+			int _id = Integer.valueOf((String) c.getTag());
 			c.setTag(TILE_ID, _id);
 			c.setTag(TILE_CYCLE, 0);
-			TextView t = (TextView)c.findViewWithTag("text");
+			TextView t = (TextView) c.findViewWithTag("text");
 			if (_id < SoundService.wav_map.length)
 				t.setText(SoundService.wav_map[_id]);
 			else t.setText("other");
 
 			c.setOnClickListener(v -> {
-				int id = (Integer)c.getTag(TILE_ID);
-				int cycle = (Integer)c.getTag(TILE_CYCLE);
+				int id = (Integer) c.getTag(TILE_ID);
+				int cycle = (Integer) c.getTag(TILE_CYCLE);
 
 				// Snaps the color cycle range: [0%, 25%, 50%, 75%, 100%]
 				int color1 = interpolate(colors[1], colors[2], cycle / 4.0f);
@@ -153,8 +161,8 @@ public class SleepFragment extends BaseFragment {
 				this.module.setTileCycle(id, cycle);
 			});
 			c.setOnLongClickListener(v -> {
-				int id = (Integer)c.getTag(TILE_ID);
-				int cycle = (Integer)c.getTag(TILE_CYCLE);
+				int id = (Integer) c.getTag(TILE_ID);
+				int cycle = (Integer) c.getTag(TILE_CYCLE);
 
 				// Snaps the color cycle range: [0%, 100%]
 				int color1 = interpolate(colors[1], colors[2], cycle / 4.0f);
