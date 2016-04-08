@@ -211,7 +211,7 @@ public class ClockView extends View {
 
         canvas.drawText(timeText, this.PADDING + radius - (totalTextWidth / 2),
                 this.PADDING + radius + (mTextHeight / 2), mTimePaint);
-        canvas.drawText(milliText, this.PADDING + radius - (totalTextWidth / 2) + textWidth,
+        canvas.drawText(milliText, (2 * this.PADDING) + radius - (totalTextWidth / 2) + textWidth,
                 this.PADDING + radius + (mTextHeight / 2), mMsPaint);
 
 		double angle = this.stopwatch.getDotAngle(); // (Math.PI / 2)

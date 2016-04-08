@@ -24,15 +24,19 @@ import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
 
 import java.util.ArrayList;
 
+import io.realm.RealmResults;
+
 /**
  * Created by andrew on 4/7/16.
  */
 public class PrescriptionFragment extends BaseFragment {
 	public static final String TAG = PrescriptionFragment.class.getSimpleName();
 
+	private PrescriptionModule prescriptionModule;
+
 	public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
-		private ArrayList<String> mPrescriptions;
+		private RealmResults<PrescriptionModel> mPrescriptions;
 
 		// Provide a reference to the views for each data item
 		// Complex data items may need more than one view per item, and
@@ -45,12 +49,31 @@ public class PrescriptionFragment extends BaseFragment {
 				mLinearLayout = v;
 			}
 
-			public void setContent(String item) {
+			public void setContent(PrescriptionModel item) {
+				String name = item.getName();
+				int dosage = item.getDosage();
+				long startDate = item.getStartDate();
+
+				AlarmSender alarmSender = new AlarmSender();
+				alarmSender.setTimeInMillis(startDate);
+				String time = alarmSender.getFieldString(AlarmSender.HOUR, false)
+						+ ":" + alarmSender.getFieldString(AlarmSender.MINUTE, false);
+				String timePeriod = "AM";
+				int hourOfDay = alarmSender.get(AlarmSender.HOUR_OF_DAY);
+				if (hourOfDay > 11) {
+					timePeriod = "PM";
+				}
+				TextView alarmTime = (TextView) mLinearLayout.findViewById(R.id.alarm_time);
+				TextView alarmPeriod = (TextView) mLinearLayout.findViewById(R.id.alarm_time_period);
+				TextView alarmDosage = (TextView) mLinearLayout.findViewById(R.id.alarm_dosage);
+				alarmTime.setText(time);
+				alarmPeriod.setText(timePeriod);
+				alarmDosage.setText(String.valueOf(dosage) + " " + name + " every day");
 			}
 		}
 
 		// Provide a suitable constructor (depends on the kind of dataset)
-		public ListAdapter(ArrayList<String> myDataset) {
+		public ListAdapter(RealmResults<PrescriptionModel> myDataset) {
 			mPrescriptions = myDataset;
 		}
 
@@ -142,18 +165,31 @@ public class PrescriptionFragment extends BaseFragment {
 	}
 
 	public void updateAlarmList() {
-		ArrayList<String> stringArrayList = new ArrayList<String>();
-		int num_alarms = 10;
-		for (int i = 0; i < num_alarms; i++) {
-			stringArrayList.add("blah");
-		}
-		ListAdapter listAdapter = new ListAdapter(stringArrayList);
+
+		RealmResults<PrescriptionModel> prescriptions = prescriptionModule.getPrescriptions();
+		ListAdapter listAdapter = new ListAdapter(prescriptions);
 		xml().alarmList.setAdapter(listAdapter);
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+
+		prescriptionModule = new PrescriptionModule();
+
+		prescriptionModule.clearAllPrescriptions();
+
+		prescriptionModule.setName("foolenol");
+		prescriptionModule.setDosage(5);
+		prescriptionModule.setStartDate(System.currentTimeMillis());
+		prescriptionModule.setRepeatDuration(AlarmManager.INTERVAL_DAY);
+		prescriptionModule.addPrescription();
+
+		prescriptionModule.setName("barlisil");
+		prescriptionModule.setDosage(3);
+		prescriptionModule.setStartDate(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
+		prescriptionModule.setRepeatDuration(AlarmManager.INTERVAL_DAY);
+		prescriptionModule.addPrescription();
 
 		xml().alarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
 		updateAlarmList();

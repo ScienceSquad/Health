@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="1:50"
-                android:id="@+id/textView4"
+                android:id="@+id/alarm_time"
                 android:textSize="50dp"
                 android:textStyle="bold"
                 android:layout_marginRight="8dp"
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="AM"
-                android:id="@+id/textView5"
+                android:id="@+id/alarm_time_period"
                 android:textSize="30dp"/>
 
             <RelativeLayout
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="5 tylenol every day"
-                android:id="@+id/textView6"/>
+                android:id="@+id/alarm_dosage"/>
         </LinearLayout>
     </LinearLayout>
 

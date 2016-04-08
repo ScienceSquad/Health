@@ -7,6 +7,7 @@ import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.BaseApp;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 import java.util.Calendar;
 
@@ -21,16 +22,48 @@ public class PrescriptionModule extends Module {
 
 	private RealmContext<PrescriptionModel> prescriptionRealm;
 
+	private String name;
+	private int dosage;
+	private long repeatDuration;
+	private long startDate;
+
 	/**
 	 * Constructs the module itself.
 	 * It also sets up a Realm Context for the Module.
 	 */
 
-	public PrescriptionModule() throws Exception{
+	public PrescriptionModule() {
 		Log.d(TAG, "Constructing Prescription Module");
 		this.prescriptionRealm = new RealmContext<>();
 		this.prescriptionRealm.init(BaseApp.app(), PrescriptionModel.class, "prescription.realm");
 	}
+
+	public void setName(String name) { this.name = name; }
+	public String getName() { return this.name; }
+	public void setDosage(int dosage) { this.dosage = dosage; }
+	public int getDosage() { return this.dosage; }
+	public void setRepeatDuration(long repeatDuration) { this.repeatDuration = repeatDuration; }
+	public long getRepeatDuration() { return this.repeatDuration; }
+	public void setStartDate(long startDate) { this.startDate = startDate; }
+	public long getStartDate() { return this.startDate; }
+
+	public void addPrescription() {
+		PrescriptionModel prescriptionModel = new PrescriptionModel();
+		prescriptionModel.setName(this.name);
+		prescriptionModel.setDosage(this.dosage);
+		prescriptionModel.setRepeatDuration(this.repeatDuration);
+		prescriptionModel.setStartDate(this.startDate);
+		prescriptionRealm.add(prescriptionModel);
+	}
+
+	public RealmResults<PrescriptionModel> getPrescriptions() {
+		return prescriptionRealm.query().findAll();
+	}
+
+	public void clearAllPrescriptions() {
+		prescriptionRealm.clear();
+	}
+
 
 	@Override
 	public Pair<String, Integer> identifier() {
