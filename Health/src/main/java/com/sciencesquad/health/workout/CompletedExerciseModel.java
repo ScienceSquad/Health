@@ -22,6 +22,8 @@ public class CompletedExerciseModel extends RealmObject {
 
     private String exerciseName;
     private RealmList<ExerciseSetModel> sets;
+    private float oneRepMax;
+    private String dateString;
     /**
      * Calendar date where this model was created.
      */
@@ -31,6 +33,12 @@ public class CompletedExerciseModel extends RealmObject {
     // GENERATED METHODS FOLLOW
     // DO NOT MODIFY -- REALM ONLY
     //
+
+    public String getDateString(){ return this.dateString; }
+    public void setDateString(String dateString){
+        this.dateString = dateString;
+    }
+
 
     public RealmList<ExerciseSetModel> getSets() {
         return sets;
@@ -47,6 +55,12 @@ public class CompletedExerciseModel extends RealmObject {
     public void setExerciseName(String exerciseName) {
         this.exerciseName = exerciseName;
     }
+
+    public void setOneRepMax( float oneRepMax ){
+        this.oneRepMax = oneRepMax;
+    }
+
+    public float getOneRepMax(){ return this.oneRepMax; }
 
     /**
     *   Returns one-rep-max from this exercise instance

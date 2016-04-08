@@ -24,6 +24,11 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
+import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
@@ -41,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class WorkoutFragment extends BaseFragment {
     public static final String TAG = WorkoutFragment.class.getSimpleName();
@@ -326,6 +332,15 @@ public class WorkoutFragment extends BaseFragment {
         builder.create().show();
     }
 
+    private RealmLineData createLineData(String exerciseName){
+        RealmLineDataSet<CompletedExerciseModel> dataSet = new RealmLineDataSet<CompletedExerciseModel>(
+                mod.getCompletedExercisesQuery(exerciseName), "oneRepMax");
+        ArrayList<ILineDataSet> dataSetList = new ArrayList<ILineDataSet>();
+        dataSetList.add(dataSet);
+        RealmLineData data = new RealmLineData(mod.getCompletedExercisesQuery(exerciseName), "dateString" , dataSetList);
+        return data;
+    }
+
     void showExerciseHistoryDialog(String exerciseName){
         // Get Exercise History
         //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
@@ -348,6 +363,15 @@ public class WorkoutFragment extends BaseFragment {
         View dialogLayout = inflater.inflate(R.layout.exercise_history_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle(exerciseName + " History");
+
+        LineChart graph = (LineChart) dialogLayout.findViewById(R.id.history_graph);
+        graph.setDescription("One Rep Max over Time");
+        graph.setData(createLineData(exerciseName));
+        graph.invalidate();
+        //RealmLineDataSet<CompletedExerciseModel> dataSetList = new RealmLineDataSet<CompletedExerciseModel>(
+                //mod.getCompletedExercises()
+
+       // graph.setData()
 
         TextView oneRMax = (TextView) dialogLayout.findViewById(R.id.oneRMax);
         oneRMax.setText("One Rep Max: " + max);
