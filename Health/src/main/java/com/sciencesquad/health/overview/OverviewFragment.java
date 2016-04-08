@@ -15,10 +15,10 @@ import android.view.animation.AnimationUtils;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
-
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
@@ -44,6 +44,8 @@ public class OverviewFragment extends BaseFragment {
     PieChart mPieChart;
     private float[] yData = {5, 10, 15, 20, 25};
     private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
+    private Integer[] pieColor = {R.color.light_green_900, R.color.purple_700, R.color.amber_700,
+            R.color.red_700, R.color.blue_700};
 
     @Override
     protected BaseFragment.Configuration getConfiguration() {
@@ -61,13 +63,13 @@ public class OverviewFragment extends BaseFragment {
     }
 
     private void addData() {
-        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
+        ArrayList<Entry> yVals1 = new ArrayList<>();
 
         for (int i = 0; i < yData.length; i++) {
             yVals1.add(new Entry(yData[i], i));
         }
 
-        ArrayList<String> xVals = new ArrayList<String>();
+        ArrayList<String> xVals = new ArrayList<>();
 
         for (int i = 0; i < xData.length; i++) {
             xVals.add(xData[i]);
@@ -75,12 +77,19 @@ public class OverviewFragment extends BaseFragment {
 
         // create pie data set
         PieDataSet pds = new PieDataSet(yVals1, "Module Coefficients");
-        pds.setSliceSpace(3);
-        pds.setSelectionShift(5);
+        pds.setSliceSpace(3f);
+        pds.setSelectionShift(5f);
 
         // taste the rainbow
-        ArrayList<Integer> colors = new ArrayList<Integer>();
+        ArrayList<Integer> colors = new ArrayList<>();
 
+        for (int i = 0; i < pieColor.length; i++) {
+            colors.add(pieColor[i]);
+        }
+
+        /**
+         * Hopefully I don't need these stupid for-loops!
+         *
         for (int c : ColorTemplate.COLORFUL_COLORS) {
             colors.add(c);
         }
@@ -91,21 +100,18 @@ public class OverviewFragment extends BaseFragment {
 
         for (int c : ColorTemplate.PASTEL_COLORS) {
             colors.add(c);
-        }
+        } */
 
         pds.setColors(colors);
 
         PieData data = new PieData(xVals, pds);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(11f);
-        data.setValueTextColor(Color.GRAY);
+        data.setValueTextColor(Color.WHITE);
 
         mPieChart.setData(data);
-
         mPieChart.highlightValues(null);
-
         mPieChart.invalidate();
-
     }
 
     @Override
@@ -123,36 +129,35 @@ public class OverviewFragment extends BaseFragment {
         StaticPagerAdapter.install(xml().pager);
         xml().tabs.setupWithViewPager(xml().pager);
 
-        // Temporary code. This grabs the pie chart easily thanks to the xml() method
+        // This grabs the pie chart easily thanks to the xml() method
         mPieChart = (PieChart) xml().overviewChart;
-        // Add to page 1 & set description
-        xml().page1.addView(mPieChart);
         mPieChart.setDescription("Daily Overview");
         mPieChart.setDescriptionColor(R.color.amber_50);
 
         // Enable hole & configure
         mPieChart.setDrawHoleEnabled(true);
+        mPieChart.setHoleColor(Color.TRANSPARENT);
+        mPieChart.setHoleRadius(33);
+        mPieChart.setTransparentCircleRadius(45);
+        mPieChart.setCenterText("78");
+        mPieChart.setCenterTextSize(14f);
 
-        mPieChart.setHoleRadius(7);
-        mPieChart.setTransparentCircleRadius(10);
-
-        // enable touch & rotation
+        // Enable touch & rotation
         mPieChart.setTouchEnabled(true);
         mPieChart.setRotationAngle(0);
 
-
         addData();
 
-        PieData data;
-        mPieChart.setCenterText("78");
         mPieChart.invalidate();
 
-
-
-        fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_close);
-        rotate_forward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.rotate_forward);
-        rotate_backward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.rotate_backward);
+        fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.rotate_backward);
 
         // FABulous!!!
         fab = xml().overviewFab;
@@ -164,6 +169,10 @@ public class OverviewFragment extends BaseFragment {
         fab4.hide();
 
         fab.setOnClickListener(v -> {
+            animateFab();
+            /**
+             * Clearly I don't know how this works
+             *
             if (!isFabOpen) {
                 isFabOpen = true;
                 animateFab();
@@ -176,7 +185,7 @@ public class OverviewFragment extends BaseFragment {
                 fab2.hide();
                 fab3.hide();
                 fab4.hide();
-            }
+            } */
         });
 
 
@@ -193,23 +202,25 @@ public class OverviewFragment extends BaseFragment {
         }); */
     }
 
-
-
     public void animateFab() {
         if (isFabOpen) {
             fab.startAnimation(rotate_backward);
             fab2.startAnimation(fab_close);
             fab3.startAnimation(fab_close);
+            fab4.startAnimation(fab_close);
             fab2.setClickable(false);
             fab3.setClickable(false);
+            fab4.setClickable(false);
             isFabOpen = false;
             Log.d("Colin", "close");
         } else {
             fab.startAnimation(rotate_forward);
             fab2.startAnimation(fab_open);
             fab3.startAnimation(fab_open);
+            fab4.startAnimation(fab_open);
             fab2.setClickable(true);
             fab3.setClickable(true);
+            fab4.setClickable(true);
             isFabOpen = true;
             Log.d("Colin","open");
         }

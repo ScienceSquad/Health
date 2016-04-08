@@ -142,7 +142,7 @@
 
     <style name="AppTheme.Overview" parent="AppTheme">
         <item name="colorAccent">@color/light_blue_700</item>
-        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/blue_900</item>
     </style>
 
@@ -169,6 +169,5 @@
         <item name="colorPrimary">@color/green_900</item>
         <item name="colorPrimaryDark">@color/material_black</item>
     </style>
-
 
 </resources>
