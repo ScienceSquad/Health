@@ -19,7 +19,7 @@
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.LightBlue">
+            android:theme="@style/AppTheme.Purple">
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:tag="@string/overview_module"
@@ -108,6 +108,25 @@
             app:layout_anchor="@id/stepsFab"
             app:fabSize="mini"
             app:backgroundTint="@color/yellow_700"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="top" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/stepsFab3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="150dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_pause"
+            app:layout_anchor="@id/stepsFab"
+            app:fabSize="mini"
+            app:backgroundTint="@color/red_700"
             app:elevation="6dp"
             app:pressedTranslationZ="12dp"
             app:layout_anchorGravity="top" />

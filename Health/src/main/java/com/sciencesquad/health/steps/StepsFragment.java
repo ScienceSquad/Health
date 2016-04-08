@@ -9,6 +9,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 /**
@@ -64,13 +66,21 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 	private FloatingActionButton fab;
 	private FloatingActionButton fab2;
 	private FloatingActionButton fab3;
+	private Boolean isFabOpen = false;
+	private Animation fab_open;
+	private Animation fab_close;
+	private Animation rotate_forward;
+	private Animation rotate_backward;
+	private Animation rotation;
+	private Animation pause_morph;
+	private Animation play_morph;
 
 	@Override
 	protected BaseFragment.Configuration getConfiguration() {
 		String stepsTag = StepsModule.TAG; // instantiates the Module...
 		return new BaseFragment.Configuration(
-				TAG, "Overview", R.drawable.ic_menu_steps,
-				R.style.AppTheme_Overview, R.layout.fragment_steps
+				TAG, "Steps", R.drawable.ic_menu_steps,
+				R.style.AppTheme_Steps, R.layout.fragment_steps
 		);
 	}
 
@@ -90,6 +100,9 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 		reset.setTint(Color.DKGRAY);
 		Drawable pause = ContextCompat.getDrawable(getActivity(), R.drawable.ic_pause);
 		pause.setTint(Color.DKGRAY);
+
+		// Setup the Toolbar
+		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
 		// Create text views
         num_steps = (TextView) view.findViewById(R.id.num_steps);
@@ -125,20 +138,43 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 
         avg_speed.setText(String.valueOf(strideLength) + "m/s");
 
+		// Animate fabs
+		fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.fab_open);
+		fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.fab_close);
+		rotate_forward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.rotate_forward);
+		rotate_backward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.rotate_backward);
+		rotation = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.rotation);
+		pause_morph = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.pause_morph_play);
+		play_morph = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.play_morph_pause);
 
 		fab = xml().stepsFab;
 		fab.setImageDrawable(plus);
 		fab2 = xml().buttonReset;
 		fab2.setImageDrawable(reset);
+		fab2.setOnClickListener(this::resetSteps);
 		fab2.hide();
 		fab3 = xml().stepsFab3;
 		fab3.setImageDrawable(pause);
 		fab3.hide();
 
+		fab.setOnClickListener(v -> {
+			animateFab();
+		});
 
-        // This IS used -- see fragment_steps.xml
-        Button reset_steps = (Button) view.findViewById(R.id.buttonReset);
-		reset_steps.setOnClickListener(this::resetSteps);
+		fab2.setOnClickListener(v -> {
+			fab2.startAnimation(rotation);
+		});
+
+		fab3.setOnClickListener(v -> {
+			fab3.startAnimation(rotation);
+		});
     }
 
     /**
@@ -251,4 +287,29 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // Empty for the rest of time.
     }
+
+	/**
+	 * Animations for when the overviewFab is pressed
+	 */
+	public void animateFab() {
+		if (!isFabOpen) {
+			fab.startAnimation(rotate_forward);
+			fab2.startAnimation(fab_open);
+			fab3.startAnimation(fab_open);
+			fab2.show();
+			fab3.show();
+			fab2.setClickable(true);
+			fab3.setClickable(true);
+			isFabOpen = true;
+		} else {
+			fab.startAnimation(rotate_backward);
+			fab2.startAnimation(fab_close);
+			fab3.startAnimation(fab_close);
+			fab2.hide();
+			fab3.hide();
+			fab2.setClickable(false);
+			fab3.setClickable(false);
+			isFabOpen = false;
+		}
+	}
 }

@@ -170,4 +170,10 @@
         <item name="colorPrimaryDark">@color/material_black</item>
     </style>
 
+    <style name="AppTheme.Steps" parent="AppTheme">
+        <item name="colorAccent">@color/purple_300</item>
+        <item name="colorPrimary">@color/purple_50</item>
+        <item name="colorPrimaryDark">@color/purple_900</item>
+    </style>
+
 </resources>

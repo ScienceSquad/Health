@@ -81,11 +81,8 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			new SleepFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_steps) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new StepsFragment(), StepsFragment.TAG)
-					.addToBackStack(StepsFragment.TAG)
-					.commit();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new PrescriptionFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_workout) {
 			getFragmentManager()
 					.beginTransaction()
