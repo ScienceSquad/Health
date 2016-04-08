@@ -49,7 +49,7 @@ public class WorkoutModule extends Module {
         this.workoutRealm.getRealm().beginTransaction();
         this.workoutRealm.getRealm().deleteAll();
         this.workoutRealm.getRealm().commitTransaction();
-        this.workoutRealm.getRealm().refresh();
+        //this.workoutRealm.getRealm().refresh();
 
         addRecommendedWorkouts();
 

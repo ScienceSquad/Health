@@ -57,6 +57,7 @@ public class WorkoutFragment extends BaseFragment {
     public static ArrayAdapter<String> routineModelAdapter;
     public static ArrayAdapter<String> exerciseTypeAdapter;
     public static ArrayAdapter<String> currentRoutineExerciseAdapter;
+    WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
 
 
 
@@ -68,38 +69,38 @@ public class WorkoutFragment extends BaseFragment {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-   // private SectionsPagerAdapter mSectionsPagerAdapter;
+    // private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-  //  private ViewPager mViewPager;
+    //  private ViewPager mViewPager;
 
-	@Override
-	protected Configuration getConfiguration() {
-		String _ = WorkoutModule.TAG; // instantiates the Module...
-		return new Configuration(
-				TAG, "Workout", R.drawable.ic_fitness_center_24dp,
-				R.style.AppTheme_Workout, R.layout.fragment_workout
-		);
-	}
+    @Override
+    protected Configuration getConfiguration() {
+        String _ = WorkoutModule.TAG; // instantiates the Module...
+        return new Configuration(
+                TAG, "Workout", R.drawable.ic_fitness_center_24dp,
+                R.style.AppTheme_Workout, R.layout.fragment_workout
+        );
+    }
 
-	// Our generated binding class is different...
-	@Override @SuppressWarnings("unchecked")
-	protected FragmentWorkoutBinding xml() {
-		return super.xml();
-	}
+    // Our generated binding class is different...
+    @Override @SuppressWarnings("unchecked")
+    protected FragmentWorkoutBinding xml() {
+        return super.xml();
+    }
 
-	@Override
-	public void onSetupTransition() {
-		this.setEnterTransition(new RevealTransition(Visibility.MODE_IN));
-		this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
-	}
+    @Override
+    public void onSetupTransition() {
+        this.setEnterTransition(new RevealTransition(Visibility.MODE_IN));
+        this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-		xml().setModule(Module.moduleForClass(WorkoutModule.class));
+        xml().setModule(Module.moduleForClass(WorkoutModule.class));
 
         TabLayout tabLayout = xml().tabs;
         StaticPagerAdapter.install(xml().pager);
@@ -126,7 +127,7 @@ public class WorkoutFragment extends BaseFragment {
         xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
         // Bind data to currentWorkoutTab
-        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+
         WorkoutScheduleModel schedule = mod.getWorkoutSchedule();
         currentRoutineExerciseAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_expandable_list_item_1);
@@ -170,13 +171,14 @@ public class WorkoutFragment extends BaseFragment {
             String clickedRoutineName = routineModelAdapter.getItem(position).toString();
             Log.i(TAG, "Selected routine: " + clickedRoutineName);
             RoutineModel currentRoutine = mod.getRoutineModel(clickedRoutineName);
-            Log.i(TAG, "CONTAINS" + currentRoutine.getExercises().toString());
+            Log.i(TAG, "CONTAINS" + currentRoutine.getExercises().first().getName());
 
             if(currentRoutine != null){
                 Log.i(TAG, "Retrieved Routine: " + currentRoutine.getName());
                 //Check if routine is already populated with exercises
                 if(currentRoutine.getExercises().size() != 0){
                     // update current workout and switch to current workout tab
+
 
                     updateCurrentWorkout(currentRoutine);
                     xml().pager.setCurrentItem(0);
@@ -191,7 +193,7 @@ public class WorkoutFragment extends BaseFragment {
     }
 
     public void updateCurrentWorkout(RoutineModel currentRoutine){
-        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         xml().currentWorkoutHeader.setText("");
 
         currentRoutineExerciseAdapter.clear();                // first clear adapter
@@ -257,7 +259,7 @@ public class WorkoutFragment extends BaseFragment {
         builder.setTitle(name);
 
         // fill spinner with all different workout "targets" with which a user can filter exercises
-        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         List<ExerciseTargetModel> filters = mod.getAllTargets();
         Spinner filterSpinner = (Spinner) dialogLayout.findViewById(R.id.filter_spinner);
         ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
@@ -326,8 +328,9 @@ public class WorkoutFragment extends BaseFragment {
 
     void showExerciseHistoryDialog(String exerciseName){
         // Get Exercise History
-        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         ArrayList<CompletedExerciseModel> history =  mod.getCompletedExercises(exerciseName);
+        Log.i(TAG, "Num Completed Exercises: " + history.size());
         int max = 0;
         int totalWeightLifted = 0;
         for(CompletedExerciseModel c : history){
@@ -367,13 +370,13 @@ public class WorkoutFragment extends BaseFragment {
         Log.i("FragmentAlertDialog", "Positive click!" + "Name: " + name + " Category: " + category + " Target: " + target);
         if(name.equals("")){
             Snackbar.make(getView(), "Not added: Exercise name field blank!", Snackbar.LENGTH_LONG)
-                  .setAction("Action", null).show();
+                    .setAction("Action", null).show();
         }else{
 
             ExerciseTypeModel newExercise = WorkoutModule.createNewExercise(name, category, target);
             //Add to Realm
             exerciseTypeModelList.add(newExercise);
-            WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+            //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
             mod.addExerciseTypeModel(newExercise);
 
 
@@ -414,6 +417,7 @@ public class WorkoutFragment extends BaseFragment {
             for(int i = 0; i < 7; i++)
                 dow[i] = new Boolean(dowListView.isItemChecked(i));
             showRoutineScheduleBuilder(dow);
+
         });
         builder.setNegativeButton("Cancel", (dialog, whichButton) -> {
         });
@@ -438,7 +442,7 @@ public class WorkoutFragment extends BaseFragment {
         routineListView.setAdapter(routineListAdapter);
         routineListAdapter.clear();
 
-        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         for(RoutineModel m : mod.getAllRoutineModels())
             routineListAdapter.addAll(m.getName());
 
@@ -461,21 +465,18 @@ public class WorkoutFragment extends BaseFragment {
             WorkoutScheduleModel newSchedule = mod.createNewSchedule(workoutDays, Calendar.getInstance().getTime(), routines);
             mod.addWorkoutScheduleModel(newSchedule);
 
-            WorkoutScheduleModel s = mod.getWorkoutSchedule();
-            if(s == null ){
-                Log.i(TAG, "WHAT THE FUCKING FUCK REALM");
-            } else {
-                Log.i(TAG, "Retrieved a schedule, yo!!!");
-                Log.i(TAG, "Routines: " + s.getRoutineRotation().first().getName() );
-
+            if(newSchedule.getFriday() == true){
+                RoutineModel routine = mod.getRoutineModel(newSchedule.getRoutineRotation().first().getName());
+                updateCurrentWorkout(routine);
             }
+
         });
         builder.setNegativeButton("Cancel", (dialog, whichButton) -> {
         });
         builder.create().show();
     }
 
-	/**
+    /**
      *
      */
     public void cancelNewExerciseType() {
@@ -484,8 +485,8 @@ public class WorkoutFragment extends BaseFragment {
     }
 
 
-	/**
-	 *
+    /**
+     *
      */
     public void saveRoutine() {
         // Do stuff here.
@@ -493,7 +494,7 @@ public class WorkoutFragment extends BaseFragment {
             Snackbar.make(getView(), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
-            WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+            //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
             showRoutineBuilder(routineName);
 
             // Bind data to view (RoutineModels)
@@ -504,7 +505,7 @@ public class WorkoutFragment extends BaseFragment {
         }
     }
 
-	/**
+    /**
      *
      */
     public void cancelNewRoutine() {
@@ -516,7 +517,7 @@ public class WorkoutFragment extends BaseFragment {
 
 
     public void saveCompletedExercise(CompletedExerciseModel newCompletedExercise) {
-        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         mod.addCompletedExercise(newCompletedExercise);
     }
 

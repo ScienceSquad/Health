@@ -19,7 +19,7 @@ import java.util.List;
 
 public class CompletedExerciseModel extends RealmObject {
 
-    @PrimaryKey
+
     private String exerciseName;
     private RealmList<ExerciseSetModel> sets;
     /**
