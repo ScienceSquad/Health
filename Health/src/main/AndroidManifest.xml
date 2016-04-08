@@ -72,9 +72,9 @@
             </intent-filter>
 
             <!-- The initial Fragment to launch from the HostActivity. -->
-            <!-- <meta-data
+            <meta-data
                 android:name="fragment"
-                android:value="com.sciencesquad.health.overview.OverviewFragment" /> -->
+                android:value="com.sciencesquad.health.overview.OverviewFragment" />
         </activity>
 
         <!-- For SleepModule to play audio in the background. -->

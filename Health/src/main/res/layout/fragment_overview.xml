@@ -22,6 +22,7 @@
             android:theme="@style/AppTheme.LightBlue">
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
+                android:tag="@string/overview_module"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
@@ -51,7 +52,8 @@
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/overviewChart"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    app:pressedTranslationZ="6dp" />
 
             </RelativeLayout>
             <RelativeLayout
@@ -85,7 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_plus"
+        android:src="@drawable/ic_menu_overview"
         app:pressedTranslationZ="12dp" />
 
     <android.support.design.widget.FloatingActionButton
@@ -119,9 +121,9 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:src="@drawable/ic_plus"
-        app:layout_anchor="@id/overviewFab2"
+        app:layout_anchor="@id/overviewFab"
         app:fabSize="mini"
-        app:backgroundTint="@color/blue_400"
+        app:backgroundTint="@color/purple_400"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"
         app:layout_anchorGravity="top" />
@@ -138,7 +140,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:src="@drawable/ic_plus"
-        app:layout_anchor="@id/overviewFab3"
+        app:layout_anchor="@id/overviewFab"
         app:fabSize="mini"
         app:backgroundTint="@color/yellow_400"
         app:elevation="6dp"
