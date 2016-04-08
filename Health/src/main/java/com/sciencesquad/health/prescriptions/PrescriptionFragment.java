@@ -7,15 +7,20 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Visibility;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
@@ -56,8 +61,12 @@ public class PrescriptionFragment extends BaseFragment {
 
 				AlarmSender alarmSender = new AlarmSender();
 				alarmSender.setTimeInMillis(startDate);
+				String minute = alarmSender.getFieldString(AlarmSender.MINUTE, false);
+				if (minute.length() < 2) {
+					minute = "0" + minute;
+				}
 				String time = alarmSender.getFieldString(AlarmSender.HOUR, false)
-						+ ":" + alarmSender.getFieldString(AlarmSender.MINUTE, false);
+						+ ":" + minute;
 				String timePeriod = "AM";
 				int hourOfDay = alarmSender.get(AlarmSender.HOUR_OF_DAY);
 				if (hourOfDay > 11) {
@@ -129,29 +138,45 @@ public class PrescriptionFragment extends BaseFragment {
 		this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
 	}
 
-	private void setPrescriptionAlarm() {
+	public void scrollAlarmListToBottom() {
+		xml().alarmList.scrollToPosition(xml().alarmList.getAdapter().getItemCount() - 1);
+	}
+
+	private void setPrescriptionAlarm(View view) {
 			/* PrescriptionAlarmReceiver receiver = new PrescriptionAlarmReceiver();
 			receiver.doSomethingImportant("Tylenol", 5); */
-		if (dialog == null) {
-			dialog = new AlarmDialog(getActivity());
-		}
-		if (!dialog.isSet()) {
-			dialog.callDatePicker();
-		}
-		else {
-			AlarmSender alarm = dialog.getAlarm();
-
-			alarm.setInterval(AlarmManager.INTERVAL_DAY);
-
-			PrescriptionModel prescriptionModel = new PrescriptionModel();
-
-			prescriptionModel.setDosage(5);
-			prescriptionModel.setName("Tylenol");
-			prescriptionModel.setRepeatDuration(alarm.getRepeatInterval());
-			prescriptionModel.setStartDate(alarm.getTimeInMillis());
-
-			PrescriptionAlarm.setAlarm(prescriptionModel, getActivity());
-		}
+		View alarmDialog = getInflater().inflate(R.layout.fragment_prescription_alarm_dialog, null);
+		new MaterialStyledDialog(getActivity())
+				.setCustomView(alarmDialog)
+				.withDialogAnimation(true, Duration.FAST)
+				.setCancelable(false)
+				.setPositive("Accept",
+						(dialog, which) -> {
+							Log.d(TAG,"Accepted!");
+							EditText nameInput = (EditText) alarmDialog.findViewById(R.id.prescription_name);
+							EditText dosageInput = (EditText) alarmDialog.findViewById(R.id.prescription_dosage);
+							String name = nameInput.getText().toString();
+							String dosageString = dosageInput.getText().toString();
+							int dosage = 0;
+							if ((name.length() <= 0) || (dosageString.length() <= 0)) {
+								Snackbar.make(view, "Invalid input", Snackbar.LENGTH_LONG)
+										.setAction("Action", null).show();
+								return;
+							}
+							else {
+								dosage = Integer.parseInt(dosageString);
+							}
+							prescriptionModule.setName(name);
+							prescriptionModule.setDosage(dosage);
+							prescriptionModule.setStartDate(System.currentTimeMillis());
+							prescriptionModule.setRepeatDuration(AlarmManager.INTERVAL_DAY);
+							prescriptionModule.addPrescription();
+							updateAlarmList();
+							scrollAlarmListToBottom();
+						})
+				.setNegative("Decline",
+						(dialog, which) -> Log.d(TAG,"Declined!"))
+				.show();
 	}
 
 	private void sendEmergencyNotification() {
@@ -206,7 +231,7 @@ public class PrescriptionFragment extends BaseFragment {
 
 		xml().fabAlarms.setImageDrawable(alarms);
 		xml().fabAlarms.setOnClickListener(view2 -> {
-			setPrescriptionAlarm();
+			setPrescriptionAlarm(view2);
 		});
 	}
 }
