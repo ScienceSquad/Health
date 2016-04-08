@@ -13,14 +13,20 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentOverviewBinding;
+
+import java.util.ArrayList;
 
 public class OverviewFragment extends BaseFragment {
     public static final String TAG = OverviewFragment.class.getSimpleName();
@@ -54,6 +60,54 @@ public class OverviewFragment extends BaseFragment {
         return super.xml();
     }
 
+    private void addData() {
+        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
+
+        for (int i = 0; i < yData.length; i++) {
+            yVals1.add(new Entry(yData[i], i));
+        }
+
+        ArrayList<String> xVals = new ArrayList<String>();
+
+        for (int i = 0; i < xData.length; i++) {
+            xVals.add(xData[i]);
+        }
+
+        // create pie data set
+        PieDataSet pds = new PieDataSet(yVals1, "Module Coefficients");
+        pds.setSliceSpace(3);
+        pds.setSelectionShift(5);
+
+        // taste the rainbow
+        ArrayList<Integer> colors = new ArrayList<Integer>();
+
+        for (int c : ColorTemplate.COLORFUL_COLORS) {
+            colors.add(c);
+        }
+
+        for (int c : ColorTemplate.JOYFUL_COLORS) {
+            colors.add(c);
+        }
+
+        for (int c : ColorTemplate.PASTEL_COLORS) {
+            colors.add(c);
+        }
+
+        pds.setColors(colors);
+
+        PieData data = new PieData(xVals, pds);
+        data.setValueFormatter(new PercentFormatter());
+        data.setValueTextSize(11f);
+        data.setValueTextColor(Color.GRAY);
+
+        mPieChart.setData(data);
+
+        mPieChart.highlightValues(null);
+
+        mPieChart.invalidate();
+
+    }
+
     @Override
     public void onSetupTransition() {
         this.setEnterTransition(new RevealTransition(Visibility.MODE_IN));
@@ -71,10 +125,24 @@ public class OverviewFragment extends BaseFragment {
 
         // Temporary code. This grabs the pie chart easily thanks to the xml() method
         mPieChart = (PieChart) xml().overviewChart;
+        // Add to page 1 & set description
         xml().page1.addView(mPieChart);
         mPieChart.setDescription("Daily Overview");
         mPieChart.setDescriptionColor(R.color.amber_50);
+
+        // Enable hole & configure
+        mPieChart.setDrawHoleEnabled(true);
+
+        mPieChart.setHoleRadius(7);
+        mPieChart.setTransparentCircleRadius(10);
+
+        // enable touch & rotation
         mPieChart.setTouchEnabled(true);
+        mPieChart.setRotationAngle(0);
+
+
+        addData();
+
         PieData data;
         mPieChart.setCenterText("78");
         mPieChart.invalidate();
@@ -124,6 +192,7 @@ public class OverviewFragment extends BaseFragment {
             }
         }); */
     }
+
 
 
     public void animateFab() {
