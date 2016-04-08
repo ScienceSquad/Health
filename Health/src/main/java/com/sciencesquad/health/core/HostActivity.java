@@ -15,8 +15,8 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.run.RunFragment;
-import com.sciencesquad.health.core.alarm.AlarmFragment;
+import com.sciencesquad.health.nutrition.DatabaseFragment;
+import com.sciencesquad.health.prescriptions.PrescriptionFragment;
 import com.sciencesquad.health.nutrition.NutritionFragment;
 import com.sciencesquad.health.run.RunLandingFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
@@ -86,24 +86,18 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 					.replace(R.id.content, new WorkoutFragment(), WorkoutFragment.TAG)
 					.addToBackStack(WorkoutFragment.TAG)
 					.commit();
-		} else if (id == R.id.nav_clock) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new ClockFragment(), ClockFragment.TAG)
-					.addToBackStack(ClockFragment.TAG)
-					.commit();
-		} else if (id == R.id.nav_alarm) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new AlarmFragment(), AlarmFragment.TAG)
-					.addToBackStack(AlarmFragment.TAG)
-					.commit();
+		} else if (id == R.id.nav_prescription) {
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new PrescriptionFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_nutrition) {
 			this.getFragmentManager()
 					.beginTransaction()
 					.replace(R.id.content, new NutritionFragment(), NutritionFragment.TAG)
 					.addToBackStack(NutritionFragment.TAG)
 					.commit();
+		} else if (id == R.id.nav_databases) {
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new DatabaseFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_manage) {
 			// NOTHING HERE
 		} else if (id == R.id.nav_share) {

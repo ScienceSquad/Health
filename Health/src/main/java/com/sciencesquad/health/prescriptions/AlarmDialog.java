@@ -1,4 +1,4 @@
-package com.sciencesquad.health.core.alarm;
+package com.sciencesquad.health.prescriptions;
 
 import android.app.Activity;
 import android.content.Context;
