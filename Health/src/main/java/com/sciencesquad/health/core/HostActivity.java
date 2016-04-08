@@ -82,7 +82,7 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 			new SleepFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_steps) {
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			new PrescriptionFragment().open(transaction, R.id.drawer_layout).commit();
+			new StepsFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_workout) {
 			getFragmentManager()
 					.beginTransaction()

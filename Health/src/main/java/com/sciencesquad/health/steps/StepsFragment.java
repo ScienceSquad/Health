@@ -149,10 +149,6 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 				R.anim.rotate_backward);
 		rotation = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
 				R.anim.rotation);
-		pause_morph = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
-				R.anim.pause_morph_play);
-		play_morph = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
-				R.anim.play_morph_pause);
 
 		fab = xml().stepsFab;
 		fab.setImageDrawable(plus);
