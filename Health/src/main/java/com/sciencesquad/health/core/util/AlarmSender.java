@@ -1,4 +1,4 @@
-package com.sciencesquad.health.prescriptions;
+package com.sciencesquad.health.core.util;
 
 
 import android.app.AlarmManager;

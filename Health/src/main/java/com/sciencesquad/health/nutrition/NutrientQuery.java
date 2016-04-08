@@ -1,6 +1,6 @@
 package com.sciencesquad.health.nutrition;
 
-import com.sciencesquad.health.util.DataGetter;
+import com.sciencesquad.health.core.util.DataGetter;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -5,18 +5,13 @@ import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.nutrition.NutrientQuery;
 import com.sciencesquad.health.nutrition.NutritionModel;
-import com.sciencesquad.health.nutrition.RecipeQuery;
-import com.sciencesquad.health.util.DataGetter;
 
 
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;
 import junit.framework.Assert;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
