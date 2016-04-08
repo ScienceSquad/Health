@@ -172,8 +172,8 @@ public class RunFragment extends Fragment implements
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
-        //float minDistResolution = currentAcc/20; //TEST RESOLUTION
+        //float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
+        float minDistResolution = currentAcc/8; //TEST RESOLUTION
 
 
         if (lastLoc==null) {

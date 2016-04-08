@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".overview.OverviewFragment">
+    <data>
+        <variable name="fragment" type="com.sciencesquad.health.overview.OverviewFragment"/>
+        <variable name="module" type="com.sciencesquad.health.overview.OverviewModule"/>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionGroup="true"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.LightBlue">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:tag="@string/overview_module"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:navigationIcon="@drawable/ic_menu"
+                app:title="@string/overview_module"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?colorPrimary"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+            <RelativeLayout
+                android:id="@+id/page1"
+                android:tag="Overview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/overviewChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:pressedTranslationZ="6dp" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/page2"
+                android:tag="Calendar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <CalendarView
+                    android:id="@+id/calendarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/dateDisplay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calendar View Date Display"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            </RelativeLayout>
+        </android.support.v4.view.ViewPager>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/overviewFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_plus"
+        app:pressedTranslationZ="12dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/overviewFab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="90dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_plus"
+        app:layout_anchor="@id/overviewFab"
+        app:fabSize="mini"
+        app:backgroundTint="@color/green_400"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:layout_anchorGravity="top" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/overviewFab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="150dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_plus"
+        app:layout_anchor="@id/overviewFab"
+        app:fabSize="mini"
+        app:backgroundTint="@color/purple_400"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:layout_anchorGravity="top" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/overviewFab4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="210dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_plus"
+        app:layout_anchor="@id/overviewFab"
+        app:fabSize="mini"
+        app:backgroundTint="@color/red_400"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:layout_anchorGravity="top" />
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

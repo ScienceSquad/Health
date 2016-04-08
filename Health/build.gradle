@@ -2,9 +2,10 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.0.0'
         classpath 'me.tatarka:gradle-retrolambda:3.1.0'
         classpath 'com.android.databinding:dataBinder:1.0-rc1'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
@@ -101,17 +102,18 @@ dependencies {
     compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     compile 'com.diogobernardino:williamchart:2.2'
     compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
+    compile 'com.github.javiersantos:MaterialStyledDialogs:1.3'
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.google.maps.android:android-maps-utils:0.3.+'
 
     compile 'junit:junit:4.12'
     compile 'com.wdullaer:materialdatetimepicker:2.2.0'
-    compile 'com.github.javiersantos:MaterialStyledDialogs:1.3'
     compile 'com.roughike:bottom-bar:1.2.7'
 
     // ZXing Barcode compiling
     compile 'com.journeyapps:zxing-android-embedded:3.0.2@aar'
     compile 'com.google.zxing:core:3.2.0'
+
     // MPAndroid Chart compiling
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 }

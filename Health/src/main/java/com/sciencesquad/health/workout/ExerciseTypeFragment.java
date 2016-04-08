@@ -39,6 +39,7 @@ public class ExerciseTypeFragment extends Fragment {
 		ArrayAdapter<ExerciseTypeModel> exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
 				android.R.layout.simple_list_item_1, WorkoutFragment.exerciseTypeModelList);
 		exerciseTypeAdapter.clear();                // first clear adapter
+		//TODO: fill adapter from Realm
 		exerciseTypeAdapter.addAll(WorkoutFragment.exerciseTypeModelList);        // add all exercises created by user to the adapter
 		exerciseListView.setAdapter(exerciseTypeAdapter);       // bind the adapter to the listview
 		exerciseListView.setOnItemClickListener(((parent, view, position, id) -> {

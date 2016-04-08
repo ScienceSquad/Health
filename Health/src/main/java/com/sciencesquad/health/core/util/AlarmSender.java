@@ -1,4 +1,4 @@
-package com.sciencesquad.health.core.alarm;
+package com.sciencesquad.health.core.util;
 
 
 import android.app.AlarmManager;

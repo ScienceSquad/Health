@@ -2,9 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_overview"
+            android:icon="@drawable/ic_menu_overview"
+            android:title="@string/overview_module" />
+        <item
             android:id="@+id/nav_workout"
             android:icon="@drawable/ic_fitness_center_24dp"
-            android:title="Workout" />
+            android:title="@string/workout_module" />
         <item
             android:id="@+id/nav_steps"
             android:icon="@drawable/ic_menu_steps"
@@ -22,13 +26,13 @@
             android:icon="@drawable/ic_menu_nutrition"
             android:title="@string/nutrition_module" />
         <item
-            android:id="@+id/nav_clock"
-            android:icon="@drawable/ic_menu_clock"
-            android:title="Clock" />
-        <item
-            android:id="@+id/nav_alarm"
+            android:id="@+id/nav_prescription"
             android:icon="@drawable/ic_alarm"
-            android:title="Alarm" />
+            android:title="@string/prescription_module" />
+        <item
+            android:id="@+id/nav_databases"
+            android:icon="@drawable/ic_menu_nutrition"
+            android:title="@string/database_module" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

@@ -1,21 +1,19 @@
-import android.app.AlarmManager;
 import android.test.ApplicationTestCase;
+import android.util.Log;
+
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.nutrition.NutrientQuery;
 import com.sciencesquad.health.nutrition.NutritionModel;
-import com.sciencesquad.health.workout.ExerciseTypeModel;
-import com.sciencesquad.health.workout.WorkoutModule;
-import com.sciencesquad.health.workout.ExerciseKind;
-import com.sciencesquad.health.workout.RoutineModel;
-
-import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
-import com.sciencesquad.health.prescriptions.PrescriptionModel;
 
 
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;
 import junit.framework.Assert;
+
 import org.junit.Test;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.Calendar;
 
@@ -98,31 +96,73 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
         }
 
     }
+
+    private String nodeToString(Node node) {
+        String result = node.getNodeName() + ": " + node.getTextContent() + "\n" + childrenToString(node);
+        return result;
+    }
+
+    private String childrenToString(Node node) {
+        String result = "";
+        NodeList nodes = node.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            result += nodeToString(nodes.item(i)) + "\n";
+        }
+        return result;
+    }
+
+    @Test
+    public void testDataGetter() {
+        String urlString = new NutrientQuery()
+                .getURLString();
+        Log.d("testDataGetter", urlString);
+    }
+
+
     /*
     @Test
     public void testWorkout(){
         createApplication();
         try{
-            RealmContext workoutTestRealm = new RealmContext<>();
-            workoutTestRealm.init(BaseApplication.application(), ExerciseTypeModel.class, "test.realm");
-            workoutTestRealm.clear();
+            RealmContext testRealm = new RealmContext<>();
+            testRealm.init(BaseApp.app(), ExerciseTypeModel.class, "test.realm");
+            testRealm.clear();
             ExerciseKind kind = ExerciseKind.valueOf("STRENGTH");
-            ExerciseTypeModel newExerciseType = com.sciencesquad.health.workout.WorkoutModule.createNewExercise("Bench Press", kind, "Chest");
-            workoutTestRealm.add(newExerciseType);
-            RealmQuery<ExerciseTypeModel> testQuery = workoutTestRealm.query();
+            //ExerciseTypeModel newExerciseType = new ExerciseTypeModel("Bench Press", "Strength", "Chest");
+            /*
+            ExerciseTypeModel benchPress = new ExerciseTypeModel();
+            benchPress.setName("Bench Press");
+            benchPress.setCategory("Strength");
+            benchPress.setTarget("Chest");
+            Calendar rightNow = Calendar.getInstance();
+            benchPress.setDate(rightNow.getTime());
+            */
+            ExerciseTypeModel benchPress = WorkoutModule.createNewExercise("Bench Press", "Strength", "Chest");
+            testRealm.add(benchPress);
+            RealmQuery<ExerciseTypeModel> testQuery = testRealm.query(ExerciseTypeModel.class);
 
             Assert.assertEquals(testQuery.findAll().size(), 1);
             Assert.assertEquals(testQuery.findAll().first().getName(), "Bench Press");
 
 
-            workoutTestRealm.clear();
-            //workoutTestRealm.getRealm().clear(ExerciseTypeModel.class);
-           //Assert.assertEquals(testQuery.findAll().size(), 0);
+            testRealm.clear();
+            Assert.assertEquals(testQuery.findAll().size(), 0);
 
             try {
-                workoutTestRealm.close();
+               testRealm.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Assert.fail("Realm Failed to Close.");
+            }
 
+        } catch (Exception e){
+            e.printStackTrace();
+            Assert.fail("An Exception Occurred.");
+        }
 
+    }
+
+   /*
     @Test
     public void testPrescriptionRealm() {
         createApplication();

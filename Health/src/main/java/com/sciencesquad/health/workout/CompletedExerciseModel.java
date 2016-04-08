@@ -9,6 +9,7 @@ import org.threeten.bp.Duration;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
 import java.util.Date;
@@ -16,10 +17,13 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class ExerciseModel {
+public class CompletedExerciseModel extends RealmObject {
 
-    private ExerciseTypeModel exercise;
-    private List<ExerciseSetModel> sets;
+
+    private String exerciseName;
+    private RealmList<ExerciseSetModel> sets;
+    private float oneRepMax;
+    private String dateString;
     /**
      * Calendar date where this model was created.
      */
@@ -30,25 +34,38 @@ public class ExerciseModel {
     // DO NOT MODIFY -- REALM ONLY
     //
 
-    public List<ExerciseSetModel> getSets() {
+    public String getDateString(){ return this.dateString; }
+    public void setDateString(String dateString){
+        this.dateString = dateString;
+    }
+
+
+    public RealmList<ExerciseSetModel> getSets() {
         return sets;
     }
 
-    public ExerciseTypeModel getExercise() {
-        return exercise;
+    public String getExerciseName() {
+        return exerciseName;
     }
 
-    public void setSets(List<ExerciseSetModel> sets){
+    public void setSets(RealmList<ExerciseSetModel> sets){
         this.sets = sets;
     }
 
-    public void setExercise(ExerciseTypeModel exercise) {
-        this.exercise = exercise;
+    public void setExerciseName(String exerciseName) {
+        this.exerciseName = exerciseName;
     }
 
-    /**
-    /* Returns one-rep-max from this exercise instance
+    public void setOneRepMax( float oneRepMax ){
+        this.oneRepMax = oneRepMax;
+    }
 
+    public float getOneRepMax(){ return this.oneRepMax; }
+
+    /**
+    *   Returns one-rep-max from this exercise instance
+    *
+     */
     public Integer get1RMax(){
         Integer maxWeight = 0;
         Integer nextWeight = 0;
@@ -60,7 +77,7 @@ public class ExerciseModel {
         }
         return maxWeight;
     }
-     */
+
 
     @NonNull
     public Date getDate() {

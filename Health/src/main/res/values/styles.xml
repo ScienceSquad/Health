@@ -140,11 +140,25 @@
 
     <!-- The following are Module-specific themes. -->
 
+    <style name="AppTheme.Overview" parent="AppTheme">
+        <item name="colorAccent">@color/light_blue_700</item>
+        <item name="colorPrimary">@color/light_blue_50</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+    </style>
+
     <style name="AppTheme.Sleep" parent="AppTheme">
         <item name="colorAccent">@color/amber_700</item>
         <item name="colorPrimary">@color/blue_grey_700</item>
         <item name="colorPrimaryDark">@color/blue_grey_900</item>
     </style>
+
+
+    <style name="AppTheme.Workout" parent="AppTheme">
+        <item name="colorAccent">@color/amber_700</item>
+        <item name="colorPrimary">@color/blue_grey_700</item>
+        <item name="colorPrimaryDark">@color/blue_grey_900</item>
+    </style>
+
 
     <style name="AppTheme.Diet" parent="AppTheme">
         <item name="colorAccent">@color/light_green_700</item>
@@ -164,5 +178,10 @@
         <item name="colorPrimaryDark">@color/material_black</item>
     </style>
 
+    <style name="AppTheme.Steps" parent="AppTheme">
+        <item name="colorAccent">@color/purple_300</item>
+        <item name="colorPrimary">@color/purple_50</item>
+        <item name="colorPrimaryDark">@color/purple_900</item>
+    </style>
 
 </resources>

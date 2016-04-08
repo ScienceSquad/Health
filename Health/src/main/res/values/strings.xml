@@ -33,6 +33,8 @@
     <string name="title_activity_alarm">AlarmActivity</string>
     <string name="title_activity_emergency_card">EmergencyCardActivity</string>
 
+    <string name="overview_module">Overview</string>
+    <string name="workout_module">Workout</string>
     <string name="steps_module">Steps</string>
     <string name="sleep_module">Sleep</string>
     <string name="nutrition_module">Nutrition</string>
@@ -51,6 +53,26 @@
     <string name="reset_steps">Reset Steps</string>
     <string name="title_activity_run_tracking">RunTracking</string>
 
+    <string-array
+        name="days_of_week">
+        <item
+            >Sunday</item>
+        <item
+            >Monday</item>
+        <item
+            >Tuesday</item>
+        <item
+            >Wednesday</item>
+        <item
+            >Thursday</item>
+        <item
+            >Friday</item>
+        <item
+            >Saturday</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="prescription_module">Prescription</string>
+    <string name="database_module">Databases</string>
 </resources>
