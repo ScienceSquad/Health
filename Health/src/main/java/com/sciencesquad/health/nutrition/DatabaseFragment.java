@@ -28,6 +28,7 @@ import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentDatabaseBinding;
 
@@ -142,44 +143,59 @@ public class DatabaseFragment extends BaseFragment {
 	}
 
 	private void getRecipeQueryResults(String queryString) throws JSONException {
-		RecipeQuery query = new RecipeQuery();
-		query.setName(queryString);
-		JSONObject results = query.getJSONResults();
-		if (results == null) return;
-		JSONArray resultsArray = results.getJSONArray("results");
-		if (resultsArray == null) return;
-		ArrayList<ItemContent> contentArray = new ArrayList<ItemContent>();
-		for (int i = 0; i < resultsArray.length(); i++) {
-			JSONObject object = resultsArray.getJSONObject(i);
-			ItemContent itemContent = new ItemContent();
-			itemContent.title = object.getString("title");
-			itemContent.url = object.getString("href");
-			itemContent.content = object.getString("ingredients");
-			contentArray.add(itemContent);
-		}
-		ListAdapter listAdapter = new ListAdapter(contentArray);
-		xml().page1.setAdapter(listAdapter);
+		Dispatcher.UTILITY.run(() -> {
+			RecipeQuery query = new RecipeQuery();
+			query.setName(queryString);
+			JSONObject results = query.getJSONResults();
+			if (results == null) return;
+			try {
+				JSONArray resultsArray = results.getJSONArray("results");
+				if (resultsArray == null) return;
+				ArrayList<ItemContent> contentArray = new ArrayList<ItemContent>();
+				for (int i = 0; i < resultsArray.length(); i++) {
+					JSONObject object = resultsArray.getJSONObject(i);
+					ItemContent itemContent = new ItemContent();
+					itemContent.title = object.getString("title");
+					itemContent.url = object.getString("href");
+					itemContent.content = object.getString("ingredients");
+					contentArray.add(itemContent);
+				}
+				Dispatcher.UI.run(() -> {
+					ListAdapter listAdapter = new ListAdapter(contentArray);
+					xml().page1.setAdapter(listAdapter);
+				});
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
-	private void getNutrientQueryResults(String queryString) throws JSONException {
-		NutrientQuery query = new NutrientQuery(NutrientQuery.QueryType.SEARCH);
-		query.setSearchQuery(queryString);
-		JSONObject results = query.getJSONResults();
-		if (results == null) return;
-		JSONArray resultsArray = results.getJSONObject("list").getJSONArray("item");
-		if (resultsArray == null) return;
-		ArrayList<ItemContent> contentArray = new ArrayList<ItemContent>();
-		for (int i = 0; i < resultsArray.length(); i++) {
-			JSONObject object = resultsArray.getJSONObject(i);
-			ItemContent itemContent = new ItemContent();
-			itemContent.title = object.getString("name");
-			itemContent.url = object.getString("ndbno");
-			itemContent.content = object.getString("name");
-			contentArray.add(itemContent);
-		}
-		ListAdapter listAdapter = new ListAdapter(contentArray);
-		xml().page2.setAdapter(listAdapter);
-
+	private void getNutrientQueryResults(String queryString) {
+		Dispatcher.UTILITY.run(() -> {
+			NutrientQuery query = new NutrientQuery(NutrientQuery.QueryType.SEARCH);
+			query.setSearchQuery(queryString);
+			JSONObject results = query.getJSONResults();
+			if (results == null) return;
+			try {
+				JSONArray resultsArray = results.getJSONObject("list").getJSONArray("item");
+				if (resultsArray == null) return;
+				ArrayList<ItemContent> contentArray = new ArrayList<ItemContent>();
+				for (int i = 0; i < resultsArray.length(); i++) {
+					JSONObject object = resultsArray.getJSONObject(i);
+					ItemContent itemContent = new ItemContent();
+					itemContent.title = object.getString("name");
+					itemContent.url = object.getString("ndbno");
+					itemContent.content = object.getString("name");
+					contentArray.add(itemContent);
+				}
+				Dispatcher.UI.run(() -> {
+					ListAdapter listAdapter = new ListAdapter(contentArray);
+					xml().page2.setAdapter(listAdapter);
+				});
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	private void updateConditionContent() {
@@ -238,11 +254,7 @@ public class DatabaseFragment extends BaseFragment {
 							String queryString = searchQuery.getText().toString();
 							Snackbar.make(view, "Query string: " + queryString, Snackbar.LENGTH_LONG)
 								.setAction("Action", null).show();
-							try {
-								getNutrientQueryResults(queryString);
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
+							getNutrientQueryResults(queryString);
 						})
 				.setNegative(getResources().getString(R.string.decline),
 						(dialog, which) -> Log.d(TAG, "Declined!"))

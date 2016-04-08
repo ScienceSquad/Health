@@ -72,10 +72,9 @@
 
             <!-- The initial Fragment to launch from the HostActivity. -->
             <meta-data
-                    android:name="fragment"
-                    android:value="com.sciencesquad.health.sleep.SleepFragment" />
+                android:name="fragment"
+                android:value="com.sciencesquad.health.overview.OverviewFragment" />
         </activity>
-
         <!-- For SleepModule to monitor data in the background. -->
         <service
                 android:name=".sleep.SleepMonitoringService"

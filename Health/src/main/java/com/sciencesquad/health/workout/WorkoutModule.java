@@ -3,7 +3,6 @@ package com.sciencesquad.health.workout;
 import android.util.Log;
 import android.util.Pair;
 
-import com.google.repacked.apache.commons.lang3.ObjectUtils;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.BaseApp;
