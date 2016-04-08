@@ -16,6 +16,8 @@ import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
@@ -272,6 +274,9 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		if (e == null)
 			return;
 
+		Drawable oval = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_overview);
+		oval.setTint(Color.DKGRAY);
+
 		double d = yData[e.getXIndex()] / overviewCoefficient * 180;
 		double d0 = yData[0] / overviewCoefficient * 180;
 		double d1 = yData[1] / overviewCoefficient * 180;
@@ -296,7 +301,16 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy,
 						Easing.EasingOption.EaseInOutCirc);
 			}
-
+			new MaterialStyledDialog(getActivity())
+					.setIcon(oval)
+					.setCustomView(getInflater().inflate(R.layout.fragment_overview_nutrition, null))
+					.withDialogAnimation(true, Duration.FAST)
+					.setCancelable(false)
+					.setPositive(getResources().getString(R.string.accept),
+							(dialog, which) -> Log.d(TAG, "Accepted!"))
+					.setNegative(getResources().getString(R.string.decline),
+							(dialog, which) -> Log.d(TAG, "Declined!"))
+					.show();
 		} else if (e.getXIndex() == 1) {
 			if (mPieChart.getRotationAngle() == 0) {
 				mPieChart.spin(1000, 0, 270 - rotateBy - rc1, Easing.EasingOption.EaseInOutCirc);
@@ -304,7 +318,16 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy - rc1,
 						Easing.EasingOption.EaseInOutCirc);
 			}
-
+			new MaterialStyledDialog(getActivity())
+					.setIcon(oval)
+					.setCustomView(getInflater().inflate(R.layout.fragment_overview_run, null))
+					.withDialogAnimation(true, Duration.FAST)
+					.setCancelable(false)
+					.setPositive(getResources().getString(R.string.accept),
+							(dialog, which) -> Log.d(TAG, "Accepted!"))
+					.setNegative(getResources().getString(R.string.decline),
+							(dialog, which) -> Log.d(TAG, "Declined!"))
+					.show();
 		} else if (e.getXIndex() == 2) {
 			if (mPieChart.getRotationAngle() == 0) {
 				mPieChart.spin(1000, 0, 270 - rotateBy - rc2, Easing.EasingOption.EaseInOutCirc);
@@ -312,7 +335,16 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy - rc2,
 						Easing.EasingOption.EaseInOutCirc);
 			}
-
+			new MaterialStyledDialog(getActivity())
+					.setIcon(oval)
+					.setCustomView(getInflater().inflate(R.layout.fragment_overview_sleep, null))
+					.withDialogAnimation(true, Duration.FAST)
+					.setCancelable(false)
+					.setPositive(getResources().getString(R.string.accept),
+							(dialog, which) -> Log.d(TAG, "Accepted!"))
+					.setNegative(getResources().getString(R.string.decline),
+							(dialog, which) -> Log.d(TAG, "Declined!"))
+					.show();
 		}  else if (e.getXIndex() == 3) {
 			if (mPieChart.getRotationAngle() == 0) {
 				mPieChart.spin(1000, 0, 270 - rotateBy - rc3, Easing.EasingOption.EaseInOutCirc);
@@ -320,7 +352,16 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy - rc3,
 						Easing.EasingOption.EaseInOutCirc);
 			}
-
+			new MaterialStyledDialog(getActivity())
+					.setIcon(oval)
+					.setCustomView(getInflater().inflate(R.layout.fragment_overview_steps, null))
+					.withDialogAnimation(true, Duration.FAST)
+					.setCancelable(false)
+					.setPositive(getResources().getString(R.string.accept),
+							(dialog, which) -> Log.d(TAG, "Accepted!"))
+					.setNegative(getResources().getString(R.string.decline),
+							(dialog, which) -> Log.d(TAG, "Declined!"))
+					.show();
 		}  else if (e.getXIndex() == 4) {
 			if (mPieChart.getRotationAngle() == 0) {
 				mPieChart.spin(1000, 0, 270 - rotateBy - rc4, Easing.EasingOption.EaseInOutCirc);
@@ -328,7 +369,16 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy - rc4,
 						Easing.EasingOption.EaseInOutCirc);
 			}
-
+			new MaterialStyledDialog(getActivity())
+					.setIcon(oval)
+					.setCustomView(getInflater().inflate(R.layout.fragment_overview_workout, null))
+					.withDialogAnimation(true, Duration.FAST)
+					.setCancelable(false)
+					.setPositive(getResources().getString(R.string.accept),
+							(dialog, which) -> Log.d(TAG, "Accepted!"))
+					.setNegative(getResources().getString(R.string.decline),
+							(dialog, which) -> Log.d(TAG, "Declined!"))
+					.show();
 		}
 	}
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Run Overview"
+        android:textAppearance="@android:style/TextAppearance.Material.Large"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:text="You're run score is quite low, especially in relation to the other aspects of your health."
+        android:id="@+id/nutrition_overview"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@android:style/TextAppearance.Material.Small" >
+    </TextView>
+</LinearLayout>
