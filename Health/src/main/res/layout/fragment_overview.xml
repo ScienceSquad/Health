@@ -15,35 +15,54 @@
         android:transitionGroup="true"
         android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.LightBlue">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:navigationIcon="@drawable/ic_menu"
-            app:title="@string/overview_module"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.LightBlue">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:id="@+id/content" />
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:navigationIcon="@drawable/ic_menu"
+                app:title="@string/overview_module"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?colorPrimary"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+            <RelativeLayout
+                android:id="@+id/page1"
+                android:tag="Overview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/overviewChart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/overviewChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/page2"
+                android:tag="Calendar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            </RelativeLayout>
+        </android.support.v4.view.ViewPager>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/overviewFab"
@@ -51,7 +70,65 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_plus" />
+        android:src="@drawable/ic_plus"
+        app:pressedTranslationZ="12dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/overviewFab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="90dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_plus"
+        app:layout_anchor="@id/overviewFab"
+        app:fabSize="mini"
+        app:backgroundTint="@color/green_400"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:layout_anchorGravity="top" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/overviewFab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="150dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_plus"
+        app:layout_anchor="@id/overviewFab2"
+        app:fabSize="mini"
+        app:backgroundTint="@color/blue_400"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:layout_anchorGravity="top" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/overviewFab4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="210dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_plus"
+        app:layout_anchor="@id/overviewFab3"
+        app:fabSize="mini"
+        app:backgroundTint="@color/yellow_400"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:layout_anchorGravity="top" />
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>
