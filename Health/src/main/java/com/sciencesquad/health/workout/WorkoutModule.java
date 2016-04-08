@@ -3,6 +3,7 @@ package com.sciencesquad.health.workout;
 import android.util.Log;
 import android.util.Pair;
 
+import com.google.repacked.apache.commons.lang3.ObjectUtils;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.BaseApp;
@@ -195,11 +196,11 @@ public class WorkoutModule extends Module {
         Date d = Calendar.getInstance().getTime();
         newRoutine.setDate(d);
         newRoutine.setName(name);
-
         newRoutine.setExercises(exerciseList);
 
         return newRoutine;
     }
+
 
     public ArrayList<RoutineModel> getAllRoutineModels() {
         ArrayList<RoutineModel> routines = new ArrayList<>();
@@ -212,6 +213,20 @@ public class WorkoutModule extends Module {
         }
 
         return routines;
+    }
+
+    public RoutineModel getRoutineModel(String routineName) {
+        try {
+            RealmResults<RoutineModel> result = workoutRealm.query(RoutineModel.class).equalTo("name", routineName).findAll();
+            if(result.size() == 0){
+                return null;
+            } else {
+                return result.first();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error finding RoutineModel by name " + e.getMessage());
+        }
+        return null;
     }
 
 
@@ -231,6 +246,26 @@ public class WorkoutModule extends Module {
             return false;
         }
 
+    }
+
+    public boolean addCompletedExercise(CompletedExerciseModel newCompletedExercise){
+        try {
+            workoutRealm.getRealm().beginTransaction();
+            workoutRealm.getRealm().copyToRealm(newCompletedExercise);
+            workoutRealm.getRealm().commitTransaction();
+        } catch (Exception e){
+            if (e.getMessage().contains("Trying to set non-nullable field date to null.")){
+                Log.w(TAG, "Continuing to add completedExercise anyway");
+                workoutRealm.getRealm().commitTransaction();
+                return true;
+            }
+            else
+                workoutRealm.getRealm().cancelTransaction();
+            Log.e(TAG, "Error adding RoutineModel to Realm");
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+        return  true;
     }
 
 
@@ -265,6 +300,24 @@ public class WorkoutModule extends Module {
         }
 
     }
+
+    public boolean isEmptyRoutine(String name){
+        try {
+            RealmQuery<RoutineModel> query = this.workoutRealm.query(RoutineModel.class);
+            query.equalTo("name", name);
+
+            if(query.findAll().first().getExercises().size() == 0){
+                Log.i(TAG, "Routine has not yet been built");
+                return true;       // This routine has not yet been built
+            } else {
+                return false;        // This exercise has been previously added
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public RealmContext<ExerciseTypeModel> getWorkoutRealm(){
         return this.workoutRealm;

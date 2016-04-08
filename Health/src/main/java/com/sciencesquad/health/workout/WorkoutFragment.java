@@ -46,7 +46,7 @@ public class WorkoutFragment extends BaseFragment {
     public static List<ExerciseTypeModel> exerciseTypeModelList = new ArrayList<>();     // list of exercises added by user
     public static List<RoutineModel> routineModelList = new ArrayList<>();           // list of routines created by user
     public static HashSet<String> exerciseTargets = new HashSet<>();            // contains all exercise targets
-
+    public static CompletedExerciseModel completedExercise;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -112,20 +112,14 @@ public class WorkoutFragment extends BaseFragment {
         WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         ArrayAdapter<String> exerciseTypeAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
-
         exerciseTypeAdapter.clear();                // first clear adapter
-        //exerciseTypeAdapter.addAll(mod.getAllExerciseTypeModels());        // add all exercises created by user to the adapter
         for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
             exerciseTypeAdapter.add(m.getName());
         xml().exerciseModelListView.setAdapter(exerciseTypeAdapter);
-
-
-        //xml().exerciseModelListView.setOnItemClickListener(this, );
-        /*
         xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {
-            ((WorkoutFragment) getTargetFragment()).showSetDialog(exerciseTypeAdapter.getItem(position));
+            this.showSetDialog(exerciseTypeAdapter.getItem(position));
         }));
-        */
+
 
         // Bind data to view (RoutineModels)
         ArrayAdapter<String> routineModelAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
@@ -133,11 +127,42 @@ public class WorkoutFragment extends BaseFragment {
         routineModelAdapter.clear();                // first clear adapter
         for (RoutineModel m : mod.getAllRoutineModels())
             routineModelAdapter.add(m.getName());
-
         xml().routineModelListView.setAdapter(routineModelAdapter);
+        xml().routineModelListView.setOnItemClickListener(((parent, views, position, id) -> {
 
+            RoutineModel currentRoutine = mod.getRoutineModel(routineModelAdapter.getItem(position));
+
+            if(currentRoutine != null){
+                Log.i(TAG, "Retrieved Routine: " + currentRoutine.getName());
+                //Check if routine is already populated with exercises
+                if(currentRoutine.getExercises().size() != 0){
+                    // update current workout and switch to current workout tab
+                    updateCurrentWorkout(currentRoutine);
+                    xml().pager.setCurrentItem(3);
+                } else {
+                    Log.i(TAG, "Routine has not yet been built");
+                    // open buildRoutineFragmentDialog
+                    showRoutineBuilder(currentRoutine.getName());
+                }
+            }
+
+        }));
 
     }
+
+    public void updateCurrentWorkout(RoutineModel currentRoutine){
+        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        ArrayAdapter<String> exerciseTypeAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
+                android.R.layout.simple_list_item_1);
+        exerciseTypeAdapter.clear();                // first clear adapter
+        for (RealmString m : currentRoutine.getExercises())
+            exerciseTypeAdapter.add(m.getName());
+        xml().currentRoutineListView.setAdapter(exerciseTypeAdapter);
+        xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {
+            this.showSetDialog(exerciseTypeAdapter.getItem(position));
+        }));
+    }
+
 
 
 
@@ -277,9 +302,6 @@ public class WorkoutFragment extends BaseFragment {
             mod.addExerciseTypeModel(newExercise);
 
 
-			// FIXME: THIS ID DOES NOT EXIST, CALL WILL RETURN NULL
-
-            //ListView exerciseListView = (ListView)getView().findViewById(R.id.exercise_model_list_view);
 
             ArrayAdapter<String> exerciseTypeModelAdapter = new ArrayAdapter<>(getContext(),
                     android.R.layout.simple_list_item_1);
@@ -298,6 +320,7 @@ public class WorkoutFragment extends BaseFragment {
         // Do stuff here.
         Log.i("FragmentAlertDialog", "Negative click!");
     }
+
 
 	/**
 	 *
@@ -341,4 +364,13 @@ public class WorkoutFragment extends BaseFragment {
         // Do stuff here.
         Log.i("FragmentAlertDialog", "Negative click!");
     }
+
+
+
+
+    public void saveCompletedExercise(CompletedExerciseModel newCompletedExercise) {
+        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        mod.addCompletedExercise(newCompletedExercise);
+    }
+
 }

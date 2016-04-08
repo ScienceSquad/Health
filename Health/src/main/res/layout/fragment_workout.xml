@@ -56,11 +56,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
                 <ListView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/routine_model_list_view"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true" />
+            </RelativeLayout>
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/current_routine_view"
+                android:tag="Workout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/current_routine_list_view"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true" />
             </RelativeLayout>
