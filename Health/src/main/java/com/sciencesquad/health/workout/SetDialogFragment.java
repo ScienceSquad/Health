@@ -63,8 +63,10 @@ public class SetDialogFragment extends DialogFragment {
 		button.setOnClickListener(butt -> {
 			int numReps = new Integer(numRepsField.getText().toString());
 			int weight = new Integer(weightField.getText().toString());
-
-			ExerciseSetModel newSet = new ExerciseSetModel(numReps, weight);
+			ExerciseSetModel newSet = new ExerciseSetModel();
+			newSet.setReps(numReps);
+			newSet.setWeight(weight);
+			newSet.setDate(Calendar.getInstance().getTime());
 			set.add(newSet);        // add set to the list of sets
 
 			completedSetAdapter.clear();
@@ -82,7 +84,6 @@ public class SetDialogFragment extends DialogFragment {
                     Calendar rightNow = Calendar.getInstance();
                     completedExercise.setDate(rightNow.getTime());
                     ((WorkoutFragment)getTargetFragment()).saveCompletedExercise(completedExercise);
-
 				}
 		);
 		builder.setNegativeButton("Cancel",

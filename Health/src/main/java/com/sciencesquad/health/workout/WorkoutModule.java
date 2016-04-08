@@ -11,6 +11,7 @@ import com.sciencesquad.health.core.BaseApp;
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -131,7 +132,7 @@ public class WorkoutModule extends Module {
         addRoutineModel(strongLiftsA);
 
         RealmList<RealmString> exerciseNamesB = new RealmList<>();
-        for(ExerciseTypeModel m : sLAExercises){
+        for(ExerciseTypeModel m : sLBExercises){
             RealmString newName = new RealmString();
             newName.setDate(rightNow.getTime());
             newName.setName(m.getName());
@@ -188,6 +189,18 @@ public class WorkoutModule extends Module {
     }
 
 
+    public ArrayList<CompletedExerciseModel> getCompletedExercises(String exerciseName){
+        ArrayList<CompletedExerciseModel> completed = new ArrayList<>();
+        try {
+            RealmQuery<CompletedExerciseModel> query = this.workoutRealm.query(CompletedExerciseModel.class).equalTo("exerciseName", exerciseName);
+            RealmResults<CompletedExerciseModel> results = query.findAll();
+            for(CompletedExerciseModel c : results)
+                completed.add(c);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return completed;
+    }
 
 
     public boolean isDuplicateExerciseType(ExerciseTypeModel newExercise){
@@ -322,6 +335,111 @@ public class WorkoutModule extends Module {
         return  true;
     }
 
+    public boolean addWorkoutScheduleModel(WorkoutScheduleModel schedule){
+        /*
+        WorkoutScheduleModel currentWorkout = getWorkoutSchedule();
+        if(currentWorkout != null){
+            try{
+                workoutRealm.query(WorkoutScheduleModel.class).findAll().first().removeFromRealm();
+            } catch (Exception e){
+                Log.e(TAG, "Error removing current schedule from Realm");
+            }
+
+        }
+        */
+        try {
+            workoutRealm.getRealm().beginTransaction();
+            workoutRealm.getRealm().copyToRealm(schedule);
+            workoutRealm.getRealm().commitTransaction();
+
+            //workoutRealm.add(schedule);
+        } catch (Exception e){
+            if (e.getMessage().contains("Trying to set non-nullable field date to null.")){
+                Log.w(TAG, "Continuing to add schedule anyway");
+                workoutRealm.getRealm().commitTransaction();
+                return true;
+            }
+            else
+                workoutRealm.getRealm().cancelTransaction();
+            Log.e(TAG, "Error adding WorkoutSchedule to Realm");
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+        return  true;
+    }
+
+    public WorkoutScheduleModel getWorkoutSchedule(){
+        WorkoutScheduleModel schedule = null;
+        try {
+            RealmResults<WorkoutScheduleModel> results = workoutRealm.query(WorkoutScheduleModel.class).findAll();
+            schedule = results.first();
+            Log.i(TAG, "Found a schedule! First Routine: " + schedule.getRoutineRotation().first().getName());
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting WorkoutSchedule from Realm");
+            schedule = null;
+        }
+
+        return schedule;
+    }
+
+    public RoutineModel getTodaysRoutine(){
+        int offset = 0;
+        WorkoutScheduleModel schedule = getWorkoutSchedule();
+        Calendar rightNow = Calendar.getInstance();
+        if(schedule != null){
+            int startDOW  = schedule.getStartDate().getDay();
+            //calculate number of workout days in a week
+            int numWorkoutDaysInWeek = 0;
+            Boolean[] dow = getWorkoutDays(schedule);
+            if(dow[rightNow.getTime().getDay()] != true ){
+                Log.i(TAG, "No scheduled workout: today is not a workout day");
+                return null;
+            }
+
+            for(int i = 0; i < 7; i++) {
+                if (dow[i] == true) {
+                    numWorkoutDaysInWeek++;
+                    if (i < startDOW)
+                        offset++;
+                }
+            }
+            //TODO: actually do this
+            //calculate number of workout days passed since startdate
+            //long numDaysSinceStart = getDayCount(schedule.getStartDate(), rightNow.getTime());
+            Log.i(TAG, "ATTEMPTING TO RETRIEVE ROUTINE: " + schedule.getRoutineRotation().first().getName());
+
+            return getRoutineModel(schedule.getRoutineRotation().first().getName());
+        }
+
+        return null;
+
+    }
+
+    public static long getDayCount(Date start, Date today) {
+        long diff = -1;
+        try {
+
+            //time is always 00:00:00 so rounding should help to ignore the missing hour when going from winter to summer time as well as the extra hour in the other direction
+            diff = Math.round((today.getTime() - start.getTime()) / (double) 86400000);
+        } catch (Exception e) {
+            Log.e(TAG, "Error Calculating number of days between start and today");
+
+        }
+        return diff;
+    }
+
+    public Boolean[] getWorkoutDays(WorkoutScheduleModel scheduleModel){
+        Boolean[] dow = new Boolean[7];
+        dow[0] = scheduleModel.getSunday();
+        dow[1] = scheduleModel.getMonday();
+        dow[2] = scheduleModel.getTuesday();
+        dow[3] = scheduleModel.getWednesday();
+        dow[4] = scheduleModel.getThursday();
+        dow[5] = scheduleModel.getFriday();
+        dow[6] = scheduleModel.getSaturday();
+        return  dow;
+    }
+
 
     /**
      *
@@ -370,6 +488,23 @@ public class WorkoutModule extends Module {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public WorkoutScheduleModel createNewSchedule(Boolean[] workoutDays, Date startDate, RealmList<RealmString> routineRotation){
+        WorkoutScheduleModel newSchedule = new WorkoutScheduleModel();
+        newSchedule.setSunday(workoutDays[0]);
+        newSchedule.setMonday(workoutDays[1]);
+        newSchedule.setTuesday(workoutDays[2]);
+        newSchedule.setWednesday(workoutDays[3]);
+        newSchedule.setThursday(workoutDays[4]);
+        newSchedule.setFriday(workoutDays[5]);
+        newSchedule.setSaturday(workoutDays[6]);
+        newSchedule.setRoutineRotation(routineRotation);
+        newSchedule.setStartDate(startDate);
+        Date d = Calendar.getInstance().getTime();
+        newSchedule.setDate(d);
+
+        return newSchedule;
     }
 
 

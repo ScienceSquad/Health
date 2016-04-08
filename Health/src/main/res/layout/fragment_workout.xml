@@ -38,6 +38,26 @@
                 android:background="?colorPrimary"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/current_routine_view"
+                android:tag="Workout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/current_workout_header"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/md_styled_text_title"/>
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/current_routine_list_view"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true" />
+            </RelativeLayout>
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/exercise_type_view"
                 android:tag="Exercises"
                 android:layout_width="match_parent"
@@ -63,19 +83,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true" />
             </RelativeLayout>
-            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/current_routine_view"
-                android:tag="Workout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <ListView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/current_routine_list_view"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true" />
-            </RelativeLayout>
+
 
         </android.support.v4.view.ViewPager>
         <android.support.design.widget.FloatingActionButton

@@ -59,11 +59,8 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 					.addToBackStack(StepsFragment.TAG)
 					.commit();
 		} else if (id == R.id.nav_workout) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new WorkoutFragment(), WorkoutFragment.TAG)
-					.addToBackStack(WorkoutFragment.TAG)
-					.commit();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new WorkoutFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_clock) {
 			getFragmentManager()
 					.beginTransaction()

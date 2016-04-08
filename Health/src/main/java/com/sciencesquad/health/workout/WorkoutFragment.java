@@ -1,8 +1,6 @@
 package com.sciencesquad.health.workout;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -12,13 +10,11 @@ import android.app.DialogFragment;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 
 import android.widget.ArrayAdapter;
@@ -26,10 +22,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
@@ -38,8 +32,11 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
 
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -58,6 +55,11 @@ public class WorkoutFragment extends BaseFragment {
     public static HashSet<String> exerciseTargets = new HashSet<>();            // contains all exercise targets
     public static CompletedExerciseModel completedExercise;
     public static ArrayAdapter<String> routineModelAdapter;
+    public static ArrayAdapter<String> exerciseTypeAdapter;
+    public static ArrayAdapter<String> currentRoutineExerciseAdapter;
+
+
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -109,19 +111,38 @@ public class WorkoutFragment extends BaseFragment {
             //      .setAction("Action", null).show();
             int selectedTab = tabLayout.getSelectedTabPosition();
             if (selectedTab == 0) {
+                // in current workout tab
+                showDOWScheduleBuilder();
+            } else if (selectedTab == 1) {
                 // in exercise tab
                 showNewExerciseDialog();
-            } else if (selectedTab == 1) {
+            } else if (selectedTab == 2) {
                 // in routine tab
                 showNewRoutineDialog();
+
             }
         });
 
         xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
-        // Bind data to view (ExerciseTypeModels)
+        // Bind data to currentWorkoutTab
         WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
-        ArrayAdapter<String> exerciseTypeAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
+        WorkoutScheduleModel schedule = mod.getWorkoutSchedule();
+        currentRoutineExerciseAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_expandable_list_item_1);
+        //RoutineModel todaysRoutine = mod.getTodaysRoutine();
+        if(schedule == null){
+            Log.i(TAG, "DID NOT FIND A SCHEDULE");
+            xml().currentWorkoutHeader.setText("No Scheduled Routines");
+        } else {
+            Log.i(TAG, "FOUND SOME SORT OF ROUTINE");
+            RoutineModel todaysRoutine = mod.getRoutineModel(schedule.getRoutineRotation().first().getName());
+            updateCurrentWorkout(todaysRoutine);
+        }
+
+        // Bind data to view (ExerciseTypeModels)
+
+        exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
         exerciseTypeAdapter.clear();                // first clear adapter
         for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
@@ -131,9 +152,14 @@ public class WorkoutFragment extends BaseFragment {
             this.showSetDialog(exerciseTypeAdapter.getItem(position));
         }));
 
+        xml().exerciseModelListView.setOnItemLongClickListener(((parent1, views1, position1, id1) -> {
+            this.showExerciseHistoryDialog(exerciseTypeAdapter.getItem(position1));
+            return true;
+        }));
+
 
         // Bind data to view (RoutineModels)
-        routineModelAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
+        routineModelAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
         routineModelAdapter.clear();                // first clear adapter
         for (RoutineModel m : mod.getAllRoutineModels())
@@ -141,15 +167,19 @@ public class WorkoutFragment extends BaseFragment {
         xml().routineModelListView.setAdapter(routineModelAdapter);
         xml().routineModelListView.setOnItemClickListener(((parent, views, position, id) -> {
 
-            RoutineModel currentRoutine = mod.getRoutineModel(routineModelAdapter.getItem(position));
+            String clickedRoutineName = routineModelAdapter.getItem(position).toString();
+            Log.i(TAG, "Selected routine: " + clickedRoutineName);
+            RoutineModel currentRoutine = mod.getRoutineModel(clickedRoutineName);
+            Log.i(TAG, "CONTAINS" + currentRoutine.getExercises().toString());
 
             if(currentRoutine != null){
                 Log.i(TAG, "Retrieved Routine: " + currentRoutine.getName());
                 //Check if routine is already populated with exercises
                 if(currentRoutine.getExercises().size() != 0){
                     // update current workout and switch to current workout tab
+
                     updateCurrentWorkout(currentRoutine);
-                    xml().pager.setCurrentItem(3);
+                    xml().pager.setCurrentItem(0);
                 } else {
                     Log.i(TAG, "Routine has not yet been built");
                     // open buildRoutineFragmentDialog
@@ -158,79 +188,22 @@ public class WorkoutFragment extends BaseFragment {
             }
 
         }));
-
-
-
     }
 
     public void updateCurrentWorkout(RoutineModel currentRoutine){
         WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
-        ArrayAdapter<String> exerciseTypeAdapter = new ArrayAdapter<>(getContext(),             // create an adapter to fill array
-                android.R.layout.simple_list_item_1);
-        exerciseTypeAdapter.clear();                // first clear adapter
+        xml().currentWorkoutHeader.setText("");
+
+        currentRoutineExerciseAdapter.clear();                // first clear adapter
         for (RealmString m : currentRoutine.getExercises())
-            exerciseTypeAdapter.add(m.getName());
-        xml().currentRoutineListView.setAdapter(exerciseTypeAdapter);
+            currentRoutineExerciseAdapter.add(m.getName());
+        xml().currentRoutineListView.setAdapter(currentRoutineExerciseAdapter);
         xml().currentRoutineListView.setOnItemClickListener(((parent, views, position, id) -> {
-            this.showSetDialog(exerciseTypeAdapter.getItem(position));
+            this.showSetDialog(currentRoutineExerciseAdapter.getItem(position));
         }));
     }
 
 
-
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    /*
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        Fragment source = null;
-
-        public SectionsPagerAdapter(FragmentManager fm, Fragment source) {
-            super(fm);
-            this.source = source;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            if(position == 0){
-
-            }
-            switch(position){
-                case 0:
-                    ExerciseTypeFragment a = ExerciseTypeFragment.newInstance();
-                    a.setTargetFragment(source, 0);
-                    return a;
-                case 1:
-                    RoutineFragment b = RoutineFragment.newInstance();
-                    b.setTargetFragment(source, 0);
-                    return b;
-            }
-            return null;
-
-        }
-
-        @Override
-        public int getCount() {
-            // Show 2 total pages.
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Exercises";
-                case 1:
-                    return "Routines";
-            }
-            return null;
-        }
-    }
-    */
     /**
      * @showNewExerciseDialog
      * This method launches a DialogFragment that allows
@@ -275,12 +248,7 @@ public class WorkoutFragment extends BaseFragment {
      * a select exercises to add to a routine
      */
     void showRoutineBuilder(String name) {
-        /*
-        BuildRoutineDialogFragment newFragment = BuildRoutineDialogFragment.newInstance(getString(R.string.title_new_exercise_dialog));
-        //newFragment.titleThing = name; // FIXME: Is this what we pass in?
-        newFragment.setTargetFragment(this, 0);
-        newFragment.show(getFragmentManager(), "dialog");
-        */
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -288,15 +256,6 @@ public class WorkoutFragment extends BaseFragment {
         builder.setView(dialogLayout);
         builder.setTitle(name);
 
-    /*
-        AlertDialog newDialog = new AlertDialog()
-            .setCancelable(false)
-            .setTitle(name)
-            .setPositive(getResources().getString(R.string.accept), (dialog, which) -> Log.d(TAG, "Accepted!"))
-            .setNegative(getResources().getString(R.string.decline), (dialog, which) -> Log.d(TAG, "Declined!"));
-        View dialogLayout = getInflater().inflate(R.layout.fragment_workout_build_routine_layout, null);
-        newDialog.setCustomView(dialogLayout);
-    */
         // fill spinner with all different workout "targets" with which a user can filter exercises
         WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         List<ExerciseTargetModel> filters = mod.getAllTargets();
@@ -324,12 +283,12 @@ public class WorkoutFragment extends BaseFragment {
         button.setOnClickListener(_button -> {
             String f = filterSpinner.getSelectedItem().toString();
             exerciseListAdapter.clear();
-            if(f.equals("None")){
+            if (f.equals("None")) {
                 // Remove any applied filters (i.e., show all exercises)
-                for(ExerciseTypeModel m : mod.getAllExerciseTypeModels())
+                for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
                     exerciseListAdapter.add(m.getName());
             } else {
-                for(ExerciseTypeModel m : mod.getFilteredExerciseTypeModels(f))
+                for (ExerciseTypeModel m : mod.getFilteredExerciseTypeModels(f))
                     exerciseListAdapter.add(m.getName());
             }
         });
@@ -339,9 +298,9 @@ public class WorkoutFragment extends BaseFragment {
             // Get items selected and update Routine Model
             Calendar rightNow = Calendar.getInstance();
             RealmList<RealmString> exercises = new RealmList<RealmString>();
-            if(exerciseListAdapter.getCount() > 0){
-                for(int i = 0; i < exerciseListAdapter.getCount(); i++){
-                    if(exerciseListView.isItemChecked(i)){
+            if (exerciseListAdapter.getCount() > 0) {
+                for (int i = 0; i < exerciseListAdapter.getCount(); i++) {
+                    if (exerciseListView.isItemChecked(i)) {
                         RealmString newExercise = new RealmString();
                         newExercise.setName(exerciseListAdapter.getItem(i).toString());
                         rightNow = Calendar.getInstance();
@@ -365,6 +324,37 @@ public class WorkoutFragment extends BaseFragment {
         builder.create().show();
     }
 
+    void showExerciseHistoryDialog(String exerciseName){
+        // Get Exercise History
+        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        ArrayList<CompletedExerciseModel> history =  mod.getCompletedExercises(exerciseName);
+        int max = 0;
+        int totalWeightLifted = 0;
+        for(CompletedExerciseModel c : history){
+            if(c.get1RMax() > max){
+                max = c.get1RMax();
+            }
+            for(ExerciseSetModel set : c.getSets()){
+                totalWeightLifted += set.getWeight() * set.getReps();
+            }
+        }
+
+        //Build Dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogLayout = inflater.inflate(R.layout.exercise_history_dialog, null);
+        builder.setView(dialogLayout);
+        builder.setTitle(exerciseName + " History");
+
+        TextView oneRMax = (TextView) dialogLayout.findViewById(R.id.oneRMax);
+        oneRMax.setText("One Rep Max: " + max);
+        TextView totalWeight = (TextView) dialogLayout.findViewById(R.id.integratedWeight);
+        totalWeight.setText("Total weight lifted: " + totalWeightLifted );
+
+        builder.create().show();
+
+
+    }
 
 
     /**
@@ -380,19 +370,6 @@ public class WorkoutFragment extends BaseFragment {
                   .setAction("Action", null).show();
         }else{
 
-            /*
-            ExerciseTypeModel newExercise = new ExerciseTypeModel();
-            newExercise.setName(name);
-            newExercise.setCategory(category);
-            newExercise.setTarget(target);
-            newExercise.setMaxDistance(0.0);
-            newExercise.setMaxDuration((long) 0);
-            newExercise.setMaxWeight(0);
-            Calendar rightNow = Calendar.getInstance();
-            newExercise.setDate(rightNow.getTime());
-            exerciseTargets.add(target);
-            */
-
             ExerciseTypeModel newExercise = WorkoutModule.createNewExercise(name, category, target);
             //Add to Realm
             exerciseTypeModelList.add(newExercise);
@@ -401,15 +378,101 @@ public class WorkoutFragment extends BaseFragment {
 
 
 
-            ArrayAdapter<String> exerciseTypeModelAdapter = new ArrayAdapter<>(getContext(),
-                    android.R.layout.simple_list_item_1);
-            exerciseTypeModelAdapter.clear();
+
+            exerciseTypeAdapter.clear();
             //exerciseTypeModelAdapter.addAll(mod.getAllExerciseTypeModels());
             for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
-                exerciseTypeModelAdapter.add(m.getName());
-            xml().exerciseModelListView.setAdapter(exerciseTypeModelAdapter);
+                exerciseTypeAdapter.add(m.getName());
 
         }
+    }
+
+    /**
+     * @showDOWScheduleBuilder
+     */
+    public void showDOWScheduleBuilder(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogLayout = inflater.inflate(R.layout.schedule_builder_dow_dialog, null);
+        builder.setView(dialogLayout);
+        builder.setTitle("Select Workout Days");
+
+        // list days of week
+        ListView dowListView = (ListView) dialogLayout.findViewById(R.id.dow_list);
+        ArrayAdapter<String> dowListAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.select_dialog_multichoice);
+        dowListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        dowListView.setAdapter(dowListAdapter);
+        dowListAdapter.clear();
+        dowListAdapter.addAll(getResources().getStringArray(R.array.days_of_week));
+
+
+        // Add Dialog buttons
+        builder.setPositiveButton("Save", (dialog, whichButton) -> {
+            // Get items selected and update Routine Model
+            Boolean[] dow = new Boolean[7];
+            for(int i = 0; i < 7; i++)
+                dow[i] = new Boolean(dowListView.isItemChecked(i));
+            showRoutineScheduleBuilder(dow);
+        });
+        builder.setNegativeButton("Cancel", (dialog, whichButton) -> {
+        });
+        builder.create().show();
+    }
+
+    /**
+     * @showRoutineScheduleBuilder
+     */
+    public void showRoutineScheduleBuilder(Boolean[] workoutDays){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogLayout = inflater.inflate(R.layout.schedule_builder_routine_dialog, null);
+        builder.setView(dialogLayout);
+        builder.setTitle("Select Routine Rotation");
+
+        // list all user-created routines in Dialog
+        ListView routineListView = (ListView) dialogLayout.findViewById(R.id.routine_schedule_list);
+        ArrayAdapter<String> routineListAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.select_dialog_multichoice);
+        routineListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        routineListView.setAdapter(routineListAdapter);
+        routineListAdapter.clear();
+
+        WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        for(RoutineModel m : mod.getAllRoutineModels())
+            routineListAdapter.addAll(m.getName());
+
+        // Add Dialog buttons
+        builder.setPositiveButton("Save", (dialog, whichButton) -> {
+            Calendar rightNow = Calendar.getInstance();
+            RealmList<RealmString> routines = new RealmList<RealmString>();
+            if(routineListAdapter.getCount() > 0) {
+                for (int i = 0; i < routineListAdapter.getCount(); i++) {
+                    if (routineListView.isItemChecked(i)) {
+                        RealmString newRoutine = new RealmString();
+                        newRoutine.setName(routineListAdapter.getItem(i).toString());
+                        newRoutine.setDate(Calendar.getInstance().getTime());
+                        Log.i(TAG, "Building rotation: added " + newRoutine.getName());
+                        routines.add(newRoutine);
+                    }
+                }
+            }
+
+            WorkoutScheduleModel newSchedule = mod.createNewSchedule(workoutDays, Calendar.getInstance().getTime(), routines);
+            mod.addWorkoutScheduleModel(newSchedule);
+
+            WorkoutScheduleModel s = mod.getWorkoutSchedule();
+            if(s == null ){
+                Log.i(TAG, "WHAT THE FUCKING FUCK REALM");
+            } else {
+                Log.i(TAG, "Retrieved a schedule, yo!!!");
+                Log.i(TAG, "Routines: " + s.getRoutineRotation().first().getName() );
+
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, whichButton) -> {
+        });
+        builder.create().show();
     }
 
 	/**
