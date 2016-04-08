@@ -1,5 +1,8 @@
 package com.sciencesquad.health.core;
 
+import android.app.AlertDialog;
+import android.content.Context;
+
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -11,13 +14,25 @@ import android.support.design.widget.NavigationView.OnNavigationItemSelectedList
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.overview.OverviewFragment;
+import com.sciencesquad.health.prescriptions.UserModel;
+import com.sciencesquad.health.run.RunFragment;
 import com.sciencesquad.health.nutrition.DatabaseFragment;
 import com.sciencesquad.health.prescriptions.PrescriptionFragment;
+
 import com.sciencesquad.health.nutrition.NutritionFragment;
 import com.sciencesquad.health.run.RunLandingFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
@@ -84,11 +99,8 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			new StepsFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_workout) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new WorkoutFragment(), WorkoutFragment.TAG)
-					.addToBackStack(WorkoutFragment.TAG)
-					.commit();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new WorkoutFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_prescription) {
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			new PrescriptionFragment().open(transaction, R.id.drawer_layout).commit();
@@ -102,7 +114,35 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			new DatabaseFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_manage) {
-			// NOTHING HERE
+			// OH BABY DIS GUN B DURTI
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View dialogLayout = inflater.inflate(R.layout.user_profile_dialog, null);
+			builder.setView(dialogLayout);
+			builder.setTitle("Edit User Info");
+			EditText userNameField = (EditText) dialogLayout.findViewById(R.id.user_name_field);
+			userNameField.setInputType(InputType.TYPE_CLASS_TEXT);
+			EditText userAgeField = (EditText) dialogLayout.findViewById(R.id.user_age_field);
+			userAgeField.setInputType(InputType.TYPE_CLASS_NUMBER);
+			EditText userWeightField = (EditText) dialogLayout.findViewById(R.id.user_weight_field);
+			userWeightField.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+			// Add Dialog buttons
+			builder.setPositiveButton("Save", (dialog, whichButton) -> {
+				UserModel user = new UserModel();
+				user.setName(userNameField.getText().toString());
+				user.setAge(Integer.parseInt(userAgeField.getText().toString()));
+				user.setWeight(Float.parseFloat(userWeightField.getText().toString()));
+
+				getSharedPreferences("USER_MODEL", Context.MODE_PRIVATE)
+						.edit()
+						.putString("USER_MODEL", user.toString())
+						.apply();
+
+			});
+			builder.setNegativeButton("Cancel", (dialog, whichButton) -> {
+			});
+			builder.create().show();
 		} else if (id == R.id.nav_share) {
 			// NOTHING HERE
 		} else if (id == R.id.nav_send) {
