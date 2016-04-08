@@ -1,43 +1,34 @@
 package com.sciencesquad.health.nutrition;
 
+import android.util.Log;
 import android.util.Pair;
+
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import android.util.Log;
 
-import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.core.DataEmptyEvent;
-import com.sciencesquad.health.core.DataFailureEvent;
-import com.sciencesquad.health.core.DataUpdateEvent;
-import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.BaseApp;
+import io.realm.RealmResults;
 
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 /**
  * Nutrition Module
  */
-public class    NutritionModule extends Module {
-    private static final String TAG = NutritionModule.class.getSimpleName();
+public class NutritionModule extends Module {
+    public static final String TAG = NutritionModule.class.getSimpleName();
 
     private static final String REALMNAME = "nutrition.realm";
 
     //Important Data.
-    private int calorieIntake;
+    private float calorieIntake;
     private boolean hadCaffeine;
     private int numCheatDays;
+    private boolean cheated;
     private NutrientModel nutrients;
     private MineralModel minerals;
     private VitaminModel vitamins;
@@ -52,35 +43,38 @@ public class    NutritionModule extends Module {
      * Subscribes to events necessary to maintaining its own model.
     */
     public NutritionModule()  {
+
         this.nutritionRealm = new RealmContext<>();
         this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
+        this.nutritionRealm.clear();
 
         // default values
         this.favoriteFoods = new ArrayList<String>();
         this.hadCaffeine = false;
         this.calorieIntake = 0;
         this.numCheatDays = 5;
-        createModels();
+        this.cheated = false; // being positive and assuming no cheating :)
 
-        this.subscribe(DataEmptyEvent.class, null, (DataEmptyEvent dataEmptyEvent) -> Log.d(TAG, "Some realm was empty."));
-        this.subscribe(DataFailureEvent.class, this, (DataFailureEvent dataFailureEvent1) -> {
-            Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
+        bus(b -> {
+            b.subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
+            b.subscribe("DataFailureEvent", this, e -> {
+                Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
 
-        });
-        this.subscribe(DataFailureEvent.class, null, (DataFailureEvent dataFailureEvent) -> {
-            Log.d(TAG, "Data failed somewhere.");
+            });
+            b.subscribe("DataFailureEvent", null, e -> {
+                Log.d(TAG, "Data failed somewhere.");
 
-        });
-        this.subscribe(DataUpdateEvent.class, null, (DataUpdateEvent dataUpdateEvent) -> {
-            Log.d(TAG, "There was an update to a realm.");
+            });
+            b.subscribe("DataUpdateEvent", null, e -> {
+                Log.d(TAG, "There was an update to a realm.");
 
-            // maybe use the key as the realm name?
-            if (dataUpdateEvent.key().equals(REALMNAME)){
-                Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
-            }
-            else {
-                // do something about it.
-            }
+                // maybe use the key as the realm name?
+                if (e.get("key").equals(REALMNAME)) {
+                    Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
+                } else {
+                    // do something about it.
+                }
+            });
         });
     }
 
@@ -112,39 +106,45 @@ public class    NutritionModule extends Module {
      * Will be changed to fit the Dispatcher Pattern later.
      */
     public void addNutritionRecord(){
+
         NutritionModel newNutritionModel = new NutritionModel();
         newNutritionModel.setHadCaffeine(hadCaffeine);
         newNutritionModel.setCalorieIntake(calorieIntake);
         newNutritionModel.setNutrientModel(nutrients);
+        newNutritionModel.setCheated(cheated);
+        newNutritionModel.setNumCheatDays(numCheatDays);
         newNutritionModel.setVitaminModel(vitamins);
         newNutritionModel.setMineralModel(minerals);
         newNutritionModel.setDate(DateTimeUtils.toDate(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
+        newNutritionModel.setDateString("Date: " + LocalDateTime.now().getYear() + "-"
+                + LocalDateTime.now().getMonth().getValue() + "-"
+                + LocalDateTime.now().getDayOfMonth());
         nutritionRealm.add(newNutritionModel);
+
+        // reset values
         clearModels();
+        this.hadCaffeine = false;
+        this.calorieIntake = 0;
         createModels();
     }
 
-    public float[] queryCalories(){
-        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
-        float[] calorieSet = new float[nutritionQueryResults.size()];
-
-        for (int index = 0; index < nutritionQueryResults.size(); index++){
-            NutritionModel model = nutritionQueryResults.get(index);
-            calorieSet[index] = (float) model.getCalorieIntake();
-        }
-
-        return calorieSet;
+    public RealmResults<NutritionModel> queryNutrition(){
+        return nutritionRealm.query(NutritionModel.class).findAll();
     }
 
-    public String[] queryDates(){
-        RealmResults<NutritionModel> nutritionQueryResults = nutritionRealm.query().findAll();
-        String[] dateSet = new String[nutritionQueryResults.size()];
-
-        for (int index = 0; index < nutritionQueryResults.size(); index++){
-            NutritionModel model = nutritionQueryResults.get(index);
-            dateSet[index] = model.getDate().toString();
+    public ArrayList<String> createNutritionLog(){
+        ArrayList<String> log = new ArrayList<>();
+        RealmResults<NutritionModel> results = nutritionRealm.query(NutritionModel.class).findAll();
+        for (int i = 0; i < results.size(); i++){
+            NutritionModel model = results.get(i);
+            String logEntry = "Calories: " + model.getCalorieIntake() + ", " +
+                    LocalDateTime.now().getDayOfWeek().toString() + " "
+                    + LocalDateTime.now().getMonth().toString() + " "
+                    + LocalDateTime.now().getDayOfMonth() + " "
+                    + LocalDateTime.now().getYear();
+            log.add(logEntry);
         }
-        return dateSet;
+        return log;
     }
 
     public void setHadCaffeine(boolean hadCaffeine) {
@@ -158,7 +158,7 @@ public class    NutritionModule extends Module {
         return hadCaffeine;
     }
 
-    public int getCalorieIntake() {
+    public float getCalorieIntake() {
         return calorieIntake;
     }
 
@@ -185,7 +185,7 @@ public class    NutritionModule extends Module {
 
     public void generateData() {
         for (int i = 0; i < 10; i++){
-            calorieIntake = i * 100;
+            calorieIntake = i * 100 + 50;
             hadCaffeine = !hadCaffeine;
             addNutritionRecord();
         }
@@ -193,11 +193,35 @@ public class    NutritionModule extends Module {
 
     @Override
     public Pair<String, Integer> identifier() {
-        return null;
+        return new Pair<>("Nutrition", R.drawable.ic_menu_nutrition);
     }
 
     @Override
     public void init() {
+        Module.registerModule(this.getClass());
 
+    }
+
+    public boolean checkCheatDays() {
+        RealmResults<NutritionModel> results = nutritionRealm.query(NutritionModel.class).findAllSorted("dateString");
+        NutritionModel mostRecentModel = results.last();
+
+        String testString = "Date: " + LocalDateTime.now().getYear() + "-"
+                + LocalDateTime.now().getMonth().getValue() + "-"
+                + LocalDateTime.now().getDayOfMonth();
+
+        if (testString.equals(mostRecentModel.getDateString()) && mostRecentModel.isCheated()){
+            return false;
+
+        }
+        return numCheatDays > 0 && !cheated;
+    }
+
+    public boolean isCheated() {
+        return cheated;
+    }
+
+    public void setCheated(boolean cheated) {
+        this.cheated = cheated;
     }
 }

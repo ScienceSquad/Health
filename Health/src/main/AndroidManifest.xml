@@ -42,7 +42,7 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.Grey"
             android:backupAgent=".core.RealmContext$RealmBackupAgent"
             android:fullBackupOnly="true"
             android:fullBackupContent="true">
@@ -59,48 +59,36 @@
 
         <!-- Entry point for the app. -->
         <activity
-            android:name=".MainActivity"
+            android:name=".core.HostActivity"
 			android:label="@string/app_name"
-			android:theme="@style/AppTheme.NoActionBar"
+			android:theme="@style/AppTheme.Grey"
 			android:screenOrientation="portrait" >
 
             <!-- Can be started from any launcher application. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- The initial Fragment to launch from the HostActivity. -->
+            <meta-data
+                    android:name="fragment"
+                    android:value="com.sciencesquad.health.sleep.SleepFragment" />
         </activity>
 
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
-        <activity
-            android:name=".activity.MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:exported="true" >
-        </activity>
-
-        <!-- For Clock testing. -->
-        <activity
-            android:name=".ClockActivity"
-            android:label="@string/title_activity_clock"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+        <!-- For SleepModule to monitor data in the background. -->
+        <service
+                android:name=".sleep.SleepMonitoringService"
+                android:exported="false"/>
 
         <!-- For SleepModule to play audio in the background. -->
         <service
             android:name=".sleep.SoundService"
             android:exported="false"/>
+
+        <!-- For SleepModule to receive a wake up alarm. -->
+        <receiver android:name=".sleep.SleepWakeUpReceiver"
+                  android:enabled="true" />
 
         <!-- For PrescriptionsModule to trigger in a timely manner. -->
         <receiver

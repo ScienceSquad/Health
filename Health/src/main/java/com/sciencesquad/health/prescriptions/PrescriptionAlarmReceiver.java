@@ -8,9 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 
-import com.sciencesquad.health.MainActivity;
+import com.sciencesquad.health.core.HostActivity;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 
@@ -32,7 +31,7 @@ public class PrescriptionAlarmReceiver extends BroadcastReceiver {
 				.setContentText("Don't forget to take " + String.valueOf(dosage) + " " + name + "!")
 				.setSmallIcon(SMALL_ICON);
 
-		Intent intent = new Intent(context, MainActivity.class);
+		Intent intent = new Intent(context, HostActivity.class);
 		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 		mBuilder.setContentIntent(resultPendingIntent);
 

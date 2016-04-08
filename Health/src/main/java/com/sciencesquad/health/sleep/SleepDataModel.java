@@ -1,12 +1,8 @@
 package com.sciencesquad.health.sleep;
 
-import android.util.Pair;
-import org.immutables.value.Value;
-import org.threeten.bp.Duration;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalTime;
+import io.realm.RealmObject;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * The model that records the user's sleep through a period of time,
@@ -14,8 +10,7 @@ import java.util.List;
  * Pittsburgh Sleep Quality Index (PSQI) and can be used for such
  * calculation or pattern learning.
  */
-@Value.Immutable
-public interface SleepDataModel {
+public class SleepDataModel extends RealmObject {
 
 	/**
 	 * The DreamType can be one of:
@@ -42,35 +37,35 @@ public interface SleepDataModel {
 	/**
 	 * The date this session occurred.
 	 */
-	LocalDate date();
+	public Date date; // LocalDate
 
 	/**
 	 * When the sleep interval began.
 	 */
-	LocalTime start();
+	public Date start; // LocalTime
 
 	/**
 	 * When the sleep interval ended.
 	 */
-	LocalTime end();
+	public Date end; // LocalTime
 
 	/**
 	 * The time taken between beginning the session and actually entering
 	 * deep sleep (usually marked as REM sleep).
 	 */
-	Duration untilDeepSleep();
+	public long untilDeepSleep; // Duration
 
 	/**
 	 * The user-reported type of dream that occurred during this session.
 	 * (For either sleep or a short nap.)
 	 */
-	DreamType dreamType();
+	public int dreamType; //DreamType
 
 	/**
 	 * The user-reported dream diary for this session.
 	 * This should only be for the user to review; not for number crunching.
 	 */
-	String dreamDiary();
+	public String dreamDiary;
 
 	/**
 	 * The user-reported type of discomfort (or comfort) that occurred
@@ -80,7 +75,7 @@ public interface SleepDataModel {
 	 * ComfortType.UNKNOWN. If they report "comfortable" or "nothing
 	 * in particular," use ComfortType.NONE.
 	 */
-	DiscomfortType discomfortType();
+	public int discomfortType; // DiscomfortType
 
 	/**
 	 * A list of all (time, duration) tuples that correspond to points
@@ -89,11 +84,91 @@ public interface SleepDataModel {
 	 *
 	 * This could be snoring, restless shuffle, or any other interpretation.
 	 */
-	List<Pair<LocalTime, Duration>> noises();
+	//public List<Pair<LocalTime, Duration>> noises;
 
 	/**
 	 * The user-reported description of this session, which would not fit
 	 * into data buckets above.
 	 */
-	String otherDescription();
+	public String otherDescription;
+
+
+	//
+	// GENERATED METHODS FOLLOW:
+	//
+
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Date getStart() {
+		return start;
+	}
+
+	public void setStart(Date start) {
+		this.start = start;
+	}
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
+	}
+
+	public long getUntilDeepSleep() {
+		return untilDeepSleep;
+	}
+
+	public void setUntilDeepSleep(long untilDeepSleep) {
+		this.untilDeepSleep = untilDeepSleep;
+	}
+
+	public int getDreamType() {
+		return dreamType;
+	}
+
+	public void setDreamType(int dreamType) {
+		this.dreamType = dreamType;
+	}
+
+	public String getDreamDiary() {
+		return dreamDiary;
+	}
+
+	public void setDreamDiary(String dreamDiary) {
+		this.dreamDiary = dreamDiary;
+	}
+
+	public int getDiscomfortType() {
+		return discomfortType;
+	}
+
+	public void setDiscomfortType(int discomfortType) {
+		this.discomfortType = discomfortType;
+	}
+
+	/*
+	public List<Pair<LocalTime, Duration>> getNoises() {
+		return noises;
+	}
+
+	public void setNoises(List<Pair<LocalTime, Duration>> noises) {
+		this.noises = noises;
+	}
+	//*/
+
+	public String getOtherDescription() {
+		return otherDescription;
+	}
+
+	public void setOtherDescription(String otherDescription) {
+		this.otherDescription = otherDescription;
+	}
 }

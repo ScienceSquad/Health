@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
@@ -13,10 +14,8 @@ import android.util.Log;
 import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.Event;
-import com.sciencesquad.health.util.X;
+import com.sciencesquad.health.core.util.X;
 import java8.util.stream.StreamSupport;
-import org.immutables.value.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,22 +31,6 @@ public class SoundService extends Service {
 	private static final String TAG = SoundService.class.getSimpleName();
 
 	/**
-	 * The event sent when the SoundService is started.
-	 */
-	@Value.Immutable @Event.EventType
-	public interface SoundServiceStart extends Event {
-		//
-	}
-
-	/**
-	 * The event sent when the SoundService is stopped.
-	 */
-	@Value.Immutable @Event.EventType
-	public interface SoundServiceStop extends Event {
-		//
-	}
-
-	/**
 	 * The action to send this Service if it should be stopped.
 	 */
 	public static final String STOP = SoundService.class.getName() + ".STOP";
@@ -57,6 +40,19 @@ public class SoundService extends Service {
 	 * action to the SoundService manually.
 	 */
 	private static final int NOTE_ID = 0xDEADFA11;
+
+	/**
+	 * Has the SoundService been started or stopped?
+	 */
+	private static boolean isStarted = false;
+
+	/**
+	 * Map between integers to actual WAV file names.
+	 */
+	public static final String[] wav_map = new String[] {
+			"waves", "birds", "crickets", "rain",
+			"thunder", "fire", "wind"
+	};
 
 	/**
 	 * Loads all Sleep-specific RawRes sounds into MediaPlayers.
@@ -83,8 +79,8 @@ public class SoundService extends Service {
 	 */
 	public static void startSoundService() {
 		X.of(BaseApp.app()).let(app -> {
-			Intent startIntent = new Intent(app, SoundService.class);
-			app.startService(startIntent);
+			app.startService(new Intent(app, SoundService.class));
+			isStarted = true;
 		}).or(() -> {
 			Log.d(TAG, "SoundService could not be started.");
 		});
@@ -96,11 +92,29 @@ public class SoundService extends Service {
 	 */
 	public static void stopSoundService() {
 		X.of(BaseApp.app()).let(app -> {
-			Intent stopIntent = new Intent(app, SoundService.class);
-			app.stopService(stopIntent);
+			app.stopService(new Intent(app, SoundService.class));
+			isStarted = false;
 		}).or(() -> {
 			Log.d(TAG, "SoundService could not be stopped.");
 		});
+	}
+
+	/**
+	 * Has the SoundService become active?
+	 *
+	 * @return whether the SoundService is active or not
+	 */
+	public static boolean isSoundServiceActive() {
+		return isStarted;
+	}
+
+	/**
+	 * Shorthand to toggle the activity of the SoundService.
+	 */
+	public static void toggleSoundService() {
+		if (!isStarted)
+			startSoundService();
+		else stopSoundService();
 	}
 
 	/**
@@ -109,6 +123,8 @@ public class SoundService extends Service {
 	 */
 	private Map<String, MediaPlayer> players = defaultPlayers();
 	private Map<String, ValueAnimator> animators = new HashMap<>();
+
+	private BroadcastReceiver test;
 
 	/**
 	 * @see Service
@@ -150,7 +166,10 @@ public class SoundService extends Service {
 
 		// Broadcast an event to say that we started up.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
-			bus.publish(SoundServiceStartEvent.from(this).create());
+			bus.publish("SoundServiceStartEvent", this);
+			this.test = bus.subscribe("SoundServiceStartEvent", null, ev -> {
+				Log.i(TAG, "Dolphins! " + ev);
+			});
 		});
 
 		// Start the notification and keep us alive.
@@ -183,7 +202,7 @@ public class SoundService extends Service {
 
 		// Broadcast an event to say that we stopped.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
-			bus.publish(SoundServiceStopEvent.from(this).create());
+			bus.publish("SoundServiceStopEvent", this);
 		});
 	}
 

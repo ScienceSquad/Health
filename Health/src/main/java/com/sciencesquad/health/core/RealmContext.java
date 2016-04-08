@@ -6,8 +6,9 @@ import android.app.backup.FileBackupHelper;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.sciencesquad.health.core.DataFailureEvent;
+import android.util.Log;
 
+import com.sciencesquad.health.core.EventBus.Entry;
 import io.realm.*;
 import java8.util.function.Consumer;
 
@@ -19,7 +20,7 @@ import java.util.Iterator;
  * The RealmContext.
  */
 public final class RealmContext<M extends RealmObject> implements DataContext<M> {
-    private static final String TAG = RealmContext.class.getSimpleName();
+	private static final String TAG = RealmContext.class.getSimpleName();
 
 	/**
 	 * List of Failure strings for Data Failure.
@@ -42,6 +43,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		public static final String OBJECT_CANNOT_CHECK_ISEMPTY = "OBJECT_CANNOT_CHECK_ISEMPTY";
 		public static final String OBJECT_HAS_NO_SIZE = "OBJECT_HAS_NO_SIZE";
 		public static final String COULD_NOT_PRODUCE_ARRAY = "COULD_NOT_PRODUCE_ARRAY";
+		public static final String COULD_NOT_SWITCH_REALM = "COULD_NOT_SWITCH_REALM";
 	}
 
 	private Realm realm;
@@ -52,21 +54,21 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		return this.realm.where(this.realmClass).findAll();
 	}
 
-    /**
-     * This sets up the Realm for the module.
-     *
-     * Notes:
-     *      - sets up a RealmConfiguration to establish the realm.
-     *      - uses RealmConfiguration to build the Realm for this module.
-     *      - Sets up a RealmList to hold all the RealmModels in a list for history purposes.
-     *      - configNutritionRealm is set to delete the Realm if there are changes in the model,
-     *      which in the early stages of development is okay.
-     *      HOWEVER, once this is released, we need to make a separate Migration, which is will
-     *      support multiple versions of the app.
-     */
-    @Override
+	/**
+	 * This sets up the Realm for the module.
+	 *
+	 * Notes:
+	 *      - sets up a RealmConfiguration to establish the realm.
+	 *      - uses RealmConfiguration to build the Realm for this module.
+	 *      - Sets up a RealmList to hold all the RealmModels in a list for history purposes.
+	 *      - configNutritionRealm is set to delete the Realm if there are changes in the model,
+	 *      which in the early stages of development is okay.
+	 *      HOWEVER, once this is released, we need to make a separate Migration, which is will
+	 *      support multiple versions of the app.
+	 */
+	@Override
 	@SuppressWarnings("unchecked")
-    public void init(Context context, Class realmClass, String identifier) {
+	public void init(Context context, Class realmClass, String identifier) {
 		try {
 			RealmConfiguration config = new RealmConfiguration.Builder(context)
 					.name(identifier)
@@ -76,9 +78,10 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			this.realm = Realm.getInstance(config);
 			this.realmClass = realmClass;
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_INIT_REALM).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_INIT_REALM));
 		}
-    }
+	}
 
 	/**
 	 * Return the Realm for this RealmContext.
@@ -92,18 +95,22 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	/**
 	 * @see Collection
 	 */
-    @Override
-    public boolean add(M object) {
+	@Override
+	public boolean add(RealmObject object) {
 		try {
 			realm.beginTransaction();
-			this.realm.copyToRealm(object);
+			realm.copyToRealm(object);
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_ADD_SINGLE_OBJECT).create());
+			realm.cancelTransaction();
+			Log.e(TAG, "Failed to add a model!");
+			Log.e(TAG, e.getMessage());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_ADD_SINGLE_OBJECT));
 			return false;
 		}
 		return true;
-    }
+	}
 
 	/**
 	 * @see Collection
@@ -115,7 +122,9 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			this.realm.copyToRealm(collection);
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_ADD_COLLECTION_OBJECT).create());
+			realm.cancelTransaction();
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_ADD_COLLECTION_OBJECT));
 			return false;
 		}
 		return true;
@@ -129,7 +138,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().contains(object);
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_DOES_NOT_EXIST).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.OBJECT_DOES_NOT_EXIST));
 			return false;
 		}
 	}
@@ -142,7 +152,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().containsAll(collection);
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_COLLECTION_DOES_NOT_EXIST).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.OBJECT_COLLECTION_DOES_NOT_EXIST));
 			return false;
 		}
 	}
@@ -155,7 +166,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().equals(object);
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_COMPARE_OBJECT).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_COMPARE_OBJECT));
 			return false;
 		}
 	}
@@ -168,7 +180,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().hashCode();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_HASH_CODE).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_PRODUCE_HASH_CODE));
 			return -1;
 		}
 	}
@@ -181,7 +194,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().isEmpty();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_CANNOT_CHECK_ISEMPTY).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.OBJECT_CANNOT_CHECK_ISEMPTY));
 			return false;
 		}
 	}
@@ -194,7 +208,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().iterator();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_ITERATOR).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_PRODUCE_ITERATOR));
 			return Collections.emptyIterator();
 		}
 
@@ -218,7 +233,9 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.commitTransaction();
 			return true;
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_REMOVE_SINGLE_OBJECT).create());
+			realm.cancelTransaction();
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_REMOVE_SINGLE_OBJECT));
 			return false;
 		}
 	}
@@ -243,7 +260,9 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.commitTransaction();
 			return true;
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_REMOVE_COLLECTION_OBJECT).create());
+			realm.cancelTransaction();
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_REMOVE_COLLECTION_OBJECT));
 			return false;
 		}
 	}
@@ -266,7 +285,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.commitTransaction();
 			return true;
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_RETAIN_OBJECTS).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_RETAIN_OBJECTS));
 			return false;
 		}
 	}
@@ -279,7 +299,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().size();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.OBJECT_HAS_NO_SIZE).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.OBJECT_HAS_NO_SIZE));
 			return -1;
 		}
 	}
@@ -293,7 +314,9 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.clear(this.realmClass);
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_CLEAR_REALM).create());
+			realm.cancelTransaction();
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_CLEAR_REALM));
 		}
 	}
 
@@ -305,7 +328,8 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		try {
 			return items().toArray();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_ARRAY).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_PRODUCE_ARRAY));
 			return (new Object[1]);
 		}
 	}
@@ -327,39 +351,42 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	}
 
 	/**
-     * This will set up a Realm Query object
-     * based off of the Realm Object associated with the module
-     *
-     * From there, one can do SQL-esque queries which returns a
-     * RealmList<RealmObjectClass> results,
-     * which is pertinent to that query.
-     */
+	 * This will set up a Realm Query object
+	 * based off of the Realm Object associated with the module
+	 *
+	 * From there, one can do SQL-esque queries which returns a
+	 * RealmList<RealmObjectClass> results,
+	 * which is pertinent to that query.
+	 */
 	@Nullable
-    public RealmQuery<M> query() {
+	public RealmQuery query(Class realmClass) {
 		try {
-			return realm.where(this.realmClass);
+			return realm.where(realmClass);
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_PRODUCE_QUERY).create());
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_PRODUCE_QUERY));
 			return null;
 		}
-    }
+	}
 
 
-    /**
-     * This will take a model that is stored in the realm
-     * via a query then update the key to it.
-     * This will generate an event to all subscribers on the Event Bus.
-     * This can be also used to update other certain values one at a time.
-     */
-    public void updateRealmModel(int index, Consumer<M> handler) {
+	/**
+	 * This will take a model that is stored in the realm
+	 * via a query then update the key to it.
+	 * This will generate an event to all subscribers on the Event Bus.
+	 * This can be also used to update other certain values one at a time.
+	 */
+	public void updateRealmModel(int index, Consumer<M> handler) {
 		try {
 			realm.beginTransaction();
 			handler.accept(items().get(index));
 			realm.commitTransaction();
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish(DataFailureEvent.from(this).operation(Failures.COULD_NOT_UPDATE_REALM_AT_INDEX).create());
+			realm.cancelTransaction();
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_UPDATE_REALM_AT_INDEX));
 		}
-    }
+	}
 
 	/**
 	 * Backup agent to back up all the realm files.

@@ -13,31 +13,32 @@ public class NutritionModel extends RealmObject {
 	/**
 	 * Data that is relevant to store for Nutrition Purposes.
 	 */
-	private int calorieIntake;
+	private float calorieIntake;
 	private boolean hadCaffeine;
+	private boolean cheated;
+	private int numCheatDays;
 
 	private NutrientModel nutrientModel;
 	private VitaminModel vitaminModel;
 	private MineralModel mineralModel;
-
-
 
 	/**
 	 * Calendar date where this model was created.
 	 */
 	@Required
 	private Date date;
+	private String dateString;
 
 	//
 	// GENERATED METHODS FOLLOW
 	// DO NOT MODIFY -- REALM ONLY
 	//
 
-	public int getCalorieIntake() {
+	public float getCalorieIntake() {
 		return calorieIntake;
 	}
 
-	public void setCalorieIntake(int calorieIntake) {
+	public void setCalorieIntake(float calorieIntake) {
 		this.calorieIntake = calorieIntake;
 	}
 
@@ -84,5 +85,29 @@ public class NutritionModel extends RealmObject {
 
 	public void setNutrientModel(@NonNull NutrientModel nutrientModel) {
 		this.nutrientModel = nutrientModel;
+	}
+
+	public String getDateString() {
+		return dateString;
+	}
+
+	public void setDateString(String dateString) {
+		this.dateString = dateString;
+	}
+
+	public int getNumCheatDays() {
+		return numCheatDays;
+	}
+
+	public void setNumCheatDays(int numCheatDays) {
+		this.numCheatDays = numCheatDays;
+	}
+
+	public boolean isCheated() {
+		return cheated;
+	}
+
+	public void setCheated(boolean cheated) {
+		this.cheated = cheated;
 	}
 }

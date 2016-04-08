@@ -1,20 +1,168 @@
 <resources>
 
-    <!-- Base app theme. -->
+    <!-- Base app themes. -->
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Support for API 21 Design Library. -->
+
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:navigationBarColor">?colorPrimaryDark</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!-- Support for API 21 Activity Transitions. -->
+
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowSharedElementsUseOverlay">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowEnterTransition">@android:transition/slide_bottom</item>
+        <item name="android:windowExitTransition">@android:transition/slide_bottom</item>
+        <item name="android:windowReenterTransition">@android:transition/slide_bottom</item>
+        <item name="android:windowReturnTransition">@android:transition/slide_bottom</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementReenterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementReturnTransition">@android:transition/move</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="AppTheme.Fullscreen" parent="AppTheme">
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
+
+    <!-- Compatibility themes for AppCompat elements like AppBar and Popup. -->
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- The following are color style themes. -->
+
+    <style name="AppTheme.Red" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/red_700</item>
+        <item name="colorPrimaryDark">@color/red_900</item>
+    </style>
+    <style name="AppTheme.Pink" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/pink_700</item>
+        <item name="colorPrimaryDark">@color/pink_900</item>
+    </style>
+    <style name="AppTheme.Purple" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/purple_700</item>
+        <item name="colorPrimaryDark">@color/purple_900</item>
+    </style>
+    <style name="AppTheme.DeepPurple" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/dark_purple_700</item>
+        <item name="colorPrimaryDark">@color/dark_purple_900</item>
+    </style>
+    <style name="AppTheme.Indigo" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/indigo_700</item>
+        <item name="colorPrimaryDark">@color/indigo_900</item>
+    </style>
+    <style name="AppTheme.Blue" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+    </style>
+    <style name="AppTheme.LightBlue" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/light_blue_700</item>
+        <item name="colorPrimaryDark">@color/light_blue_900</item>
+    </style>
+    <style name="AppTheme.Cyan" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/cyan_700</item>
+        <item name="colorPrimaryDark">@color/cyan_900</item>
+    </style>
+    <style name="AppTheme.Teal" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/teal_700</item>
+        <item name="colorPrimaryDark">@color/teal_900</item>
+    </style>
+    <style name="AppTheme.Green" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/green_700</item>
+        <item name="colorPrimaryDark">@color/green_900</item>
+    </style>
+    <style name="AppTheme.LightGreen" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/light_green_700</item>
+        <item name="colorPrimaryDark">@color/light_green_900</item>
+    </style>
+    <style name="AppTheme.Lime" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/lime_700</item>
+        <item name="colorPrimaryDark">@color/lime_900</item>
+    </style>
+    <style name="AppTheme.Yellow" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/yellow_700</item>
+        <item name="colorPrimaryDark">@color/yellow_900</item>
+    </style>
+    <style name="AppTheme.Amber" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/amber_700</item>
+        <item name="colorPrimaryDark">@color/amber_900</item>
+    </style>
+    <style name="AppTheme.Orange" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/orange_700</item>
+        <item name="colorPrimaryDark">@color/orange_900</item>
+    </style>
+    <style name="AppTheme.DeepOrange" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/deep_orange_700</item>
+        <item name="colorPrimaryDark">@color/deep_orange_900</item>
+    </style>
+    <style name="AppTheme.Brown" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/brown_700</item>
+        <item name="colorPrimaryDark">@color/brown_900</item>
+    </style>
+    <style name="AppTheme.Grey" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/grey_700</item>
+        <item name="colorPrimaryDark">@color/grey_900</item>
+    </style>
+    <style name="AppTheme.BlueGrey" parent="AppTheme">
+        <item name="colorAccent">@color/material_white</item>
+        <item name="colorPrimary">@color/blue_grey_700</item>
+        <item name="colorPrimaryDark">@color/blue_grey_900</item>
+    </style>
+
+    <!-- The following are Module-specific themes. -->
+
+    <style name="AppTheme.Sleep" parent="AppTheme">
+        <item name="colorAccent">@color/amber_700</item>
+        <item name="colorPrimary">@color/blue_grey_700</item>
+        <item name="colorPrimaryDark">@color/blue_grey_900</item>
+    </style>
+
+    <style name="AppTheme.Diet" parent="AppTheme">
+        <item name="colorAccent">@color/light_green_700</item>
+        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimaryDark">@color/material_black</item>
+    </style>
+
+    <style name="AppTheme.Nutrient" parent="AppTheme">
+        <item name="colorAccent">@color/green_700</item>
+        <item name="colorPrimary">@color/light_green_700</item>
+        <item name="colorPrimaryDark">@color/material_black</item>
+    </style>
+
+    <style name="AppTheme.Nutrition" parent="AppTheme">
+        <item name="colorAccent">@color/light_green_900</item>
+        <item name="colorPrimary">@color/green_900</item>
+        <item name="colorPrimaryDark">@color/material_black</item>
+    </style>
+
 
 </resources>

@@ -3,32 +3,32 @@ package com.sciencesquad.health.nutrition;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.sciencesquad.health.R;
 
 public class CalorieDialogFragment extends DialogFragment {
-
-    private boolean hadCaffeine;
-
     private static final String TAG = CalorieDialogFragment.class.getSimpleName();
 
+    private boolean hadCaffeine;
+    private boolean usedCheatDay;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         hadCaffeine = false;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        usedCheatDay = false;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Nutrient);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View dialogLayout = inflater.inflate(R.layout.calorie_dialog_fragment_layout, null);
+        View dialogLayout = inflater.inflate(R.layout.fragment_nutrition_calorie_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle("Nutrient Menu");
 
@@ -40,13 +40,43 @@ public class CalorieDialogFragment extends DialogFragment {
             hadCaffeine = true;
         });
 
+        TextView numCheatDaysView = (TextView) dialogLayout.findViewById(R.id.cheat_view);
+        numCheatDaysView.setText("Cheat days left: " +
+                (((NutritionFragment) getTargetFragment()).getNutritionModule().getNumCheatDays()));
+
+        Button cheatButton = (Button) dialogLayout.findViewById(R.id.cheat_button);
+        cheatButton.setOnClickListener(v -> {
+
+            if (((NutritionFragment) getTargetFragment()).getNutritionModule().checkCheatDays()
+                    && !usedCheatDay) {
+                usedCheatDay = true;
+                Snackbar snackbar = Snackbar.make(v, "Success: You've used a cheat day.",
+                        Snackbar.LENGTH_SHORT);
+                snackbar.show();
+                numCheatDaysView.setText("Cheat days left: " + (((NutritionFragment)
+                        getTargetFragment()).getNutritionModule().getNumCheatDays() - 1));
+            } else {
+                Snackbar snackbar = Snackbar.make(v, "You can't use more cheat days today.",
+                        Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+        });
+
         builder.setPositiveButton("Save",
                 (dialog, whichButton) -> {
-                    ((NutritionViewModel) getTargetFragment()).getNutritionModule().setCalorieIntake(
+                    if (calorieField.getText().toString().equals("")) {
+                        return;
+                    }
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().setCalorieIntake(
                             Integer.parseInt(calorieField.getText().toString()));
-                    ((NutritionViewModel) getTargetFragment()).getNutritionModule().
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
                             setHadCaffeine(hadCaffeine);
-
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
+                            setCheated(usedCheatDay);
+                    int numCheats = ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
+                            getNumCheatDays();
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
+                            setNumCheatDays(numCheats--);
                 }
         );
         builder.setNegativeButton("Cancel",
