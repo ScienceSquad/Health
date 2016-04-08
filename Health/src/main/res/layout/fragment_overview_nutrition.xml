@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
-        android:text="You're nutrition score is quite low, especially in relation to the other aspects of your health."
+        android:text="Your nutrition score is quite low, especially in relation to the other aspects of your health. You should make sure to keep a well-balanced diet!"
         android:id="@+id/nutrition_overview"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"

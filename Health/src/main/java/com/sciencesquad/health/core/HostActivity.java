@@ -28,11 +28,8 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		getFragmentManager()
-				.beginTransaction()
-				.replace(R.id.content, new OverviewFragment(), OverviewFragment.TAG)
-				.addToBackStack(OverviewFragment.TAG)
-				.commit();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		new OverviewFragment().open(transaction, R.id.drawer_layout).commit();
 		this.drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
@@ -50,11 +47,8 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 	public boolean onNavigationItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.nav_overview) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new OverviewFragment(), OverviewFragment.TAG)
-					.addToBackStack(OverviewFragment.TAG)
-					.commit();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new OverviewFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_run) {
 			getFragmentManager()
 					.beginTransaction()

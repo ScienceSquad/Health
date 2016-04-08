@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
-        android:text="You're steps score is quite good! Especially in relation to the other aspects of your health."
+        android:text="Your steps score is quite good! You've been walking quite a bit lately, and it's showing! You've burned 1234 calories from walking today."
         android:id="@+id/nutrition_overview"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"

@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
-        android:text="You're nutrition score is quite low, especially in relation to the other aspects of your health."
+        android:text="Your sleep score looks great! We base this score off of the PSQI - Pittsburgh Sleep Quality Index - through analyzing your sleep data and providing you with feedback. You have had a very healthy sleep schedule lately!"
         android:id="@+id/nutrition_overview"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
