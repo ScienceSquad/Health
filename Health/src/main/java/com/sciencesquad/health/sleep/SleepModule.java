@@ -36,6 +36,9 @@ public class SleepModule extends Module {
 	public void setTileCycle(int tile, int cycle) {
 		if (tile >= SoundService.wav_map.length) return;
 		String name = SoundService.wav_map[tile];
+		if (!SoundService.isSoundServiceActive())
+			SoundService.startSoundService();
+		else SoundService.stopSoundService();
 		Log.i(TAG, "Sound \"" + name + "\" updated to volume " + (cycle / 4.0f) * 100.0f + ".");
 	}
 
