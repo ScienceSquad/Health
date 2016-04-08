@@ -1,12 +1,17 @@
 package com.sciencesquad.health.core;
 
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
 import android.app.FragmentTransaction;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.sciencesquad.health.R;
@@ -33,6 +38,23 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 		this.drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+
+		// Try to auto-launch a BaseFragment if provided in the AndroidManifest.
+		// i.e. <meta-data android:name="fragment" android:value="CLASS" />
+		try {
+			ActivityInfo actInfo = getPackageManager().getActivityInfo(getComponentName(), PackageManager.GET_META_DATA);
+			String fragmentClass = actInfo.metaData.getString("fragment");
+			if (fragmentClass == null) {
+				ApplicationInfo appInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+				fragmentClass = appInfo.metaData.getString("fragment");
+			}
+
+			Log.i(TAG, "Loading " + fragmentClass);
+			BaseFragment fragment = (BaseFragment)Class.forName(fragmentClass).newInstance();
+			fragment.open(getFragmentManager().beginTransaction(), R.id.drawer_layout).commit();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
