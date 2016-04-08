@@ -57,7 +57,7 @@ public class PrescriptionModule extends Module {
 	}
 
 	public RealmResults<PrescriptionModel> getPrescriptions() {
-		return prescriptionRealm.query().findAll();
+		return prescriptionRealm.query(PrescriptionModel.class).findAll();
 	}
 
 	public void clearAllPrescriptions() {

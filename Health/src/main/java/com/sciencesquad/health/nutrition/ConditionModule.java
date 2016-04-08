@@ -30,7 +30,7 @@ public class ConditionModule extends Module {
 
 	public ConditionModule() {
 		Log.d(TAG, "Constructing Prescription Module");
-		this.conditionRealm = new RealmContext<>();
+		this.conditionRealm = new RealmContext<ConditionModel>();
 		this.conditionRealm.init(BaseApp.app(), ConditionModel.class, "condition.realm");
 	}
 
@@ -63,7 +63,7 @@ public class ConditionModule extends Module {
 	}
 
 	public RealmResults<ConditionModel> getConditions() {
-		return conditionRealm.query().findAll();
+		return conditionRealm.query(ConditionModel.class).findAll();
 	}
 
 	public void clearAllConditions() {
