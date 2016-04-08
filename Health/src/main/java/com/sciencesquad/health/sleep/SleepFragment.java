@@ -5,24 +5,19 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.CardView;
+import android.support.v4.content.ContextCompat;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
-import com.sciencesquad.health.core.alarm.AlarmSender;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-import java8.util.stream.Stream;
-import java8.util.stream.StreamSupport;
 
 import static com.sciencesquad.health.core.util.AnimationUtils.*;
 
@@ -52,7 +47,7 @@ public class SleepFragment extends BaseFragment {
 	 */
 	@Override
 	protected Configuration getConfiguration() {
-		String _ = SleepModule.TAG; // instantiates the Module...
+		String notUnderscore = SleepModule.TAG; // instantiates the Module...
 		return new Configuration(
 				TAG, "Sleep", R.drawable.ic_menu_sleep,
 				R.style.AppTheme_Sleep, R.layout.fragment_sleep
