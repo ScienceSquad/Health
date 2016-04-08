@@ -31,7 +31,7 @@ import org.threeten.bp.ZoneOffset;
  */
 
 public class StepsModule extends Module {
-    private static final String TAG = StepsModule.class.getSimpleName();
+    public static final String TAG = StepsModule.class.getSimpleName();
     private static final String REALMNAME = "steps.realm";
 
     private RealmContext<StepsModel> stepsRealm;
