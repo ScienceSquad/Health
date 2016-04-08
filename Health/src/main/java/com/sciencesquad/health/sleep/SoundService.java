@@ -47,6 +47,14 @@ public class SoundService extends Service {
 	private static boolean isStarted = false;
 
 	/**
+	 * Map between integers to actual WAV file names.
+	 */
+	public static final String[] wav_map = new String[] {
+			"waves", "birds", "crickets", "rain",
+			"thunder", "fire", "wind"
+	};
+
+	/**
 	 * Loads all Sleep-specific RawRes sounds into MediaPlayers.
 	 * Each player is encoded in the Map by its name as a String.
 	 *
