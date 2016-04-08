@@ -1,21 +1,24 @@
-import android.app.AlarmManager;
 import android.test.ApplicationTestCase;
+import android.util.Log;
+
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.nutrition.NutrientQuery;
 import com.sciencesquad.health.nutrition.NutritionModel;
-import com.sciencesquad.health.workout.ExerciseTypeModel;
-import com.sciencesquad.health.workout.WorkoutModule;
-import com.sciencesquad.health.workout.ExerciseKind;
-import com.sciencesquad.health.workout.RoutineModel;
-
-import com.sciencesquad.health.prescriptions.PrescriptionAlarm;
-import com.sciencesquad.health.prescriptions.PrescriptionModel;
+import com.sciencesquad.health.nutrition.RecipeQuery;
+import com.sciencesquad.health.util.DataGetter;
 
 
 import io.realm.RealmQuery;
 import java8.util.function.Consumer;
 import junit.framework.Assert;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.Calendar;
 
@@ -98,6 +101,29 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
         }
 
     }
+
+    private String nodeToString(Node node) {
+        String result = node.getNodeName() + ": " + node.getTextContent() + "\n" + childrenToString(node);
+        return result;
+    }
+
+    private String childrenToString(Node node) {
+        String result = "";
+        NodeList nodes = node.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            result += nodeToString(nodes.item(i)) + "\n";
+        }
+        return result;
+    }
+
+    @Test
+    public void testDataGetter() {
+        String urlString = new NutrientQuery()
+                .getURLString();
+        Log.d("testDataGetter", urlString);
+    }
+
+
     /*
     @Test
     public void testWorkout(){
