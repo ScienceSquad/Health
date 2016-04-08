@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,11 +35,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import io.realm.RealmResults;
+
 /**
  * Created by andrew on 4/6/16.
  */
 public class DatabaseFragment extends BaseFragment {
 	public static final String TAG = DatabaseFragment.class.getSimpleName();
+
+	private ConditionModule conditionModule;
 
 	public class ItemContent {
 		public String title;
@@ -172,6 +177,25 @@ public class DatabaseFragment extends BaseFragment {
 
 	}
 
+	private void updateConditionContent() {
+		RealmResults<ConditionModel> conditionModels = conditionModule.getConditions();
+		ArrayList<ItemContent> contentArray = new ArrayList<ItemContent>();
+		for (int i = 0; i < conditionModels.size(); i++) {
+			ConditionModel model = conditionModels.get(i);
+			ItemContent itemContent = new ItemContent();
+			itemContent.title = model.getName();
+			itemContent.content = model.getRestrictedFoods();
+			itemContent.url = "";
+			contentArray.add(itemContent);
+		}
+		ListAdapter listAdapter = new ListAdapter(contentArray);
+		xml().page3.setAdapter(listAdapter);
+	}
+
+	private void addConditionRestrictedFood(View conditionDialog) {
+
+	}
+
 	private void callRecipeQueryDialog(View view) {
 		View recipeDialog = getInflater().inflate(R.layout.fragment_database_recipe_dialog, null);
 		new MaterialStyledDialog(getActivity())
@@ -220,12 +244,42 @@ public class DatabaseFragment extends BaseFragment {
 				.show();
 	}
 
+	public void callMedicalConditionDialog(View view) {
+		View conditionDialog = getInflater().inflate(R.layout.fragment_database_condition_dialog, null);
+		EditText nameInput = (EditText) conditionDialog.findViewById(R.id.condition_name);
+		EditText foodInput = (EditText) conditionDialog.findViewById(R.id.condition_food);
+		new MaterialStyledDialog(getActivity())
+				.setCustomView(conditionDialog)
+				.withDialogAnimation(true, Duration.FAST)
+				.setCancelable(false)
+				.setPositive(getResources().getString(R.string.accept),
+						(dialog, which) -> {
+							Log.d(TAG, "Accepted!");
+							String conditionName = nameInput.getText().toString();
+							String restrictedFood = foodInput.getText().toString();
+							Snackbar.make(view, "Condition: " + conditionName + "; food: " + restrictedFood, Snackbar.LENGTH_LONG)
+									.setAction("Action", null).show();
+
+							conditionModule.setName(conditionName);
+							conditionModule.setRestrictedFoods(restrictedFood);
+							conditionModule.addCondition();
+
+							updateConditionContent();
+						})
+				.setNegative(getResources().getString(R.string.decline),
+						(dialog, which) -> Log.d(TAG, "Declined!"))
+				.show();
+	}
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
 		Drawable search = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_nutrition);
 		search.setTint(Color.WHITE);
+
+		conditionModule = new ConditionModule();
+		conditionModule.clearAllConditions();
 
 		// TODO get nav open working
 		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
@@ -235,11 +289,13 @@ public class DatabaseFragment extends BaseFragment {
 		xml().fab.setOnClickListener(view2 -> {
 			int currentTab = xml().pager.getCurrentItem();
 			if (currentTab == 0) callRecipeQueryDialog(view2);
-			else callNutrientQueryDialog(view2);
+			else if (currentTab == 1) callNutrientQueryDialog(view2);
+			else callMedicalConditionDialog(view2);
 		});
 
 		xml().page1.setLayoutManager(new LinearLayoutManager(getActivity()));
 		xml().page2.setLayoutManager(new LinearLayoutManager(getActivity()));
+		xml().page3.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 		StaticPagerAdapter.install(xml().pager);
 		xml().tabs.setupWithViewPager(xml().pager);

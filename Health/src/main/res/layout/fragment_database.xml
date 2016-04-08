@@ -5,6 +5,7 @@
               tools:context=".nutrition.DatabaseFragment">
     <data>
         <variable name="fragment" type="com.sciencesquad.health.nutrition.DatabaseFragment"/>
+        <variable name="module" type="com.sciencesquad.health.nutrition.ConditionModule" />
     </data>
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -44,6 +45,11 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/page2"
                     android:tag="Nutrient Database"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/page3"
+                    android:tag="Medical Conditions"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
         </android.support.v4.view.ViewPager>

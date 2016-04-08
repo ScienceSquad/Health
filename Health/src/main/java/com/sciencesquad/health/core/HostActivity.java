@@ -76,12 +76,14 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 					.replace(R.id.content, new NutritionFragment(), NutritionFragment.TAG)
 					.addToBackStack(NutritionFragment.TAG)
 					.commit();
-		} else if (id == R.id.nav_manage) {
+		} else if (id == R.id.nav_databases) {
 			this.getFragmentManager()
 					.beginTransaction()
 					.replace(R.id.content, new DatabaseFragment(), DatabaseFragment.TAG)
 					.addToBackStack(DatabaseFragment.TAG)
 					.commit();
+		} else if (id == R.id.nav_manage) {
+			// NOTHING HERE
 		} else if (id == R.id.nav_share) {
 			// NOTHING HERE
 		} else if (id == R.id.nav_send) {
