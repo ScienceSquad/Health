@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CalendarView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -44,8 +47,11 @@ public class OverviewFragment extends BaseFragment {
     PieChart mPieChart;
     private float[] yData = {5, 10, 15, 20, 25};
     private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
-    private Integer[] pieColor = {R.color.light_green_900, R.color.purple_700, R.color.amber_700,
-            R.color.red_700, R.color.blue_700};
+    private Integer[] pieColor = {Color.GREEN, Color.MAGENTA, Color.YELLOW,
+            Color.RED, Color.BLUE};
+
+    CalendarView calendarView;
+    TextView dateDisplay;
 
     @Override
     protected BaseFragment.Configuration getConfiguration() {
@@ -87,21 +93,6 @@ public class OverviewFragment extends BaseFragment {
             colors.add(pieColor[i]);
         }
 
-        /**
-         * Hopefully I don't need these stupid for-loops!
-         *
-        for (int c : ColorTemplate.COLORFUL_COLORS) {
-            colors.add(c);
-        }
-
-        for (int c : ColorTemplate.JOYFUL_COLORS) {
-            colors.add(c);
-        }
-
-        for (int c : ColorTemplate.PASTEL_COLORS) {
-            colors.add(c);
-        } */
-
         pds.setColors(colors);
 
         PieData data = new PieData(xVals, pds);
@@ -129,7 +120,7 @@ public class OverviewFragment extends BaseFragment {
         StaticPagerAdapter.install(xml().pager);
         xml().tabs.setupWithViewPager(xml().pager);
 
-        // This grabs the pie chart easily thanks to the xml() method
+        // This binds the pie chart easily thanks to the xml() method
         mPieChart = (PieChart) xml().overviewChart;
         mPieChart.setDescription("Daily Overview");
         mPieChart.setDescriptionColor(R.color.amber_50);
@@ -140,7 +131,7 @@ public class OverviewFragment extends BaseFragment {
         mPieChart.setHoleRadius(33);
         mPieChart.setTransparentCircleRadius(45);
         mPieChart.setCenterText("78");
-        mPieChart.setCenterTextSize(14f);
+        mPieChart.setCenterTextSize(16f);
 
         // Enable touch & rotation
         mPieChart.setTouchEnabled(true);
@@ -148,7 +139,21 @@ public class OverviewFragment extends BaseFragment {
 
         addData();
 
-        mPieChart.invalidate();
+        // Bind calendar view
+        calendarView = xml().calendarView;
+        dateDisplay = xml().dateDisplay;
+        dateDisplay.setText("Date: ");
+
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(CalendarView calendarView, int i, int i1, int i2) {
+                dateDisplay.setText("Date: " + i2 + " / " + i1 + " / " + i);
+
+                Toast.makeText(getActivity().getApplicationContext(), "Selected Date:\n" + "Day = " + i2 + "\n" +
+                        "Month = " + i1 + "\n" + "Year = " + i, Toast.LENGTH_LONG).show();
+            }
+        });
+
 
         fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
                 R.anim.fab_open);
@@ -203,26 +208,32 @@ public class OverviewFragment extends BaseFragment {
     }
 
     public void animateFab() {
-        if (isFabOpen) {
-            fab.startAnimation(rotate_backward);
-            fab2.startAnimation(fab_close);
-            fab3.startAnimation(fab_close);
-            fab4.startAnimation(fab_close);
-            fab2.setClickable(false);
-            fab3.setClickable(false);
-            fab4.setClickable(false);
-            isFabOpen = false;
-            Log.d("Colin", "close");
-        } else {
+        if (!isFabOpen) {
             fab.startAnimation(rotate_forward);
             fab2.startAnimation(fab_open);
             fab3.startAnimation(fab_open);
             fab4.startAnimation(fab_open);
+            fab2.show();
+            fab2.show();
+            fab4.show();
             fab2.setClickable(true);
             fab3.setClickable(true);
             fab4.setClickable(true);
             isFabOpen = true;
             Log.d("Colin","open");
+        } else {
+            fab.startAnimation(rotate_backward);
+            fab2.startAnimation(fab_close);
+            fab2.hide();
+            fab3.startAnimation(fab_close);
+            fab3.hide();
+            fab4.startAnimation(fab_close);
+            fab4.hide();
+            fab2.setClickable(false);
+            fab3.setClickable(false);
+            fab4.setClickable(false);
+            isFabOpen = false;
+            Log.d("Colin", "close");
         }
     }
 }
