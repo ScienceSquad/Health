@@ -11,12 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sciencesquad.health.R;
@@ -45,6 +48,9 @@ public class NutritionFragment extends BaseFragment {
     private FloatingActionButton fab4; // submit
     private FloatingActionButton fab5; // ZXing.
 
+    private Animation fab_open;
+    private Animation fab_close;
+
     @Override
     protected Configuration getConfiguration() {
         return new Configuration(TAG, "Nutrition", R.drawable.ic_menu_nutrition,
@@ -69,6 +75,11 @@ public class NutritionFragment extends BaseFragment {
 
         nutritionModule.generateData();
 
+        fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.fab_close);
+
         // create FABs.
         fab = xml().fabNutrition;
         fab2 = xml().fabDiet;
@@ -82,6 +93,11 @@ public class NutritionFragment extends BaseFragment {
 
         // set FABs listeners.
         fab.setOnClickListener(v -> {
+            fab.startAnimation(fab_close);
+            fab2.startAnimation(fab_open);
+            fab3.startAnimation(fab_open);
+            fab4.startAnimation(fab_open);
+            fab5.startAnimation(fab_open);
             fab.hide();
             fab2.show();
             fab3.show();
@@ -148,6 +164,7 @@ public class NutritionFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
+
         IntentResult result= IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null){
             if (result.getContents() != null){
