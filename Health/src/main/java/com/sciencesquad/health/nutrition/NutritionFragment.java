@@ -4,13 +4,10 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
@@ -19,7 +16,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sciencesquad.health.R;
@@ -106,6 +102,7 @@ public class NutritionFragment extends BaseFragment {
         });
 
         fab2.setOnClickListener(v -> {
+            fab.startAnimation(fab_open);
             fab.show();
             fab2.hide();
             fab3.hide();
@@ -115,6 +112,7 @@ public class NutritionFragment extends BaseFragment {
         });
 
         fab3.setOnClickListener(v -> {
+            fab.startAnimation(fab_open);
             fab.show();
             fab2.hide();
             fab3.hide();
@@ -124,6 +122,7 @@ public class NutritionFragment extends BaseFragment {
         });
 
         fab4.setOnClickListener(v -> {
+            fab.startAnimation(fab_open);
             fab.show();
             fab2.hide();
             fab3.hide();
@@ -133,6 +132,7 @@ public class NutritionFragment extends BaseFragment {
         });
 
         fab5.setOnClickListener(v -> {
+            fab.startAnimation(fab_open);
             fab.show();
             fab2.hide();
             fab3.hide();

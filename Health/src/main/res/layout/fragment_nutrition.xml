@@ -43,87 +43,21 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:context="com.sciencesquad.health.nutrition.NutritionModule">
 
-                <com.github.mikephil.charting.charts.LineChart
+                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/nutrition_chart"
-                    android:layout_width="wrap_content"
+                    android:layout_width="500dp"
                     android:layout_height="@dimen/max_nutrition_chart_height"
                     android:layout_above="@+id/textView3"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
                     android:layout_below="@+id/textView4" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/nutrition_recycler_view"
                     android:scrollbars="vertical"
-                    android:layout_width="wrap_content"
+                    android:layout_width="500dp"
                     android:layout_height="@dimen/max_nutrition_log_height"
-                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/textView3"
                     android:layout_alignParentStart="true"
-                    android:layout_marginBottom="42dp"
-                    android:layout_alignEnd="@+id/nutrition_chart" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_nutrition"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:src="@drawable/ic_add_white"
-                    app:backgroundTint="@color/red_900"
-                    android:layout_marginLeft="@dimen/fab_margin"
-                    android:layout_marginRight="@dimen/fab_margin"
-                    android:layout_marginBottom="34dp"
-                    android:layout_alignBottom="@+id/nutrition_recycler_view"
                     android:layout_alignParentEnd="true" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_zxing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:src="@drawable/ic_camera_white_"
-                    app:fabSize="mini"
-                    app:backgroundTint="@color/amber_900"
-                    android:layout_above="@+id/fab_submit"
-                    android:layout_alignStart="@+id/fab_submit" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_submit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:src="@drawable/ic_check_white"
-                    android:layout_marginLeft="@dimen/fab_margin"
-                    android:layout_marginRight="@dimen/fab_margin"
-                    app:fabSize="mini"
-                    app:backgroundTint="@color/dark_purple_900"
-                    android:layout_above="@+id/fab_diet"
-                    android:layout_alignEnd="@+id/nutrition_chart" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_nutrient"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:src="@drawable/ic_edit_white"
-                    android:layout_marginLeft="@dimen/fab_margin"
-                    android:layout_marginRight="@dimen/fab_margin"
-                    app:fabSize="mini"
-                    app:backgroundTint="@color/green_900"
-                    android:layout_below="@+id/nutrition_chart"
-                    android:layout_alignEnd="@+id/nutrition_chart" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_diet"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:src="@drawable/ic_restaurant_menu_white"
-                    android:layout_marginLeft="@dimen/fab_margin"
-                    android:layout_marginRight="@dimen/fab_margin"
-                    app:fabSize="mini"
-                    app:backgroundTint="@color/blue"
-                    android:layout_alignBottom="@+id/nutrition_chart"
-                    android:layout_alignEnd="@+id/nutrition_chart" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -131,7 +65,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Calorie Log"
                     android:id="@+id/textView3"
-                    android:layout_above="@+id/nutrition_recycler_view"
+                    android:layout_centerVertical="true"
                     android:layout_alignParentStart="true" />
 
                 <TextView
@@ -143,7 +77,90 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true" />
 
-
             </RelativeLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_nutrition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_add_white"
+            android:layout_margin="@dimen/fab_margin"
+            app:pressedTranslationZ="12dp"
+            app:backgroundTint="@color/red_900" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_zxing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_camera_white_"
+            android:layout_marginBottom="225dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            app:layout_anchor="@id/fab_nutrition"
+            app:fabSize="mini"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:backgroundTint="@color/amber_900"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_check_white"
+            android:layout_marginBottom="180dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            app:layout_anchor="@id/fab_nutrition"
+            app:fabSize="mini"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:backgroundTint="@color/dark_purple_900"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_nutrient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_edit_white"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="90dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            app:layout_anchor="@id/fab_nutrition"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="top"
+            app:fabSize="mini"
+            app:backgroundTint="@color/green_900" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_diet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_restaurant_menu_white"
+            android:layout_marginBottom="135dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            app:layout_anchor="@id/fab_nutrition"
+            app:fabSize="mini"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="top"
+            app:backgroundTint="@color/blue"/>
     </android.support.design.widget.CoordinatorLayout>
 </layout>
