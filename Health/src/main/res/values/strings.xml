@@ -33,6 +33,8 @@
     <string name="title_activity_alarm">AlarmActivity</string>
     <string name="title_activity_emergency_card">EmergencyCardActivity</string>
 
+    <string name="overview_module">Overview</string>
+    <string name="workout_module">Workout</string>
     <string name="steps_module">Steps</string>
     <string name="sleep_module">Sleep</string>
     <string name="nutrition_module">Nutrition</string>

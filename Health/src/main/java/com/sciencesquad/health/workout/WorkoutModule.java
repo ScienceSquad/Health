@@ -3,7 +3,6 @@ package com.sciencesquad.health.workout;
 import android.util.Log;
 import android.util.Pair;
 
-import com.google.repacked.apache.commons.lang3.ObjectUtils;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.BaseApp;
@@ -202,6 +201,17 @@ public class WorkoutModule extends Module {
         return completed;
     }
 
+    public RealmResults<CompletedExerciseModel> getCompletedExercisesQuery(String exerciseName){
+        RealmResults<CompletedExerciseModel> results;
+        try {
+            RealmQuery<CompletedExerciseModel> query = this.workoutRealm.query(CompletedExerciseModel.class).equalTo("exerciseName", exerciseName);
+            results = query.findAll();
+            return results;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return null;
+    }
 
     public boolean isDuplicateExerciseType(ExerciseTypeModel newExercise){
         RealmQuery<ExerciseTypeModel> query = this.workoutRealm.query(ExerciseTypeModel.class);
@@ -316,6 +326,14 @@ public class WorkoutModule extends Module {
     }
 
     public boolean addCompletedExercise(CompletedExerciseModel newCompletedExercise){
+        float orm = newCompletedExercise.get1RMax().floatValue();
+        newCompletedExercise.setOneRepMax(orm);
+
+        String Date = "Date: "  + LocalDateTime.now().getYear() + "-"
+                + LocalDateTime.now().getMonth().getValue() + "-"
+                + LocalDateTime.now().getDayOfMonth();
+
+        newCompletedExercise.setDateString(Date);
         try {
             workoutRealm.getRealm().beginTransaction();
             workoutRealm.getRealm().copyToRealm(newCompletedExercise);

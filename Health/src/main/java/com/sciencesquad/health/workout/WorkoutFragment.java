@@ -1,29 +1,29 @@
 package com.sciencesquad.health.workout;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.app.DialogFragment;
+import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-
-import android.os.Bundle;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-
-
 import android.widget.ArrayAdapter;
-
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
+import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
@@ -31,12 +31,8 @@ import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
 
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -78,7 +74,7 @@ public class WorkoutFragment extends BaseFragment {
 
     @Override
     protected Configuration getConfiguration() {
-        String _ = WorkoutModule.TAG; // instantiates the Module...
+        String notAnUnderscore = WorkoutModule.TAG; // instantiates the Module...
         return new Configuration(
                 TAG, "Workout", R.drawable.ic_fitness_center_24dp,
                 R.style.AppTheme_Workout, R.layout.fragment_workout
@@ -326,6 +322,15 @@ public class WorkoutFragment extends BaseFragment {
         builder.create().show();
     }
 
+    private RealmLineData createLineData(String exerciseName){
+        RealmLineDataSet<CompletedExerciseModel> dataSet = new RealmLineDataSet<CompletedExerciseModel>(
+                mod.getCompletedExercisesQuery(exerciseName), "oneRepMax");
+        ArrayList<ILineDataSet> dataSetList = new ArrayList<ILineDataSet>();
+        dataSetList.add(dataSet);
+        RealmLineData data = new RealmLineData(mod.getCompletedExercisesQuery(exerciseName), "dateString" , dataSetList);
+        return data;
+    }
+
     void showExerciseHistoryDialog(String exerciseName){
         // Get Exercise History
         //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
@@ -348,6 +353,15 @@ public class WorkoutFragment extends BaseFragment {
         View dialogLayout = inflater.inflate(R.layout.exercise_history_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle(exerciseName + " History");
+
+        LineChart graph = (LineChart) dialogLayout.findViewById(R.id.history_graph);
+        graph.setDescription("One Rep Max over Time");
+        graph.setData(createLineData(exerciseName));
+        graph.invalidate();
+        //RealmLineDataSet<CompletedExerciseModel> dataSetList = new RealmLineDataSet<CompletedExerciseModel>(
+                //mod.getCompletedExercises()
+
+       // graph.setData()
 
         TextView oneRMax = (TextView) dialogLayout.findViewById(R.id.oneRMax);
         oneRMax.setText("One Rep Max: " + max);

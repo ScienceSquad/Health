@@ -27,11 +27,9 @@ import android.widget.ListView;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
-
+import com.sciencesquad.health.overview.OverviewFragment;
 import com.sciencesquad.health.prescriptions.UserModel;
 import com.sciencesquad.health.run.RunFragment;
-
-
 import com.sciencesquad.health.nutrition.DatabaseFragment;
 import com.sciencesquad.health.prescriptions.PrescriptionFragment;
 
@@ -50,6 +48,8 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		new OverviewFragment().open(transaction, R.id.drawer_layout).commit();
 		this.drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
@@ -83,7 +83,10 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.nav_run) {
+		if (id == R.id.nav_overview) {
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new OverviewFragment().open(transaction, R.id.drawer_layout).commit();
+		} else if (id == R.id.nav_run) {
 			getFragmentManager()
 					.beginTransaction()
 					.replace(R.id.content, new RunLandingFragment(), RunLandingFragment.TAG)
@@ -93,11 +96,8 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			new SleepFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_steps) {
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content, new StepsFragment(), StepsFragment.TAG)
-					.addToBackStack(StepsFragment.TAG)
-					.commit();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			new StepsFragment().open(transaction, R.id.drawer_layout).commit();
 		} else if (id == R.id.nav_workout) {
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			new WorkoutFragment().open(transaction, R.id.drawer_layout).commit();
@@ -150,9 +150,5 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 		}
 		this.drawer.closeDrawer(GravityCompat.START);
 		return true;
-	}
-
-	private void loadFragment() {
-
 	}
 }
