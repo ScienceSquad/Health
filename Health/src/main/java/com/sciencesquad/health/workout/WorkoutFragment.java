@@ -1,31 +1,26 @@
 package com.sciencesquad.health.workout;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.app.DialogFragment;
+import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-
-import android.os.Bundle;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-
-
 import android.widget.ArrayAdapter;
-
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -36,17 +31,12 @@ import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
 
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 public class WorkoutFragment extends BaseFragment {
     public static final String TAG = WorkoutFragment.class.getSimpleName();
@@ -84,7 +74,7 @@ public class WorkoutFragment extends BaseFragment {
 
     @Override
     protected Configuration getConfiguration() {
-        String _ = WorkoutModule.TAG; // instantiates the Module...
+        String notAnUnderscore = WorkoutModule.TAG; // instantiates the Module...
         return new Configuration(
                 TAG, "Workout", R.drawable.ic_fitness_center_24dp,
                 R.style.AppTheme_Workout, R.layout.fragment_workout
