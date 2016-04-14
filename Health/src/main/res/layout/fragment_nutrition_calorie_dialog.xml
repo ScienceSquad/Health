@@ -44,11 +44,6 @@
                     android:hint="Food you ate"
                     android:ems="10"
                     android:id="@+id/food_eaten" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Submit food"
-                    android:id="@+id/submit_food" />
 
 
             </LinearLayout>

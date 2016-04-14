@@ -17,6 +17,7 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  * Nutrition Module
@@ -230,5 +231,28 @@ public class NutritionModule extends Module {
 
     public void setCheated(boolean cheated) {
         this.cheated = cheated;
+    }
+
+    public TreeSet<FoodModel> populateFoodTree() {
+        TreeSet<FoodModel> tree = new TreeSet<>();
+        try {
+            RealmResults<FoodModel> results = nutritionRealm.query(FoodModel.class).findAll();
+            for (int i = 0; i < results.size(); i++){
+                FoodModel model = results.get(i);
+                tree.add(model);
+            }
+            Log.v(TAG, "Food tree size: " + tree.size());
+            return tree;
+        } catch (Exception e){
+            // better off with just a blank tree.
+            return new TreeSet<>();
+
+        }
+
+    }
+
+    public void addFood(FoodModel newFood){
+        calorieIntake += newFood.getCalories();
+        nutritionRealm.add(newFood);
     }
 }
