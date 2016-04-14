@@ -43,7 +43,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		public static final String OBJECT_CANNOT_CHECK_ISEMPTY = "OBJECT_CANNOT_CHECK_ISEMPTY";
 		public static final String OBJECT_HAS_NO_SIZE = "OBJECT_HAS_NO_SIZE";
 		public static final String COULD_NOT_PRODUCE_ARRAY = "COULD_NOT_PRODUCE_ARRAY";
-		public static final String COULD_NOT_SWITCH_REALM = "COULD_NOT_SWITCH_REALM";
+		public static final String COULD_NOT_UPDATE_SINGLE_MODEL = "COULD_NOT_UPDATE_SINGLE_MODEL ";
 	}
 
 	private Realm realm;
@@ -387,6 +387,18 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.cancelTransaction();
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_UPDATE_REALM_AT_INDEX));
+		}
+	}
+
+	public void update(RealmObject model){
+		try {
+			realm.beginTransaction();
+			realm.copyToRealmOrUpdate(model);
+			realm.commitTransaction();
+		} catch (Exception e){
+			realm.cancelTransaction();
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_UPDATE_SINGLE_MODEL ));
 		}
 	}
 

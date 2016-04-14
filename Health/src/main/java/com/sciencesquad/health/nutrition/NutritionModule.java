@@ -5,8 +5,10 @@ import android.util.Pair;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.util.Dispatcher;
 
 import io.realm.RealmResults;
 
@@ -73,6 +75,7 @@ public class NutritionModule extends Module {
                     Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
                 } else {
                     // do something about it.
+                    Log.d(TAG, "OH NO!");
                 }
             });
         });
@@ -121,6 +124,9 @@ public class NutritionModule extends Module {
                 + LocalDateTime.now().getDayOfMonth());
         nutritionRealm.add(newNutritionModel);
 
+        //Trying to send events.
+        //BaseApp.app().eventBus().publish("DataUpdateEvent", null);
+
         // reset values
         clearModels();
         this.hadCaffeine = false;
@@ -162,7 +168,7 @@ public class NutritionModule extends Module {
         return calorieIntake;
     }
 
-    public void setCalorieIntake(int calorieIntake) {
+    public void setCalorieIntake(float calorieIntake) {
         this.calorieIntake = calorieIntake;
     }
 
@@ -189,6 +195,7 @@ public class NutritionModule extends Module {
             hadCaffeine = !hadCaffeine;
             addNutritionRecord();
         }
+
     }
 
     @Override

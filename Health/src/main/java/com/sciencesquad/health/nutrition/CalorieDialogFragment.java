@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -13,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -22,18 +20,31 @@ import android.widget.TextView;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 
+import java.util.TreeSet;
+
+import io.realm.Realm;
+
+
 public class CalorieDialogFragment extends DialogFragment {
     private static final String TAG = CalorieDialogFragment.class.getSimpleName();
 
     private boolean hadCaffeine;
     private boolean usedCheatDay;
-
-
+    private TreeSet<FoodModel> foodModelTreeSet;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         hadCaffeine = false;
         usedCheatDay = false;
+
+        FoodModel foobar = new FoodModel("Cake", 0);
+        foodModelTreeSet = new TreeSet<>();
+        foodModelTreeSet.add(foobar);
+        FoodModel foodModel = new FoodModel("Fuck", 1);
+        foodModelTreeSet.add(foodModel);
+
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.fragment_nutrition_calorie_dialog, null);
@@ -44,6 +55,17 @@ public class CalorieDialogFragment extends DialogFragment {
         StaticPagerAdapter.install(pager);
         tabLayout.setupWithViewPager(pager);
 
+        // Basic Menu
+        EditText foodField = (EditText) dialogLayout.findViewById(R.id.food_eaten);
+        foodField.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        Button submitFood = (Button) dialogLayout.findViewById(R.id.submit_food);
+        submitFood.setOnClickListener(v -> {
+            // check if the food exists currently.
+
+        });
+
+        // Advanced Menu
         EditText calorieField = (EditText) dialogLayout.findViewById(R.id.num_calories);
         calorieField.setInputType(InputType.TYPE_CLASS_NUMBER);
 
@@ -72,17 +94,25 @@ public class CalorieDialogFragment extends DialogFragment {
             }
         });
 
+        // setting up positive/negative buttons
         builder.setPositiveButton("Save",
                 (dialog, whichButton) -> {
                     if (calorieField.getText().toString().equals("")) {
                         return;
                     }
-                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().setCalorieIntake(
-                            Integer.parseInt(calorieField.getText().toString()));
+
+                    float newCalorieIntake = ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).
+                            getNutritionModule().getCalorieIntake();
+                    newCalorieIntake += Float.valueOf(calorieField.getText().toString() + newCalorieIntake);
+                    ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).
+                            getNutritionModule().setCalorieIntake(newCalorieIntake);
+
                     ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
                             setHadCaffeine(hadCaffeine);
+
                     ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
                             setCheated(usedCheatDay);
+
                     int numCheats = ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
                             getNumCheatDays();
                     ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).getNutritionModule().
@@ -99,6 +129,9 @@ public class CalorieDialogFragment extends DialogFragment {
         return d;
     }
 
+    /**
+     * Sets positive/ negative buttons colors.
+     */
     @Override
     public void onStart(){
         super.onStart();
