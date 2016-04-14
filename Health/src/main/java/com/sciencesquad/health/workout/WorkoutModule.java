@@ -290,6 +290,20 @@ public class WorkoutModule extends Module {
         return null;
     }
 
+    public ExerciseTypeModel getExerciseTypeModel(String exerciseName) {
+        try {
+            RealmResults<ExerciseTypeModel> result = workoutRealm.query(ExerciseTypeModel.class).equalTo("name", exerciseName).findAll();
+            if(result.size() == 0){
+                return null;
+            } else {
+                return result.first();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error finding ExerciseTypeModel by name " + e.getMessage());
+        }
+        return null;
+    }
+
     /*
     public void updateRoutineExercises(String routineName, RealmList<RealmString> exercises){
         RoutineModel

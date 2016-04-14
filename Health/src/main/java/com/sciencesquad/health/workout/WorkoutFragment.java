@@ -146,7 +146,18 @@ public class WorkoutFragment extends BaseFragment {
             exerciseTypeAdapter.add(m.getName());
         xml().exerciseModelListView.setAdapter(exerciseTypeAdapter);
         xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {
-            this.showSetDialog(exerciseTypeAdapter.getItem(position));
+
+            ExerciseTypeModel exercise = mod.getExerciseTypeModel(exerciseTypeAdapter.getItem(position));
+
+            if(exercise == null){
+                Log.e(TAG, "Exercise retrieved from Realm was null!");
+            } else if( exercise.getCategory().equalsIgnoreCase("Cardio")){
+                // exercise is Cardio
+                showCardioDialog(exercise.getName());
+            } else {
+                showSetDialog(exercise.getName());
+            }
+
         }));
 
         xml().exerciseModelListView.setOnItemLongClickListener(((parent1, views1, position1, id1) -> {
@@ -197,7 +208,15 @@ public class WorkoutFragment extends BaseFragment {
             currentRoutineExerciseAdapter.add(m.getName());
         xml().currentRoutineListView.setAdapter(currentRoutineExerciseAdapter);
         xml().currentRoutineListView.setOnItemClickListener(((parent, views, position, id) -> {
-            this.showSetDialog(currentRoutineExerciseAdapter.getItem(position));
+            ExerciseTypeModel exercise = mod.getExerciseTypeModel(currentRoutineExerciseAdapter.getItem(position));
+            if(exercise == null){
+                Log.e(TAG, "Exercise retrieved from Realm was null!");
+            } else if( exercise.getCategory().equalsIgnoreCase("Cardio")){
+                // exercise is Cardio
+                showCardioDialog(exercise.getName());
+            } else {
+                showSetDialog(exercise.getName());
+            }
         }));
     }
 
@@ -232,11 +251,27 @@ public class WorkoutFragment extends BaseFragment {
      * a user to log his or her selected exercise
      */
     void showSetDialog(String name) {
+        // check if exercise is strength or cardio
+
         SetDialogFragment newFragment = SetDialogFragment.newInstance(
                 R.string.title_new_exercise_dialog);
         newFragment.titleThing = name;
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");
+    }
+
+
+
+    void showCardioDialog(String exerciseName) {
+
+        //Build Dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogLayout = inflater.inflate(R.layout.cardio_set_dialog, null);
+        builder.setView(dialogLayout);
+        builder.setTitle(exerciseName);
+
+        builder.create().show();
     }
 
     /**
