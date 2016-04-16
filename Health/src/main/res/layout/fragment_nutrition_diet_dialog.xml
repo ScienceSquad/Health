@@ -21,6 +21,7 @@
     <EditText
         android:layout_width="206dp"
         android:layout_height="wrap_content"
+        android:hint="Insert New Food here"
         android:id="@+id/new_food" />
 
     <Button

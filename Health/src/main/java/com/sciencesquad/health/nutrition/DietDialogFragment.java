@@ -33,7 +33,7 @@ public class DietDialogFragment extends DialogFragment {
         favoriteFoods =
                 ((NutritionFragment) getTargetFragment()).getNutritionModule().getFavoriteFoods();
         recycleList = (RecyclerView) view.findViewById(R.id.diet_recycler_view);
-        NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(favoriteFoods);
+        NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(favoriteFoods, "Favorite Foods");
         recycleList.setAdapter(adapter);
         recycleList.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
@@ -47,10 +47,16 @@ public class DietDialogFragment extends DialogFragment {
             favoriteFoods.add(newFavoriteFood.getText().toString());
             recycleList.getAdapter().notifyDataSetChanged();
             ((NutritionFragment) getTargetFragment()).getNutritionModule().setFavoriteFoods(favoriteFoods);
+            newFavoriteFood.setText("");
         });
 
         builder.setPositiveButton("Save",
                 (dialog, whichButton) -> {
+                    if (!newFavoriteFood.getText().toString().equals("")){
+                        favoriteFoods.add(newFavoriteFood.getText().toString());
+                        recycleList.getAdapter().notifyDataSetChanged();
+                        ((NutritionFragment) getTargetFragment()).getNutritionModule().setFavoriteFoods(favoriteFoods);
+                    }
 
                 }
         );

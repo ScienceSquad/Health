@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,7 +21,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentNutritionBinding;
+
 
 import org.threeten.bp.LocalDateTime;
 
@@ -36,7 +39,9 @@ public class NutritionFragment extends BaseFragment {
     private NutritionModule nutritionModule;
     private LineChart nutritionChart;
     private RecyclerView recycleList;
+    private RecyclerView foodList;
     private ArrayList<String> nutritionLog;
+    private ArrayList<String> foodLog;
 
     private FloatingActionButton fab; // overall
     private FloatingActionButton fab2; // diet
@@ -53,7 +58,10 @@ public class NutritionFragment extends BaseFragment {
                 R.style.AppTheme_Nutrition, R.layout.fragment_nutrition);
     }
 
-    // Our generated binding class is different...
+    /**
+     * XML formatting for the Nutrition Fragment
+     * @return
+     */
     @Override @SuppressWarnings("unchecked")
     protected FragmentNutritionBinding xml() {
         return super.xml();
@@ -75,6 +83,10 @@ public class NutritionFragment extends BaseFragment {
                 R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
                 R.anim.fab_close);
+
+        TabLayout tabLayout = xml().tabs;
+        StaticPagerAdapter.install(xml().pager);
+        tabLayout.setupWithViewPager(xml().pager);
 
         // create FABs.
         fab = xml().fabNutrition;
@@ -142,14 +154,19 @@ public class NutritionFragment extends BaseFragment {
         });
 
         nutritionLog = nutritionModule.createNutritionLog();
-        recycleList = (RecyclerView) view.findViewById(R.id.nutrition_recycler_view);
-        NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(nutritionLog);
+        recycleList = xml().nutritionRecyclerView;
+        NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(nutritionLog, "Nutrition Log");
         recycleList.setAdapter(adapter);
         recycleList.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
+        foodLog = nutritionModule.createFoodLog();
+        foodList = xml().nutritionHistoryView;
+        NutritionRecycleAdapter foodAdapter = new NutritionRecycleAdapter(foodLog, "Food History");
+        foodList.setAdapter(foodAdapter);
+        foodList.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         // setting up the chart.
-        nutritionChart = (LineChart) view.findViewById(R.id.nutrition_chart);
+        nutritionChart = xml().nutritionChart;
         nutritionChart.setDescription("Calorie History");
 
         // getting the data to display.

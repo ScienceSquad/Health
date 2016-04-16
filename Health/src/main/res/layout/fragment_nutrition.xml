@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".sleep.SleepFragment">
+    tools:context=".nutrition.NutritionFragment">
 
     <data>
         <variable name="fragment" type="com.sciencesquad.health.nutrition.NutritionFragment"/>
@@ -17,31 +17,34 @@
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:layout_height="wrap_content">
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
                 app:navigationIcon="@drawable/ic_menu"
-                app:title="Sleep"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                app:title="Nutrition">
                 <android.support.design.widget.TabLayout
                     android:id="@+id/tabs"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize" />
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" >
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:tag="Overview"
+                android:id="@+id/page1"
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:context="com.sciencesquad.health.nutrition.NutritionModule">
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                  <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/nutrition_chart"
@@ -78,6 +81,23 @@
                     android:layout_alignParentStart="true" />
 
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="History"
+                android:id="@+id/page2">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/nutrition_history_view"
+                    android:scrollbars="vertical"
+                    android:layout_width="500dp"
+                    android:layout_height="@dimen/max_nutrition_log_height"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+        </android.support.v4.view.ViewPager>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_nutrition"

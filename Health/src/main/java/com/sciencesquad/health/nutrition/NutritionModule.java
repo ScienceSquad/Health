@@ -1,5 +1,6 @@
 package com.sciencesquad.health.nutrition;
 
+import android.databinding.tool.util.L;
 import android.util.Log;
 import android.util.Pair;
 
@@ -8,16 +9,21 @@ import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.util.Dispatcher;
-
-import io.realm.RealmResults;
 
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
+
+import io.realm.RealmList;
+import io.realm.RealmResults;
+import java8.util.function.Consumer;
 
 /**
  * Nutrition Module
@@ -25,7 +31,7 @@ import java.util.TreeSet;
 public class NutritionModule extends Module {
     public static final String TAG = NutritionModule.class.getSimpleName();
 
-    private static final String REALMNAME = "nutrition.realm";
+    public static final String REALMNAME = "nutrition.realm";
 
     //Important Data.
     private float calorieIntake;
@@ -69,15 +75,35 @@ public class NutritionModule extends Module {
 
             });
             b.subscribe("DataUpdateEvent", null, e -> {
-                Log.d(TAG, "There was an update to a realm.");
-
-                // maybe use the key as the realm name?
-                if (e.get("key").equals(REALMNAME)) {
-                    Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
-                } else {
-                    // do something about it.
-                    Log.d(TAG, "OH NO!");
-                }
+                Log.d(TAG, "There was an update.");
+                    if (e.size() > 0) {
+                        Map.Entry event = e.entrySet().iterator().next();
+                        // maybe use the key as the realm name?
+                        if (event.getKey().equals(REALMNAME)) {
+                            Log.d(TAG, "Ignoring " + TAG + "'s own data update");
+                        }
+                        else if(event.getKey().equals("Favorite Foods")) {
+                            Log.d(TAG, "Event value:" + event.getValue());
+                            String foodName = (String) event.getValue();
+                            RealmResults<FavoriteFoodModel> results =
+                                    nutritionRealm.query(FavoriteFoodModel.class).equalTo("name", foodName).findAll();
+                            if (results.size() > 0){
+                                nutritionRealm.getRealm().beginTransaction();
+                                try {
+                                    FavoriteFoodModel model = results.first();
+                                    model.removeFromRealm();
+                                    nutritionRealm.getRealm().commitTransaction();
+                                } catch (Exception execption){
+                                    execption.printStackTrace();
+                                    nutritionRealm.getRealm().cancelTransaction();
+                                }
+                            }
+                        }
+                        else {
+                            // do something about it.
+                            Log.d(TAG, "OH NO!");
+                        }
+                    }
             });
         });
     }
@@ -126,7 +152,8 @@ public class NutritionModule extends Module {
         nutritionRealm.add(newNutritionModel);
 
         //Trying to send events.
-        //BaseApp.app().eventBus().publish("DataUpdateEvent", null);
+        BaseApp.app().eventBus().publish("DataUpdateEvent", this,
+                new EventBus.Entry(REALMNAME, newNutritionModel));
 
         // reset values
         clearModels();
@@ -175,10 +202,22 @@ public class NutritionModule extends Module {
 
 
     public ArrayList<String> getFavoriteFoods() {
+        RealmResults<FavoriteFoodModel> results = nutritionRealm.query(FavoriteFoodModel.class).findAll();
+        if (results.size() != 0){
+            favoriteFoods.clear();
+            for (int i = 0 ; i < results.size(); i++){
+                FavoriteFoodModel model = results.get(i);
+                favoriteFoods.add(model.getName());
+            }
+        }
         return favoriteFoods;
     }
 
     public void setFavoriteFoods(ArrayList<String> favoriteFoods) {
+        for (int i = 0 ; i < favoriteFoods.size(); i++){
+            FavoriteFoodModel model = new FavoriteFoodModel(favoriteFoods.get(i));
+            nutritionRealm.update(model);
+        }
         this.favoriteFoods = favoriteFoods;
     }
 
@@ -196,17 +235,6 @@ public class NutritionModule extends Module {
             hadCaffeine = !hadCaffeine;
             addNutritionRecord();
         }
-
-    }
-
-    @Override
-    public Pair<String, Integer> identifier() {
-        return new Pair<>("Nutrition", R.drawable.ic_menu_nutrition);
-    }
-
-    @Override
-    public void init() {
-        Module.registerModule(this.getClass());
 
     }
 
@@ -255,4 +283,31 @@ public class NutritionModule extends Module {
         calorieIntake += newFood.getCalories();
         nutritionRealm.add(newFood);
     }
+
+    public ArrayList<String> createFoodLog() {
+        ArrayList<String> foodLog = new ArrayList<>();
+        RealmResults<FoodModel> food= nutritionRealm.query(FoodModel.class).findAll();
+        for (int i = 0 ; i < food.size(); i++){
+            FoodModel item = food.get(i);
+            foodLog.add(item.getName());
+        }
+
+        return foodLog;
+    }
+
+    /**
+     * Overriding Module methods.
+     */
+    @Override
+    public Pair<String, Integer> identifier() {
+        return new Pair<>("Nutrition", R.drawable.ic_menu_nutrition);
+    }
+
+    @Override
+    public void init() {
+        Module.registerModule(this.getClass());
+
+    }
+
+
 }
