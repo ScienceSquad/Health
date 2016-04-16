@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -15,9 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.EventBus;
-import com.sciencesquad.health.core.EventBus.Entry;
 
 import java.util.ArrayList;
 
