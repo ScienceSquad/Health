@@ -177,7 +177,6 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
      * Registers a listener for the Sensor to pick up User's steps.
      * @param maxdelay
      */
-
     private void registerEventListener(int maxdelay) {
         // BEGIN_INCLUDE(register)
 
@@ -210,7 +209,6 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
      * Event handler for StepCounter events.
      * It will log the steps as it picks up events.
      */
-
     private SensorEventListener sensorEventListener = new SensorEventListener() {
         //
         @Override
@@ -255,8 +253,11 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
     }
 
 
-    // Resets the steps
-    public void resetSteps(View v) {
+	/**
+	 *
+	 * @param v
+	 */
+	public void resetSteps(View v) {
         stepsModule.resetSteps(v);
         numSteps = stepsModule.getNumSteps();
         stopwatch.reset();
@@ -264,6 +265,10 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
         num_steps.setText(String.valueOf(numSteps));
     }
 
+	/**
+	 *
+	 * @param event
+	 */
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (counterSteps < 1) {
@@ -278,8 +283,12 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
         Log.d(TAG, "Sensor picked up steps. Current step count: " + numSteps);
     }
 
-    //
-    @Override
+	/**
+	 *
+	 * @param sensor
+	 * @param accuracy
+	 */
+	@Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // Empty for the rest of time.
     }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.text.Layout;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -275,6 +276,11 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		if (e == null)
 			return;
 
+		long delay = 1000L;
+		float a = mPieChart.getRotationAngle();
+		Easing.EasingOption eo = Easing.EasingOption.EaseInOutCirc;
+		TimeUnit tu = TimeUnit.MILLISECONDS;
+
 		double d = yData[e.getXIndex()] / overviewCoefficient * 180;
 		double d0 = yData[0] / overviewCoefficient * 180;
 		double d1 = yData[1] / overviewCoefficient * 180;
@@ -291,112 +297,60 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		rc3 = rc1 + rc2 + rc3;
 		float rc4 = (float) d4;		// correction
 		rc4 = rc0 + rc1 + rc3 + rc4;
+		float r = 270 - rotateBy;
 
 		if (e.getXIndex() == 0) {
-			if (mPieChart.getRotationAngle() == 0) {
-				mPieChart.spin(1000, 0, 270 - rotateBy, Easing.EasingOption.EaseInOutCirc);
-			} else {
-				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy,
-						Easing.EasingOption.EaseInOutCirc);
-			}
-			Drawable nutrients = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_nutrition);
+			rotateChart(eo, a, r, 0);
+			Drawable nutrients = ContextCompat.getDrawable(getActivity(),
+					R.drawable.ic_menu_nutrition);
 			nutrients.setTint(Color.GREEN);
+			int l = R.layout.fragment_overview_nutrition;
+
 			Dispatcher.UI.run(() -> {
-				new MaterialStyledDialog(getActivity())
-						.setIcon(nutrients)
-						.setCustomView(getInflater().inflate(R.layout.fragment_overview_nutrition, null))
-						.withDialogAnimation(true, Duration.FAST)
-						.setCancelable(false)
-						.setPositive(getResources().getString(R.string.accept),
-								(dialog, which) -> Log.d(TAG, "Accepted!"))
-						.setNegative(getResources().getString(R.string.decline),
-								(dialog, which) -> Log.d(TAG, "Declined!"))
-						.show();
-			}, 1000L, TimeUnit.MILLISECONDS);
+				showDialog(nutrients, l);
+			}, delay, tu);
+
 		} else if (e.getXIndex() == 1) {
-			if (mPieChart.getRotationAngle() == 0) {
-				mPieChart.spin(1000, 0, 270 - rotateBy - rc1, Easing.EasingOption.EaseInOutCirc);
-			} else {
-				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy - rc1,
-						Easing.EasingOption.EaseInOutCirc);
-			}
+			rotateChart(eo, a, r, rc1);
 			Drawable runner = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_run);
 			runner.setTint(Color.MAGENTA);
+			int l = R.layout.fragment_overview_run;
+
 			Dispatcher.UI.run(() -> {
-				new MaterialStyledDialog(getActivity())
-						.setIcon(runner)
-						.setCustomView(getInflater().inflate(R.layout.fragment_overview_run, null))
-						.withDialogAnimation(true, Duration.FAST)
-						.setCancelable(false)
-						.setPositive(getResources().getString(R.string.accept),
-								(dialog, which) -> Log.d(TAG, "Accepted!"))
-						.setNegative(getResources().getString(R.string.decline),
-								(dialog, which) -> Log.d(TAG, "Declined!"))
-						.show();
-			}, 1000L, TimeUnit.MILLISECONDS);
+				showDialog(runner, l);
+			}, delay, tu);
+
 		} else if (e.getXIndex() == 2) {
-			if (mPieChart.getRotationAngle() == 0) {
-				mPieChart.spin(1000, 0, 270 - rotateBy - rc2, Easing.EasingOption.EaseInOutCirc);
-			} else {
-				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy - rc2,
-						Easing.EasingOption.EaseInOutCirc);
-			}
+			rotateChart(eo, a, r, rc2);
 			Drawable zzz = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
 			zzz.setTint(Color.YELLOW);
+			int l = R.layout.fragment_overview_sleep;
+
 			Dispatcher.UI.run(() -> {
-				new MaterialStyledDialog(getActivity())
-						.setIcon(zzz)
-						.setCustomView(getInflater().inflate(R.layout.fragment_overview_sleep, null))
-						.withDialogAnimation(true, Duration.FAST)
-						.setCancelable(false)
-						.setPositive(getResources().getString(R.string.accept),
-								(dialog, which) -> Log.d(TAG, "Accepted!"))
-						.setNegative(getResources().getString(R.string.decline),
-								(dialog, which) -> Log.d(TAG, "Declined!"))
-						.show();
-			}, 1000L, TimeUnit.MILLISECONDS);
+				showDialog(zzz, l);
+			}, delay, tu);
+
 		}  else if (e.getXIndex() == 3) {
-			if (mPieChart.getRotationAngle() == 0) {
-				mPieChart.spin(1000, 0, 270 - rotateBy - rc3, Easing.EasingOption.EaseInOutCirc);
-			} else {
-				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy - rc3,
-						Easing.EasingOption.EaseInOutCirc);
-			}
+			rotateChart(eo, a, r, rc3);
 			Drawable stepper = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_steps);
 			stepper.setTint(Color.RED);
+			int l = R.layout.fragment_overview_steps;
+
 			Dispatcher.UI.run(() -> {
-				new MaterialStyledDialog(getActivity())
-						.setIcon(stepper)
-						.setCustomView(getInflater().inflate(R.layout.fragment_overview_steps, null))
-						.withDialogAnimation(true, Duration.FAST)
-						.setCancelable(false)
-						.setPositive(getResources().getString(R.string.accept),
-								(dialog, which) -> Log.d(TAG, "Accepted!"))
-						.setNegative(getResources().getString(R.string.decline),
-								(dialog, which) -> Log.d(TAG, "Declined!"))
-						.show();
-			}, 1000L, TimeUnit.MILLISECONDS);
+				showDialog(stepper, l);
+			}, delay, tu);
+
 		}  else if (e.getXIndex() == 4) {
-			if (mPieChart.getRotationAngle() == 0) {
-				mPieChart.spin(1000, 0, 270 - rotateBy - rc4, Easing.EasingOption.EaseInOutCirc);
-			} else {
-				mPieChart.spin(1000, mPieChart.getRotationAngle(), 270 - rotateBy - rc4,
-						Easing.EasingOption.EaseInOutCirc);
-			}
-			Drawable dumbbell = ContextCompat.getDrawable(getActivity(), R.drawable.ic_fitness_center_24dp);
+			rotateChart(eo, a, r, rc4);
+			Drawable dumbbell = ContextCompat.getDrawable(getActivity(),
+					R.drawable.ic_fitness_center_24dp);
 			dumbbell.setTint(Color.BLUE);
+			int l = R.layout.fragment_overview_workout;
+
 			Dispatcher.UI.run(() -> {
-				new MaterialStyledDialog(getActivity())
-						.setIcon(dumbbell)
-						.setCustomView(getInflater().inflate(R.layout.fragment_overview_workout, null))
-						.withDialogAnimation(true, Duration.FAST)
-						.setCancelable(false)
-						.setPositive(getResources().getString(R.string.accept),
-								(dialog, which) -> Log.d(TAG, "Accepted!"))
-						.setNegative(getResources().getString(R.string.decline),
-								(dialog, which) -> Log.d(TAG, "Declined!"))
-						.show();
-			}, 1000L, TimeUnit.MILLISECONDS);
+				showDialog(dumbbell, l);
+			}, delay, tu);
+
 		}
 	}
 
@@ -417,16 +371,8 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	public void onChartLongPressed(MotionEvent me) {
 		Drawable oval = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_overview);
 		oval.setTint(Color.WHITE);
-		new MaterialStyledDialog(getActivity())
-				.setIcon(oval)
-				.setCustomView(getInflater().inflate(R.layout.fragment_overview_number, null))
-				.withDialogAnimation(true, Duration.FAST)
-				.setCancelable(false)
-				.setPositive(getResources().getString(R.string.accept),
-						(dialog, which) -> Log.d(TAG, "Accepted!"))
-				.setNegative(getResources().getString(R.string.decline),
-						(dialog, which) -> Log.d(TAG, "Declined!"))
-				.show();
+		int l = R.layout.fragment_overview_number;
+		showDialog(oval, l);
 	}
 
 	/**
@@ -506,5 +452,35 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	@Override
 	public void onChartTranslate(MotionEvent me, float dX, float dY) {
 		// Do nothing
+	}
+
+	/**
+	 *
+	 * @param eo
+	 * @param rotation
+	 * @param correction
+	 */
+	public void rotateChart(Easing.EasingOption eo, float angle, float rotation, float correction) {
+		mPieChart.spin(1000, angle, rotation - correction, eo);
+	}
+
+	/**
+	 * Displays relevant dialog as determined in onValuePressed() and onLongPressed() methods
+	 *
+	 * @param d
+	 * @param layout
+	 */
+	public void showDialog(Drawable d, int layout) {
+
+		new MaterialStyledDialog(getActivity())
+				.setIcon(d)
+				.setCustomView(getInflater().inflate(layout, null))
+				.withDialogAnimation(true, Duration.FAST)
+				.setCancelable(false)
+				.setPositive(getResources().getString(R.string.accept),
+						(dialog, which) -> Log.d(TAG, "Accepted!"))
+				.setNegative(getResources().getString(R.string.decline),
+						(dialog, which) -> Log.d(TAG, "Declined!"))
+				.show();
 	}
 }
