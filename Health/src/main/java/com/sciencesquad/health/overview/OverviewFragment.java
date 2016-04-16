@@ -276,82 +276,64 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		if (e == null)
 			return;
 
+		int ll = 0;
 		long delay = 1000L;
 		float a = mPieChart.getRotationAngle();
+		float c = 0;
+		Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_overview);
 		Easing.EasingOption eo = Easing.EasingOption.EaseInOutCirc;
 		TimeUnit tu = TimeUnit.MILLISECONDS;
 
-		double d = yData[e.getXIndex()] / overviewCoefficient * 180;
-		double d0 = yData[0] / overviewCoefficient * 180;
-		double d1 = yData[1] / overviewCoefficient * 180;
-		double d2 = yData[2] / overviewCoefficient * 180;
-		double d3 = yData[3] / overviewCoefficient * 180;
-		double d4 = yData[4] / overviewCoefficient * 180;
-
-		float rotateBy = (float) d; // rotate by this much to center / focus module
-		float rc0 = (float) d0;		// correction
-		float rc1 = (float) d1;		// correction
-		float rc2 = (float) d2;		// correction
+		float rotateBy = (float) (yData[e.getXIndex()] / overviewCoefficient * 180);
+		float rc0 = (float) (yData[0] / overviewCoefficient * 180);
+		float rc1 = (float) (yData[1] / overviewCoefficient * 180);
+		float rc2 = (float) (yData[2] / overviewCoefficient * 180);
+		float rc3 = (float) (yData[3] / overviewCoefficient * 180);
+		float rc4 = (float) (yData[4] / overviewCoefficient * 180);
 		rc2 = rc0 + rc1 + rc2;
-		float rc3 = (float) d3;		// correction
 		rc3 = rc1 + rc2 + rc3;
-		float rc4 = (float) d4;		// correction
 		rc4 = rc0 + rc1 + rc3 + rc4;
 		float r = 270 - rotateBy;
 
-		if (e.getXIndex() == 0) {
-			rotateChart(eo, a, r, 0);
-			Drawable nutrients = ContextCompat.getDrawable(getActivity(),
-					R.drawable.ic_menu_nutrition);
-			nutrients.setTint(Color.GREEN);
-			int l = R.layout.fragment_overview_nutrition;
-
-			Dispatcher.UI.run(() -> {
-				showDialog(nutrients, l);
-			}, delay, tu);
-
-		} else if (e.getXIndex() == 1) {
-			rotateChart(eo, a, r, rc1);
-			Drawable runner = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_run);
-			runner.setTint(Color.MAGENTA);
-			int l = R.layout.fragment_overview_run;
-
-			Dispatcher.UI.run(() -> {
-				showDialog(runner, l);
-			}, delay, tu);
-
-		} else if (e.getXIndex() == 2) {
-			rotateChart(eo, a, r, rc2);
-			Drawable zzz = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
-			zzz.setTint(Color.YELLOW);
-			int l = R.layout.fragment_overview_sleep;
-
-			Dispatcher.UI.run(() -> {
-				showDialog(zzz, l);
-			}, delay, tu);
-
-		}  else if (e.getXIndex() == 3) {
-			rotateChart(eo, a, r, rc3);
-			Drawable stepper = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_steps);
-			stepper.setTint(Color.RED);
-			int l = R.layout.fragment_overview_steps;
-
-			Dispatcher.UI.run(() -> {
-				showDialog(stepper, l);
-			}, delay, tu);
-
-		}  else if (e.getXIndex() == 4) {
-			rotateChart(eo, a, r, rc4);
-			Drawable dumbbell = ContextCompat.getDrawable(getActivity(),
-					R.drawable.ic_fitness_center_24dp);
-			dumbbell.setTint(Color.BLUE);
-			int l = R.layout.fragment_overview_workout;
-
-			Dispatcher.UI.run(() -> {
-				showDialog(dumbbell, l);
-			}, delay, tu);
-
+		switch (e.getXIndex()) {
+			case 0:
+				c = 0;
+				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_nutrition);
+				drawable.setTint(Color.GREEN);
+				ll = R.layout.fragment_overview_nutrition;
+				break;
+			case 1:
+				c = rc1;
+				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_run);
+				drawable.setTint(Color.MAGENTA);
+				ll = R.layout.fragment_overview_run;
+				break;
+			case 2:
+				c = rc2;
+				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
+				drawable.setTint(Color.YELLOW);
+				ll = R.layout.fragment_overview_sleep;
+				break;
+			case 3:
+				c = rc3;
+				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_steps);
+				drawable.setTint(Color.RED);
+				ll = R.layout.fragment_overview_steps;
+				break;
+			case 4:
+				c = rc4;
+				drawable = ContextCompat.getDrawable(getActivity(),
+						R.drawable.ic_fitness_center_24dp);
+				drawable.setTint(Color.BLUE);
+				ll = R.layout.fragment_overview_workout;
+				break;
 		}
+		final Drawable myDrawable = drawable;
+		final int l = ll;
+		rotateChart(eo, a, r, c);
+		Dispatcher.UI.run(() -> {
+			showDialog(myDrawable, l);
+		}, delay, tu);
 	}
 
 	/**
