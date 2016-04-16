@@ -76,11 +76,6 @@ public class NutritionModule extends Module {
                 Log.d(TAG, "Data failed somewhere.");
 
             });
-            b.subscribe("GetFuckedEvent", this, e -> {
-                Map.Entry event = e.entrySet().iterator().next();
-                Log.d(TAG, "You have been fucked by " + event.getKey());
-
-            });
             b.subscribe("DataUpdateEvent", null, e -> {
                 Log.d(TAG, "There was an update.");
                     if (e.size() > 0) {
