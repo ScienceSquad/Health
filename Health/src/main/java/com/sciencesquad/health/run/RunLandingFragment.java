@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentRunLandingBinding;
 
 //import android.app.Fragment;
@@ -47,6 +48,7 @@ public class RunLandingFragment extends BaseFragment{
         this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
     }
 
+    /* TODO Delete this when everything works
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
 
@@ -95,16 +97,14 @@ public class RunLandingFragment extends BaseFragment{
                 .replace(R.id.content, new RunTrainingFragment(), RunTrainingFragment.TAG)
                 .addToBackStack(RunTrainingFragment.TAG)
                 .commit();
-    }
+    } */
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Setup the Toolbar, ViewPager, and FAB.
-        //xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
-        //StaticPagerAdapter.install(xml().pager);
-        //xml().tabs.setupWithViewPager(xml().pager);
+        // Setup the Toolbar
+        xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
     }
 
 }

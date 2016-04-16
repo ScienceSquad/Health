@@ -4,14 +4,16 @@ import android.Manifest;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -32,7 +34,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.util.TTSManager;
+import com.sciencesquad.health.databinding.FragmentRunBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +45,24 @@ import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
 
 
-public class RunFragment extends Fragment implements
+public class RunFragment extends BaseFragment implements
         ConnectionCallbacks,  OnConnectionFailedListener, LocationListener {
     public static final String TAG = RunFragment.class.getSimpleName();
+
+    @Override
+    protected Configuration getConfiguration() {
+        String notAnUnderscore = RunLandingFragment.TAG; // instantiates the Module...
+        return new Configuration(
+                TAG, "RunFragment", R.drawable.ic_fitness_center_24dp,
+                R.style.AppTheme_Run, R.layout.fragment_run
+        );
+    }
+
+    // Our generated binding class is different...
+    @Override @SuppressWarnings("unchecked")
+    protected FragmentRunBinding xml() {
+        return super.xml();
+    }
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final static int REQUEST_LOCATION_PERMISSION = 8;
@@ -56,6 +75,19 @@ public class RunFragment extends Fragment implements
     private TextView myTextViewCalories = null;
     private TextView myTextViewDistance = null;
     private TextView myTextViewSpeed = null;
+
+    private FloatingActionButton fab;
+    private FloatingActionButton fab2;
+    private FloatingActionButton fab3;
+    private Button runStartButton;
+    private Boolean isFabOpen = false;
+    private Animation fab_open;
+    private Animation fab_close;
+    private Animation rotate_forward;
+    private Animation rotate_backward;
+    private Animation rotation;
+    private Animation pause_morph;
+    private Animation play_morph;
 
 	List<LatLng> pointsLatLng = new ArrayList<>();
 	List<Long> timeStamps = new ArrayList<>();
@@ -90,6 +122,7 @@ public class RunFragment extends Fragment implements
 
     private TTSManager ttsManager;
 
+    /*
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_run, container, false);
 
@@ -101,24 +134,23 @@ public class RunFragment extends Fragment implements
             }
         });
         return view;
-    }
-
-    public void buttonStartRunClicked(View view) {
-        isRunStarted = true;
-        startRun(lastLoc);
-    }
+    } */
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
+        plus.setTint(Color.DKGRAY);
+        Drawable reset = ContextCompat.getDrawable(getActivity(), R.drawable.ic_reset);
+        reset.setTint(Color.DKGRAY);
+        Drawable pause = ContextCompat.getDrawable(getActivity(), R.drawable.ic_pause);
+        pause.setTint(Color.DKGRAY);
+
         // TextToSpeech Initialization
         ttsManager = new TTSManager();
         ttsManager.init(getActivity());
 
-        this.myTextViewCalories = (TextView) view.findViewById(R.id.textView_Calories);
-        this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
-        this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
 
         setUpMapIfNeeded();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -132,6 +164,64 @@ public class RunFragment extends Fragment implements
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(2000)        // 2 seconds, in milliseconds
                 .setFastestInterval(500); // Half second, in milliseconds
+
+        // Setup the Toolbar
+        xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
+
+        // Create text views
+        final Button buttonStartRun = (Button) view.findViewById(R.id.buttonStartRun);
+        this.myTextViewCalories = (TextView) view.findViewById(R.id.textView_Calories);
+        this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
+        this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
+
+        // Animate fabs
+        fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.rotate_backward);
+        rotation = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.rotation);
+
+        fab = xml().runFab;
+        fab.setImageDrawable(plus);
+        fab2 = xml().buttonReset;
+        fab2.setImageDrawable(reset);
+        //fab2.setOnClickListener(this::resetRun);
+        fab2.hide();
+        fab3 = xml().runFab3;
+        fab3.setImageDrawable(pause);
+        fab3.hide();
+        runStartButton = xml().buttonStartRun;
+
+        fab.setOnClickListener(v -> {
+            animateFab();
+        });
+
+        fab2.setOnClickListener(v -> {
+            fab2.startAnimation(rotation);
+        });
+
+        fab3.setOnClickListener(v -> {
+            fab3.startAnimation(rotation);
+        });
+
+        runStartButton.setOnClickListener(v -> {
+            buttonStartRunClicked();
+        });
+    }
+
+
+
+
+
+
+    public void buttonStartRunClicked() {
+        isRunStarted = true;
+        startRun(lastLoc);
     }
 
     @Override
@@ -158,6 +248,32 @@ public class RunFragment extends Fragment implements
                         mMap = googleMap;
                     });
 
+        }
+    }
+
+
+    /**
+     * Animations for when the overviewFab is pressed
+     */
+    public void animateFab() {
+        if (!isFabOpen) {
+            fab.startAnimation(rotate_forward);
+            fab2.startAnimation(fab_open);
+            fab3.startAnimation(fab_open);
+            fab2.show();
+            fab3.show();
+            fab2.setClickable(true);
+            fab3.setClickable(true);
+            isFabOpen = true;
+        } else {
+            fab.startAnimation(rotate_backward);
+            fab2.startAnimation(fab_close);
+            fab3.startAnimation(fab_close);
+            fab2.hide();
+            fab3.hide();
+            fab2.setClickable(false);
+            fab3.setClickable(false);
+            isFabOpen = false;
         }
     }
 

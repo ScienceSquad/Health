@@ -2,40 +2,125 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".run.RunLandingFragment">
+    tools:context=".overview.OverviewFragment">
     <data>
         <variable name="fragment" type="com.sciencesquad.health.run.RunLandingFragment"/>
     </data>
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    <android.support.design.widget.CoordinatorLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionGroup="true"
+        android:fitsSystemWindows="true">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Free Run"
-        android:id="@+id/buttonFreeRun"
-        android:layout_gravity="left|center_vertical"
-        android:layout_margin="10dp"
-        android:clickable="true" />
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.Purple">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:tag="@string/overview_module"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:navigationIcon="@drawable/ic_menu"
+                app:title="@string/overview_module"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Build a Route"
-        android:id="@+id/buttonBuildRoute"
-        android:layout_gravity="center"
-        android:layout_margin="10dp" />
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:context="com.sciencesquad.health.run.RunLandingFragment">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Training Programs"
-        android:id="@+id/buttonTrainingProgram"
-        android:layout_gravity="right|center_vertical"
-        android:textSize="9dp"
-        android:layout_margin="10dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Free Run"
+                android:id="@+id/buttonFreeRun"
+                android:layout_gravity="left|center_vertical"
+                android:layout_margin="10dp"
+                android:clickable="true" />
 
-</FrameLayout>
-    </layout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Build a Route"
+                android:id="@+id/buttonBuildRoute"
+                android:layout_gravity="center"
+                android:layout_margin="10dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Training Programs"
+                android:id="@+id/buttonTrainingProgram"
+                android:layout_gravity="right|center_vertical"
+                android:textSize="9dp"
+                android:layout_margin="10dp" />
+
+        </RelativeLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/stepsFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_plus"
+            app:pressedTranslationZ="12dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/buttonReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="90dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_reset"
+            app:layout_anchor="@id/stepsFab"
+            app:fabSize="mini"
+            app:backgroundTint="@color/yellow_700"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="top" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/stepsFab3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="150dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_pause"
+            app:layout_anchor="@id/stepsFab"
+            app:fabSize="mini"
+            app:backgroundTint="@color/red_700"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="top" />
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

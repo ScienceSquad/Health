@@ -1,67 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/map_layout"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".overview.OverviewFragment"
+    android:id="@+id/map_layout">
+    <data>
+        <variable name="fragment" type="com.sciencesquad.health.run.RunFragment"/>
+    </data>
 
-    <fragment
+    <android.support.design.widget.CoordinatorLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:id="@+id/map" />
+        android:transitionGroup="true"
+        android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:background="@color/blue"
-        android:weightSum="1"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal|bottom">
-
-        <TextView
-            android:layout_weight="0.333"
-            android:layout_width="0dp"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Distance: 0 m"
-            android:id="@+id/textView_Distance"
-            android:textColor="@android:color/white"
-            android:textAlignment="center"
-            android:layout_gravity="center_horizontal" />
+            android:theme="@style/AppTheme.Purple">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:tag="@string/overview_module"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:navigationIcon="@drawable/ic_menu"
+                app:title="@string/overview_module"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
 
-        <TextView
-            android:layout_weight="0.333"
-            android:layout_width="0dp"
+        <fragment
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:id="@+id/map" />
+
+        <LinearLayout
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Calories: 0"
-            android:id="@+id/textView_Calories"
-            android:textColor="@android:color/white"
-            android:textAlignment="center"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_width="match_parent"
+            android:background="@color/blue"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal|bottom">
 
-        <TextView
-            android:layout_weight="0.333"
-            android:layout_width="0dp"
+            <TextView
+                android:layout_weight="0.333"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Distance: 0 m"
+                android:id="@+id/textView_Distance"
+                android:textColor="@android:color/white"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:layout_weight="0.333"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Calories: 0"
+                android:id="@+id/textView_Calories"
+                android:textColor="@android:color/white"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"/>
+
+            <TextView
+                android:layout_weight="0.333"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Pace: 0 m/s"
+                android:id="@+id/textView_Speed"
+                android:textColor="@android:color/white"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Pace: 0 m/s"
-            android:id="@+id/textView_Speed"
-            android:textColor="@android:color/white"
-            android:textAlignment="center"
-            android:layout_gravity="center_horizontal" />
+            android:text="Start Run"
+            android:id="@+id/buttonStartRun"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="60dp" />
 
-    </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/runFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_plus"
+            app:pressedTranslationZ="12dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Run"
-        android:id="@+id/buttonStartRun"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="60dp" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/buttonReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="90dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_reset"
+            app:layout_anchor="@id/runFab"
+            app:fabSize="mini"
+            app:backgroundTint="@color/yellow_700"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="top" />
 
-</FrameLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/runFab3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="150dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_pause"
+            app:layout_anchor="@id/runFab"
+            app:fabSize="mini"
+            app:backgroundTint="@color/red_700"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            app:layout_anchorGravity="top" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</layout>
