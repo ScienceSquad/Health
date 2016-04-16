@@ -7,6 +7,7 @@ import android.util.Pair;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.EventBus;
+import com.sciencesquad.health.core.EventBus.Entry;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import io.realm.RealmList;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 import java8.util.function.Consumer;
 
@@ -58,7 +60,7 @@ public class NutritionModule extends Module {
         this.nutritionRealm.clear();
 
         // default values
-        this.favoriteFoods = new ArrayList<String>();
+        this.favoriteFoods = new ArrayList<>();
         this.hadCaffeine = false;
         this.calorieIntake = 0;
         this.numCheatDays = 5;
@@ -74,6 +76,11 @@ public class NutritionModule extends Module {
                 Log.d(TAG, "Data failed somewhere.");
 
             });
+            b.subscribe("GetFuckedEvent", this, e -> {
+                Map.Entry event = e.entrySet().iterator().next();
+                Log.d(TAG, "You have been fucked by " + event.getKey());
+
+            });
             b.subscribe("DataUpdateEvent", null, e -> {
                 Log.d(TAG, "There was an update.");
                     if (e.size() > 0) {
@@ -85,19 +92,11 @@ public class NutritionModule extends Module {
                         else if(event.getKey().equals("Favorite Foods")) {
                             Log.d(TAG, "Event value:" + event.getValue());
                             String foodName = (String) event.getValue();
-                            RealmResults<FavoriteFoodModel> results =
-                                    nutritionRealm.query(FavoriteFoodModel.class).equalTo("name", foodName).findAll();
-                            if (results.size() > 0){
-                                nutritionRealm.getRealm().beginTransaction();
-                                try {
-                                    FavoriteFoodModel model = results.first();
-                                    model.removeFromRealm();
-                                    nutritionRealm.getRealm().commitTransaction();
-                                } catch (Exception execption){
-                                    execption.printStackTrace();
-                                    nutritionRealm.getRealm().cancelTransaction();
-                                }
-                            }
+                            handleDeleteEvent(foodName, FavoriteFoodModel.class);
+                        }
+                        else if (event.getKey().equals("Food History")){
+                            String foodName = (String) event.getValue();
+                            handleDeleteEvent(foodName, FoodModel.class);
                         }
                         else {
                             // do something about it.
@@ -106,6 +105,22 @@ public class NutritionModule extends Module {
                     }
             });
         });
+    }
+
+    private void handleDeleteEvent(String name, Class modelClazz){
+        RealmResults<FoodModel> results =
+                nutritionRealm.query(modelClazz).equalTo("name", name).findAll();
+        if (results.size() > 0){
+            nutritionRealm.getRealm().beginTransaction();
+            try {
+                RealmObject model = results.first();
+                model.removeFromRealm();
+                nutritionRealm.getRealm().commitTransaction();
+            } catch (Exception execption){
+                execption.printStackTrace();
+                nutritionRealm.getRealm().cancelTransaction();
+            }
+        }
     }
 
     /**
@@ -153,7 +168,7 @@ public class NutritionModule extends Module {
 
         //Trying to send events.
         BaseApp.app().eventBus().publish("DataUpdateEvent", this,
-                new EventBus.Entry(REALMNAME, newNutritionModel));
+                new Entry(REALMNAME, newNutritionModel));
 
         // reset values
         clearModels();
