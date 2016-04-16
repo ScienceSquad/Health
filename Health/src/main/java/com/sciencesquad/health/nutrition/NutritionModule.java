@@ -5,8 +5,10 @@ import android.util.Pair;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.util.Dispatcher;
 
 import io.realm.RealmResults;
 
@@ -15,6 +17,7 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  * Nutrition Module
@@ -73,6 +76,7 @@ public class NutritionModule extends Module {
                     Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
                 } else {
                     // do something about it.
+                    Log.d(TAG, "OH NO!");
                 }
             });
         });
@@ -121,6 +125,9 @@ public class NutritionModule extends Module {
                 + LocalDateTime.now().getDayOfMonth());
         nutritionRealm.add(newNutritionModel);
 
+        //Trying to send events.
+        //BaseApp.app().eventBus().publish("DataUpdateEvent", null);
+
         // reset values
         clearModels();
         this.hadCaffeine = false;
@@ -162,7 +169,7 @@ public class NutritionModule extends Module {
         return calorieIntake;
     }
 
-    public void setCalorieIntake(int calorieIntake) {
+    public void setCalorieIntake(float calorieIntake) {
         this.calorieIntake = calorieIntake;
     }
 
@@ -189,6 +196,7 @@ public class NutritionModule extends Module {
             hadCaffeine = !hadCaffeine;
             addNutritionRecord();
         }
+
     }
 
     @Override
@@ -223,5 +231,28 @@ public class NutritionModule extends Module {
 
     public void setCheated(boolean cheated) {
         this.cheated = cheated;
+    }
+
+    public TreeSet<FoodModel> populateFoodTree() {
+        TreeSet<FoodModel> tree = new TreeSet<>();
+        try {
+            RealmResults<FoodModel> results = nutritionRealm.query(FoodModel.class).findAll();
+            for (int i = 0; i < results.size(); i++){
+                FoodModel model = results.get(i);
+                tree.add(model);
+            }
+            Log.v(TAG, "Food tree size: " + tree.size());
+            return tree;
+        } catch (Exception e){
+            // better off with just a blank tree.
+            return new TreeSet<>();
+
+        }
+
+    }
+
+    public void addFood(FoodModel newFood){
+        calorieIntake += newFood.getCalories();
+        nutritionRealm.add(newFood);
     }
 }
