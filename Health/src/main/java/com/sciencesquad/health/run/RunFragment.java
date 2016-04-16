@@ -120,9 +120,6 @@ public class RunFragment extends BaseFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
-        plus.setTint(Color.DKGRAY);
-
         // TextToSpeech Initialization
         ttsManager = new TTSManager();
         ttsManager.init(getActivity());
@@ -153,7 +150,6 @@ public class RunFragment extends BaseFragment implements
         this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
 
         fab = xml().runFab;
-        fab.setImageDrawable(plus);
 
         runStartButton = xml().buttonStartRun;
 

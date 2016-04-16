@@ -110,13 +110,28 @@
                     android:layout_marginBottom="60dp" />
 
                 <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/runFab"
+                android:id="@+id/runFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_location_pin"
+                app:pressedTranslationZ="12dp"
+                android:layout_marginBottom="35dp"
+                android:layout_marginLeft="@dimen/fab_margin"
+                android:layout_marginTop="@dimen/fab_margin"
+                android:layout_marginRight="@dimen/fab_margin" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/endRunFab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|bottom"
                     android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_plus"
+                    android:layout_alignParentLeft="true"
+                    app:backgroundTint="@color/red_700"
+                    android:src="@drawable/ic_stop"
                     app:pressedTranslationZ="12dp"
                     android:layout_marginBottom="35dp"
                     android:layout_marginLeft="@dimen/fab_margin"
