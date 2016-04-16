@@ -26,7 +26,7 @@
                 android:tag="@string/overview_module"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
+                android:background="@color/blue"
                 app:navigationIcon="@drawable/ic_menu"
                 app:title="@string/overview_module"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
@@ -36,111 +36,155 @@
                     android:layout_height="?attr/actionBarSize" />
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
-
-        <fragment
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:name="com.google.android.gms.maps.MapFragment"
-            android:id="@+id/map" />
+            android:background="@color/blue">
+            <RelativeLayout
+                android:id="@+id/runPage1"
+                android:tag="Run"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="@color/blue"
-            android:weightSum="1"
-            android:orientation="horizontal"
-            android:layout_gravity="center_horizontal|bottom">
+                <fragment
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:name="com.google.android.gms.maps.MapFragment"
+                    android:id="@+id/map" />
 
-            <TextView
-                android:layout_weight="0.333"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Distance: 0 m"
-                android:id="@+id/textView_Distance"
-                android:textColor="@android:color/white"
-                android:textAlignment="center"
-                android:layout_gravity="center_horizontal" />
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/blue"
+                    android:weightSum="1"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal|bottom">
 
-            <TextView
-                android:layout_weight="0.333"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Calories: 0"
-                android:id="@+id/textView_Calories"
-                android:textColor="@android:color/white"
-                android:textAlignment="center"
-                android:layout_gravity="center_horizontal"/>
+                    <TextView
+                        android:layout_weight="0.333"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Distance: 0 m"
+                        android:id="@+id/textView_Distance"
+                        android:textColor="@android:color/white"
+                        android:textAlignment="center"
+                        android:layout_gravity="center_horizontal" />
 
-            <TextView
-                android:layout_weight="0.333"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Pace: 0 m/s"
-                android:id="@+id/textView_Speed"
-                android:textColor="@android:color/white"
-                android:textAlignment="center"
-                android:layout_gravity="center_horizontal" />
+                    <TextView
+                        android:layout_weight="0.333"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Calories: 0"
+                        android:id="@+id/textView_Calories"
+                        android:textColor="@android:color/white"
+                        android:textAlignment="center"
+                        android:layout_gravity="center_horizontal"/>
 
-        </LinearLayout>
+                    <TextView
+                        android:layout_weight="0.333"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Pace: 0 m/s"
+                        android:id="@+id/textView_Speed"
+                        android:textColor="@android:color/white"
+                        android:textAlignment="center"
+                        android:layout_gravity="center_horizontal" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start Run"
-            android:id="@+id/buttonStartRun"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="60dp" />
+                </LinearLayout>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/runFab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_plus"
-            app:pressedTranslationZ="12dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start Run"
+                    android:id="@+id/buttonStartRun"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginBottom="60dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/buttonReset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="90dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:src="@drawable/ic_reset"
-            app:layout_anchor="@id/runFab"
-            app:fabSize="mini"
-            app:backgroundTint="@color/yellow_700"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"
-            app:layout_anchorGravity="top" />
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/runFab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_plus"
+                    app:pressedTranslationZ="12dp"
+                    android:layout_marginBottom="35dp"
+                    android:layout_marginLeft="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:layout_marginRight="@dimen/fab_margin" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/runFab3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="150dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:src="@drawable/ic_pause"
-            app:layout_anchor="@id/runFab"
-            app:fabSize="mini"
-            app:backgroundTint="@color/red_700"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"
-            app:layout_anchorGravity="top" />
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/buttonReset"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="125dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:src="@drawable/ic_reset"
+                    app:layout_anchor="@id/runFab"
+                    app:fabSize="mini"
+                    app:backgroundTint="@color/yellow_700"
+                    app:elevation="6dp"
+                    app:pressedTranslationZ="12dp"
+                    app:layout_anchorGravity="top" />
 
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/runFab3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="185dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:src="@drawable/ic_pause"
+                    app:layout_anchor="@id/runFab"
+                    app:fabSize="mini"
+                    app:backgroundTint="@color/red_700"
+                    app:elevation="6dp"
+                    app:pressedTranslationZ="12dp"
+                    app:layout_anchorGravity="top" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/runPage2"
+                android:tag="Training"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/runPage3"
+                android:tag="History"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+            </RelativeLayout>
+
+        </android.support.v4.view.ViewPager>
     </android.support.design.widget.CoordinatorLayout>
 
 </layout>

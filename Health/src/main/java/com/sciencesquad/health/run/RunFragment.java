@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.TTSManager;
 import com.sciencesquad.health.databinding.FragmentRunBinding;
 
@@ -167,6 +168,9 @@ public class RunFragment extends BaseFragment implements
 
         // Setup the Toolbar
         xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
+
+        StaticPagerAdapter.install(xml().pager);
+        xml().tabs.setupWithViewPager(xml().pager);
 
         // Create text views
         final Button buttonStartRun = (Button) view.findViewById(R.id.buttonStartRun);
