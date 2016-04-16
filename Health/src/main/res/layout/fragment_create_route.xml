@@ -1,46 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/map_layout"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".overview.OverviewFragment"
+    android:id="@+id/createRoute_layout">
 
-    <fragment
+    <data>
+    <variable name="fragment" type="com.sciencesquad.health.run.CreateRouteFragment"/>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:id="@+id/map" />
+        android:transitionGroup="true"
+        android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:background="@color/blue"
-        android:weightSum="1"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal|bottom">
-
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="0dp"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Distance: 0 m"
-            android:id="@+id/textView_RouteDistance"
-            android:textColor="@android:color/white"
-            android:textAlignment="center"
-            android:layout_gravity="center_horizontal" />
+            android:theme="@style/AppTheme.Purple">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:tag="@string/overview_module"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/blue"
+                app:navigationIcon="@drawable/ic_menu"
+                app:title="@string/overview_module"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
 
-    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add New Marker"
-        android:id="@+id/buttonNewMarker"
-        android:layout_gravity="center|bottom"
-        android:layout_marginBottom="30dp"
-        android:clickable="true" />
 
-</FrameLayout>
+        <fragment
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:id="@+id/map" />
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@color/blue"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal|bottom">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Distance: 0 m"
+                android:id="@+id/textView_RouteDistance"
+                android:textColor="@android:color/white"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add New Marker"
+            android:id="@+id/buttonNewMarker"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="30dp"
+            android:clickable="true" />
+
+    </FrameLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

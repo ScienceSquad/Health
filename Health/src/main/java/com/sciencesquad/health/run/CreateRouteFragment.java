@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +31,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.databinding.FragmentCreateRouteBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +40,23 @@ import java.util.List;
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 
-public class CreateRouteFragment extends Fragment implements
+public class CreateRouteFragment extends BaseFragment implements
         ConnectionCallbacks,  OnConnectionFailedListener, OnMarkerDragListener, LocationListener {
     public static final String TAG = CreateRouteFragment.class.getSimpleName();
+
+    @Override
+    protected BaseFragment.Configuration getConfiguration() {
+        return new Configuration(
+                TAG, "CreateRouteFragment", R.drawable.ic_fitness_center_24dp,
+                R.style.AppTheme_Run, R.layout.fragment_create_route
+        );
+    }
+
+    // Our generated binding class is different...
+    @Override @SuppressWarnings("unchecked")
+    protected FragmentCreateRouteBinding xml() {
+        return super.xml();
+    }
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final static int REQUEST_LOCATION_PERMISSION = 8;
@@ -50,6 +65,8 @@ public class CreateRouteFragment extends Fragment implements
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+
+    private Button newMarkerButton;
 
     static TextView mTextViewDistance;
 
@@ -69,26 +86,19 @@ public class CreateRouteFragment extends Fragment implements
             .color(Color.BLUE);
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_route, container, false);
-        mTextViewDistance = (TextView) view.findViewById(R.id.textView_RouteDistance);
-        // Button
-        final Button button = (Button) view.findViewById(R.id.buttonNewMarker);
-        //Button Click
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                buttonClicked(v);
-            }
-        });
-        return view;
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Setup the Toolbar
+        xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
+        mTextViewDistance = (TextView) view.findViewById(R.id.textView_RouteDistance);
+
+        newMarkerButton = xml().buttonNewMarker;
+
+        newMarkerButton.setOnClickListener(v -> {
+            buttonClicked();
+        });
 
         setUpMapIfNeeded();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -177,9 +187,14 @@ public class CreateRouteFragment extends Fragment implements
     }
 
     // Button push triggers new marker (dragable)
-    public void buttonClicked(View view) {
-        newMarker(mMap, pointsLatLng.get(pointsLatLng.size() - 1));
-        distanceCalculate(latLng, pointsLatLng);
+    public void buttonClicked() {
+        try {
+            newMarker(mMap, pointsLatLng.get(pointsLatLng.size() - 1));
+            distanceCalculate(latLng, pointsLatLng);
+        } catch(ArrayIndexOutOfBoundsException e) {
+            //Log the error
+            Log.e(TAG, "No Location Data Received");
+        }
     }
 
     @Override
