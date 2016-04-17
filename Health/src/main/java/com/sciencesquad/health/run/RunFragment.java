@@ -174,8 +174,8 @@ public class RunFragment extends BaseFragment implements
         try {
             isRunStarted = true;
             startRun(lastLoc);
-            //TODO: Make Start Button Disappear
-
+            //Makes start button disappear on click
+            xml().buttonStartRun.setVisibility(View.GONE);
         } catch(Exception e) {
             //Log the error
             Log.e(TAG, "No Location Data Received");

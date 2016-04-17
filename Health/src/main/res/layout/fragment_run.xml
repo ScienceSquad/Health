@@ -107,7 +107,8 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center_horizontal|bottom"
-                    android:layout_marginBottom="60dp" />
+                    android:layout_marginBottom="60dp"
+                    android:visibility="visible" />
 
                 <android.support.design.widget.FloatingActionButton
                 android:id="@+id/runFab"
