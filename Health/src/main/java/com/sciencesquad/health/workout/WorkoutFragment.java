@@ -33,6 +33,7 @@ import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -144,6 +145,13 @@ public class WorkoutFragment extends BaseFragment {
         exerciseTypeAdapter.clear();                // first clear adapter
         for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
             exerciseTypeAdapter.add(m.getName());
+        exerciseTypeAdapter.sort(new Comparator<String>() {
+           @Override
+           public int compare(String lhs, String rhs) {
+               return lhs.compareTo(rhs);   //or whatever your sorting algorithm
+           }
+        });
+        exerciseTypeAdapter.notifyDataSetChanged();
         xml().exerciseModelListView.setAdapter(exerciseTypeAdapter);
         xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {
 
@@ -172,6 +180,13 @@ public class WorkoutFragment extends BaseFragment {
         routineModelAdapter.clear();                // first clear adapter
         for (RoutineModel m : mod.getAllRoutineModels())
             routineModelAdapter.add(m.getName());
+
+        routineModelAdapter.sort(new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);   //or whatever your sorting algorithm
+            }
+        });
         xml().routineModelListView.setAdapter(routineModelAdapter);
         xml().routineModelListView.setOnItemClickListener(((parent, views, position, id) -> {
 
@@ -429,12 +444,18 @@ public class WorkoutFragment extends BaseFragment {
             mod.addExerciseTypeModel(newExercise);
 
 
-
-
             exerciseTypeAdapter.clear();
             //exerciseTypeModelAdapter.addAll(mod.getAllExerciseTypeModels());
             for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
                 exerciseTypeAdapter.add(m.getName());
+
+            exerciseTypeAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String lhs, String rhs) {
+                    return lhs.compareTo(rhs);   //or whatever your sorting algorithm
+                }
+            });
+            exerciseTypeAdapter.notifyDataSetChanged();
 
         }
     }
@@ -551,6 +572,13 @@ public class WorkoutFragment extends BaseFragment {
             for (RoutineModel m : mod.getAllRoutineModels())
                 routineModelAdapter.add(m.getName());
             //xml().routineModelListView.setAdapter(routineModelAdapter);
+            routineModelAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String lhs, String rhs) {
+                    return lhs.compareTo(rhs);   //or whatever your sorting algorithm
+                }
+            });
+            routineModelAdapter.notifyDataSetChanged();
         }
     }
 
