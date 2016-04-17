@@ -1,10 +1,12 @@
 package com.sciencesquad.health.run;
 
 import android.Manifest;
+import android.app.FragmentTransaction;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -66,6 +68,8 @@ public class CreateRouteFragment extends BaseFragment implements
     private LocationRequest mLocationRequest;
 
     private Button newMarkerButton;
+    private FloatingActionButton fabSave;
+    private FloatingActionButton fabBack;
 
     static TextView mTextViewDistance;
 
@@ -94,9 +98,21 @@ public class CreateRouteFragment extends BaseFragment implements
         mTextViewDistance = (TextView) view.findViewById(R.id.textView_RouteDistance);
 
         newMarkerButton = xml().buttonNewMarker;
+        fabBack = xml().backRouteFab;
+        fabSave = xml().saveRouteFab;
 
         newMarkerButton.setOnClickListener(v -> {
             buttonClicked();
+        });
+
+        fabBack.setOnClickListener(v -> {
+            //Links to RunFragment
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            new RunFragment().open(transaction, R.id.drawer_layout).commit();
+        });
+
+        fabSave.setOnClickListener(v -> {
+            // TODO Save Route to Realm Object
         });
 
         setUpMapIfNeeded();

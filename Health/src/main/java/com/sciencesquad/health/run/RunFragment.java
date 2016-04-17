@@ -77,7 +77,8 @@ public class RunFragment extends BaseFragment implements
     private TextView myTextViewDistance = null;
     private TextView myTextViewSpeed = null;
 
-    private FloatingActionButton fab;
+    private FloatingActionButton fabMarker;
+    private FloatingActionButton fabStop;
     private Button runStartButton;
 
 	List<LatLng> pointsLatLng = new ArrayList<>();
@@ -146,14 +147,22 @@ public class RunFragment extends BaseFragment implements
         this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
         this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
 
-        fab = xml().runFab;
+        fabMarker = xml().runFab;
+        fabStop = xml().endRunFab;
 
         runStartButton = xml().buttonStartRun;
 
-        fab.setOnClickListener(v -> {
+        fabMarker.setOnClickListener(v -> {
             //Links to CreateRouteFragment
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             new CreateRouteFragment().open(transaction, R.id.drawer_layout).commit();
+        });
+
+        fabStop.setOnClickListener(v -> {
+            //TODO: Stop Run
+
+            //TODO: Save run to Realm Object
+
         });
 
         runStartButton.setOnClickListener(v -> {
@@ -165,6 +174,8 @@ public class RunFragment extends BaseFragment implements
         try {
             isRunStarted = true;
             startRun(lastLoc);
+            //TODO: Make Start Button Disappear
+
         } catch(Exception e) {
             //Log the error
             Log.e(TAG, "No Location Data Received");
