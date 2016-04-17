@@ -80,12 +80,16 @@ public class RunFragment extends BaseFragment implements
     private FloatingActionButton fabMarker;
     private FloatingActionButton fabStop;
     private Button runStartButton;
+    private TextView textViewCalories;
+    private TextView textViewDistance;
+    private TextView textViewSpeed;
 
 	List<LatLng> pointsLatLng = new ArrayList<>();
 	List<Long> timeStamps = new ArrayList<>();
 	List<Double> distances = new ArrayList<>();
 	static double totalDistance = 0;
 	static double totalCalories = 0;
+    double speed = 0;
 	LatLng lastLoc = null;
 
 	boolean firstLoc = true; // used to ensure that only one starting marker is created.
@@ -142,10 +146,10 @@ public class RunFragment extends BaseFragment implements
         StaticPagerAdapter.install(xml().pager);
         xml().tabs.setupWithViewPager(xml().pager);
 
-        // Create text views
-        this.myTextViewCalories = (TextView) view.findViewById(R.id.textView_Calories);
-        this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
-        this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
+
+        textViewCalories = xml().textViewCalories;
+        textViewDistance = xml().textViewDistance;
+        textViewSpeed = xml().textViewSpeed;
 
         fabMarker = xml().runFab;
         fabStop = xml().endRunFab;
@@ -159,15 +163,37 @@ public class RunFragment extends BaseFragment implements
         });
 
         fabStop.setOnClickListener(v -> {
-            //TODO: Stop Run
-
-            //TODO: Save run to Realm Object
-
+            stopRun();
         });
 
         runStartButton.setOnClickListener(v -> {
             buttonStartRunClicked();
         });
+    }
+
+    public void saveRunToRealm() {
+        //TODO: Save run to Realm Object
+    }
+
+    public void stopRun() {
+        isRunStarted = false;
+        saveRunToRealm();
+        //TODO: reset data after saving to Realm
+        resetRunValues();
+        xml().buttonStartRun.setVisibility(View.VISIBLE);
+    }
+
+    public void resetRunValues() {
+        pointsLatLng.clear();
+        timeStamps.clear();
+        distances.clear();
+        totalDistance = 0;
+        totalCalories = 0;
+        firstLoc = true; // used to ensure that only one starting marker is created.
+        splitNumber = 1;
+        speed = 0;
+        updateTextViews();
+        lastLoc = null;
     }
 
     public void buttonStartRunClicked() {
@@ -246,7 +272,7 @@ public class RunFragment extends BaseFragment implements
 
         lastLoc = latLng;
 
-        double speed = 0;
+
         pointsLatLng.add(latLng);
         timeStamps.add(currentTimeMillis());
         if (timeStamps.size()>2) {
@@ -256,12 +282,7 @@ public class RunFragment extends BaseFragment implements
             double timeDiff = (timeStamps.get(timeStamps.size()-1)-timeStamps.get(timeStamps.size()-2))/1000; //time difference in seconds
             speed = distanceDiff/timeDiff; //calculates the speed since the last location update
             totalCalories = totalCalories + calorieBurn(speed,timeDiff,weightKG);
-            this.myTextViewCalories.setText("Cal. Burned: " +
-                    String.format("%.1f",totalCalories));
-            this.myTextViewDistance.setText("Distance: " +
-                    String.format("%.1f",totalDistance) + " m");
-            this.myTextViewSpeed.setText("Pace: " +
-                    String.format("%.1f", speed) + " m/s");
+            updateTextViews();
         }
 
         // TextToSpeech - Split Data
@@ -276,6 +297,15 @@ public class RunFragment extends BaseFragment implements
 
         mMap.addPolyline((polylineoptions)
                 .addAll(pointsLatLng));
+    }
+
+    public void updateTextViews() {
+        textViewCalories.setText("Cal. Burned: " +
+                String.format("%.1f",totalCalories));
+        textViewDistance.setText("Distance: " +
+                String.format("%.1f",totalDistance) + " m");
+        textViewSpeed.setText("Pace: " +
+                String.format("%.1f", speed) + " m/s");
     }
 
     public void startRun(LatLng latLng) {
