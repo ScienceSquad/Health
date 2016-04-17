@@ -78,10 +78,7 @@ public class RunFragment extends BaseFragment implements
     private TextView myTextViewSpeed = null;
 
     private FloatingActionButton fab;
-    private FloatingActionButton fab2;
-    private FloatingActionButton fab3;
     private Button runStartButton;
-    private Boolean isFabOpen = false;
 
 	List<LatLng> pointsLatLng = new ArrayList<>();
 	List<Long> timeStamps = new ArrayList<>();
