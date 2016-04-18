@@ -17,8 +17,11 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.google.zxing.qrcode.encoder.QRCode;
+import com.journeyapps.barcodescanner.BarcodeResult;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
@@ -29,12 +32,17 @@ import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
 
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
+
 
 /**
  * ViewModel for the Nutrition Module.
  */
 public class NutritionFragment extends BaseFragment {
     public static final String TAG = NutritionFragment.class.getSimpleName();
+    private static final int RC_BARCODE_CAPTURE = 9001;
 
     private NutritionModule nutritionModule;
     private LineChart nutritionChart;
@@ -176,24 +184,43 @@ public class NutritionFragment extends BaseFragment {
     }
 
     private void useZxing() {
-        IntentIntegrator.forFragment(this).initiateScan();
+
+        //IntentIntegrator.forFragment(this).initiateScan();
+        // launch barcode activity.
+        Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
+        startActivityForResult(intent, RC_BARCODE_CAPTURE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == RC_BARCODE_CAPTURE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    //statusMessage.setText(R.string.barcode_success);
+                    //barcodeValue.setText(barcode.displayValue);
 
-        IntentResult result= IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null){
-            if (result.getContents() != null){
-                Snackbar snackbar = Snackbar.make(xml().getRoot(),
-                        "Scanned: " + result.getContents(), Snackbar.LENGTH_SHORT);
-                snackbar.show();
+                    int selectedTab = xml().tabs.getSelectedTabPosition();
+                    if (selectedTab == 0) {
+                        Snackbar.make(xml().page1, "Barcode read: " + barcode.displayValue,
+                                Snackbar.LENGTH_LONG).show();
+                    }
+                    else if (selectedTab == 1){
+                        Snackbar.make(xml().page2, "Barcode read: " + barcode.displayValue,
+                                Snackbar.LENGTH_LONG).show();
+                    }
+
+
+                } else {
+                    Log.d(TAG, "No barcode captured, intent data is null");
+                }
+            } else {
+                Log.d(TAG, CommonStatusCodes.getStatusCodeString(resultCode));
             }
         }
         else {
-            // shit broke.
+            super.onActivityResult(requestCode, resultCode, data);
         }
-
     }
 
     /**
@@ -206,14 +233,6 @@ public class NutritionFragment extends BaseFragment {
         newFrag.setTargetFragment(this, 0);
         newFrag.show(getFragmentManager(), "diet dialog");
 
-    }
-
-    /**
-     * Creates the Nutrient Menu which was originally the Calorie Menu.
-     */
-
-    public void submitCalories(){
-        createCalorieDialog();
     }
 
     /**

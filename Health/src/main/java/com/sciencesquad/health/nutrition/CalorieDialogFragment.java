@@ -24,7 +24,6 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import io.realm.Realm;
 
 
 public class CalorieDialogFragment extends DialogFragment {
@@ -94,7 +93,6 @@ public class CalorieDialogFragment extends DialogFragment {
                 (dialog, whichButton) -> {
 
                     int selectedTab = tabLayout.getSelectedTabPosition();
-                    Log.d(TAG, "selectedTab: " + selectedTab);
                     if (selectedTab == 0) {
                         String foodName = foodField.getText().toString();
                         Iterator<FoodModel> treeIterator = foodTreeSet.iterator();
