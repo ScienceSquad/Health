@@ -5,16 +5,12 @@ import android.app.FragmentTransaction;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -41,7 +37,10 @@ import com.sciencesquad.health.core.util.TTSManager;
 import com.sciencesquad.health.databinding.FragmentRunBinding;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import io.realm.Realm;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
@@ -73,10 +72,6 @@ public class RunFragment extends BaseFragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    private TextView myTextViewCalories = null;
-    private TextView myTextViewDistance = null;
-    private TextView myTextViewSpeed = null;
-
     private FloatingActionButton fabMarker;
     private FloatingActionButton fabStop;
     private Button runStartButton;
@@ -97,6 +92,8 @@ public class RunFragment extends BaseFragment implements
 	Marker currentPos = null; // used to display current position
 	Circle accuracyCircle = null;
     float currentAcc;
+
+    Realm realm = Realm.getDefaultInstance();
 
     MarkerOptions currentPosOptions = new MarkerOptions()
             .position(new LatLng(40,40))
@@ -173,12 +170,19 @@ public class RunFragment extends BaseFragment implements
 
     public void saveRunToRealm() {
         //TODO: Save run to Realm Object
+        realm.beginTransaction();
+        CompletedRunModel run = new CompletedRunModel();
+        run.setCalories(totalCalories);
+        run.setDistance(totalDistance);
+        run.setDate(new Date());
+        //TODO: Set GoogleMap
+
+        realm.commitTransaction();
     }
 
     public void stopRun() {
         isRunStarted = false;
         saveRunToRealm();
-        //TODO: reset data after saving to Realm
         resetRunValues();
         xml().buttonStartRun.setVisibility(View.VISIBLE);
     }
