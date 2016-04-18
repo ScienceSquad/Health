@@ -38,6 +38,8 @@ import com.sciencesquad.health.databinding.FragmentCreateRouteBinding;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 
@@ -70,11 +72,13 @@ public class CreateRouteFragment extends BaseFragment implements
     private Button newMarkerButton;
     private FloatingActionButton fabSave;
     private FloatingActionButton fabBack;
+    private static TextView textViewDistance;
 
-    static TextView mTextViewDistance;
+    private static double totalDistance = 0;
 
     private Polyline polyline;
 
+    Realm realm = Realm.getDefaultInstance();
 
     List<LatLng> pointsLatLng = new ArrayList<>();
     private static List<Double> distances = new ArrayList<>();
@@ -95,7 +99,7 @@ public class CreateRouteFragment extends BaseFragment implements
         // Setup the Toolbar
         xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
-        mTextViewDistance = (TextView) view.findViewById(R.id.textView_RouteDistance);
+        textViewDistance = xml().textViewRouteDistance;
 
         newMarkerButton = xml().buttonNewMarker;
         fabBack = xml().backRouteFab;
@@ -112,7 +116,8 @@ public class CreateRouteFragment extends BaseFragment implements
         });
 
         fabSave.setOnClickListener(v -> {
-            // TODO Save Route to Realm Object
+            saveRouteToRealm();
+            //TODO: Saved to Realm Confirmation Dialog Box
         });
 
         setUpMapIfNeeded();
@@ -127,6 +132,14 @@ public class CreateRouteFragment extends BaseFragment implements
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(2000)        // 2 seconds, in milliseconds
                 .setFastestInterval(500); // Half second, in milliseconds
+    }
+
+    public void saveRouteToRealm() {
+        realm.beginTransaction();
+        CreatedRouteModel route = new CreatedRouteModel();
+        route.setDistance(totalDistance);
+        //TODO: Save route information
+        realm.commitTransaction();
     }
 
     @Override
@@ -244,12 +257,11 @@ public class CreateRouteFragment extends BaseFragment implements
 
     // Calculates distance and adds to the distances list
     public static double distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {
-        double totalDistance = 0;
         for (int i = 1; i<pointsLatLng.size(); i++) {
             totalDistance = totalDistance + computeDistanceBetween(pointsLatLng.get(i-1),
                     pointsLatLng.get(i));
         }
-        mTextViewDistance.setText("Distance: " + String.format("%.1f", totalDistance) + " m");
+        textViewDistance.setText("Distance: " + String.format("%.1f", totalDistance) + " m");
         return totalDistance;
     }
 

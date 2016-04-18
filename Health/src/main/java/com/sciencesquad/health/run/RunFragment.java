@@ -169,14 +169,12 @@ public class RunFragment extends BaseFragment implements
     }
 
     public void saveRunToRealm() {
-        //TODO: Save run to Realm Object
         realm.beginTransaction();
         CompletedRunModel run = new CompletedRunModel();
         run.setCalories(totalCalories);
         run.setDistance(totalDistance);
         run.setDate(new Date());
         //TODO: Set GoogleMap
-
         realm.commitTransaction();
     }
 
