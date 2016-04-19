@@ -1,39 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dialog_layout_root"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    >
-
-    <EditText
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Number of Calories"
-        android:ems="10"
-        android:id="@+id/num_calories" />
+        android:layout_height="match_parent"
+        android:transitionGroup="true"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.Nutrient">
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:navigationIcon="@drawable/ic_menu"
+                android:transitionGroup="true">
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/calorie_pager"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/dialog_layout_root_2"
+                android:orientation="vertical"
+                android:tag="Basic Menu"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                >
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Food you ate"
+                    android:ems="10"
+                    android:id="@+id/food_eaten" />
 
-    <RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Caffeine"
-        android:id="@+id/caffeine_button"
-        android:clickable="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cheat Days Left: "
-        android:id="@+id/cheat_view" />
+            </LinearLayout>
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Use Cheat Day"
-        android:id="@+id/cheat_button" />
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/dialog_layout_root"
+                android:tag="Advanced Menu"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Number of Calories"
+                    android:ems="10"
+                    android:id="@+id/num_calories"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Caffeine"
+                    android:id="@+id/caffeine_button"
+                    android:clickable="true"
+                    android:layout_below="@+id/num_calories" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cheat Days Left: "
+                    android:id="@+id/cheat_view"
+                    android:layout_below="@+id/caffeine_button"
+                    android:layout_alignParentStart="true" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Use Cheat Day"
+                    android:id="@+id/cheat_button"
+                    android:layout_below="@+id/cheat_view"
+                    android:layout_alignParentStart="true" />
 
 
-</LinearLayout>
+            </RelativeLayout>
+        </android.support.v4.view.ViewPager>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

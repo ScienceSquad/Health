@@ -136,7 +136,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             benchPress.setTarget("Chest");
             Calendar rightNow = Calendar.getInstance();
             benchPress.setDate(rightNow.getTime());
-            */
+
             ExerciseTypeModel benchPress = WorkoutModule.createNewExercise("Bench Press", "Strength", "Chest");
             testRealm.add(benchPress);
             RealmQuery<ExerciseTypeModel> testQuery = testRealm.query(ExerciseTypeModel.class);
