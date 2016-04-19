@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
-import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -52,21 +51,6 @@ public abstract class Module implements Observable {
 	 * Special identifier only set by a ContextBinder for identification.
 	 */
 	/*package*/ transient UUID _identifier;
-
-	/**
-	 *
-	 */
-	/*package*/ ViewContext<? extends ViewDataBinding> _viewContext;
-
-	/**
-	 *
-	 */
-	/*package*/ ViewContext<? extends ViewDataBinding> _dataContext;
-
-	/**
-	 *
-	 */
-	/*package*/ ViewContext<? extends ViewDataBinding> _sensorContext;
 
 	/**
 	 * Any subclass of the Module class should ideally register itself
@@ -143,36 +127,6 @@ public abstract class Module implements Observable {
 	 * by the system when the module is to be created, only once.
 	 */
 	public abstract void init();
-
-	/**
-	 *
-	 *
-	 * @param <T>
-	 * @return
-	 */
-	protected <T extends ViewDataBinding> X<ViewContext<T>> viewContext() {
-		return X.of(null);
-	}
-
-	/**
-	 *
-	 *
-	 * @param <T>
-	 * @return
-	 */
-	protected <T extends ViewDataBinding> X<ViewContext<T>> dataContext() {
-		return X.of(null);
-	}
-
-	/**
-	 *
-	 *
-	 * @param <T>
-	 * @return
-	 */
-	protected <T extends ViewDataBinding> X<ViewContext<T>> sensorContext() {
-		return X.of(null);
-	}
 
 	/**
 	 * Tracks any receivers for removal when this Fragment dies.
