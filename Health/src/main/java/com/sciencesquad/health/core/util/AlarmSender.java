@@ -47,11 +47,6 @@ public class AlarmSender {
 		this.repeatInterval = AlarmManager.INTERVAL_DAY * DEFAULT_REPEAT;
 	}
 
-	// Convenience...
-	public void setAlarm(Fragment fragment, Intent intent) {
-		this.setAlarm(fragment.getActivity(), intent);
-	}
-
 	/**
 	 * Sends alarm using context and intent
 	 * Intent is target activity

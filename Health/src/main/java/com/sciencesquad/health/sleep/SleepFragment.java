@@ -118,7 +118,7 @@ public class SleepFragment extends BaseFragment {
 
 			AlarmSender sender = new AlarmSender();
 			sender.setTimeInMillis(1000 * 3);
-			sender.setAlarm(this, new Intent(getActivity(), SleepWakeUpReceiver.class));
+			// sender.setAlarm(this, new Intent(getActivity(), SleepWakeUpReceiver.class));
 		});
 
 		// Set up a list of tiles for the ambience mixer.

@@ -91,7 +91,7 @@
 
         <!-- For PrescriptionsModule to trigger in a timely manner. -->
         <receiver
-            android:name=".prescriptions.PrescriptionAlarmReceiver"
+            android:name=".prescriptions.AlarmReceiver"
             android:enabled="true" />
 	</application>
 </manifest>

@@ -3,6 +3,8 @@ package com.sciencesquad.health.prescriptions;
 import android.util.Log;
 import android.util.Pair;
 
+import com.sciencesquad.health.alarm.AlarmModel;
+import com.sciencesquad.health.alarm.AlarmModule;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.BaseApp;
@@ -24,8 +26,7 @@ public class PrescriptionModule extends Module {
 
 	private String name;
 	private int dosage;
-	private long repeatDuration;
-	private long startDate;
+	private int alarmID;
 
 	/**
 	 * Constructs the module itself.
@@ -38,22 +39,29 @@ public class PrescriptionModule extends Module {
 		this.prescriptionRealm.init(BaseApp.app(), PrescriptionModel.class, "prescription.realm");
 	}
 
-	public void setName(String name) { this.name = name; }
+	public PrescriptionModule setName(String name) {
+		this.name = name;
+		return this;
+	}
 	public String getName() { return this.name; }
-	public void setDosage(int dosage) { this.dosage = dosage; }
+	public PrescriptionModule setDosage(int dosage) {
+		this.dosage = dosage;
+		return this;
+	}
 	public int getDosage() { return this.dosage; }
-	public void setRepeatDuration(long repeatDuration) { this.repeatDuration = repeatDuration; }
-	public long getRepeatDuration() { return this.repeatDuration; }
-	public void setStartDate(long startDate) { this.startDate = startDate; }
-	public long getStartDate() { return this.startDate; }
+	public PrescriptionModule setAlarmID(int alarmID) {
+		this.alarmID = alarmID;
+		return this;
+	}
+	public int getAlarmID() { return this.alarmID; }
 
-	public void addPrescription() {
+	public PrescriptionModel addPrescription() {
 		PrescriptionModel prescriptionModel = new PrescriptionModel();
 		prescriptionModel.setName(this.name);
 		prescriptionModel.setDosage(this.dosage);
-		prescriptionModel.setRepeatDuration(this.repeatDuration);
-		prescriptionModel.setStartDate(this.startDate);
+		prescriptionModel.setAlarmID(this.alarmID);
 		prescriptionRealm.add(prescriptionModel);
+		return prescriptionModel;
 	}
 
 	public RealmResults<PrescriptionModel> getPrescriptions() {
@@ -61,6 +69,10 @@ public class PrescriptionModule extends Module {
 	}
 
 	public void removePrescription(PrescriptionModel item) {
+		AlarmModule alarmModule = new AlarmModule();
+
+		alarmModule.removeAlarmById(item.getAlarmID());
+
 		prescriptionRealm.getRealm().beginTransaction();
 		item.removeFromRealm();
 		prescriptionRealm.getRealm().commitTransaction();

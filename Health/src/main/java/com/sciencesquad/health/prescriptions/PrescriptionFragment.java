@@ -22,12 +22,16 @@ import android.widget.TextView;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.alarm.AlarmModel;
+import com.sciencesquad.health.alarm.AlarmModule;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.AlarmSender;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
+
+import java.util.Calendar;
 
 import io.realm.RealmResults;
 
@@ -38,6 +42,7 @@ public class PrescriptionFragment extends BaseFragment {
 	public static final String TAG = PrescriptionFragment.class.getSimpleName();
 
 	private PrescriptionModule prescriptionModule;
+	private AlarmModule alarmModule;
 
 	public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
@@ -57,24 +62,11 @@ public class PrescriptionFragment extends BaseFragment {
 			public void setContent(PrescriptionModel item) {
 				String name = item.getName();
 				int dosage = item.getDosage();
-				long startDate = item.getStartDate();
 
-				AlarmSender alarmSender = new AlarmSender();
-				alarmSender.setTimeInMillis(startDate);
-				String minute = alarmSender.getFieldString(AlarmSender.MINUTE, false);
-				int hour = alarmSender.get(AlarmSender.HOUR);
-				if (hour == 0) {
-					hour = 12;
-				}
-				if (minute.length() < 2) {
-					minute = "0" + minute;
-				}
-				String time = String.valueOf(hour) + ":" + minute;
-				String timePeriod = "AM";
-				int hourOfDay = alarmSender.get(AlarmSender.HOUR_OF_DAY);
-				if (hourOfDay > 11) {
-					timePeriod = "PM";
-				}
+				AlarmModel alarm = alarmModule.getAlarmById(item.getAlarmID());
+
+				alarmModule.setTimeInMillis(alarm.getTime());
+
 				TextView alarmTime = (TextView) mLinearLayout.findViewById(R.id.alarm_time);
 				TextView alarmPeriod = (TextView) mLinearLayout.findViewById(R.id.alarm_time_period);
 				TextView alarmDosage = (TextView) mLinearLayout.findViewById(R.id.alarm_dosage);
@@ -84,8 +76,8 @@ public class PrescriptionFragment extends BaseFragment {
 					removeAlarm(item);
 					updateAlarmList();
 				});
-				alarmTime.setText(time);
-				alarmPeriod.setText(timePeriod);
+				alarmTime.setText(alarmModule.getPrettyTime());
+				alarmPeriod.setText(alarmModule.getTimePeriod());
 				alarmDosage.setText(String.valueOf(dosage) + " " + name + " every day");
 			}
 		}
@@ -181,8 +173,10 @@ public class PrescriptionFragment extends BaseFragment {
 							}
 							prescriptionModule.setName(name);
 							prescriptionModule.setDosage(dosage);
-							prescriptionModule.setStartDate(System.currentTimeMillis());
-							prescriptionModule.setRepeatDuration(AlarmManager.INTERVAL_DAY);
+							// Set alarm data
+							alarmModule.setTimeInMillis(System.currentTimeMillis());
+							// Tie alarm to prescription
+							prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
 							prescriptionModule.addPrescription();
 							updateAlarmList();
 							scrollAlarmListToBottom();
@@ -214,19 +208,32 @@ public class PrescriptionFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 
 		prescriptionModule = new PrescriptionModule();
+		alarmModule = new AlarmModule();
 
 		prescriptionModule.clearAllPrescriptions();
 
-		prescriptionModule.setName("foolenol");
-		prescriptionModule.setDosage(5);
-		prescriptionModule.setStartDate(System.currentTimeMillis());
-		prescriptionModule.setRepeatDuration(AlarmManager.INTERVAL_DAY);
+		// Set Prescription data
+		prescriptionModule.setName("foolenol")
+				.setDosage(5);
+
+		// Set alarm data
+		alarmModule.setTimeInMillis(System.currentTimeMillis());
+
+		// Tie alarm to prescription
+		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
+
 		prescriptionModule.addPrescription();
 
+		// Set Prescription data
 		prescriptionModule.setName("barlisil");
 		prescriptionModule.setDosage(3);
-		prescriptionModule.setStartDate(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
-		prescriptionModule.setRepeatDuration(AlarmManager.INTERVAL_DAY);
+
+		// Set alarm data
+		alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
+
+		// Tie alarm to prescription
+		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
+
 		prescriptionModule.addPrescription();
 
 		xml().alarmList.setLayoutManager(new LinearLayoutManager(getActivity()));

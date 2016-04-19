@@ -1,6 +1,9 @@
+import android.app.AlarmManager;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
+import com.sciencesquad.health.R;
+import com.sciencesquad.health.alarm.AlarmModule;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.nutrition.NutrientQuery;
@@ -118,6 +121,21 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
         Log.d("testDataGetter", urlString);
     }
 
+    @Test
+    public void testAlarm() {
+        AlarmModule alarmModule = new AlarmModule();
+        for (int i = 0; i < 5; i++) {
+            Log.d("testAlarm", "Started adding alarm");
+            alarmModule.setTimeInMillis(System.currentTimeMillis() + (1000 * 60 * 60 * 24))
+                    .setRepeatInterval(AlarmModule.RepeatInterval.NEVER)
+                    .setNotificationTitle("Title")
+                    .setNotificationContent("Content")
+                    .setNotificationIcon(R.drawable.ic_menu_nutrition)
+                    .setNotificationLayout(android.R.layout.simple_list_item_2)
+                    .add();
+        }
+    }
+
 
     /*
     @Test
@@ -136,7 +154,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             benchPress.setTarget("Chest");
             Calendar rightNow = Calendar.getInstance();
             benchPress.setDate(rightNow.getTime());
-            */
+
             ExerciseTypeModel benchPress = WorkoutModule.createNewExercise("Bench Press", "Strength", "Chest");
             testRealm.add(benchPress);
             RealmQuery<ExerciseTypeModel> testQuery = testRealm.query(ExerciseTypeModel.class);

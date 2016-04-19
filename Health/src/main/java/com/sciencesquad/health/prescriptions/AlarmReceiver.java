@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.sciencesquad.health.alarm.AlarmModel;
+import com.sciencesquad.health.alarm.AlarmModule;
 import com.sciencesquad.health.core.HostActivity;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
@@ -16,7 +18,7 @@ import com.sciencesquad.health.core.BaseApp;
 /**
  * Created by andrew on 3/4/16.
  */
-public class PrescriptionAlarmReceiver extends BroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
 
 	static final String NOTIFICATION_TITLE = "Prescription Reminder";
 	static final int SMALL_ICON = R.drawable.ic_menu_manage;
@@ -48,8 +50,16 @@ public class PrescriptionAlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		String name = intent.getStringExtra(PrescriptionAlarm.PRESCRIPTION_NAME);
-		int dosage = intent.getIntExtra(PrescriptionAlarm.PRESCRIPTION_DOSAGE, 0);
+		// Placeholders :(
+		String name = "Prescription name";
+		int dosage = 0;
+
+		int alarmId = intent.getIntExtra("alarmId", 0);
+		if (alarmId == 0) {
+			return;
+		}
+		AlarmModule alarmModule = new AlarmModule();
+		AlarmModel alarm = alarmModule.getAlarmById(alarmId);
 
 		Log.d("PAReceiver", "Name: " + name + " Dosage: " + String.valueOf(dosage));
 
