@@ -24,11 +24,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
@@ -86,12 +88,17 @@ public class RunFragment extends BaseFragment implements
 	static double totalCalories = 0;
     double speed = 0;
 	LatLng lastLoc = null;
+    LatLng lastLocPersistent = null;
 
 	boolean firstLoc = true; // used to ensure that only one starting marker is created.
     boolean isRunStarted = false; // only starts on button press.
+    boolean firstMarker = true;
 	Marker currentPos = null; // used to display current position
+    static Marker startingMarker = null;
 	Circle accuracyCircle = null;
     float currentAcc;
+    private Polyline polyline;
+    boolean toClearOnStart = false;
 
     Realm realm = Realm.getDefaultInstance();
 
@@ -183,6 +190,7 @@ public class RunFragment extends BaseFragment implements
         saveRunToRealm();
         resetRunValues();
         xml().buttonStartRun.setVisibility(View.VISIBLE);
+        toClearOnStart = true;
     }
 
     public void resetRunValues() {
@@ -196,12 +204,18 @@ public class RunFragment extends BaseFragment implements
         speed = 0;
         updateTextViews();
         lastLoc = null;
+        firstMarker = true;
     }
 
     public void buttonStartRunClicked() {
         try {
+            if(toClearOnStart) clearLastRun();
             isRunStarted = true;
-            startRun(lastLoc);
+            if(lastLoc!=null) {
+                startRun(lastLoc);
+            } else {
+                startRun(lastLocPersistent);
+            }
             //Makes start button disappear on click
             xml().buttonStartRun.setVisibility(View.GONE);
         } catch(Exception e) {
@@ -210,6 +224,15 @@ public class RunFragment extends BaseFragment implements
         } catch(Error e2) {
             Log.e(TAG, "Error: " + e2.toString());
         }
+    }
+
+    public void clearLastRun() {
+        if (polyline!=null) polyline.remove();
+        polyline = null;
+        if (startingMarker!=null) startingMarker.remove();
+        startingMarker = null;
+        if (currentPos!=null) currentPos.remove();
+        currentPos = null;
     }
 
     @Override
@@ -253,11 +276,19 @@ public class RunFragment extends BaseFragment implements
         //float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
         float minDistResolution = currentAcc/8; //TEST RESOLUTION
 
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                .title("Current Position");
 
-        if (lastLoc==null) {
+
+        if (currentPos==null) {
             lastLoc = latLng;
-            currentPos = mMap.addMarker(currentPosOptions);
-            accuracyCircle = mMap.addCircle(accuracyCircleOptions);
+            lastLocPersistent = latLng;
+            currentPos = mMap.addMarker(options);
+            if (accuracyCircle==null) {
+                accuracyCircle = mMap.addCircle(accuracyCircleOptions);
+            }
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -273,6 +304,7 @@ public class RunFragment extends BaseFragment implements
             return; //stops running the method if distance is inconsequential.
 
         lastLoc = latLng;
+        lastLocPersistent = latLng;
 
 
         pointsLatLng.add(latLng);
@@ -297,8 +329,12 @@ public class RunFragment extends BaseFragment implements
 
         currentPos.setPosition(latLng);
 
-        mMap.addPolyline((polylineoptions)
-                .addAll(pointsLatLng));
+        if (firstMarker) {
+            polyline = mMap.addPolyline(polylineoptions.addAll(pointsLatLng));
+            firstMarker = false;
+        } else {
+            polyline.setPoints(pointsLatLng);
+        }
     }
 
     public void updateTextViews() {
@@ -328,8 +364,13 @@ public class RunFragment extends BaseFragment implements
     public static void newStartingMarker(GoogleMap mMap, LatLng latLng) {
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 .title("Starting Place");
-        mMap.addMarker(options);
+        if (startingMarker==null) {
+            startingMarker = mMap.addMarker(options);
+        } else {
+            startingMarker.setPosition(latLng);
+        }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
     }
 
