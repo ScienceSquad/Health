@@ -20,16 +20,12 @@ public class SleepModule extends Module {
 	private DataContext<SleepDataModel> dataContext;
 
 	public void init() {
-		Log.i(TAG, "SleepModule initializing...");
-
 		this.dataContext = new RealmContext<>();
 		this.dataContext.init(BaseApp.app(), SleepDataModel.class, "sleep.realm");
 
 		// Run the sleep monitor for a minute.
 		SleepMonitoringService.startMonitoringService();
-		Dispatcher.BACKGROUND.run(() -> {
-			SleepMonitoringService.stopMonitoringService();
-		}, 1L, TimeUnit.MINUTES);
+		Dispatcher.BACKGROUND.run(SleepMonitoringService::stopMonitoringService, 1L, TimeUnit.MINUTES);
 
 		// Broadcast an event to say that we started up.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {

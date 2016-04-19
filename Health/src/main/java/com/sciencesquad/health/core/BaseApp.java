@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -58,7 +59,10 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 *
 	 * @return the EventBus globally available to the app.
 	 */
+	@NonNull
 	public EventBus eventBus() {
+		if (_eventBus == null)
+			_eventBus = new EventBus(this);
 		return _eventBus;
 	}
 
@@ -142,17 +146,16 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		_application = this;
 
+		// Application-specific configuration.
 		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(getBaseContext())
 				.name("default.health.realm")
 				.deleteRealmIfMigrationNeeded()
 				.build();
 		Realm.setDefaultConfiguration(defaultConfig);
-		// gives timezone data.
 		AndroidThreeTen.init(this);
 
-		_application = this;
-		_eventBus = new EventBus(this);
 		this.eventBus().publish("AppCreateEvent", this);
 	}
 

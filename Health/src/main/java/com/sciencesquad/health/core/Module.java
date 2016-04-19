@@ -69,6 +69,7 @@ public abstract class Module implements Observable {
 	@Nullable
 	public static <T extends Module> T register(@NonNull Class<T> module) {
 		try {
+			Log.i(TAG, "Initializing " + module.getSimpleName() + "...");
 			T instance = module.newInstance();
 			instance.init();
 			return _modules.add(instance) ? instance : null;
@@ -115,7 +116,6 @@ public abstract class Module implements Observable {
 				.filter(a -> module.isAssignableFrom(a.getClass()))
 				.findFirst()
 				.orElse(Module.register(module));
-		Log.i(TAG, "TEST WITH " + item);
 		return item;
 	}
 
