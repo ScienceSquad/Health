@@ -9,10 +9,10 @@ import android.transition.Visibility;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.EventBus.Entry;
@@ -85,11 +85,11 @@ public class SleepFragment extends BaseFragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		xml().setModule((module = Module.moduleForClass(SleepModule.class)));
+		xml().setModule((module = Module.of(SleepModule.class)));
 
 		// Prepare the sleep dialog.
 		Drawable zzz = getTintedDrawable(this, R.drawable.ic_menu_sleep, Color.WHITE);
-		bus(b -> track(b.subscribe("SoundServiceStopEvent", null, ev -> {
+		bus(b -> track(b.subscribe("SleepWakeAlarmEvent", null, ev -> {
 			new MaterialStyledDialog(getActivity())
 					.setIcon(zzz)
 					.setCustomView(getInflater().inflate(R.layout.fragment_sleep_userinput, null))
@@ -112,7 +112,7 @@ public class SleepFragment extends BaseFragment {
 		xml().fab.setOnClickListener(v -> {
 			// 15 min to fall asleep, 90 min cycles. FIXME
 			TimePickerDialog tpd = TimePickerDialog.newInstance((l, h, m, s) -> {
-				Toast.makeText(getActivity(), "Got " + h + " " + m + " " + s, Toast.LENGTH_LONG).show();
+				BaseApp.app().display("Got " + h + ":" + m + ":" + s, true);
 			}, 8, 30, false);
 			tpd.show(getFragmentManager(), "TPD");
 

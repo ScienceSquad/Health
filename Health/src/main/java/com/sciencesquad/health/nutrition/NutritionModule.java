@@ -1,15 +1,10 @@
 package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
-import android.util.Pair;
-
-import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-
 import io.realm.RealmResults;
-
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
@@ -192,13 +187,8 @@ public class NutritionModule extends Module {
     }
 
     @Override
-    public Pair<String, Integer> identifier() {
-        return new Pair<>("Nutrition", R.drawable.ic_menu_nutrition);
-    }
-
-    @Override
     public void init() {
-        Module.registerModule(this.getClass());
+        Module.register(this.getClass());
 
     }
 

@@ -4,12 +4,17 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.sciencesquad.health.core.EventBus.Entry;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The BaseApp connects the monolithic Android Application
@@ -29,6 +34,11 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 * The private app-wide instance of the EventBus.
 	 */
 	private EventBus _eventBus;
+
+	/**
+	 * The set of Application-wide Wakelocks.
+	 */
+	private static Map<String, PowerManager.WakeLock> locks = new ConcurrentHashMap<>();
 
 	/**
 	 * Returns the global shared BaseApp.
@@ -56,6 +66,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 * Convenience method to access vibration functions.
 	 *
 	 * @see Vibrator
+	 * @param milliseconds the vibration duration
 	 */
 	public void vibrate(long milliseconds) {
 		Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
@@ -66,10 +77,60 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 * Convenience method to access vibration functions.
 	 *
 	 * @see Vibrator
+	 * @param pattern the vibration pattern
+	 * @param repeat the number of times to repeat the pattern
 	 */
 	public void vibrate(long[] pattern, int repeat) {
 		Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 		v.vibrate(pattern, repeat);
+	}
+
+	/**
+	 * Convenience method to display a Toast message.
+	 *
+	 * @see Toast
+	 * @param text the text to display on screen
+	 * @param longer whether to display the message for a longer time
+	 */
+	public void display(CharSequence text, boolean longer) {
+		Toast.makeText(this, text, longer ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+	}
+
+	/**
+	 * Convenience method to acquire a managed WakeLock by ID.
+	 *
+	 * @see PowerManager
+	 * @param id the unique WakeLock ID
+	 * @param flags flags passed to PowerManager to create a WakeLock
+	 * @param autorelease the number of milliseconds to autorelease within
+	 */
+	public void acquireWakelock(String id, int flags, int autorelease) {
+		final PowerManager power = (PowerManager)getSystemService(Context.POWER_SERVICE);
+		final PowerManager.WakeLock lock = power.newWakeLock(flags, id);
+		lock.setReferenceCounted(false);
+
+		// Manage our non-reference counted lock and acquire it.
+		locks.put(id, lock);
+		if (autorelease <= 0)
+			lock.acquire();
+		else lock.acquire(autorelease);
+	}
+
+	/**
+	 * Convenience method to release a managed WakeLock by ID.
+	 *
+	 * @see PowerManager
+	 * @param id the unique WakeLock ID
+	 */
+	public void releaseWakelock(String id) {
+		final PowerManager.WakeLock wakeLock = locks.get(id);
+		try {
+			if (wakeLock != null)
+				wakeLock.release();
+		} catch (Exception ignored) {
+		} finally {
+			locks.remove(id);
+		}
 	}
 
 	/**

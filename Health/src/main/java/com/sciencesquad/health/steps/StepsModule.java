@@ -1,23 +1,10 @@
 package com.sciencesquad.health.steps;
 
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-
-import android.util.Log;
-import android.util.Pair;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-
-import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.SensorContext;
-import com.sciencesquad.health.core.BaseApp;
-
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
@@ -172,11 +159,6 @@ public class StepsModule extends Module {
         numSteps = 0;
         counterSteps = 0;
         //writeStepsToRealm();
-    }
-
-    @Override
-    public Pair<String, Integer> identifier() {
-        return null;
     }
 
     @Override

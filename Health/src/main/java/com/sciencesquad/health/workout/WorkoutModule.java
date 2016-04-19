@@ -1,26 +1,17 @@
 package com.sciencesquad.health.workout;
 
 import android.util.Log;
-import android.util.Pair;
-
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.BaseApp;
-
-import org.threeten.bp.DateTimeUtils;
+import io.realm.RealmList;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneOffset;
-import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 /**
  * Created by mrjohnson on 3/1/16.
@@ -28,7 +19,7 @@ import io.realm.RealmResults;
 
 public class WorkoutModule extends Module {
     public static final String TAG = WorkoutModule.class.getSimpleName();
-    static { Module.registerModule(WorkoutModule.class); }
+    static { Module.register(WorkoutModule.class); }
 
     //Data context.
     private RealmContext<ExerciseTypeModel> workoutRealm;
@@ -141,12 +132,6 @@ public class WorkoutModule extends Module {
         RoutineModel strongLiftsB = createNewRoutine("StrongLifts 5x5: B", exerciseNamesB);
         addRoutineModel(strongLiftsB);
 
-    }
-
-
-    @Override
-    public Pair<String, Integer> identifier() {
-        return null;
     }
 
     @Override

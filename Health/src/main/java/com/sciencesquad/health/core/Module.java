@@ -8,11 +8,11 @@ import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.Pair;
 import com.sciencesquad.health.core.util.X;
 import java8.util.function.Consumer;
 import java8.util.stream.StreamSupport;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -75,7 +75,7 @@ public abstract class Module implements Observable {
 	 * Example:
 	 * ```java
 	 * static {
-	 *     Module.registerModule(this);
+	 *     Module.register(this);
 	 * }
 	 * ```
 	 *
@@ -83,7 +83,7 @@ public abstract class Module implements Observable {
 	 * @return true if registration successful, false otherwise
 	 */
 	@Nullable
-	public static <T extends Module> T registerModule(@NonNull Class<T> module) {
+	public static <T extends Module> T register(@NonNull Class<T> module) {
 		try {
 			T instance = module.newInstance();
 			instance.init();
@@ -100,7 +100,7 @@ public abstract class Module implements Observable {
 	 * @param module the module to unregister
 	 * @return true if unregistration successful, false otherwise
 	 */
-	public static <T extends Module> void unregisterModule(@NonNull Class<T> module) {
+	public static <T extends Module> void unregister(@NonNull Class<T> module) {
 		StreamSupport.stream(_modules)
 				.filter(a -> module.isAssignableFrom(a.getClass()))
 				.forEach(v -> _modules.remove(v));
@@ -112,8 +112,8 @@ public abstract class Module implements Observable {
 	 * @return all registered Module subclasses
 	 */
 	@NonNull
-	public static Set<Module> registeredModules() {
-		return _modules;
+	public static Set<Module> all() {
+		return Collections.unmodifiableSet(_modules);
 	}
 
 	/**
@@ -126,25 +126,14 @@ public abstract class Module implements Observable {
 	 */
 	@NonNull
 	@SuppressWarnings("unchecked")
-	public static <T extends Module> T moduleForClass(@NonNull Class<T> module) {
+	public static <T extends Module> T of(@NonNull Class<T> module) {
 		T item =  (T)StreamSupport.stream(_modules)
 				.filter(a -> module.isAssignableFrom(a.getClass()))
 				.findFirst()
-				.orElse(Module.registerModule(module));
+				.orElse(Module.register(module));
 		Log.i(TAG, "TEST WITH " + item);
 		return item;
 	}
-
-	/**
-	 * A Module's identifier provides the name and icon of a Module for
-	 * implementations where the user interacts with available Modules.
-	 *
-	 * The identifier is a tuple consisting of a String for the Module name,
-	 * and an icon, represented as an integer drawable resource.
-	 *
-	 * @return a tuple of a String for the name and int for the drawable
-	 */
-	public abstract Pair<String, Integer> identifier();
 
 	/**
 	 * Refrain from using the constructor of a module for initialization

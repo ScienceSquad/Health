@@ -1,15 +1,10 @@
 package com.sciencesquad.health.prescriptions;
 
 import android.util.Log;
-import android.util.Pair;
-
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.BaseApp;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
-
-import java.util.Calendar;
 
 /**
  * Nutrition Module itself.
@@ -68,12 +63,6 @@ public class PrescriptionModule extends Module {
 
 	public void clearAllPrescriptions() {
 		prescriptionRealm.clear();
-	}
-
-
-	@Override
-	public Pair<String, Integer> identifier() {
-		return null;
 	}
 
 	@Override

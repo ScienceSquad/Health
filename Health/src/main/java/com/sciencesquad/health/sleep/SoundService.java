@@ -11,7 +11,6 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
-import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.util.X;
@@ -135,7 +134,7 @@ public class SoundService extends Service {
 		// Handle STOP first, and pass-through to START.
 		// If intent is null, the Service was just restarted.
 		if (intent != null && STOP.equals(intent.getAction())) {
-			Toast.makeText(this, "Stopping sounds...", Toast.LENGTH_SHORT).show();
+			BaseApp.app().display("Stopping sounds...", false);
 			stopSelfResult(startId);
 			return Service.START_REDELIVER_INTENT;
 		}

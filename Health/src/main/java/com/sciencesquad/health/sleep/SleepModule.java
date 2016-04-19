@@ -1,9 +1,6 @@
 package com.sciencesquad.health.sleep;
 
 import android.util.Log;
-import android.util.Pair;
-import android.widget.Toast;
-import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.Module;
@@ -38,7 +35,7 @@ public class SleepModule extends Module {
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
 			bus.subscribe("SleepWakeAlarmEvent", null, ev -> {
 				Log.i(TAG, "Woke up!");
-				Toast.makeText(BaseApp.app(), "Woke up!", Toast.LENGTH_LONG).show();
+				BaseApp.app().display("Woke up!", true);
 				BaseApp.app().vibrate(3000);
 			});
 		});
@@ -65,10 +62,5 @@ public class SleepModule extends Module {
 			c.roll(Calendar.MINUTE, 90);
 		} while (c.before(reference));
 		return c;
-	}
-
-	@Override
-	public Pair<String, Integer> identifier() {
-		return new Pair<>("Sleep", R.drawable.ic_music_circle);
 	}
 }
