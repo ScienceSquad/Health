@@ -14,6 +14,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.cocoahero.android.geojson.Feature;
+import com.cocoahero.android.geojson.GeoJSON;
+import com.cocoahero.android.geojson.GeoJSONObject;
+import com.cocoahero.android.geojson.MultiPoint;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -65,7 +69,8 @@ public class RunFragment extends BaseFragment implements
     }
 
     // Our generated binding class is different...
-    @Override @SuppressWarnings("unchecked")
+    @Override
+    @SuppressWarnings("unchecked")
     protected FragmentRunBinding xml() {
         return super.xml();
     }
@@ -85,21 +90,21 @@ public class RunFragment extends BaseFragment implements
     private TextView textViewDistance;
     private TextView textViewSpeed;
 
-	List<LatLng> pointsLatLng = new ArrayList<>();
-	List<Long> timeStamps = new ArrayList<>();
-	List<Double> distances = new ArrayList<>();
-	static double totalDistance = 0;
-	static double totalCalories = 0;
+    List<LatLng> pointsLatLng = new ArrayList<>();
+    List<Long> timeStamps = new ArrayList<>();
+    List<Double> distances = new ArrayList<>();
+    static double totalDistance = 0;
+    static double totalCalories = 0;
     double speed = 0;
-	LatLng lastLoc = null;
+    LatLng lastLoc = null;
     LatLng lastLocPersistent = null;
 
-	boolean firstLoc = true; // used to ensure that only one starting marker is created.
+    boolean firstLoc = true; // used to ensure that only one starting marker is created.
     boolean isRunStarted = false; // only starts on button press.
     boolean firstMarker = true;
-	Marker currentPos = null; // used to display current position
+    Marker currentPos = null; // used to display current position
     static Marker startingMarker = null;
-	Circle accuracyCircle = null;
+    Circle accuracyCircle = null;
     float currentAcc;
     private Polyline polyline;
     boolean toClearOnStart = false;
@@ -107,11 +112,11 @@ public class RunFragment extends BaseFragment implements
     Realm realm = Realm.getDefaultInstance();
 
     MarkerOptions currentPosOptions = new MarkerOptions()
-            .position(new LatLng(40,40))
+            .position(new LatLng(40, 40))
             .title("Current Position");
 
     CircleOptions accuracyCircleOptions = new CircleOptions()
-            .center(new LatLng(40,40))
+            .center(new LatLng(40, 40))
             .radius((double) currentAcc)
             .strokeColor(0xaf00bfff)
             .fillColor(0x3f00bfff);
@@ -190,8 +195,19 @@ public class RunFragment extends BaseFragment implements
     }
 
     public void setUpGeoJson() {
+        /*
         //TODO: Create a GeoJSON object from path.
+        GeoJSON geojson = new GeoJSON();
+        GeoJSONObject geojsonobject = new GeoJSONObject() {
+            @Override
+            public String getType() {
+                return GeoJSON.TYPE_MULTI_POINT;
+            }
+            MultiPoint multiPoint = new MultiPoint(pathArray);
+            JSONObject geoJSON = multiPoint.toJSON();
+        }; */
     }
+
 
 
     public void stopRun() {
