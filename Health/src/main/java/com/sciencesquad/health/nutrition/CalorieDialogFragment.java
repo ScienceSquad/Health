@@ -117,7 +117,17 @@ public class CalorieDialogFragment extends DialogFragment {
         cholesterolField.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         RadioButton caffeineButton = (RadioButton) dialogLayout.findViewById(R.id.caffeine_button);
-        caffeineButton.setOnClickListener(v -> hadCaffeine = true);
+        caffeineButton.setOnClickListener(v -> {
+            Log.d(TAG, "caffiene button set: "+ caffeineButton.isChecked());
+            if (!hadCaffeine) {
+                hadCaffeine = true;
+            }
+            else {
+                caffeineButton.setChecked(false);
+                hadCaffeine = false;
+            }
+
+        });
 
         TextView numCheatDaysView = (TextView) dialogLayout.findViewById(R.id.cheat_view);
         numCheatDaysView.setText("Cheat days left: " +
