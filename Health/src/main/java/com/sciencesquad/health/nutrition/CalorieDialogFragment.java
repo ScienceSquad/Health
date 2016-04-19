@@ -24,8 +24,6 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-
-
 public class CalorieDialogFragment extends DialogFragment {
     private static final String TAG = CalorieDialogFragment.class.getSimpleName();
 
