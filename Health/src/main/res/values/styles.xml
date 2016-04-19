@@ -26,6 +26,7 @@
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
         <item name="android:windowSharedElementReenterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementReturnTransition">@android:transition/move</item>
+        <item name="android:textColorPrimary">@color/accent_material_light</item>
     </style>
 
     <style name="AppTheme.Fullscreen" parent="AppTheme">
@@ -156,6 +157,10 @@
         <item name="colorAccent">@color/amber_700</item>
         <item name="colorPrimary">@color/blue_grey_700</item>
         <item name="colorPrimaryDark">@color/blue_grey_900</item>
+    </style>
+
+    <style name="AppTheme.Run" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/accent_material_light</item>
     </style>
 
 

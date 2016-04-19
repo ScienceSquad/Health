@@ -4,28 +4,34 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.google.android.gms.common.api.CommonStatusCodes;
+
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentNutritionBinding;
+
 
 import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
+
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 
 /**
@@ -33,11 +39,14 @@ import java.util.ArrayList;
  */
 public class NutritionFragment extends BaseFragment {
     public static final String TAG = NutritionFragment.class.getSimpleName();
+    private static final int RC_BARCODE_CAPTURE = 9001;
 
     private NutritionModule nutritionModule;
     private LineChart nutritionChart;
     private RecyclerView recycleList;
+    private RecyclerView foodList;
     private ArrayList<String> nutritionLog;
+    private ArrayList<String> foodLog;
 
     private FloatingActionButton fab; // overall
     private FloatingActionButton fab2; // diet
@@ -45,13 +54,19 @@ public class NutritionFragment extends BaseFragment {
     private FloatingActionButton fab4; // submit
     private FloatingActionButton fab5; // ZXing.
 
+    private Animation fab_open;
+    private Animation fab_close;
+
     @Override
     protected Configuration getConfiguration() {
         return new Configuration(TAG, "Nutrition", R.drawable.ic_menu_nutrition,
                 R.style.AppTheme_Nutrition, R.layout.fragment_nutrition);
     }
 
-    // Our generated binding class is different...
+    /**
+     * XML formatting for the Nutrition Fragment
+     * @return
+     */
     @Override @SuppressWarnings("unchecked")
     protected FragmentNutritionBinding xml() {
         return super.xml();
@@ -69,6 +84,15 @@ public class NutritionFragment extends BaseFragment {
 
         nutritionModule.generateData();
 
+        fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+                R.anim.fab_close);
+
+        TabLayout tabLayout = xml().tabs;
+        StaticPagerAdapter.install(xml().pager);
+        tabLayout.setupWithViewPager(xml().pager);
+
         // create FABs.
         fab = xml().fabNutrition;
         fab2 = xml().fabDiet;
@@ -82,6 +106,11 @@ public class NutritionFragment extends BaseFragment {
 
         // set FABs listeners.
         fab.setOnClickListener(v -> {
+            fab.startAnimation(fab_close);
+            fab2.startAnimation(fab_open);
+            fab3.startAnimation(fab_open);
+            fab4.startAnimation(fab_open);
+            fab5.startAnimation(fab_open);
             fab.hide();
             fab2.show();
             fab3.show();
@@ -90,6 +119,7 @@ public class NutritionFragment extends BaseFragment {
         });
 
         fab2.setOnClickListener(v -> {
+            fab.startAnimation(fab_open);
             fab.show();
             fab2.hide();
             fab3.hide();
@@ -99,6 +129,7 @@ public class NutritionFragment extends BaseFragment {
         });
 
         fab3.setOnClickListener(v -> {
+            fab.startAnimation(fab_open);
             fab.show();
             fab2.hide();
             fab3.hide();
@@ -108,6 +139,7 @@ public class NutritionFragment extends BaseFragment {
         });
 
         fab4.setOnClickListener(v -> {
+            fab.startAnimation(fab_open);
             fab.show();
             fab2.hide();
             fab3.hide();
@@ -117,6 +149,7 @@ public class NutritionFragment extends BaseFragment {
         });
 
         fab5.setOnClickListener(v -> {
+            fab.startAnimation(fab_open);
             fab.show();
             fab2.hide();
             fab3.hide();
@@ -126,14 +159,19 @@ public class NutritionFragment extends BaseFragment {
         });
 
         nutritionLog = nutritionModule.createNutritionLog();
-        recycleList = (RecyclerView) view.findViewById(R.id.nutrition_recycler_view);
-        NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(nutritionLog);
+        recycleList = xml().nutritionRecyclerView;
+        NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(nutritionLog, "Nutrition Log");
         recycleList.setAdapter(adapter);
         recycleList.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
+        foodLog = nutritionModule.createFoodLog();
+        foodList = xml().nutritionHistoryView;
+        NutritionRecycleAdapter foodAdapter = new NutritionRecycleAdapter(foodLog, "Food History");
+        foodList.setAdapter(foodAdapter);
+        foodList.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         // setting up the chart.
-        nutritionChart = (LineChart) view.findViewById(R.id.nutrition_chart);
+        nutritionChart = xml().nutritionChart;
         nutritionChart.setDescription("Calorie History");
 
         // getting the data to display.
@@ -143,23 +181,43 @@ public class NutritionFragment extends BaseFragment {
     }
 
     private void useZxing() {
-        IntentIntegrator.forFragment(this).initiateScan();
+
+        //IntentIntegrator.forFragment(this).initiateScan();
+        // launch barcode activity.
+        Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
+        startActivityForResult(intent, RC_BARCODE_CAPTURE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        IntentResult result= IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null){
-            if (result.getContents() != null){
-                Snackbar snackbar = Snackbar.make(xml().getRoot(),
-                        "Scanned: " + result.getContents(), Snackbar.LENGTH_SHORT);
-                snackbar.show();
+        if (requestCode == RC_BARCODE_CAPTURE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    //statusMessage.setText(R.string.barcode_success);
+                    //barcodeValue.setText(barcode.displayValue);
+
+                    int selectedTab = xml().tabs.getSelectedTabPosition();
+                    if (selectedTab == 0) {
+                        Snackbar.make(xml().page1, "Barcode read: " + barcode.displayValue,
+                                Snackbar.LENGTH_LONG).show();
+                    }
+                    else if (selectedTab == 1){
+                        Snackbar.make(xml().page2, "Barcode read: " + barcode.displayValue,
+                                Snackbar.LENGTH_LONG).show();
+                    }
+
+
+                } else {
+                    Log.d(TAG, "No barcode captured, intent data is null");
+                }
+            } else {
+                Log.d(TAG, CommonStatusCodes.getStatusCodeString(resultCode));
             }
         }
         else {
-            // shit broke.
+            super.onActivityResult(requestCode, resultCode, data);
         }
-
     }
 
     /**
@@ -172,14 +230,6 @@ public class NutritionFragment extends BaseFragment {
         newFrag.setTargetFragment(this, 0);
         newFrag.show(getFragmentManager(), "diet dialog");
 
-    }
-
-    /**
-     * Creates the Nutrient Menu which was originally the Calorie Menu.
-     */
-
-    public void submitCalories(){
-        createCalorieDialog();
     }
 
     /**

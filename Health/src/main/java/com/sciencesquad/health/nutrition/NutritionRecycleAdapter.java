@@ -7,16 +7,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.EventBus;
 
 import java.util.List;
 
 
+
 public class NutritionRecycleAdapter extends RecyclerView.Adapter<NutritionRecycleAdapter.NutritionViewHolder> {
 
-    private List<String> nutritionLog;
+    public static final String TAG = NutritionRecycleAdapter.class.getSimpleName();
 
-    public NutritionRecycleAdapter (List<String> nutritionLog) {
+    private String name;
+    private List<String> nutritionLog;
+    public NutritionRecycleAdapter (List<String> nutritionLog, String name) {
         this.nutritionLog = nutritionLog;
+        this.name = name;
     }
 
 
@@ -28,7 +34,7 @@ public class NutritionRecycleAdapter extends RecyclerView.Adapter<NutritionRecyc
     @Override
     public void onBindViewHolder(NutritionViewHolder nutritionViewHolder, int i) {
         String logEntry = nutritionLog.get(i);
-        nutritionViewHolder.nutritionLog.setText(logEntry);
+        nutritionViewHolder.nutritionLogView.setText(logEntry);
     }
 
     @Override
@@ -40,12 +46,24 @@ public class NutritionRecycleAdapter extends RecyclerView.Adapter<NutritionRecyc
         return new NutritionViewHolder(logView);
     }
 
-    public static class NutritionViewHolder extends RecyclerView.ViewHolder {
-        protected TextView nutritionLog;
-        public NutritionViewHolder(View v) {
+    public class NutritionViewHolder extends RecyclerView.ViewHolder {
+        protected TextView nutritionLogView;
+        public NutritionViewHolder(View v)   {
             super(v);
-            nutritionLog = (TextView) v.findViewById(R.id.log_text);
-
+            nutritionLogView = (TextView) v.findViewById(R.id.log_text);
+            nutritionLogView.setOnLongClickListener(v1 -> {
+                remove(getAdapterPosition());
+                return true;
+            });
         }
     }
+
+    public void remove(int position){
+        String removedItem = nutritionLog.remove(position);
+        notifyItemRemoved(position);
+        BaseApp.app().eventBus().publish("DataUpdateEvent", this,
+                new EventBus.Entry(name, removedItem));
+
+    }
+
 }
