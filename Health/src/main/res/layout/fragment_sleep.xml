@@ -35,7 +35,199 @@
                 android:layout_marginTop="?attr/actionBarSize"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?colorPrimary" >
+                android:background="?colorPrimary">
+            <LinearLayout
+                    android:id="@+id/page1"
+                    android:tag="Alarms"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                <android.support.v7.widget.CardView
+                        android:layout_height="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@anim/lift_on_touch"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardUseCompatPadding="true"
+                        app:cardBackgroundColor="?colorPrimaryDark"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="6dp"
+                        android:tag="1"
+                        android:id="@+id/alarm1">
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="start|center_vertical"
+                                android:textSize="24sp"
+                                android:textColor="?colorAccent"
+                                android:textAllCaps="true"
+                                android:fontFamily="sans-serif-condensed-light"
+                                android:text="SUN" />
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="end|center_vertical"
+                                android:gravity="center"
+                                android:textSize="72sp"
+                                android:textColor="@color/white"
+                                android:text="6:00 AM"/>
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                        android:layout_height="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@anim/lift_on_touch"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardUseCompatPadding="true"
+                        app:cardBackgroundColor="?colorPrimaryDark"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="6dp"
+                        android:tag="2"
+                        android:id="@+id/alarm2">
+                    <TextClock
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="100sp"
+                            android:textColor="@color/white"
+                            android:format12Hour="6:00 AM"/>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                        android:layout_height="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@anim/lift_on_touch"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardUseCompatPadding="true"
+                        app:cardBackgroundColor="?colorPrimaryDark"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="6dp"
+                        android:tag="3"
+                        android:id="@+id/alarm3">
+                    <TextClock
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="100sp"
+                            android:textColor="@color/white"
+                            android:format12Hour="6:00 AM"/>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                        android:layout_height="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@anim/lift_on_touch"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardUseCompatPadding="true"
+                        app:cardBackgroundColor="?colorPrimaryDark"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="6dp"
+                        android:tag="4"
+                        android:id="@+id/alarm4">
+                    <TextClock
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="100sp"
+                            android:textColor="@color/white"
+                            android:format12Hour="6:00 AM"/>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                        android:layout_height="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@anim/lift_on_touch"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardUseCompatPadding="true"
+                        app:cardBackgroundColor="?colorPrimaryDark"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="6dp"
+                        android:tag="5"
+                        android:id="@+id/alarm5">
+                    <TextClock
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="100sp"
+                            android:textColor="@color/white"
+                            android:format12Hour="6:00 AM"/>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                        android:layout_height="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@anim/lift_on_touch"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardUseCompatPadding="true"
+                        app:cardBackgroundColor="?colorPrimaryDark"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="6dp"
+                        android:tag="6"
+                        android:id="@+id/alarm6">
+                    <TextClock
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="100sp"
+                            android:textColor="@color/white"
+                            android:format12Hour="6:00 AM"/>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                        android:layout_height="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@anim/lift_on_touch"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardUseCompatPadding="true"
+                        app:cardBackgroundColor="?colorPrimaryDark"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="6dp"
+                        android:tag="7"
+                        android:id="@+id/alarm7">
+                    <TextClock
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="100sp"
+                            android:textColor="@color/white"
+                            android:format12Hour="6:00 AM"/>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+            <!--
             <GridLayout
                     android:id="@+id/page1"
                     android:tag="Birds"
@@ -43,11 +235,8 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:alignmentMode="alignBounds"
-                    android:rowCount="3"
-                    android:columnCount="3"
                     android:rowOrderPreserved="false"
                     android:useDefaultMargins="true">
-                <!--
                 <android.support.v7.widget.CardView
                         android:layout_column="0"
                         android:layout_row="0"
@@ -73,7 +262,6 @@
                             android:paddingRight="2dp"
                             android:src="@drawable/bird_owl"/>
                 </android.support.v7.widget.CardView>
-                -->
                 <android.support.v7.widget.CardView
                         android:layout_column="1"
                         android:layout_row="0"
@@ -275,6 +463,7 @@
                             android:src="@drawable/bird_flare"/>
                 </android.support.v7.widget.CardView>
             </GridLayout>
+            -->
             <GridLayout
                     android:id="@+id/page2"
                     android:tag="Ambience"
