@@ -23,12 +23,65 @@ public class EventBus {
 	private static final String TAG = EventBus.class.getSimpleName();
 
 	/**
-	 *
+	 * An Entry for a Key-Value pair to be used in HashMap construction.
 	 */
 	public static final class Entry extends SimpleImmutableEntry<String, Object> {
 		public Entry(String theKey, Object theValue) {
 			super(theKey, theValue);
 		}
+	}
+
+	/**
+	 * The EventBusBroadcastReceiverBridge is designed to receive any
+	 * global Broadcasts and bridge them into the local Broadcast system
+	 * and wrap them into an event for automatic/easy consumption.
+	 *
+	 * It is advised that an Intent have some earmarking so a user of the
+	 * GenericBroadcastEvent knows which Intent is theirs.
+	 */
+	public static final class BroadcastReceiverBridge extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String event = intent.getAction() == null ?
+					"GenericBroadcastEvent" : intent.getAction();
+			final HashMap<String, Object> data = (HashMap)intent.getSerializableExtra("data");
+			BaseApp.app().eventBus().publish(event, null, data);
+		}
+	}
+
+	/**
+	 * Convenience method to create an Intent from Event descriptors.
+	 *
+	 * @param context if provided, a global Intent will be made
+	 * @param entries values to include in the Event's Intent
+	 * @return an Intent for the Event parameters
+	 */
+	public static Intent intentForEvent(Context context, @NonNull String name,
+										@Nullable SimpleImmutableEntry<String, Object>... entries) {
+		final Intent i = context == null ? new Intent() : new Intent(context, BroadcastReceiverBridge.class);
+		i.setAction(name);
+		X.of(entries).let(d -> {
+			HashMap<String, Object> map = new HashMap<>();
+			for (SimpleImmutableEntry<String, Object> e : entries)
+				map.put(e.getKey(), e.getValue());
+			i.putExtra("data", map);
+		});
+		return i;
+	}
+
+	/**
+	 * Convenience method to create an Intent from Event descriptors.
+	 *
+	 * @param context if provided, a global Intent will be made
+	 * @param data values to include in the Event's Intent
+	 * @return an Intent for the Event parameters
+	 */
+	public static Intent intentForEvent(Context context, @NonNull String name,
+										@Nullable HashMap<String, Object> data) {
+		final Intent i = context == null ? new Intent() : new Intent(context, BroadcastReceiverBridge.class);
+		i.setAction(name);
+		X.of(data).let(d -> i.putExtra("data", d));
+		return i;
 	}
 
 	private final LocalBroadcastManager _lbm;
@@ -55,7 +108,7 @@ public class EventBus {
 	 * @param source
 	 */
 	public void publish(@NonNull String name, @Nullable final Object source,
-						@NonNull SimpleImmutableEntry<String, Object>... entries) {
+						@Nullable SimpleImmutableEntry<String, Object>... entries) {
 		Intent intent = new Intent(name);
 		X.of(source).let(s -> {
 			UUID id = UUID.randomUUID();

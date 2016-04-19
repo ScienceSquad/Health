@@ -1,6 +1,5 @@
 package com.sciencesquad.health.sleep;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,13 +14,14 @@ import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.EventBus;
+import com.sciencesquad.health.core.EventBus.Entry;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.core.util.AlarmSender;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
-import com.sciencesquad.health.core.util.AlarmSender;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-
 import java8.util.stream.Stream;
 import java8.util.stream.StreamSupport;
 
@@ -118,14 +118,14 @@ public class SleepFragment extends BaseFragment {
 
 			AlarmSender sender = new AlarmSender();
 			sender.setTimeInMillis(1000 * 3);
-			sender.setAlarm(this, new Intent(getActivity(), SleepWakeUpReceiver.class));
+			sender.setAlarm(this, EventBus.intentForEvent(getActivity(), "SleepWakeAlarmEvent", new Entry("hi", "test")));
 		});
 
 		// Set up a list of tiles for the ambience mixer.
 		int colors[] = getThemeColors(getInflater().getContext());
 		Stream<CardView> tiles = StreamSupport
 				.of(xml().tile1, xml().tile2, xml().tile3, xml().tile4,
-						xml().tile5, xml().tile6, xml().tile7, xml().tile8);
+					xml().tile5, xml().tile6, xml().tile7, xml().tile8);
 
 		// For each tile, configure the behavior like so:
 		// 1. Snap between range [0%, (25%, 50%, 75%,) 100%]

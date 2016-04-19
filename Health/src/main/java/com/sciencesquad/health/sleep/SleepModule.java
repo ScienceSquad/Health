@@ -2,12 +2,14 @@ package com.sciencesquad.health.sleep;
 
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.util.Dispatcher;
+import com.sciencesquad.health.core.util.X;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +32,16 @@ public class SleepModule extends Module {
 		SleepMonitoringService.startMonitoringService();
 		Dispatcher.BACKGROUND.run(() -> {
 			SleepMonitoringService.stopMonitoringService();
-		}, 5L, TimeUnit.MINUTES);
+		}, 1L, TimeUnit.MINUTES);
+
+		// Broadcast an event to say that we started up.
+		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
+			bus.subscribe("SleepWakeAlarmEvent", null, ev -> {
+				Log.i(TAG, "Woke up!");
+				Toast.makeText(BaseApp.app(), "Woke up!", Toast.LENGTH_LONG).show();
+				BaseApp.app().vibrate(3000);
+			});
+		});
 	}
 
 	public void setTileCycle(int tile, int cycle) {

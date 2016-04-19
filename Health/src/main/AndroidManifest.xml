@@ -47,22 +47,12 @@
             android:fullBackupOnly="true"
             android:fullBackupContent="true">
 
-        <!-- For Google's AutoBackupAgent. -->
-        <meta-data
-                android:name="com.google.android.backup.api_key"
-                android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
-
-        <!-- For Google's Maps API. -->
-        <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="@string/google_maps_key" />
-
-        <!-- Entry point for the app. -->
+        <!-- Entry Activity point for the app. -->
         <activity
-            android:name=".core.HostActivity"
-			android:label="@string/app_name"
-			android:theme="@style/AppTheme.Grey"
-			android:screenOrientation="portrait" >
+                android:name=".core.HostActivity"
+                android:label="@string/app_name"
+                android:theme="@style/AppTheme.Grey"
+                android:screenOrientation="portrait">
 
             <!-- Can be started from any launcher application. -->
             <intent-filter>
@@ -75,23 +65,46 @@
                 android:name="fragment"
                 android:value="com.sciencesquad.health.overview.OverviewFragment" />
         </activity>
-        <!-- For SleepModule to monitor data in the background. -->
+
+        <!-- Entry Service point for the app. -->
+        <service
+                android:name=".core.HostService"
+                android:enabled="true"
+                android:exported="false">
+
+            <!-- The Modules to configure from the HostService. -->
+            <meta-data
+                    android:name="modules"
+                    android:value="FIXME" />
+        </service>
+
+        <!-- Entry Event point for the app. -->
+        <receiver android:name=".core.EventBus$BroadcastReceiverBridge"
+                  android:enabled="true" />
+
+
+
+
+
+        <!-- For Google's API. -->
+        <meta-data
+                android:name="com.google.android.backup.api_key"
+                android:value="AEdPqrEAAAAIH0mZXy_cfYTsA7ZYW8iO-x0b-h2_k3SLBDx7Dg" />
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_maps_key" />
+
+
+
+
+
+        <!-- FIXME: DEPRECATED -->
         <service
                 android:name=".sleep.SleepMonitoringService"
                 android:exported="false"/>
-
-        <!-- For SleepModule to play audio in the background. -->
+        <!-- FIXME: DEPRECATED -->
         <service
-            android:name=".sleep.SoundService"
-            android:exported="false"/>
-
-        <!-- For SleepModule to receive a wake up alarm. -->
-        <receiver android:name=".sleep.SleepWakeUpReceiver"
-                  android:enabled="true" />
-
-        <!-- For PrescriptionsModule to trigger in a timely manner. -->
-        <receiver
-            android:name=".prescriptions.PrescriptionAlarmReceiver"
-            android:enabled="true" />
+                android:name=".sleep.SoundService"
+                android:exported="false"/>
 	</application>
 </manifest>
