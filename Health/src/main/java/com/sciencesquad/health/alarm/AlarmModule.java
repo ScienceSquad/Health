@@ -241,13 +241,13 @@ public class AlarmModule extends Module {
 		if (repeatInterval == RepeatInterval.DAY_SPECIFIC) {
 			int dayOfWeek = this.get(Calendar.DAY_OF_WEEK);
 			if (this.daysOfWeek.contains(dayOfWeek)) {
-				alarmMgr.set(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), pendingIntent);
+				alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), 7 * AlarmManager.INTERVAL_DAY, pendingIntent);
 			}
 			Calendar now = Calendar.getInstance();
 			now.get(Calendar.DAY_OF_WEEK);
 		}
 		else if (repeatInterval == RepeatInterval.DAILY) {
-			Calendar.getInstance();
+			alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 		}
 	}
 

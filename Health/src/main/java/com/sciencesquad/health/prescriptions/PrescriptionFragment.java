@@ -217,7 +217,8 @@ public class PrescriptionFragment extends BaseFragment {
 				.setDosage(5);
 
 		// Set alarm data
-		alarmModule.setTimeInMillis(System.currentTimeMillis());
+		alarmModule.setTimeInMillis(System.currentTimeMillis())
+				.setRepeatInterval(AlarmModule.RepeatInterval.DAILY);
 
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
@@ -229,7 +230,8 @@ public class PrescriptionFragment extends BaseFragment {
 		prescriptionModule.setDosage(3);
 
 		// Set alarm data
-		alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
+		alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR)
+				.setRepeatInterval(AlarmModule.RepeatInterval.DAILY);
 
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
