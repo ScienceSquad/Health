@@ -58,7 +58,7 @@ public class StepsModule extends Module {
      */
     /**
     private void registerEventListener(int maxdelay) {
-        // BEGIN_INCLUDE(register)
+        // BEGIN_INCLUDE(start)
 
         // Keep track of state so that the correct sensor type and batch delay can be set up when
         // the app is restored (for example on screen rotation).
@@ -75,7 +75,7 @@ public class StepsModule extends Module {
         // If the max delay is 0, events will be delivered in continuous mode without batching.
         final boolean sensorWorking = sensorManager.registerListener(
                 sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL, maxDelay);
-        // END_INCLUDE(register)
+        // END_INCLUDE(start)
 
         if (!sensorWorking) {
             // something fucked up
@@ -162,7 +162,12 @@ public class StepsModule extends Module {
     }
 
     @Override
-    public void init() {
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onStop() {
 
     }
 }

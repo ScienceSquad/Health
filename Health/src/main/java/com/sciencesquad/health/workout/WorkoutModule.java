@@ -19,7 +19,7 @@ import java.util.Date;
 
 public class WorkoutModule extends Module {
     public static final String TAG = WorkoutModule.class.getSimpleName();
-    static { Module.register(WorkoutModule.class); }
+    static { Module.start(WorkoutModule.class); }
 
     //Data context.
     private RealmContext<ExerciseTypeModel> workoutRealm;
@@ -135,7 +135,12 @@ public class WorkoutModule extends Module {
     }
 
     @Override
-    public void init() {
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onStop() {
 
     }
 

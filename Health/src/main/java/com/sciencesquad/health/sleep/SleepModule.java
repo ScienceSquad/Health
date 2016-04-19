@@ -19,7 +19,8 @@ public class SleepModule extends Module {
 
 	private DataContext<SleepDataModel> dataContext;
 
-	public void init() {
+	@Override
+	public void onStart() {
 		this.dataContext = new RealmContext<>();
 		this.dataContext.init(BaseApp.app(), SleepDataModel.class, "sleep.realm");
 
@@ -35,6 +36,11 @@ public class SleepModule extends Module {
 				BaseApp.app().vibrate(3000);
 			});
 		});
+	}
+
+	@Override
+	public void onStop() {
+
 	}
 
 	public void setTileCycle(int tile, int cycle) {

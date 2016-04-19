@@ -7,12 +7,18 @@ import com.sciencesquad.health.core.RealmContext;
 
 public class OverviewModule extends Module {
     public static final String TAG = OverviewModule.class.getSimpleName();
-    static { Module.register(OverviewModule.class); }
+    static { Module.start(OverviewModule.class); }
 
     private DataContext<OverviewModel> dataContext;
 
-    public void init() {
+	@Override
+    public void onStart() {
         this.dataContext = new RealmContext<>();
         this.dataContext.init(BaseApp.app(), OverviewModel.class, "overview.realm");
     }
+
+	@Override
+	public void onStop() {
+
+	}
 }

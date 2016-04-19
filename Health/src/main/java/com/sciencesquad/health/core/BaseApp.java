@@ -192,7 +192,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		this.eventBus().publish("AppConfigurationChangedEvent", this, new Entry("configuration", newConfig));
+		this.eventBus().publish("AppConfigurationChangedEvent", this, new Entry("configuration", newConfig.toString()));
 	}
 
 	/**

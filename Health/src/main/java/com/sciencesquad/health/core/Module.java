@@ -14,14 +14,13 @@ import java8.util.stream.StreamSupport;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * The Module abstract class is the binding glue behind a modular architecture
  * that relies on dependency injection and a global and/or local event bus.
  *
  *
- * Any subclass of the Module class should register itself and observe for any
+ * Any subclass of the Module class should start itself and observe for any
  * relevant events (such as the AppCreateEvent or ActivityStartEvent). It may
  * then request resources like a SensorContext or DataContext to support a data
  * back-end. It is its own ViewModel, so it may also request a
@@ -48,33 +47,28 @@ public abstract class Module implements Observable {
 	private transient PropertyChangeRegistry _callbacks;
 
 	/**
-	 * Special identifier only set by a ContextBinder for identification.
-	 */
-	/*package*/ transient UUID _identifier;
-
-	/**
-	 * Any subclass of the Module class should ideally register itself
+	 * Any subclass of the Module class should ideally start itself
 	 * for free support from the framework dependency injector.
 	 *
 	 * Example:
 	 * ```java
 	 * static {
-	 *     Module.register(this);
+	 *     Module.start(this);
 	 * }
 	 * ```
 	 *
-	 * @param module the module to register
+	 * @param module the module to start
 	 * @return true if registration successful, false otherwise
 	 */
 	@Nullable
-	public static <T extends Module> T register(@NonNull Class<T> module) {
+	public static <T extends Module> T start(@NonNull Class<T> module) {
 		try {
 			Log.i(TAG, "Initializing " + module.getSimpleName() + "...");
 			T instance = module.newInstance();
-			instance.init();
+			instance.onStart();
 			return _modules.add(instance) ? instance : null;
 		} catch (Exception e) {
-			Log.e(TAG, "Unable to register Module class! " + e.getLocalizedMessage());
+			Log.e(TAG, "Unable to start Module class! " + e.getLocalizedMessage());
 			return null;
 		}
 	}
@@ -82,10 +76,10 @@ public abstract class Module implements Observable {
 	/**
 	 * Unregister.
 	 *
-	 * @param module the module to unregister
+	 * @param module the module to stop
 	 * @return true if unregistration successful, false otherwise
 	 */
-	public static <T extends Module> void unregister(@NonNull Class<T> module) {
+	public static <T extends Module> void stop(@NonNull Class<T> module) {
 		StreamSupport.stream(_modules)
 				.filter(a -> module.isAssignableFrom(a.getClass()))
 				.forEach(v -> _modules.remove(v));
@@ -115,7 +109,7 @@ public abstract class Module implements Observable {
 		T item =  (T)StreamSupport.stream(_modules)
 				.filter(a -> module.isAssignableFrom(a.getClass()))
 				.findFirst()
-				.orElse(Module.register(module));
+				.orElse(Module.start(module));
 		return item;
 	}
 
@@ -126,7 +120,13 @@ public abstract class Module implements Observable {
 	 * This method is the preferred point of initialization and is called
 	 * by the system when the module is to be created, only once.
 	 */
-	public abstract void init();
+	public abstract void onStart();
+
+	/**
+	 * This method is invoked when the Module is required to be stopped
+	 * by the System or Android, and should clear up resources used.
+	 */
+	public abstract void onStop();
 
 	/**
 	 * Tracks any receivers for removal when this Fragment dies.

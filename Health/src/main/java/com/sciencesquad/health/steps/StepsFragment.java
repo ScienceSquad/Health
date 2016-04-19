@@ -170,7 +170,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
      */
 
     private void registerEventListener(int maxdelay) {
-        // BEGIN_INCLUDE(register)
+        // BEGIN_INCLUDE(start)
 
         // Keep track of state so that the correct sensor type and batch delay can be set up when
         // the app is restored (for example on screen rotation).
@@ -241,7 +241,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
     public void onPause() {
         super.onPause();
         activityRunning = false;
-        // if you unregister the last listener, the hardware will stop detecting step events
+        // if you stop the last listener, the hardware will stop detecting step events
         // sensorManager.unregisterListener(this);
     }
 

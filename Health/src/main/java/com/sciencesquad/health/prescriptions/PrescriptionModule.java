@@ -66,7 +66,12 @@ public class PrescriptionModule extends Module {
 	}
 
 	@Override
-	public void init() {
+	public void onStart() {
+
+	}
+
+	@Override
+	public void onStop() {
 
 	}
 }
