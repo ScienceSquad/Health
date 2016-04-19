@@ -166,10 +166,10 @@ public class SoundService extends Service {
 
 		// Broadcast an event to say that we started up.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
-			bus.publish("SoundServiceStartEvent", this);
-			this.test = bus.subscribe("SoundServiceStartEvent", null, ev -> {
-				Log.i(TAG, "Dolphins! " + ev);
+			this.test = bus.subscribe("SoundServiceStartEvent", null, data -> {
+				Log.i(TAG, "Dolphins! " + data);
 			});
+			bus.publish("SoundServiceStartEvent", this);
 		});
 
 		// Start the notification and keep us alive.
@@ -202,6 +202,7 @@ public class SoundService extends Service {
 
 		// Broadcast an event to say that we stopped.
 		X.of(BaseApp.app()).map(BaseApp::eventBus).let(bus -> {
+			bus.unsubscribe(this.test);
 			bus.publish("SoundServiceStopEvent", this);
 		});
 	}
