@@ -38,6 +38,10 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.TTSManager;
 import com.sciencesquad.health.databinding.FragmentRunBinding;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -181,9 +185,14 @@ public class RunFragment extends BaseFragment implements
         run.setCalories(totalCalories);
         run.setDistance(totalDistance);
         run.setDate(new Date());
-        //TODO: Set GoogleMap
+        setUpGeoJson();
         realm.commitTransaction();
     }
+
+    public void setUpGeoJson() {
+        //TODO: Create a GeoJSON object from path.
+    }
+
 
     public void stopRun() {
         isRunStarted = false;
