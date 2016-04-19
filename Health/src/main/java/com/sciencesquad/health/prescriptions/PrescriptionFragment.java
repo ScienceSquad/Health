@@ -15,23 +15,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.alarm.AlarmModel;
-import com.sciencesquad.health.alarm.AlarmModule;
+import com.sciencesquad.health.core.alarm.AlarmModel;
+import com.sciencesquad.health.core.alarm.AlarmModule;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
-import com.sciencesquad.health.core.util.AlarmSender;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
-
-import java.util.Calendar;
 
 import io.realm.RealmResults;
 
@@ -63,18 +62,36 @@ public class PrescriptionFragment extends BaseFragment {
 				String name = item.getName();
 				int dosage = item.getDosage();
 
-				AlarmModel alarm = alarmModule.getAlarmById(item.getAlarmID());
+				int alarmId = item.getAlarmID();
+				AlarmModel alarm = alarmModule.getAlarmById(alarmId);
 
 				alarmModule.setTimeInMillis(alarm.getTime());
 
+				View.OnClickListener timeListener = (view) -> {
+					AlarmDialog dialog = new AlarmDialog();
+					dialog.callTimePicker(alarmId, () -> updateAlarmList(), getActivity(), false);
+				};
+
 				TextView alarmTime = (TextView) mLinearLayout.findViewById(R.id.alarm_time);
+				alarmTime.setOnClickListener(timeListener);
+
 				TextView alarmPeriod = (TextView) mLinearLayout.findViewById(R.id.alarm_time_period);
+				alarmPeriod.setOnClickListener(timeListener);
+
 				TextView alarmDosage = (TextView) mLinearLayout.findViewById(R.id.alarm_dosage);
-				RelativeLayout removeButton = (RelativeLayout) mLinearLayout.findViewById(R.id.alarm_remove);
+				alarmDosage.setOnClickListener((view) -> setPrescriptionAlarm(view, item));
+
+				FrameLayout removeButton = (FrameLayout) mLinearLayout.findViewById(R.id.alarm_remove);
+				Switch toggleSwitch = (Switch) mLinearLayout.findViewById(R.id.alarm_switch);
+				toggleSwitch.setChecked(alarm.getActive());
 				removeButton.setOnClickListener((view) -> {
 					Log.d(TAG, "Should remove alarm");
 					removeAlarm(item);
 					updateAlarmList();
+				});
+				toggleSwitch.setOnClickListener((view) -> {
+					Log.d(TAG, "Should switch alarm");
+					alarmModule.setActive(alarm, toggleSwitch.isChecked());
 				});
 				alarmTime.setText(alarmModule.getPrettyTime());
 				alarmPeriod.setText(alarmModule.getTimePeriod());
@@ -117,13 +134,6 @@ public class PrescriptionFragment extends BaseFragment {
 		}
 	}
 
-	private boolean alarmSet = false;
-	AlarmDialog dialog;
-
-	private Runnable createRunnable(AlarmDialog dialog, Context context, Intent intent) {
-		return () -> dialog.setAlarm(context, intent);
-	}
-
 	public Configuration getConfiguration() {
 		return new Configuration(TAG, "Prescription",
 				R.drawable.ic_alarm, R.style.AppTheme_Nutrition,
@@ -147,10 +157,14 @@ public class PrescriptionFragment extends BaseFragment {
 		prescriptionModule.removePrescription(item);
 	}
 
-	private void setPrescriptionAlarm(View view) {
-			/* PrescriptionAlarmReceiver receiver = new PrescriptionAlarmReceiver();
-			receiver.doSomethingImportant("Tylenol", 5); */
+	private void setPrescriptionAlarm(View view, PrescriptionModel prescription) {
 		View alarmDialog = getInflater().inflate(R.layout.fragment_prescription_alarm_dialog, null);
+		EditText nameInput = (EditText) alarmDialog.findViewById(R.id.prescription_name);
+		EditText dosageInput = (EditText) alarmDialog.findViewById(R.id.prescription_dosage);
+		if (prescription != null) {
+			nameInput.setText(prescription.getName());
+			dosageInput.setText(String.valueOf(prescription.getDosage()));
+		}
 		new MaterialStyledDialog(getActivity())
 				.setCustomView(alarmDialog)
 				.withDialogAnimation(true, Duration.FAST)
@@ -158,8 +172,6 @@ public class PrescriptionFragment extends BaseFragment {
 				.setPositive("Accept",
 						(dialog, which) -> {
 							Log.d(TAG,"Accepted!");
-							EditText nameInput = (EditText) alarmDialog.findViewById(R.id.prescription_name);
-							EditText dosageInput = (EditText) alarmDialog.findViewById(R.id.prescription_dosage);
 							String name = nameInput.getText().toString();
 							String dosageString = dosageInput.getText().toString();
 							int dosage = 0;
@@ -171,19 +183,29 @@ public class PrescriptionFragment extends BaseFragment {
 							else {
 								dosage = Integer.parseInt(dosageString);
 							}
-							prescriptionModule.setName(name);
-							prescriptionModule.setDosage(dosage);
-							// Set alarm data
-							alarmModule.setTimeInMillis(System.currentTimeMillis());
-							// Tie alarm to prescription
-							prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
-							prescriptionModule.addPrescription();
+							if (prescription == null) {
+								prescriptionModule.setName(name);
+								prescriptionModule.setDosage(dosage);
+								// Set alarm data
+								alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
+								// Tie alarm to prescription
+								prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
+								prescriptionModule.addPrescription();
+							}
+							else {
+								prescriptionModule.setName(prescription, name);
+								prescriptionModule.setDosage(prescription, dosage);
+							}
 							updateAlarmList();
-							scrollAlarmListToBottom();
 						})
 				.setNegative("Decline",
 						(dialog, which) -> Log.d(TAG,"Declined!"))
 				.show();
+
+	}
+
+	private void setPrescriptionAlarm(View view) {
+		setPrescriptionAlarm(view, null);
 	}
 
 	private void sendEmergencyNotification() {
@@ -207,8 +229,8 @@ public class PrescriptionFragment extends BaseFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		prescriptionModule = new PrescriptionModule();
-		alarmModule = new AlarmModule();
+		prescriptionModule = PrescriptionModule.getModule();
+		alarmModule = AlarmModule.getModule();
 
 		prescriptionModule.clearAllPrescriptions();
 
@@ -217,8 +239,9 @@ public class PrescriptionFragment extends BaseFragment {
 				.setDosage(5);
 
 		// Set alarm data
-		alarmModule.setTimeInMillis(System.currentTimeMillis())
-				.setRepeatInterval(AlarmModule.RepeatInterval.DAILY);
+		// Send alarm 5 seconds from now
+		alarmModule.setTimeInMillis(System.currentTimeMillis() + (1000 * 5))
+				.setRepeatInterval(AlarmModule.RepeatInterval.NEVER);
 
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
@@ -230,8 +253,9 @@ public class PrescriptionFragment extends BaseFragment {
 		prescriptionModule.setDosage(3);
 
 		// Set alarm data
-		alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR)
-				.setRepeatInterval(AlarmModule.RepeatInterval.DAILY);
+		// Send alarm 15 seconds from now
+		alarmModule.setTimeInMillis(System.currentTimeMillis() + (1000 * 15))
+				.setRepeatInterval(AlarmModule.RepeatInterval.NEVER);
 
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());

@@ -39,7 +39,7 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/alarm_remove">
+                android:id="@+id/right_layout">
 
                 <FrameLayout
                     android:layout_width="30dp"
@@ -47,8 +47,16 @@
                     android:background="@drawable/abc_ic_clear_mtrl_alpha"
                     android:backgroundTint="?attr/colorPrimaryDark"
                     android:layout_alignParentRight="true"
-                    android:layout_margin="4dp">
+                    android:layout_margin="4dp"
+                    android:id="@+id/alarm_remove">
                 </FrameLayout>
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/alarm_switch"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toStartOf="@+id/alarm_remove"/>
             </RelativeLayout>
 
         </LinearLayout>
