@@ -1,12 +1,10 @@
 package com.sciencesquad.health.nutrition;
 
-import android.databinding.tool.util.L;
 import android.util.Log;
 import android.util.Pair;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.EventBus.Entry;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
@@ -16,19 +14,14 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
-import java8.util.function.Consumer;
 
 /**
- * Nutrition Module
+ * Nutrition Module. The big controller for Nutrition
  */
 public class NutritionModule extends Module {
     public static final String TAG = NutritionModule.class.getSimpleName();
@@ -40,6 +33,7 @@ public class NutritionModule extends Module {
     private boolean hadCaffeine;
     private int numCheatDays;
     private boolean cheated;
+    private float waterIntake;
     private NutrientModel nutrients;
     private MineralModel minerals;
     private VitaminModel vitamins;
@@ -63,6 +57,7 @@ public class NutritionModule extends Module {
         this.favoriteFoods = new ArrayList<>();
         this.hadCaffeine = false;
         this.calorieIntake = 0;
+        this.waterIntake = 0;
         this.numCheatDays = 5;
         this.cheated = false; // being positive and assuming no cheating :)
 
@@ -169,6 +164,7 @@ public class NutritionModule extends Module {
         clearModels();
         this.hadCaffeine = false;
         this.calorieIntake = 0;
+        this.waterIntake = 0;
         createModels();
     }
 
@@ -208,6 +204,21 @@ public class NutritionModule extends Module {
 
     public void setCalorieIntake(float calorieIntake) {
         this.calorieIntake = calorieIntake;
+    }
+
+    public NutrientModel getNutrients(){
+        return this.nutrients;
+    }
+
+    public void setNutrients(NutrientModel model){
+        this.nutrients = model;
+    }
+
+    public void setWaterIntake(float waterIntake) {
+        this.waterIntake = waterIntake;
+    }
+    public float getWaterIntake() {
+        return waterIntake;
     }
 
 
@@ -318,6 +329,4 @@ public class NutritionModule extends Module {
         Module.registerModule(this.getClass());
 
     }
-
-
 }
