@@ -190,7 +190,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
             }
         });
 
-		// Animate fabs
+		// Initialize animations for fabs
         fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
                 R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
@@ -337,11 +337,13 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	}
 
 	/**
-	 * Called when nothing has been selected or an "un-select" has been made.
+	 * Called when nothing has been selected or a deselect has been made.
 	 */
 	@Override
 	public void onNothingSelected() {
-		mPieChart.spin(1000, mPieChart.getRotationAngle(), 0, Easing.EasingOption.EaseInOutCirc);
+		float fangle = mPieChart.getRotationAngle();
+		float tangle = 0;
+		mPieChart.spin(1000, fangle, tangle, Easing.EasingOption.EaseInOutCirc);
 	}
 
 	/**
@@ -442,8 +444,9 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 * @param rotation
 	 * @param correction
 	 */
-	public void rotateChart(Easing.EasingOption eo, float angle, float rotation, float correction) {
-		mPieChart.spin(1000, angle, rotation - correction, eo);
+	public void rotateChart(Easing.EasingOption eo, float fromAngle, float rotation, float correction) {
+		float toAngle = rotation - correction;
+		mPieChart.spin(1000, fromAngle, toAngle, eo);
 	}
 
 	/**

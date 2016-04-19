@@ -152,7 +152,6 @@
         <item name="colorPrimaryDark">@color/blue_grey_900</item>
     </style>
 
-
     <style name="AppTheme.Workout" parent="AppTheme">
         <item name="colorAccent">@color/amber_700</item>
         <item name="colorPrimary">@color/blue_grey_700</item>
@@ -183,5 +182,12 @@
         <item name="colorPrimary">@color/purple_50</item>
         <item name="colorPrimaryDark">@color/purple_900</item>
     </style>
+
+    <!-- Testing some things -->
+    <style name="MyButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/red_700</item>
+        <item name="colorButtonNormal">@color/red_500</item>
+    </style>
+
 
 </resources>
