@@ -347,7 +347,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	/**
 	 * @see AutoCloseable
 	 */
-	public void close() throws Exception {
+	public void close() {
 		realm.close();
 	}
 

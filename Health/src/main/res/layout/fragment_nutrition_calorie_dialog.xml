@@ -16,7 +16,6 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:navigationIcon="@drawable/ic_menu"
                 android:transitionGroup="true">
                 <android.support.design.widget.TabLayout
                     android:id="@+id/tabs"
@@ -28,7 +27,8 @@
             android:id="@+id/calorie_pager"
             android:layout_marginTop="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
+
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/dialog_layout_root_2"
                 android:orientation="vertical"
@@ -52,6 +52,8 @@
                 android:id="@+id/dialog_layout_root"
                 android:tag="Advanced Menu"
                 android:orientation="vertical"
+                android:scrollbars="vertical"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -62,23 +64,106 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:hint="Number of Calories"
-                    android:ems="10"
+                    android:ems="5"
+                    android:textSize="12sp"
                     android:id="@+id/num_calories"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Liters of Water"
+                    android:ems="5"
+                    android:textSize="12sp"
+                    android:id="@+id/water_intake"
+                    android:layout_below="@+id/num_calories"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Total Amount of Fat (grams)"
+                    android:ems="5"
+                    android:textSize="12sp"
+                    android:id="@+id/num_fat"
+                    android:layout_below="@+id/water_intake"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Carbohydrates (grams)"
+                    android:ems="5"
+                    android:textSize="12sp"
+                    android:id="@+id/num_carbs"
+                    android:layout_below="@+id/num_fat"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Fiber (grams)"
+                    android:ems="5"
+                    android:textSize="12sp"
+                    android:id="@+id/fiber_intake"
+                    android:layout_below="@+id/num_carbs"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Protein (grams)"
+                    android:ems="5"
+                    android:textSize="12sp"
+                    android:id="@+id/protien_intake"
+                    android:layout_below="@+id/fiber_intake"/>
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Sugars (grams)"
+                    android:ems="10"
+                    android:textSize="12sp"
+                    android:id="@+id/sugar_intake"
+                    android:layout_below="@+id/protien_intake"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Sodium (milligrams)"
+                    android:ems="5"
+                    android:textSize="12sp"
+                    android:id="@+id/sodium_intake"
+                    android:layout_below="@+id/sugar_intake"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="Cholesterol (milligrams)"
+                    android:ems="5"
+                    android:textSize="12sp"
+                    android:id="@+id/cholesterol_intake"
+                    android:layout_below="@+id/sodium_intake"/>
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Caffeine"
+                    android:textSize="12sp"
                     android:id="@+id/caffeine_button"
                     android:clickable="true"
-                    android:layout_below="@+id/num_calories" />
+                    android:layout_below="@+id/cholesterol_intake" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cheat Days Left: "
+                    android:textSize="12sp"
                     android:id="@+id/cheat_view"
                     android:layout_below="@+id/caffeine_button"
                     android:layout_alignParentStart="true" />
@@ -88,6 +173,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Use Cheat Day"
+                    android:textSize="12sp"
                     android:id="@+id/cheat_button"
                     android:layout_below="@+id/cheat_view"
                     android:layout_alignParentStart="true" />
