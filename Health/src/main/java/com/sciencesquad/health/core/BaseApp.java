@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BaseApp extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private static final String TAG = BaseApp.class.getSimpleName();
-	private static final int MOD = 0xDEADBEEF;
+	private static final int MOD = 0xDEADFA11;
 
 	/**
 	 * The private app-wide BaseApp singleton instance.

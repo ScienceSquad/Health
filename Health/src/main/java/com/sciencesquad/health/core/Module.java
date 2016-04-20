@@ -7,8 +7,6 @@ import android.databinding.PropertyChangeRegistry;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import com.sciencesquad.health.core.util.X;
-import java8.util.function.Consumer;
 import java8.util.stream.StreamSupport;
 
 import java.util.Collections;
@@ -147,8 +145,8 @@ public abstract class Module implements Observable {
 	@Override
 	protected synchronized void finalize() throws Throwable {
 		super.finalize();
-		StreamSupport.stream(this._subscriptions)
-				.forEach(r -> this.app().map(BaseApp::eventBus).let(bus -> bus.unsubscribe(r)));
+		//StreamSupport.stream(this._subscriptions)
+		//		.forEach(r -> this.app().map(BaseApp::eventBus).let(bus -> bus.unsubscribe(r)));
 		this._subscriptions.clear();
 	}
 
@@ -156,22 +154,21 @@ public abstract class Module implements Observable {
 	 * Helper to wrap the Application as an Optional type for situations
 	 * where it may be ambiguous which Application is the owner of the Context.
 	 *
-	 * @return the Application as a nullable Optional
+	 * @return the Application
 	 */
 	@NonNull
-	protected X<BaseApp> app() {
-		return X.of(BaseApp.app());
+	protected BaseApp app() {
+		return BaseApp.app();
 	}
 
 	/**
-	 * Helper to wrap the Application EventBus as an Optional type.
+	 * Helper to wrap the Application EventBus.
 	 *
-	 * @param handler the context in which the EventBus is used.
-	 * @return the EventBus as a nullable Optional
+	 * @return the EventBus
 	 */
 	@NonNull
-	protected X<EventBus> bus(Consumer<EventBus> handler) {
-		return this.app().map(BaseApp::eventBus).let(handler);
+	protected EventBus bus() {
+		return this.app().eventBus();
 	}
 
 	/**

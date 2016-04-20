@@ -110,8 +110,5 @@
                 android:name=".sleep.SleepMonitoringService"
                 android:exported="false"/>
         <!-- FIXME: DEPRECATED -->
-        <service
-                android:name=".sleep.SoundService"
-                android:exported="false"/>
-	</application>
+    </application>
 </manifest>

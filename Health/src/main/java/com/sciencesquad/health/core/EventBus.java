@@ -51,17 +51,26 @@ public class EventBus {
 	}
 
 	/**
+	 *
+	 * @param context
+	 * @param name
+	 * @return
+	 */
+	@NonNull
+	public static Intent intentForEvent(Context context, @NonNull String name) {
+		return intentForEvent(context, name, (HashMap)null);
+	}
+
+	/**
 	 * Convenience method to create an Intent from Event descriptors.
 	 *
 	 * @param context if provided, a global Intent will be made
 	 * @param entries values to include in the Event's Intent
 	 * @return an Intent for the Event parameters
 	 */
+	@NonNull
 	public static Intent intentForEvent(Context context, @NonNull String name,
 										@Nullable SimpleImmutableEntry<String, Serializable>... entries) {
-		if (entries == null)
-			return intentForEvent(context, name, (HashMap)null);
-
 		HashMap<String, Serializable> map = new HashMap<>();
 		for (SimpleImmutableEntry<String, Serializable> e : entries)
 			map.put(e.getKey(), e.getValue());
@@ -75,6 +84,7 @@ public class EventBus {
 	 * @param data values to include in the Event's Intent
 	 * @return an Intent for the Event parameters
 	 */
+	@NonNull
 	public static Intent intentForEvent(Context context, @NonNull String name,
 										@Nullable HashMap<String, Serializable> data) {
 		final Intent i = context == null ? new Intent() : new Intent(context, BroadcastReceiverBridge.class);

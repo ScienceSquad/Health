@@ -50,26 +50,24 @@ public class NutritionModule extends Module {
         this.numCheatDays = 5;
         this.cheated = false; // being positive and assuming no cheating :)
 
-        bus(b -> {
-            b.subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
-            b.subscribe("DataFailureEvent", this, e -> {
-                Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
+        bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
+        bus().subscribe("DataFailureEvent", this, e -> {
+            Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
 
-            });
-            b.subscribe("DataFailureEvent", null, e -> {
-                Log.d(TAG, "Data failed somewhere.");
+        });
+        bus().subscribe("DataFailureEvent", null, e -> {
+            Log.d(TAG, "Data failed somewhere.");
 
-            });
-            b.subscribe("DataUpdateEvent", null, e -> {
-                Log.d(TAG, "There was an update to a realm.");
+        });
+        bus().subscribe("DataUpdateEvent", null, e -> {
+            Log.d(TAG, "There was an update to a realm.");
 
-                // maybe use the key as the realm name?
-                if (e.get("key").equals(REALMNAME)) {
-                    Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
-                } else {
-                    // do something about it.
-                }
-            });
+            // maybe use the key as the realm name?
+            if (e.get("key").equals(REALMNAME)) {
+                Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
+            } else {
+                // do something about it.
+            }
         });
     }
 
