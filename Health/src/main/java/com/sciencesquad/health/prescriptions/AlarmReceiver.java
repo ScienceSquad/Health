@@ -13,7 +13,8 @@ import com.sciencesquad.health.core.alarm.AlarmModule;
 public class AlarmReceiver extends BroadcastReceiver {
 
 	public void doSomethingImportant(int alarmId) {
-		AlarmModule alarmModule = new AlarmModule();
+		AlarmModule alarmModule = AlarmModule.getModule();
+		alarmModule.sendAlarm(alarmModule.getAlarmById(alarmId), true);
 		alarmModule.handleAlarm(alarmId);
 	}
 

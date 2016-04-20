@@ -14,10 +14,13 @@ import android.transition.Visibility;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -32,6 +35,8 @@ import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
 
+import java.util.Calendar;
+
 import io.realm.RealmResults;
 
 /**
@@ -42,6 +47,22 @@ public class PrescriptionFragment extends BaseFragment {
 
 	private PrescriptionModule prescriptionModule;
 	private AlarmModule alarmModule;
+
+	public class IntervalSelected implements AdapterView.OnItemSelectedListener {
+
+		private int alarmId;
+
+		public IntervalSelected(int alarmId) {
+			this.alarmId = alarmId;
+		}
+
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+			alarmModule.setRepeatInterval(this.alarmId, position);
+		}
+
+		public void onNothingSelected(AdapterView<?> parent) { }
+	}
+
 
 	public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
@@ -81,6 +102,15 @@ public class PrescriptionFragment extends BaseFragment {
 				TextView alarmDosage = (TextView) mLinearLayout.findViewById(R.id.alarm_dosage);
 				alarmDosage.setOnClickListener((view) -> setPrescriptionAlarm(view, item));
 
+				Spinner spinner = (Spinner) mLinearLayout.findViewById(R.id.alarm_repeat);
+				ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+						R.array.repeat_types, android.R.layout.simple_spinner_item);
+				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				spinner.setAdapter(adapter);
+				spinner.setSelection(alarm.getRepeatInterval());
+				spinner.setOnItemSelectedListener(new IntervalSelected(alarmId));
+
+
 				FrameLayout removeButton = (FrameLayout) mLinearLayout.findViewById(R.id.alarm_remove);
 				Switch toggleSwitch = (Switch) mLinearLayout.findViewById(R.id.alarm_switch);
 				toggleSwitch.setChecked(alarm.getActive());
@@ -95,7 +125,7 @@ public class PrescriptionFragment extends BaseFragment {
 				});
 				alarmTime.setText(alarmModule.getPrettyTime());
 				alarmPeriod.setText(alarmModule.getTimePeriod());
-				alarmDosage.setText(String.valueOf(dosage) + " " + name + " every day");
+				alarmDosage.setText(String.valueOf(dosage) + " " + name);
 			}
 		}
 
@@ -241,7 +271,8 @@ public class PrescriptionFragment extends BaseFragment {
 		// Set alarm data
 		// Send alarm 5 seconds from now
 		alarmModule.setTimeInMillis(System.currentTimeMillis() + (1000 * 5))
-				.setRepeatInterval(AlarmModule.RepeatInterval.NEVER);
+				.setRepeatInterval(AlarmModule.RepeatInterval.DAILY)
+				.setNumDays(4);
 
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
@@ -255,7 +286,8 @@ public class PrescriptionFragment extends BaseFragment {
 		// Set alarm data
 		// Send alarm 15 seconds from now
 		alarmModule.setTimeInMillis(System.currentTimeMillis() + (1000 * 15))
-				.setRepeatInterval(AlarmModule.RepeatInterval.NEVER);
+				.setRepeatInterval(AlarmModule.RepeatInterval.DAY_SPECIFIC)
+				.addDayOfWeek(Calendar.TUESDAY);
 
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());

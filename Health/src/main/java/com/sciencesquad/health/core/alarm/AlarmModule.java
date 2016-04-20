@@ -17,6 +17,7 @@ import com.sciencesquad.health.prescriptions.AlarmReceiver;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -35,7 +36,7 @@ public class AlarmModule extends Module {
 	private RealmContext<AlarmModel> alarmRealm;
 
 	public enum RepeatInterval {
-		NEVER,
+		ONCE,
 		DAILY,
 		DAY_SPECIFIC
 	}
@@ -45,6 +46,7 @@ public class AlarmModule extends Module {
 	private int alarmId;
 	private ArrayList<Integer> daysOfWeek;
 	private boolean active;
+	private int numDays;
 
 	private final int DEFAULT_REPEAT = 1;
 
@@ -63,10 +65,11 @@ public class AlarmModule extends Module {
 		this.time = Calendar.getInstance();
 		this.time.set(Calendar.SECOND, 0);
 		this.time.set(Calendar.MILLISECOND, 0);
-		this.repeatInterval = RepeatInterval.NEVER;
+		this.repeatInterval = RepeatInterval.ONCE;
 		this.alarmId = -1;
 		this.daysOfWeek = new ArrayList<>();
 		this.active = true;
+		this.numDays = 1;
 	}
 
 
@@ -84,6 +87,74 @@ public class AlarmModule extends Module {
 			n = n >> 1;
 		}
 		return arr;
+	}
+
+	private int getNextDayOfWeek(AlarmModel alarm, int currentDay) {
+		ArrayList<Integer> daysOfWeek = intToArrayList(alarm.getDaysOfWeek());
+		if (daysOfWeek.size() == 0) return -1;
+		Collections.sort(daysOfWeek);
+		for (int day : daysOfWeek) {
+			if (day >= currentDay) {
+				return day;
+			}
+		}
+		return daysOfWeek.get(0);
+	}
+
+	private void getNextAlarmTime(AlarmModel alarm, boolean hasFired) {
+		/* 	If ONCE
+		 		If hasFired
+		 			toggle alarm off
+				else
+					get next time, today or tomorrow
+			If DAILY
+				get next time
+			If DAY_SPECIFIC
+				get next specific day and time on that day
+		*/
+
+		Calendar now = Calendar.getInstance();
+		Calendar next = Calendar.getInstance();
+		Calendar alarmTime = Calendar.getInstance();
+		alarmTime.setTimeInMillis(alarm.getTime());
+		next.set(Calendar.HOUR_OF_DAY, alarmTime.get(Calendar.HOUR_OF_DAY));
+		next.set(Calendar.MINUTE, alarmTime.get(Calendar.MINUTE));
+		next.set(Calendar.SECOND, alarmTime.get(Calendar.SECOND));
+		next.set(Calendar.MILLISECOND, alarmTime.get(Calendar.MILLISECOND));
+		RepeatInterval repeatInterval = intToRepeatInterval(alarm.getRepeatInterval());
+		switch (repeatInterval) {
+			case DAY_SPECIFIC:
+				int dayOfWeek = now.get(Calendar.DAY_OF_WEEK);
+				if (next.getTimeInMillis() <= now.getTimeInMillis()) dayOfWeek++;
+				dayOfWeek = getNextDayOfWeek(alarm, dayOfWeek);
+				if (dayOfWeek > -1) {
+					next.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+					if (next.getTimeInMillis() <= now.getTimeInMillis()) {
+						next.add(Calendar.WEEK_OF_MONTH, 1);
+					}
+					break;
+				}
+			case ONCE:
+			default:
+				if (hasFired) {
+					this.setActive(alarm, false);
+					break;
+				}
+			case DAILY:
+				if (alarm.getNumDays() > 0) {
+					if (next.getTimeInMillis() <= now.getTimeInMillis()) {
+						next.add(Calendar.DAY_OF_MONTH, alarm.getNumDays());
+					}
+				}
+				else {
+					this.setActive(alarm, false);
+					break;
+				}
+				break;
+		}
+		alarmRealm.getRealm().beginTransaction();
+		alarm.setTime(next.getTimeInMillis());
+		alarmRealm.getRealm().commitTransaction();
 	}
 
 	/** Get a unique alarm ID
@@ -181,7 +252,9 @@ public class AlarmModule extends Module {
 		return "AM";
 	}
 
-	public void sendAlarm(AlarmModel alarm) {
+	public void sendAlarm(AlarmModel alarm, boolean hasFired) {
+
+		getNextAlarmTime(alarm, hasFired);
 
 		if (!alarm.getActive()) return;
 
@@ -193,24 +266,11 @@ public class AlarmModule extends Module {
 
 		this.copyAlarm(alarm);
 
+		alarmMgr.set(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), pendingIntent);
+	}
 
-		switch (repeatInterval) {
-			case DAY_SPECIFIC:
-				int dayOfWeek = this.get(Calendar.DAY_OF_WEEK);
-				if (this.daysOfWeek.contains(dayOfWeek)) {
-					alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), 7 * AlarmManager.INTERVAL_DAY, pendingIntent);
-				}
-				Calendar now = Calendar.getInstance();
-				now.get(Calendar.DAY_OF_WEEK);
-				break;
-			case DAILY:
-				alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-				break;
-			case NEVER:
-			default:
-				alarmMgr.set(AlarmManager.RTC_WAKEUP, this.getTimeInMillis(), pendingIntent);
-				break;
-		}
+	public void sendAlarm(AlarmModel alarm) {
+		sendAlarm(alarm, false);
 	}
 
 	public void sendAll() {
@@ -255,7 +315,7 @@ public class AlarmModule extends Module {
 		switch (repeatInterval) {
 			case 1: return RepeatInterval.DAILY;
 			case 2: return RepeatInterval.DAY_SPECIFIC;
-			default: return RepeatInterval.NEVER;
+			default: return RepeatInterval.ONCE;
 		}
 	}
 
@@ -279,10 +339,10 @@ public class AlarmModule extends Module {
 		alarm.setDaysOfWeek(arrayListToInt(daysOfWeek));
 		alarm.setTime(time.getTimeInMillis());
 		alarm.setActive(this.active);
+		alarm.setNumDays(this.numDays);
 
 		if (this.alarmId > -1) {
 			this.alarmRealm.getRealm().commitTransaction();
-			sendAlarm(alarm);
 		}
 		else
 			this.alarmRealm.add(alarm);
@@ -338,14 +398,26 @@ public class AlarmModule extends Module {
 		return setTimeInMillis(getAlarmById(alarmId), timeInMillis);
 	}
 
-	public AlarmModule setRepeatInterval(AlarmModel alarm, RepeatInterval repeatInterval) {
+	public AlarmModule setRepeatInterval(AlarmModel alarm, int repeatInterval) {
 		if (alarm == null) return this;
 		cancelAlarm(alarm);
 		alarmRealm.getRealm().beginTransaction();
-		alarm.setRepeatInterval(repeatIntervalToInt(repeatInterval));
+		alarm.setRepeatInterval(repeatInterval);
 		alarmRealm.getRealm().commitTransaction();
 		sendAlarm(alarm);
 		return this;
+	}
+
+	public AlarmModule setRepeatInterval(int alarmId, int repeatInterval) {
+		return setRepeatInterval(getAlarmById(alarmId), repeatInterval);
+	}
+
+	public AlarmModule setRepeatInterval(AlarmModel alarm, RepeatInterval repeatInterval) {
+		return setRepeatInterval(alarm, repeatIntervalToInt(repeatInterval));
+	}
+
+	public AlarmModule setRepeatInterval(int alarmId, RepeatInterval repeatInterval) {
+		return setRepeatInterval(getAlarmById(alarmId), repeatInterval);
 	}
 
 	public AlarmModule setDaysOfWeek(AlarmModel alarm, ArrayList<Integer> daysOfWeek) {
@@ -360,6 +432,25 @@ public class AlarmModule extends Module {
 
 	public AlarmModule setDaysOfWeek(int alarmId, ArrayList<Integer> daysOfWeek) {
 		return setDaysOfWeek(getAlarmById(alarmId), daysOfWeek);
+	}
+
+	public AlarmModule setNumDays(AlarmModel alarm, int numDays) {
+		if (alarm == null) return this;
+		cancelAlarm(alarm);
+		alarmRealm.getRealm().beginTransaction();
+		alarm.setNumDays(numDays);
+		alarmRealm.getRealm().commitTransaction();
+		sendAlarm(alarm);
+		return this;
+	}
+
+	public AlarmModule setNumDays(int alarmId, int numDays) {
+		return setDaysOfWeek(getAlarmById(alarmId), daysOfWeek);
+	}
+
+	public AlarmModule setNumDays(int numDays) {
+		this.numDays = numDays;
+		return this;
 	}
 
 	public AlarmModule addDayOfWeek(AlarmModel alarm, int day) {
@@ -390,10 +481,6 @@ public class AlarmModule extends Module {
 		return addDayOfWeek(getAlarmById(alarmId), day);
 	}
 
-	public AlarmModule setRepeatInterval(int alarmId, RepeatInterval repeatInterval) {
-		return setRepeatInterval(getAlarmById(alarmId), repeatInterval);
-	}
-
 	public void copyAlarm(AlarmModel alarm) {
 		this.resetData();
 		this.time.setTimeInMillis(alarm.getTime());
@@ -401,6 +488,7 @@ public class AlarmModule extends Module {
 		this.alarmId = alarm.getAlarmId();
 		this.daysOfWeek = intToArrayList(alarm.getDaysOfWeek());
 		this.active = alarm.getActive();
+		this.numDays = alarm.getNumDays();
 	}
 
 	public AlarmModule setAlarmById(int alarmId) {
@@ -411,13 +499,43 @@ public class AlarmModule extends Module {
 
 	public void handleAlarm(int alarmId) {
 
+		AlarmModel alarm = getAlarmById(alarmId);
+
+		String repeatType;
+
+		switch (intToRepeatInterval(alarm.getRepeatInterval())) {
+			case DAILY:
+				repeatType = "daily";
+				break;
+			case DAY_SPECIFIC:
+				repeatType = "day-specific";
+				break;
+			default:
+			case ONCE:
+				repeatType = "once";
+		}
+
+		String nextAlarm;
+		if (!alarm.getActive()) {
+			nextAlarm = "never";
+		}
+		else {
+			copyAlarm(alarm);
+			nextAlarm = getFieldString(Calendar.DAY_OF_WEEK, true) + ", "
+					+ getFieldString(Calendar.MONTH, true)
+					+ getFieldString(Calendar.DAY_OF_MONTH, false) + ", "
+					+ getFieldString(Calendar.YEAR, false) + ", @ "
+					+ getPrettyTime();
+			resetData();
+		}
+
 		Context ctx = BaseApp.app().getApplicationContext();
 
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(ctx)
 						.setSmallIcon(R.drawable.ic_alarm)
 						.setContentTitle("Alarm has been received!")
-						.setContentText("Alarm ID: " + String.valueOf(alarmId));
+						.setContentText("Next alarm: " + nextAlarm + ".");
 
 		if (getAlarmById(alarmId) == null) mBuilder.setContentTitle("Alarm does not exist!");
 

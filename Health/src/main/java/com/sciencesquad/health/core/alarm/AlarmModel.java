@@ -15,6 +15,7 @@ public class AlarmModel extends RealmObject {
 	private int repeatInterval;
 	private boolean active;
 	private int daysOfWeek;
+	private int numDays;
 
 	public void setAlarmId(int alarmId) { this.alarmId = alarmId; }
 	public int getAlarmId() { return this.alarmId; }
@@ -26,4 +27,6 @@ public class AlarmModel extends RealmObject {
 	public boolean getActive() { return this.active; }
 	public void setDaysOfWeek(int daysOfWeek) { this.daysOfWeek = daysOfWeek; }
 	public int getDaysOfWeek() { return this.daysOfWeek; }
+	public void setNumDays(int numDays) { this.numDays = numDays; }
+	public int getNumDays() { return this.numDays; }
 }

@@ -62,7 +62,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="4dp">
@@ -73,6 +73,12 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="5 tylenol every day"
                 android:id="@+id/alarm_dosage"/>
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/alarm_repeat"
+                android:layout_gravity="right"/>
         </LinearLayout>
     </LinearLayout>
 
