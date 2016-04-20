@@ -434,6 +434,8 @@ public class AlarmModule extends Module {
 		return setDaysOfWeek(getAlarmById(alarmId), daysOfWeek);
 	}
 
+	public ArrayList<Integer> getDaysOfWeek() { return this.daysOfWeek; }
+
 	public AlarmModule setNumDays(AlarmModel alarm, int numDays) {
 		if (alarm == null) return this;
 		cancelAlarm(alarm);
