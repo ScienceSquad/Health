@@ -1,13 +1,15 @@
 package com.sciencesquad.health.core;
 
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.Toast;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.sciencesquad.health.core.EventBus.Entry;
@@ -25,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BaseApp extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private static final String TAG = BaseApp.class.getSimpleName();
+	private static final int MOD = 0xDEADBEEF;
 
 	/**
 	 * The private app-wide BaseApp singleton instance.
@@ -49,7 +52,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 *
 	 * @return an Optional containing the BaseApp singleton.
 	 */
-	@Nullable
+	@NonNull
 	public static BaseApp app() {
 		return _application;
 	}
@@ -96,7 +99,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 * @param text the text to display on screen
 	 * @param longer whether to display the message for a longer time
 	 */
-	public void display(CharSequence text, boolean longer) {
+	public void display(@NonNull String text, boolean longer) {
 		Toast.makeText(this, text, longer ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
 	}
 
@@ -108,7 +111,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 * @param flags flags passed to PowerManager to create a WakeLock
 	 * @param autorelease the number of milliseconds to autorelease within
 	 */
-	public void acquireWakelock(String id, int flags, int autorelease) {
+	public void acquireWakelock(@NonNull String id, int flags, int autorelease) {
 		final PowerManager power = (PowerManager)getSystemService(Context.POWER_SERVICE);
 		final PowerManager.WakeLock lock = power.newWakeLock(flags, id);
 		lock.setReferenceCounted(false);
@@ -126,7 +129,7 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	 * @see PowerManager
 	 * @param id the unique WakeLock ID
 	 */
-	public void releaseWakelock(String id) {
+	public void releaseWakelock(@NonNull String id) {
 		final PowerManager.WakeLock wakeLock = locks.get(id);
 		try {
 			if (wakeLock != null)
@@ -138,6 +141,27 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	}
 
 	/**
+	 * Support for sending a system/app Notification.
+	 *
+	 * @param name the notification's unique name
+	 * @param notification the notification to send
+	 */
+	public void notify(@NonNull String name, @NonNull Notification notification) {
+		NotificationManager n = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		n.notify(name, MOD, notification);
+	}
+
+	/**
+	 * Support for cancelling a system/app Notification.
+	 *
+	 * @param name the notification's unique name
+	 */
+	public void cancel(@NonNull String name) {
+		NotificationManager n = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		n.cancel(name, MOD);
+	}
+
+	/**
 	 * Overridden to provide Application lifecycle Events to the EventBus.
 	 * "Setting a default configuration in your custom Application class,
 	 * will ensure that it is available in the rest of your code."
@@ -146,7 +170,10 @@ public class BaseApp extends Application implements SharedPreferences.OnSharedPr
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		// Begin the background service.
 		_application = this;
+		startService(new Intent(this, HostService.class));
 
 		// Application-specific configuration.
 		RealmConfiguration defaultConfig = new RealmConfiguration.Builder(getBaseContext())

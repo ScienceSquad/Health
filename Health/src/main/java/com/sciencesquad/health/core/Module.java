@@ -32,7 +32,7 @@ public abstract class Module implements Observable {
 	 * A collection of all the registered modules; a module may not be
 	 * registered more than once.
 	 */
-	private static Set<Module> _modules = new HashSet<>();
+	/*package*/ static Set<Module> _modules = new HashSet<>();
 
 	/**
 	 * The internal set of Subscriptions to auto-unsubscribe from.

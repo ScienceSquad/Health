@@ -76,7 +76,7 @@
             <!-- The Modules to configure from the HostService. -->
             <meta-data
                     android:name="modules"
-                    android:value="FIXME" />
+                    android:value=".nutrition.NutritionModule|.prescriptions.PrescriptionModule|.sleep.SleepModule|.steps.StepsModule|.workout.WorkoutModule" />
         </service>
 
         <!-- Entry Event point for the app. -->
