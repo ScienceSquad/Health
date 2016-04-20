@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         tools:context=".sleep.SleepFragment">
     <data>
+        <import type="org.threeten.bp.DayOfWeek" />
         <variable name="module" type="com.sciencesquad.health.sleep.SleepModule"/>
         <variable name="fragment" type="com.sciencesquad.health.sleep.SleepFragment"/>
     </data>
@@ -57,30 +58,83 @@
                         app:cardBackgroundColor="?colorPrimaryDark"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
-                        android:tag="1"
+                        android:tag="0"
                         android:id="@+id/alarm1">
-                    <LinearLayout
+                    <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:layout_height="wrap_content">
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="start|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="8dp"
                                 android:textSize="24sp"
                                 android:textColor="?colorAccent"
                                 android:textAllCaps="true"
                                 android:fontFamily="sans-serif-condensed-light"
-                                android:text="SUN" />
+                                android:text="@{module.dayOfWeek(0)}" />
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="end|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
                                 android:gravity="center"
                                 android:textSize="72sp"
                                 android:textColor="@color/white"
-                                android:text="6:00 AM"/>
-                    </LinearLayout>
+                                android:text="@{module.timeForDayOfWeek(0)}"/>
+                        <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"/>
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                        android:layout_height="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:stateListAnimator="@anim/lift_on_touch"
+                        android:clickable="true"
+                        android:padding="8dp"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardUseCompatPadding="true"
+                        app:cardBackgroundColor="?colorPrimaryDark"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="6dp"
+                        android:tag="1"
+                        android:id="@+id/alarm2">
+                    <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="8dp"
+                                android:textSize="24sp"
+                                android:textColor="?colorAccent"
+                                android:textAllCaps="true"
+                                android:fontFamily="sans-serif-condensed-light"
+                                android:text="@{module.dayOfWeek(1)}" />
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
+                                android:gravity="center"
+                                android:textSize="72sp"
+                                android:textColor="@color/white"
+                                android:text="@{module.timeForDayOfWeek(1)}"/>
+                        <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"/>
+                    </RelativeLayout>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
                         android:layout_height="0dp"
@@ -97,29 +151,36 @@
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
                         android:tag="2"
-                        android:id="@+id/alarm2">
-                    <LinearLayout
+                        android:id="@+id/alarm3">
+                    <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:layout_height="wrap_content">
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="start|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="8dp"
                                 android:textSize="24sp"
                                 android:textColor="?colorAccent"
                                 android:textAllCaps="true"
                                 android:fontFamily="sans-serif-condensed-light"
-                                android:text="MON" />
+                                android:text="@{module.dayOfWeek(2)}" />
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="end|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
                                 android:gravity="center"
                                 android:textSize="72sp"
                                 android:textColor="@color/white"
-                                android:text="6:00 AM"/>
-                    </LinearLayout>
+                                android:text="@{module.timeForDayOfWeek(2)}"/>
+                        <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"/>
+                    </RelativeLayout>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
                         android:layout_height="0dp"
@@ -136,29 +197,36 @@
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
                         android:tag="3"
-                        android:id="@+id/alarm3">
-                    <LinearLayout
+                        android:id="@+id/alarm4">
+                    <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:layout_height="wrap_content">
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="start|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="8dp"
                                 android:textSize="24sp"
                                 android:textColor="?colorAccent"
                                 android:textAllCaps="true"
                                 android:fontFamily="sans-serif-condensed-light"
-                                android:text="TUE" />
+                                android:text="@{module.dayOfWeek(3)}" />
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="end|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
                                 android:gravity="center"
                                 android:textSize="72sp"
                                 android:textColor="@color/white"
-                                android:text="6:00 AM"/>
-                    </LinearLayout>
+                                android:text="@{module.timeForDayOfWeek(3)}"/>
+                        <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"/>
+                    </RelativeLayout>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
                         android:layout_height="0dp"
@@ -175,29 +243,36 @@
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
                         android:tag="4"
-                        android:id="@+id/alarm4">
-                    <LinearLayout
+                        android:id="@+id/alarm5">
+                    <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:layout_height="wrap_content">
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="start|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="8dp"
                                 android:textSize="24sp"
                                 android:textColor="?colorAccent"
                                 android:textAllCaps="true"
                                 android:fontFamily="sans-serif-condensed-light"
-                                android:text="WED" />
+                                android:text="@{module.dayOfWeek(4)}" />
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="end|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
                                 android:gravity="center"
                                 android:textSize="72sp"
                                 android:textColor="@color/white"
-                                android:text="6:00 AM"/>
-                    </LinearLayout>
+                                android:text="@{module.timeForDayOfWeek(4)}"/>
+                        <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"/>
+                    </RelativeLayout>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
                         android:layout_height="0dp"
@@ -214,29 +289,36 @@
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
                         android:tag="5"
-                        android:id="@+id/alarm5">
-                    <LinearLayout
+                        android:id="@+id/alarm6">
+                    <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:layout_height="wrap_content">
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="start|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="8dp"
                                 android:textSize="24sp"
                                 android:textColor="?colorAccent"
                                 android:textAllCaps="true"
                                 android:fontFamily="sans-serif-condensed-light"
-                                android:text="THU" />
+                                android:text="@{module.dayOfWeek(5)}" />
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="end|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
                                 android:gravity="center"
                                 android:textSize="72sp"
                                 android:textColor="@color/white"
-                                android:text="6:00 AM"/>
-                    </LinearLayout>
+                                android:text="@{module.timeForDayOfWeek(5)}"/>
+                        <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"/>
+                    </RelativeLayout>
                 </android.support.v7.widget.CardView>
                 <android.support.v7.widget.CardView
                         android:layout_height="0dp"
@@ -253,68 +335,36 @@
                         app:cardCornerRadius="4dp"
                         app:cardElevation="6dp"
                         android:tag="6"
-                        android:id="@+id/alarm6">
-                    <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-                        <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="start|center_vertical"
-                                android:textSize="24sp"
-                                android:textColor="?colorAccent"
-                                android:textAllCaps="true"
-                                android:fontFamily="sans-serif-condensed-light"
-                                android:text="FRI" />
-                        <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="end|center_vertical"
-                                android:gravity="center"
-                                android:textSize="72sp"
-                                android:textColor="@color/white"
-                                android:text="6:00 AM"/>
-                    </LinearLayout>
-                </android.support.v7.widget.CardView>
-                <android.support.v7.widget.CardView
-                        android:layout_height="0dp"
-                        android:layout_width="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:stateListAnimator="@anim/lift_on_touch"
-                        android:clickable="true"
-                        android:padding="8dp"
-                        app:cardPreventCornerOverlap="false"
-                        app:cardUseCompatPadding="true"
-                        app:cardBackgroundColor="?colorPrimaryDark"
-                        app:cardCornerRadius="4dp"
-                        app:cardElevation="6dp"
-                        android:tag="7"
                         android:id="@+id/alarm7">
-                    <LinearLayout
+                    <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:layout_height="wrap_content">
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="start|center_vertical"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="8dp"
                                 android:textSize="24sp"
                                 android:textColor="?colorAccent"
                                 android:textAllCaps="true"
                                 android:fontFamily="sans-serif-condensed-light"
-                                android:text="SAT" />
+                                android:text="@{module.dayOfWeek(6)}" />
                         <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="end|center_vertical"
-                                android:gravity="center"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
                                 android:textSize="72sp"
+                                android:gravity="center"
                                 android:textColor="@color/white"
-                                android:text="6:00 AM"/>
-                    </LinearLayout>
+                                android:text="@{module.timeForDayOfWeek(6)}"/>
+                        <Switch
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true" />
+                    </RelativeLayout>
                 </android.support.v7.widget.CardView>
             </LinearLayout>
 

@@ -12,9 +12,13 @@ import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import java8.util.stream.StreamSupport;
+import org.threeten.bp.DayOfWeek;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.TextStyle;
 
-import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -22,6 +26,13 @@ import java.util.Map;
  */
 public class SleepModule extends Module {
 	public static final String TAG = SleepModule.class.getSimpleName();
+
+	/**
+	 * Map between integers to days of the week.
+	 */
+	public static final String[] week_days = new String[] {
+			"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"
+	};
 
 	/**
 	 * Map between integers to actual WAV file names.
@@ -67,6 +78,18 @@ public class SleepModule extends Module {
 		return wav_map[pos];
 	}
 
+	public String timeForDayOfWeek(int pos) {
+		if (pos < 0 || pos >= week_days.length)
+			return "???";
+		return alarms[pos].format(DateTimeFormatter.ofPattern("h:mm a"));
+	}
+
+	public String dayOfWeek(int pos) {
+		if (pos < 0 || pos >= week_days.length)
+			return "???";
+		return DayOfWeek.of(pos + 1).getDisplayName(TextStyle.SHORT, Locale.getDefault());
+	}
+
 	/**
 	 * The SleepModule-specific DataContext for storing sleep info.
 	 */
@@ -77,6 +100,15 @@ public class SleepModule extends Module {
 	 * A set of `ValueAnimator`s is used to meander volume levels.
 	 */
 	private Map<String, MediaPlayer> players = new HashMap<>();
+
+	/**
+	 * A quick cache of the alarm times per day of week.
+	 */
+	/*package*/ LocalTime[] alarms = new LocalTime[] {
+			LocalTime.of(9, 00), LocalTime.of(6, 30), LocalTime.of(8, 30),
+			LocalTime.of(6, 30), LocalTime.of(6, 00), LocalTime.of(6, 30),
+			LocalTime.of(9, 30),
+	};
 
 	/**
 	 * @see Module
@@ -101,7 +133,7 @@ public class SleepModule extends Module {
 		// Prepare to handle a wake-up alarm if needed.
 		track(bus().subscribe("SleepWakeAlarmEvent", null, ev -> {
 			Log.i(TAG, "Waking up to an alarm...");
-			app().display("Woke up!", true);
+			app().display("Good morning!", true);
 			app().vibrate(3000);
 		}));
 	}
@@ -183,23 +215,5 @@ public class SleepModule extends Module {
 		if (current > 0)
 			app().notify("SleepSounds", sleepSoundsNote());
 		else app().cancel("SleepSounds");
-	}
-
-	//
-	// ---
-	//
-
-	public static Calendar get() {
-		Calendar reference = Calendar.getInstance();
-		reference.add(Calendar.DATE, 1);
-		reference.set(Calendar.HOUR_OF_DAY, 8);
-		reference.set(Calendar.MINUTE, 30);
-
-		Calendar c = Calendar.getInstance();
-		Calendar d = Calendar.getInstance();
-		do {
-			c.roll(Calendar.MINUTE, 90);
-		} while (c.before(reference));
-		return c;
 	}
 }

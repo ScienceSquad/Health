@@ -24,11 +24,16 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java8.util.function.Function;
 import java8.util.stream.Stream;
 import java8.util.stream.StreamSupport;
+import org.threeten.bp.DayOfWeek;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import static com.sciencesquad.health.core.util.AnimationUtils.*;
 
 /**
- *
+ * TODO: Alarms should be set-any, repeat-any.
  */
 public class SleepFragment extends BaseFragment {
 	public static final String TAG = SleepFragment.class.getSimpleName();
@@ -106,6 +111,7 @@ public class SleepFragment extends BaseFragment {
 
 		// Prepare to show a dialog when waking up.
 		bus().subscribe("SleepWakeAlarmEvent", null, ev -> {
+			SleepMonitoringService.stopMonitoringService();
 			new MaterialStyledDialog(getActivity())
 					.setIcon(zzz)
 					.setCustomView(getInflater().inflate(R.layout.fragment_sleep_userinput, null))
@@ -130,8 +136,17 @@ public class SleepFragment extends BaseFragment {
 		// 15 min to fall asleep, 90 min cycles. FIXME
 		xml().fab.setOnClickListener(v -> {
 			AlarmSender sender = new AlarmSender();
-			sender.setTimeInMillis(1000 * 3);
+			sender.setTimeInMillis(1000 * 30);
 			sender.setAlarm(this, EventBus.intentForEvent(app(), "SleepWakeAlarmEvent"));
+			SleepMonitoringService.startMonitoringService();
+
+			DayOfWeek day = DayOfWeek.from(LocalDateTime.now());
+			LocalTime alarm = this.module.alarms[day.getValue()];
+			LocalTime now = LocalTime.now();
+			long min = now.until(alarm, ChronoUnit.MINUTES);
+			app().display("min = " + min + " | diff = " + min % 90, false);
+			now = now.plus(min - min % 90, ChronoUnit.MINUTES);
+			app().display("Good night! I'll wake you up at " + now.format(DateTimeFormatter.ofPattern("h:mm a")), false);
 		});
 
 		// For each tile, configure their behavior.
