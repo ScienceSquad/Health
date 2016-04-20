@@ -17,9 +17,8 @@ import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.TextStyle;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Sleep Module
@@ -28,11 +27,20 @@ public class SleepModule extends Module {
 	public static final String TAG = SleepModule.class.getSimpleName();
 
 	/**
-	 * Map between integers to days of the week.
+	 * A custom container class for Alarm and repeat information.
 	 */
-	public static final String[] week_days = new String[] {
-			"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"
-	};
+	public static final class Alarm implements Serializable {
+
+		/**
+		 * The individual time for this alarm to snap to.
+		 */
+		public LocalTime time;
+
+		/**
+		 * A boolean for each DayOfWeek that can be repeated on.
+		 */
+		public boolean[] repeat = new boolean[DayOfWeek.values().length];
+	}
 
 	/**
 	 * Map between integers to actual WAV file names.
@@ -79,13 +87,13 @@ public class SleepModule extends Module {
 	}
 
 	public String timeForDayOfWeek(int pos) {
-		if (pos < 0 || pos >= week_days.length)
+		if (pos < 0 || pos >= DayOfWeek.values().length)
 			return "???";
 		return alarms[pos].format(DateTimeFormatter.ofPattern("h:mm a"));
 	}
 
 	public String dayOfWeek(int pos) {
-		if (pos < 0 || pos >= week_days.length)
+		if (pos < 0 || pos >= DayOfWeek.values().length)
 			return "???";
 		return DayOfWeek.of(pos + 1).getDisplayName(TextStyle.SHORT, Locale.getDefault());
 	}
@@ -103,6 +111,7 @@ public class SleepModule extends Module {
 
 	/**
 	 * A quick cache of the alarm times per day of week.
+	 * FIXME: DELETE!
 	 */
 	/*package*/ LocalTime[] alarms = new LocalTime[] {
 			LocalTime.of(9, 00), LocalTime.of(6, 30), LocalTime.of(8, 30),
@@ -111,10 +120,17 @@ public class SleepModule extends Module {
 	};
 
 	/**
+	 * The set of all Alarms the SleepModule is responsible for maintaining.
+	 */
+	private final Set<Alarm> _alarms = new HashSet<>();
+
+	/**
 	 * @see Module
 	 */
 	@Override
 	public void onStart() {
+		//app().getSharedPreferences("sleep.realm", Context.MODE_PRIVATE).getAll();
+		//this._alarms.addAll(null);
 
 		// Initialize and acquire the Sleep database.
 		this.dataContext = new RealmContext<>();

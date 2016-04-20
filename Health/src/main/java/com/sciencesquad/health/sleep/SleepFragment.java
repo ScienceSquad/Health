@@ -1,9 +1,11 @@
 package com.sciencesquad.health.sleep;
 
+import android.app.TimePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
 import android.transition.Visibility;
 import android.util.Log;
@@ -12,7 +14,6 @@ import android.widget.TextView;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
@@ -20,7 +21,6 @@ import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.AlarmSender;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java8.util.function.Function;
 import java8.util.stream.Stream;
 import java8.util.stream.StreamSupport;
@@ -29,6 +29,8 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.temporal.ChronoUnit;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.sciencesquad.health.core.util.AnimationUtils.*;
 
@@ -58,7 +60,6 @@ public class SleepFragment extends BaseFragment {
 	 */
 	@Override
 	protected Configuration getConfiguration() {
-		String notUnderscore = SleepModule.TAG; // instantiates the Module...
 		return new Configuration(
 				TAG, "Sleep", R.drawable.ic_menu_sleep,
 				R.style.AppTheme_Sleep, R.layout.fragment_sleep
@@ -126,27 +127,36 @@ public class SleepFragment extends BaseFragment {
 
 		// Prepare to show a time picker on each alarm.
 		alarms.forEach(a -> a.setOnClickListener(v -> {
-			TimePickerDialog tpd = TimePickerDialog.newInstance((l, h, m, s) -> {
-				BaseApp.app().display("Got " + h + ":" + m + ":" + s, true);
-			}, 8, 30, false);
-			tpd.show(getFragmentManager(), "TPD");
+			int day = DayOfWeek.from(LocalDateTime.now()).getValue();
+			LocalTime alarm = this.module.alarms[day];
+
+			new TimePickerDialog(getInflater().getContext(), (picker, h, m) -> {
+				app().display("Setting alarm to " + h + ":" + m, false);
+				this.module.alarms[day] = LocalTime.of(h, m);
+
+				TextView fixme = (TextView)a.findViewWithTag("time");
+				//Log.i(TAG, "got " + fixme + " -> " + this.module.timeForDayOfWeek(day));
+				fixme.setText(this.module.timeForDayOfWeek(day));
+			}, alarm.getHour(), alarm.getMinute(), false).show();
 		}));
 
 		// Set up the sleep now FAB.
 		// 15 min to fall asleep, 90 min cycles. FIXME
 		xml().fab.setOnClickListener(v -> {
 			AlarmSender sender = new AlarmSender();
-			sender.setTimeInMillis(1000 * 30);
+			sender.setTimeInMillis(TimeUnit.MINUTES.toMillis(1));
 			sender.setAlarm(this, EventBus.intentForEvent(app(), "SleepWakeAlarmEvent"));
 			SleepMonitoringService.startMonitoringService();
 
-			DayOfWeek day = DayOfWeek.from(LocalDateTime.now());
-			LocalTime alarm = this.module.alarms[day.getValue()];
+			int day = DayOfWeek.from(LocalDateTime.now()).getValue();
+			LocalTime alarm = this.module.alarms[day];
 			LocalTime now = LocalTime.now();
 			long min = now.until(alarm, ChronoUnit.MINUTES);
-			app().display("min = " + min + " | diff = " + min % 90, false);
+			//app().display("min = " + min + " | diff = " + min % 90, false);
 			now = now.plus(min - min % 90, ChronoUnit.MINUTES);
-			app().display("Good night! I'll wake you up at " + now.format(DateTimeFormatter.ofPattern("h:mm a")), false);
+
+			String txt = now.format(DateTimeFormatter.ofPattern("h:mm a"));
+			Snackbar.make(v, "Good night! I'll wake you up at " + txt + "!", Snackbar.LENGTH_LONG).show();
 		});
 
 		// For each tile, configure their behavior.
