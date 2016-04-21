@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.sciencesquad.health.core.util.X;
 import java8.util.function.Consumer;
 
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.HashMap;
@@ -23,12 +24,78 @@ public class EventBus {
 	private static final String TAG = EventBus.class.getSimpleName();
 
 	/**
-	 *
+	 * An Entry for a Key-Value pair to be used in HashMap construction.
 	 */
-	public static final class Entry extends SimpleImmutableEntry<String, Object> {
-		public Entry(String theKey, Object theValue) {
+	public static final class Entry extends SimpleImmutableEntry<String, Serializable> {
+		public Entry(String theKey, Serializable theValue) {
 			super(theKey, theValue);
 		}
+	}
+
+	/**
+	 * The EventBusBroadcastReceiverBridge is designed to receive any
+	 * global Broadcasts and bridge them into the local Broadcast system
+	 * and wrap them into an event for automatic/easy consumption.
+	 *
+	 * It is advised that an Intent have some earmarking so a user of the
+	 * GenericBroadcastEvent knows which Intent is theirs.
+	 */
+	public static final class BroadcastReceiverBridge extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String event = intent.getAction() == null ?
+					"GenericBroadcastEvent" : intent.getAction();
+			final HashMap<String, Serializable> data = (HashMap)intent.getSerializableExtra("data");
+			BaseApp.app().eventBus().publish(event, null, data);
+		}
+	}
+
+	/**
+	 *
+	 * @param context
+	 * @param name
+	 * @return
+	 */
+	@NonNull
+	public static Intent intentForEvent(Context context, @NonNull String name) {
+		return intentForEvent(context, name, (HashMap)null);
+	}
+
+	/**
+	 * Convenience method to create an Intent from Event descriptors.
+	 *
+	 * @param context if provided, a global Intent will be made
+	 * @param entries values to include in the Event's Intent
+	 * @return an Intent for the Event parameters
+	 */
+	@NonNull
+	public static Intent intentForEvent(Context context, @NonNull String name,
+										@Nullable SimpleImmutableEntry<String, Serializable>... entries) {
+		HashMap<String, Serializable> map = new HashMap<>();
+		for (SimpleImmutableEntry<String, Serializable> e : entries)
+			map.put(e.getKey(), e.getValue());
+		return intentForEvent(context, name, map);
+	}
+
+	/**
+	 * Convenience method to create an Intent from Event descriptors.
+	 *
+	 * @param context if provided, a global Intent will be made
+	 * @param data values to include in the Event's Intent
+	 * @return an Intent for the Event parameters
+	 */
+	@NonNull
+	public static Intent intentForEvent(Context context, @NonNull String name,
+										@Nullable HashMap<String, Serializable> data) {
+		final Intent i = context == null ? new Intent() : new Intent(context, BroadcastReceiverBridge.class);
+		i.setAction(name);
+		X.of(data).let(d -> {
+			for (String key : data.keySet())
+				i.putExtra(key, data.get(key));
+
+			i.putExtra("data", d);
+		});
+		return i;
 	}
 
 	private final LocalBroadcastManager _lbm;
@@ -45,7 +112,7 @@ public class EventBus {
 	 * @param source
 	 */
 	public void publish(@NonNull String name, @Nullable final Object source) {
-		this.publish(name, source, (HashMap<String, Object>) null);
+		this.publish(name, source, (HashMap<String, Serializable>) null);
 	}
 
 	/**
@@ -55,7 +122,7 @@ public class EventBus {
 	 * @param source
 	 */
 	public void publish(@NonNull String name, @Nullable final Object source,
-						@NonNull SimpleImmutableEntry<String, Object>... entries) {
+						@Nullable SimpleImmutableEntry<String, Serializable>... entries) {
 		Intent intent = new Intent(name);
 		X.of(source).let(s -> {
 			UUID id = UUID.randomUUID();
@@ -63,8 +130,8 @@ public class EventBus {
 			intent.putExtra("registry", id);
 		});
 		X.of(entries).let(d -> {
-			HashMap<String, Object> map = new HashMap<>();
-			for (SimpleImmutableEntry<String, Object> e : entries)
+			HashMap<String, Serializable> map = new HashMap<>();
+			for (SimpleImmutableEntry<String, Serializable> e : entries)
 				map.put(e.getKey(), e.getValue());
 			intent.putExtra("data", map);
 		});
@@ -78,7 +145,7 @@ public class EventBus {
 	 * @param source
 	 */
 	public void publish(@NonNull String name, @Nullable final Object source,
-						@Nullable HashMap<String, Object> data) {
+						@Nullable HashMap<String, Serializable> data) {
 		Intent intent = new Intent(name);
 		X.of(source).let(s -> {
 			UUID id = UUID.randomUUID();
@@ -108,12 +175,12 @@ public class EventBus {
 	@NonNull
 	@SuppressWarnings("unchecked")
 	public BroadcastReceiver subscribe(@NonNull final String name, @Nullable final Object source,
-							@NonNull final Consumer<HashMap<String, Object>> handler) {
+							@NonNull final Consumer<HashMap<String, Serializable>> handler) {
 		final WeakReference<Object> ref = new WeakReference<>(source);
 		final BroadcastReceiver receiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				HashMap<String, Object> data = (HashMap<String, Object>)intent.getSerializableExtra("data");
+				HashMap<String, Serializable> data = (HashMap<String, Serializable>)intent.getSerializableExtra("data");
 				X.of(intent.getSerializableExtra("registry")).let(r -> {
 					WeakReference<Object> registry = _registry.get(r);
 					if (ref.get() == null || ref.get().equals(registry.get()))

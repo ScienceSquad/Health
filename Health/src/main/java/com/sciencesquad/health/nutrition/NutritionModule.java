@@ -1,14 +1,12 @@
 package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
-import android.util.Pair;
-
-import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.EventBus.Entry;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-
+import io.realm.RealmObject;
+import io.realm.RealmResults;
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
@@ -16,9 +14,6 @@ import org.threeten.bp.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeSet;
-
-import io.realm.RealmObject;
-import io.realm.RealmResults;
 
 /**
  * Nutrition Module. The big controller for Nutrition
@@ -39,63 +34,68 @@ public class NutritionModule extends Module {
     private VitaminModel vitamins;
     private ArrayList<String> favoriteFoods;
 
-
     //Data context.
     private RealmContext<NutritionModel> nutritionRealm;
+
+	public NutritionModule() {
+		this.nutritionRealm = new RealmContext<>();
+		this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
+		this.nutritionRealm.clear();
+	}
 
     /**
      * Constructs the module itself.
      * Subscribes to events necessary to maintaining its own model.
     */
-    public NutritionModule()  {
+	@Override
+	public void onStart() {
 
-        this.nutritionRealm = new RealmContext<>();
-        this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
-        this.nutritionRealm.clear();
+		// default values
+		this.favoriteFoods = new ArrayList<>();
+		this.hadCaffeine = false;
+		this.calorieIntake = 0;
+		this.waterIntake = 0;
+		this.numCheatDays = 5;
+		this.cheated = false; // being positive and assuming no cheating :)
 
-        // default values
-        this.favoriteFoods = new ArrayList<>();
-        this.hadCaffeine = false;
-        this.calorieIntake = 0;
-        this.waterIntake = 0;
-        this.numCheatDays = 5;
-        this.cheated = false; // being positive and assuming no cheating :)
+		bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
+		bus().subscribe("DataFailureEvent", this, e -> {
+			Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
 
-        bus(b -> {
-            b.subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
-            b.subscribe("DataFailureEvent", this, e -> {
-                Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
+		});
+		bus().subscribe("DataFailureEvent", null, e -> {
+			Log.d(TAG, "Data failed somewhere.");
+		});
 
-            });
-            b.subscribe("DataFailureEvent", null, e -> {
-                Log.d(TAG, "Data failed somewhere.");
+		bus().subscribe("DataUpdateEvent", null, e -> {
+			Log.d(TAG, "There was an update.");
+			if (e.size() > 0) {
+				Map.Entry event = e.entrySet().iterator().next();
+				// maybe use the key as the realm name?
+				if (event.getKey().equals(REALMNAME)) {
+					Log.d(TAG, "Ignoring " + TAG + "'s own data update");
+				}
+				else if(event.getKey().equals("Favorite Foods")) {
+					Log.d(TAG, "Event value:" + event.getValue());
+					String foodName = (String) event.getValue();
+					handleDeleteEvent(foodName, FavoriteFoodModel.class);
+				}
+				else if (event.getKey().equals("Food History")){
+					String foodName = (String) event.getValue();
+					handleDeleteEvent(foodName, FoodModel.class);
+				}
+				else {
+					// do something about it.
+					Log.d(TAG, "OH NO!");
+				}
+			}
+		});
+	}
 
-            });
-            b.subscribe("DataUpdateEvent", null, e -> {
-                Log.d(TAG, "There was an update.");
-                    if (e.size() > 0) {
-                        Map.Entry event = e.entrySet().iterator().next();
-                        // maybe use the key as the realm name?
-                        if (event.getKey().equals(REALMNAME)) {
-                            Log.d(TAG, "Ignoring " + TAG + "'s own data update");
-                        }
-                        else if(event.getKey().equals("Favorite Foods")) {
-                            Log.d(TAG, "Event value:" + event.getValue());
-                            String foodName = (String) event.getValue();
-                            handleDeleteEvent(foodName, FavoriteFoodModel.class);
-                        }
-                        else if (event.getKey().equals("Food History")){
-                            String foodName = (String) event.getValue();
-                            handleDeleteEvent(foodName, FoodModel.class);
-                        }
-                        else {
-                            // do something about it.
-                            Log.d(TAG, "OH NO!");
-                        }
-                    }
-            });
-        });
-    }
+	@Override
+	public void onStop() {
+
+	}
 
     private void handleDeleteEvent(String name, Class modelClazz){
         RealmResults<FoodModel> results =
@@ -314,19 +314,5 @@ public class NutritionModule extends Module {
         }
 
         return foodLog;
-    }
-
-    /**
-     * Overriding Module methods.
-     */
-    @Override
-    public Pair<String, Integer> identifier() {
-        return new Pair<>("Nutrition", R.drawable.ic_menu_nutrition);
-    }
-
-    @Override
-    public void init() {
-        Module.registerModule(this.getClass());
-
     }
 }

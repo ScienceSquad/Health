@@ -42,6 +42,6 @@ public class FoodModel extends RealmObject implements Comparable<FoodModel>{
 
     @Override
     public int compareTo(FoodModel another) {
-        return Math.round(this.calories - another.getCalories());
+        return this.name.compareTo(another.getName());
     }
 }

@@ -160,7 +160,10 @@ public class CalorieDialogFragment extends DialogFragment {
                         while (treeIterator.hasNext()) {
                             FoodModel item = treeIterator.next();
                             if (foodName.equals(item.getName())) {
+                                Log.d(TAG, "Item found!");
                                 newCalorieIntake += item.getCalories();
+                                ((NutritionFragment) CalorieDialogFragment.this.getTargetFragment()).
+                                        getNutritionModule().setCalorieIntake(newCalorieIntake);
 
                                 Snackbar snackbar = Snackbar.make(dialogLayout, "Success: Food added!",
                                         Snackbar.LENGTH_SHORT);
@@ -168,6 +171,7 @@ public class CalorieDialogFragment extends DialogFragment {
                                 return;
                             }
                         }
+                        Log.e(TAG, "Item Not found");
                         // was not previously recorded. Using more dialogs...
                         DialogFragment newFragment = AddFoodFragment.newInstance(foodName);
                         newFragment.setTargetFragment(this, 0);

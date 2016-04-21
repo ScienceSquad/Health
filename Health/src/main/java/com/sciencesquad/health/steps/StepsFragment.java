@@ -1,36 +1,21 @@
 package com.sciencesquad.health.steps;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Toast;
-
-/**
- * Below are packages that may or may not need to be used
- */
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.content.Context;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
-/**
- * Above are packages that may or may not need to be used
- */
-
-import android.app.Fragment;
-
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
@@ -38,6 +23,15 @@ import com.sciencesquad.health.core.ui.Stopwatch;
 import com.sciencesquad.health.databinding.FragmentStepsBinding;
 
 import org.threeten.bp.Duration;
+
+/**
+ * Below are packages that may or may not need to be used
+ * <p>
+ * Above are packages that may or may not need to be used
+ */
+/**
+ * Above are packages that may or may not need to be used
+ */
 
 /**
  * This is the only way I know how to do this as of right now. Should this be in my Model instead?
@@ -176,7 +170,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
      * @param maxdelay
      */
     private void registerEventListener(int maxdelay) {
-        // BEGIN_INCLUDE(register)
+        // BEGIN_INCLUDE(start)
 
         // Keep track of state so that the correct sensor type and batch delay can be set up when
         // the app is restored (for example on screen rotation).
@@ -238,7 +232,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
         if (countSensor != null) {
             sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
         } else {
-            Toast.makeText(getActivity(), "Count sensor not available!", Toast.LENGTH_LONG).show();
+            BaseApp.app().display("Count sensor not available!", true);
         }
     }
 
@@ -246,7 +240,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
     public void onPause() {
         super.onPause();
         activityRunning = false;
-        // if you unregister the last listener, the hardware will stop detecting step events
+        // if you stop the last listener, the hardware will stop detecting step events
         // sensorManager.unregisterListener(this);
     }
 
