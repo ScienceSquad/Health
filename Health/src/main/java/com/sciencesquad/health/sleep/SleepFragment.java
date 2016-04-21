@@ -1,42 +1,43 @@
 package com.sciencesquad.health.sleep;
 
-import android.content.Intent;
+import android.app.TimePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.alarm.AlarmModule;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
-import com.sciencesquad.health.core.util.AlarmSender;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-
+import java8.util.function.Function;
 import java8.util.stream.Stream;
 import java8.util.stream.StreamSupport;
+import org.threeten.bp.DayOfWeek;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.ChronoUnit;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.sciencesquad.health.core.util.AnimationUtils.*;
 
 /**
- *
+ * TODO: Alarms should be set-any, repeat-any.
  */
 public class SleepFragment extends BaseFragment {
 	public static final String TAG = SleepFragment.class.getSimpleName();
-
-	/**
-	 * The tag ID for each tile to get the cycle out.
-	 */
-	private static final int TILE_ID = R.string.decline;
 
 	/**
 	 * The tag ID for each tile to get the cycle out.
@@ -49,11 +50,15 @@ public class SleepFragment extends BaseFragment {
 	private SleepModule module;
 
 	/**
+	 * Cached theme colors.
+	 */
+	private int[] colors;
+
+	/**
 	 * @see BaseFragment
 	 */
 	@Override
 	protected Configuration getConfiguration() {
-		String notUnderscore = SleepModule.TAG; // instantiates the Module...
 		return new Configuration(
 				TAG, "Sleep", R.drawable.ic_menu_sleep,
 				R.style.AppTheme_Sleep, R.layout.fragment_sleep
@@ -85,11 +90,28 @@ public class SleepFragment extends BaseFragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		xml().setModule((module = Module.moduleForClass(SleepModule.class)));
+		xml().setModule((module = Module.of(SleepModule.class)));
+		xml().setFragment(this);
 
-		// Prepare the sleep dialog.
+		// Prepare resources for configuration.
 		Drawable zzz = getTintedDrawable(this, R.drawable.ic_menu_sleep, Color.WHITE);
-		bus(b -> track(b.subscribe("SoundServiceStopEvent", null, ev -> {
+		colors = getThemeColors(getInflater().getContext());
+		Stream<CardView> tiles = StreamSupport
+				.of(xml().tile1, xml().tile2, xml().tile3, xml().tile4,
+						xml().tile5, xml().tile6, xml().tile7, xml().tile8);
+		Stream<CardView> alarms = StreamSupport
+				.of(xml().alarm1, xml().alarm2, xml().alarm3, xml().alarm4,
+						xml().alarm5, xml().alarm6, xml().alarm7);
+
+		// Setup the Toolbar, ViewPager, and FAB.
+		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
+		xml().fab.setImageDrawable(zzz);
+		StaticPagerAdapter.install(xml().pager);
+		xml().tabs.setupWithViewPager(xml().pager);
+
+		// Prepare to show a dialog when waking up.
+		bus().subscribe("SleepWakeAlarmEvent", null, ev -> {
+			SleepMonitoringService.stopMonitoringService();
 			new MaterialStyledDialog(getActivity())
 					.setIcon(zzz)
 					.setCustomView(getInflater().inflate(R.layout.fragment_sleep_userinput, null))
@@ -100,81 +122,86 @@ public class SleepFragment extends BaseFragment {
 					.setNegative(getResources().getString(R.string.decline),
 							(dialog, which) -> Log.d(TAG, "Declined!"))
 					.show();
-		})));
-
-		// Setup the Toolbar, ViewPager, and FAB.
-		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
-		xml().fab.setImageDrawable(zzz);
-		StaticPagerAdapter.install(xml().pager);
-		xml().tabs.setupWithViewPager(xml().pager);
-
-		// Set up the alarm handler.
-		xml().fab.setOnClickListener(v -> {
-			// 15 min to fall asleep, 90 min cycles. FIXME
-			TimePickerDialog tpd = TimePickerDialog.newInstance((l, h, m, s) -> {
-				Toast.makeText(getActivity(), "Got " + h + " " + m + " " + s, Toast.LENGTH_LONG).show();
-			}, 8, 30, false);
-			tpd.show(getFragmentManager(), "TPD");
-
-			/*
-			AlarmSender sender = new AlarmSender();
-			sender.setTimeInMillis(1000 * 3);
-			sender.setAlarm(this, new Intent(getActivity(), SleepWakeUpReceiver.class));
-			*/
 		});
 
-		// Set up a list of tiles for the ambience mixer.
-		int colors[] = getThemeColors(getInflater().getContext());
-		Stream<CardView> tiles = StreamSupport
-				.of(xml().tile1, xml().tile2, xml().tile3, xml().tile4,
-						xml().tile5, xml().tile6, xml().tile7, xml().tile8);
+		// Prepare to show a time picker on each alarm.
+		alarms.forEach(a -> a.setOnClickListener(v -> {
+			int day = DayOfWeek.from(LocalDateTime.now()).getValue();
+			LocalTime alarm = this.module.alarms[day];
 
-		// For each tile, configure the behavior like so:
-		// 1. Snap between range [0%, (25%, 50%, 75%,) 100%]
-		// 2. Save and load this cycle from the tile's tag.
-		// 3. Interpolate the colorPrimaryDark and colorAccent.
-		// 4. Determine proportion using cycle and animate it.
-		// 5. Keep track of tile cycles and control volume levels.
+			new TimePickerDialog(getInflater().getContext(), (picker, h, m) -> {
+				app().display("Setting alarm to " + h + ":" + m, false);
+				this.module.alarms[day] = LocalTime.of(h, m);
+
+				TextView fixme = (TextView)a.findViewWithTag("time");
+				//Log.i(TAG, "got " + fixme + " -> " + this.module.timeForDayOfWeek(day));
+				fixme.setText(this.module.timeForDayOfWeek(day));
+			}, alarm.getHour(), alarm.getMinute(), false).show();
+		}));
+
+		// Set up the sleep now FAB.
+		// 15 min to fall asleep, 90 min cycles. FIXME
+		xml().fab.setOnClickListener(v -> {
+			AlarmModule alarmModule = Module.of(AlarmModule.class);
+			int alarmId = alarmModule.setTimeInMillis(System.currentTimeMillis()
+					+ TimeUnit.MINUTES.toMillis(1)).add().getAlarmId();
+
+			//AlarmSender sender = new AlarmSender();
+			//sender.setTimeInMillis(TimeUnit.MINUTES.toMillis(1));
+			//sender.setAlarm(this, EventBus.intentForEvent(app(), "SleepWakeAlarmEvent"));
+			SleepMonitoringService.startMonitoringService();
+
+			int day = DayOfWeek.from(LocalDateTime.now()).getValue();
+			LocalTime alarm = this.module.alarms[day];
+			LocalTime now = LocalTime.now();
+			long min = now.until(alarm, ChronoUnit.MINUTES);
+			//app().display("min = " + min + " | diff = " + min % 90, false);
+			now = now.plus(min - min % 90, ChronoUnit.MINUTES);
+
+			String txt = now.format(DateTimeFormatter.ofPattern("h:mm a"));
+			Snackbar.make(v, "Good night! I'll wake you up at " + txt + "!", Snackbar.LENGTH_LONG).show();
+		});
+
+		// For each tile, configure their behavior.
 		tiles.forEach(c -> {
-
-			// Configure tags and text.
-			int _id = Integer.valueOf((String) c.getTag());
-			c.setTag(TILE_ID, _id);
+			int _id = Integer.valueOf((String)c.getTag());
 			c.setTag(TILE_CYCLE, 0);
 			TextView t = (TextView) c.findViewWithTag("text");
-			if (_id < SoundService.wav_map.length)
-				t.setText(SoundService.wav_map[_id]);
-			else t.setText("other");
-
-			c.setOnClickListener(v -> {
-				int id = (Integer) c.getTag(TILE_ID);
-				int cycle = (Integer) c.getTag(TILE_CYCLE);
-
-				// Snaps the color cycle range: [0%, 25%, 50%, 75%, 100%]
-				int color1 = interpolate(colors[1], colors[2], cycle / 4.0f);
-				cycle = cycle >= 4 ? 0 : cycle + 1;
-				int color2 = interpolate(colors[1], colors[2], cycle / 4.0f);
-				animateCardViewColor(c, color1, color2).start();
-
-				// Update the settings and trigger changes.
-				c.setTag(TILE_CYCLE, cycle);
-				this.module.setTileCycle(id, cycle);
-			});
-			c.setOnLongClickListener(v -> {
-				int id = (Integer) c.getTag(TILE_ID);
-				int cycle = (Integer) c.getTag(TILE_CYCLE);
-
-				// Snaps the color cycle range: [0%, 100%]
-				int color1 = interpolate(colors[1], colors[2], cycle / 4.0f);
-				cycle = cycle > 0 ? 0 : 4;
-				int color2 = interpolate(colors[1], colors[2], cycle / 4.0f);
-				animateCardViewColor(c, color1, color2).start();
-
-				// Update the settings and trigger changes.
-				c.setTag(TILE_CYCLE, cycle);
-				this.module.setTileCycle(id, cycle);
-				return true;
-			});
+			t.setText(SleepModule.nameForPosition(_id));
 		});
+
+		// Quick bootstrap to stop all tiles.
+		bus().subscribe("StoppedSleepSoundsEvent", null, ev -> {
+			tiles.forEach(c -> handleTileCycle(c, o -> 0));
+		});
+	}
+
+	// Snaps the color cycle range: [0%, 25%, 50%, 75%, 100%]
+	public void onTileClick(View c) {
+		handleTileCycle((CardView)c, o -> o >= 4 ? 0 : o + 1);
+	}
+
+	// Snaps the color cycle range: [0%, 100%]
+	public boolean onTileLongClick(View c) {
+		handleTileCycle((CardView)c, o -> o > 0 ? 0 : 4);
+		return true;
+	}
+
+	// 1. Snap between range [0%, (25%, 50%, 75%,) 100%]
+	// 2. Save and load this cycle from the tile's tag.
+	// 3. Interpolate the colorPrimaryDark and colorAccent.
+	// 4. Determine proportion using cycle and animate it.
+	// 5. Keep track of tile cycles and control volume levels.
+	private void handleTileCycle(CardView c, Function<Integer, Integer> cycler) {
+		int id = Integer.valueOf((String)c.getTag());
+		int oldCycle = (Integer) c.getTag(TILE_CYCLE);
+		int newCycle = cycler.apply(oldCycle);
+
+		// Update the settings and trigger changes.
+		int color1 = interpolate(colors[1], colors[2], oldCycle / 4.0f);
+		int color2 = interpolate(colors[1], colors[2], newCycle / 4.0f);
+		animateCardViewColor(c, color1, color2).start();
+		c.setTag(TILE_CYCLE, newCycle);
+		this.module.setPlayerVolume(id, newCycle);
 	}
 }

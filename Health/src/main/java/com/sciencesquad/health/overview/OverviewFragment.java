@@ -14,23 +14,21 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CalendarView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.Dispatcher;
@@ -137,7 +135,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //xml().setModule(Module.moduleForClass(OverviewModule.class));
+        //xml().setModule(Module.of(OverviewModule.class));
 
 		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
 		plus.setTint(Color.DKGRAY);
@@ -184,8 +182,8 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
             public void onSelectedDayChange(CalendarView calendarView, int i, int i1, int i2) {
                 dateDisplay.setText("Date: " + i2 + " / " + i1 + " / " + i);
 
-                Toast.makeText(getActivity().getApplicationContext(), "Selected Date:\n" + "Day = " + i2 + "\n" +
-                        "Month = " + i1 + "\n" + "Year = " + i, Toast.LENGTH_SHORT).show();
+				BaseApp.app().display("Selected Date:\n" + "Day = " + i2 + "\n" +
+                        "Month = " + i1 + "\n" + "Year = " + i, false);
             }
         });
 

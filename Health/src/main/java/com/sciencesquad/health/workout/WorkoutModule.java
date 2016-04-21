@@ -1,28 +1,17 @@
 package com.sciencesquad.health.workout;
 
 import android.util.Log;
-import android.util.Pair;
-
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.util.Dispatcher;
-
-import org.threeten.bp.DateTimeUtils;
+import io.realm.RealmList;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneOffset;
-import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 /**
  * Created by mrjohnson on 3/1/16.
@@ -30,65 +19,63 @@ import io.realm.RealmResults;
 
 public class WorkoutModule extends Module {
     public static final String TAG = WorkoutModule.class.getSimpleName();
-    static { Module.registerModule(WorkoutModule.class); }
     private RealmContext<ExerciseTypeModel> workoutRealm;
     //Data context.
-
-
     //private RealmContext<RoutineModel> workoutRealm;
 
     /**
      * Constructs the module itself.
      * It also sets up a Realm Context for the Module.
      */
+	@Override
+	public void onStart() {
+		this.workoutRealm = new RealmContext<>();
+		this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
 
+		//this.workoutRealm.getRealm().beginTransaction();
+		//this.workoutRealm.getRealm().deleteAll();
+		//this.workoutRealm.getRealm().commitTransaction();
+		//this.workoutRealm.getRealm().refresh();
 
-    public WorkoutModule()  {
-        this.workoutRealm = new RealmContext<>();
-        this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
-
-        //this.workoutRealm.getRealm().beginTransaction();
-        //this.workoutRealm.getRealm().deleteAll();
-        //this.workoutRealm.getRealm().commitTransaction();
-        //this.workoutRealm.getRealm().refresh();
-
-        if(getExerciseTypeModel("Abductor Machine") == null){
-            Log.i(TAG, "ADDING BASE EXERCISES");
+		if(getExerciseTypeModel("Abductor Machine") == null){
+			Log.i(TAG, "ADDING BASE EXERCISES");
             /*
             Dispatcher.BACKGROUND.run(() -> {
                 addBaseExercises();
                 addRecommendedWorkouts();
             });
                */
-            addBaseExercises();
-            addRecommendedWorkouts();
-        }
+			addBaseExercises();
+			addRecommendedWorkouts();
+		}
 
-        //addBaseExercises();
-        //addRecommendedWorkouts();
+		//addBaseExercises();
+		//addRecommendedWorkouts();
 
-        bus(b -> {
-            b.subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
-            b.subscribe("DataFailureEvent", this, e -> {
-                Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
+		bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
+		bus().subscribe("DataFailureEvent", this, e -> {
+			Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
 
-            });
-            b.subscribe("DataFailureEvent", null, e -> {
-                Log.d(TAG, "Data failed somewhere.");
+		});
+		bus().subscribe("DataFailureEvent", null, e -> {
+			Log.d(TAG, "Data failed somewhere.");
+		});
+		bus().subscribe("DataUpdateEvent", null, e -> {
+			Log.d(TAG, "There was an update to a realm.");
 
-            });
-            b.subscribe("DataUpdateEvent", null, e -> {
-                Log.d(TAG, "There was an update to a realm.");
+			// maybe use the key as the realm name?
+			if (e.get("key").equals("WorkoutRealm")) {
+				Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
+			} else {
+				// do something about it.
+			}
+		});
+	}
 
-                // maybe use the key as the realm name?
-                if (e.get("key").equals("WorkoutRealm")) {
-                    Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
-                } else {
-                    // do something about it.
-                }
-            });
-        });
-    }
+	@Override
+	public void onStop() {
+
+	}
 
     public ArrayList<ExerciseTypeModel> getAllExerciseTypeModels() {
         ArrayList<ExerciseTypeModel> exercises = new ArrayList<>();
@@ -284,17 +271,6 @@ public class WorkoutModule extends Module {
 
         RoutineModel strongLiftsB = createNewRoutine("StrongLifts 5x5: B", exerciseNamesB);
         addRoutineModel(strongLiftsB);
-
-    }
-
-
-    @Override
-    public Pair<String, Integer> identifier() {
-        return null;
-    }
-
-    @Override
-    public void init() {
 
     }
 

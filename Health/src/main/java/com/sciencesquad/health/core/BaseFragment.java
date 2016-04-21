@@ -23,9 +23,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.util.X;
-import java8.util.function.Consumer;
-import java8.util.stream.StreamSupport;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -190,19 +187,18 @@ public abstract class BaseFragment extends Fragment {
 	 * @return the Application as a nullable Optional
 	 */
 	@NonNull
-	protected X<BaseApp> app() {
-		return X.of(BaseApp.app());
+	protected BaseApp app() {
+		return BaseApp.app();
 	}
 
 	/**
 	 * Helper to wrap the Application EventBus as an Optional type.
 	 *
-	 * @param handler the context in which the EventBus is used.
 	 * @return the EventBus as a nullable Optional
 	 */
 	@NonNull
-	protected X<EventBus> bus(Consumer<EventBus> handler) {
-		return this.app().map(BaseApp::eventBus).let(handler);
+	protected EventBus bus() {
+		return this.app().eventBus();
 	}
 
 	/**
@@ -308,8 +304,8 @@ public abstract class BaseFragment extends Fragment {
 		getActivity().setTaskDescription(v);
 
 		// Clear out any saved Subscriptions.
-		StreamSupport.stream(this._subscriptions)
-				.forEach(r -> this.app().map(BaseApp::eventBus).let(bus -> bus.unsubscribe(r)));
+		//StreamSupport.stream(this._subscriptions)
+		//		.forEach(r -> this.app().map(BaseApp::eventBus).let(bus -> bus.unsubscribe(r)));
 		this._subscriptions.clear();
 	}
 }

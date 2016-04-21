@@ -7,21 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.util.Pair;
-
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.prescriptions.AlarmReceiver;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
-
 import io.realm.RealmResults;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by andrew on 4/13/16.
@@ -30,10 +25,24 @@ public class AlarmModule extends Module {
 	static final String TAG = AlarmModule.class.getSimpleName();
 	static final String ALARM_ID_FIELD = "alarmId";
 
-	static { Module.registerModule(AlarmModule.class); }
-
-
 	private RealmContext<AlarmModel> alarmRealm;
+
+	@Override
+	public void onStart() {
+		this.alarmRealm = new RealmContext<>();
+		this.alarmRealm.init(BaseApp.app(), AlarmModel.class, "alarm.realm");
+
+		resetData();
+		bus().subscribe("AlarmFiredEvent", null, ev -> {
+			int alarmId = (Integer) ev.get("alarmId");
+			sendAlarm(getAlarmById(alarmId), true);
+		});
+	}
+
+	@Override
+	public void onStop() {
+
+	}
 
 	public enum RepeatInterval {
 		ONCE,
@@ -49,17 +58,6 @@ public class AlarmModule extends Module {
 	private int numDays;
 
 	private final int DEFAULT_REPEAT = 1;
-
-	public AlarmModule() {
-		this.alarmRealm = new RealmContext<>();
-		this.alarmRealm.init(BaseApp.app(), AlarmModel.class, "alarm.realm");
-
-		resetData();
-	}
-
-	public static AlarmModule getModule() {
-		return Module.moduleForClass(AlarmModule.class);
-	}
 
 	private void resetData() {
 		this.time = Calendar.getInstance();
@@ -556,18 +554,10 @@ public class AlarmModule extends Module {
 	 */
 	public PendingIntent getAlarmIntent(AlarmModel alarm) {
 		Context ctx = BaseApp.app().getApplicationContext();
-		Intent intent = new Intent(ctx, AlarmReceiver.class);
+		HashMap<String, Serializable> data = new HashMap<>();
+		data.put("alarmId", alarm.getAlarmId());
+		Intent intent = EventBus.intentForEvent(ctx, "AlarmFiredEvent", data);
 		intent.putExtra("alarmId", alarm.getAlarmId());
 		return PendingIntent.getBroadcast(BaseApp.app().getApplicationContext(), alarm.getAlarmId(), intent, 0);
-	}
-
-	@Override
-	public Pair<String, Integer> identifier() {
-		return null;
-	}
-
-	@Override
-	public void init() {
-
 	}
 }

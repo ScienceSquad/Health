@@ -4,25 +4,21 @@ import android.content.BroadcastReceiver;
 import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
-import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.Pair;
-import com.sciencesquad.health.core.util.X;
-import java8.util.function.Consumer;
 import java8.util.stream.StreamSupport;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * The Module abstract class is the binding glue behind a modular architecture
  * that relies on dependency injection and a global and/or local event bus.
  *
  *
- * Any subclass of the Module class should register itself and observe for any
+ * Any subclass of the Module class should start itself and observe for any
  * relevant events (such as the AppCreateEvent or ActivityStartEvent). It may
  * then request resources like a SensorContext or DataContext to support a data
  * back-end. It is its own ViewModel, so it may also request a
@@ -34,7 +30,7 @@ public abstract class Module implements Observable {
 	 * A collection of all the registered modules; a module may not be
 	 * registered more than once.
 	 */
-	private static Set<Module> _modules = new HashSet<>();
+	/*package*/ static Set<Module> _modules = new HashSet<>();
 
 	/**
 	 * The internal set of Subscriptions to auto-unsubscribe from.
@@ -49,47 +45,28 @@ public abstract class Module implements Observable {
 	private transient PropertyChangeRegistry _callbacks;
 
 	/**
-	 * Special identifier only set by a ContextBinder for identification.
-	 */
-	/*package*/ transient UUID _identifier;
-
-	/**
-	 *
-	 */
-	/*package*/ ViewContext<? extends ViewDataBinding> _viewContext;
-
-	/**
-	 *
-	 */
-	/*package*/ ViewContext<? extends ViewDataBinding> _dataContext;
-
-	/**
-	 *
-	 */
-	/*package*/ ViewContext<? extends ViewDataBinding> _sensorContext;
-
-	/**
-	 * Any subclass of the Module class should ideally register itself
+	 * Any subclass of the Module class should ideally start itself
 	 * for free support from the framework dependency injector.
 	 *
 	 * Example:
 	 * ```java
 	 * static {
-	 *     Module.registerModule(this);
+	 *     Module.start(this);
 	 * }
 	 * ```
 	 *
-	 * @param module the module to register
+	 * @param module the module to start
 	 * @return true if registration successful, false otherwise
 	 */
 	@Nullable
-	public static <T extends Module> T registerModule(@NonNull Class<T> module) {
+	public static <T extends Module> T start(@NonNull Class<T> module) {
 		try {
+			Log.i(TAG, "Initializing " + module.getSimpleName() + "...");
 			T instance = module.newInstance();
-			instance.init();
+			instance.onStart();
 			return _modules.add(instance) ? instance : null;
 		} catch (Exception e) {
-			Log.e(TAG, "Unable to register Module class! " + e.getLocalizedMessage());
+			Log.e(TAG, "Unable to start Module class! " + e.getLocalizedMessage());
 			return null;
 		}
 	}
@@ -97,10 +74,10 @@ public abstract class Module implements Observable {
 	/**
 	 * Unregister.
 	 *
-	 * @param module the module to unregister
+	 * @param module the module to stop
 	 * @return true if unregistration successful, false otherwise
 	 */
-	public static <T extends Module> void unregisterModule(@NonNull Class<T> module) {
+	public static <T extends Module> void stop(@NonNull Class<T> module) {
 		StreamSupport.stream(_modules)
 				.filter(a -> module.isAssignableFrom(a.getClass()))
 				.forEach(v -> _modules.remove(v));
@@ -112,8 +89,8 @@ public abstract class Module implements Observable {
 	 * @return all registered Module subclasses
 	 */
 	@NonNull
-	public static Set<Module> registeredModules() {
-		return _modules;
+	public static Set<Module> all() {
+		return Collections.unmodifiableSet(_modules);
 	}
 
 	/**
@@ -126,25 +103,13 @@ public abstract class Module implements Observable {
 	 */
 	@NonNull
 	@SuppressWarnings("unchecked")
-	public static <T extends Module> T moduleForClass(@NonNull Class<T> module) {
+	public static <T extends Module> T of(@NonNull Class<T> module) {
 		T item =  (T)StreamSupport.stream(_modules)
 				.filter(a -> module.isAssignableFrom(a.getClass()))
 				.findFirst()
-				.orElse(Module.registerModule(module));
-		Log.i(TAG, "TEST WITH " + item);
+				.orElse(Module.start(module));
 		return item;
 	}
-
-	/**
-	 * A Module's identifier provides the name and icon of a Module for
-	 * implementations where the user interacts with available Modules.
-	 *
-	 * The identifier is a tuple consisting of a String for the Module name,
-	 * and an icon, represented as an integer drawable resource.
-	 *
-	 * @return a tuple of a String for the name and int for the drawable
-	 */
-	public abstract Pair<String, Integer> identifier();
 
 	/**
 	 * Refrain from using the constructor of a module for initialization
@@ -153,37 +118,13 @@ public abstract class Module implements Observable {
 	 * This method is the preferred point of initialization and is called
 	 * by the system when the module is to be created, only once.
 	 */
-	public abstract void init();
+	public abstract void onStart();
 
 	/**
-	 *
-	 *
-	 * @param <T>
-	 * @return
+	 * This method is invoked when the Module is required to be stopped
+	 * by the System or Android, and should clear up resources used.
 	 */
-	protected <T extends ViewDataBinding> X<ViewContext<T>> viewContext() {
-		return X.of(null);
-	}
-
-	/**
-	 *
-	 *
-	 * @param <T>
-	 * @return
-	 */
-	protected <T extends ViewDataBinding> X<ViewContext<T>> dataContext() {
-		return X.of(null);
-	}
-
-	/**
-	 *
-	 *
-	 * @param <T>
-	 * @return
-	 */
-	protected <T extends ViewDataBinding> X<ViewContext<T>> sensorContext() {
-		return X.of(null);
-	}
+	public abstract void onStop();
 
 	/**
 	 * Tracks any receivers for removal when this Fragment dies.
@@ -204,8 +145,8 @@ public abstract class Module implements Observable {
 	@Override
 	protected synchronized void finalize() throws Throwable {
 		super.finalize();
-		StreamSupport.stream(this._subscriptions)
-				.forEach(r -> this.app().map(BaseApp::eventBus).let(bus -> bus.unsubscribe(r)));
+		//StreamSupport.stream(this._subscriptions)
+		//		.forEach(r -> this.app().map(BaseApp::eventBus).let(bus -> bus.unsubscribe(r)));
 		this._subscriptions.clear();
 	}
 
@@ -213,22 +154,21 @@ public abstract class Module implements Observable {
 	 * Helper to wrap the Application as an Optional type for situations
 	 * where it may be ambiguous which Application is the owner of the Context.
 	 *
-	 * @return the Application as a nullable Optional
+	 * @return the Application
 	 */
 	@NonNull
-	protected X<BaseApp> app() {
-		return X.of(BaseApp.app());
+	protected BaseApp app() {
+		return BaseApp.app();
 	}
 
 	/**
-	 * Helper to wrap the Application EventBus as an Optional type.
+	 * Helper to wrap the Application EventBus.
 	 *
-	 * @param handler the context in which the EventBus is used.
-	 * @return the EventBus as a nullable Optional
+	 * @return the EventBus
 	 */
 	@NonNull
-	protected X<EventBus> bus(Consumer<EventBus> handler) {
-		return this.app().map(BaseApp::eventBus).let(handler);
+	protected EventBus bus() {
+		return this.app().eventBus();
 	}
 
 	/**

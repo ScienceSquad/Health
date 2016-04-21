@@ -1,15 +1,10 @@
 package com.sciencesquad.health.prescriptions;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-
-import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.alarm.AlarmModel;
+import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.alarm.AlarmModule;
-import com.sciencesquad.health.core.util.AlarmSender;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
@@ -38,7 +33,7 @@ public class AlarmDialog implements TimePickerDialog.OnTimeSetListener,
 	}
 
 	public AlarmDialog() {
-		alarmModule = AlarmModule.getModule();
+		alarmModule = Module.of(AlarmModule.class);
 	}
 
 	@Override
