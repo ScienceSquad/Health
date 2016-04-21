@@ -1,8 +1,6 @@
 package com.sciencesquad.health.prescriptions;
 
 import android.app.AlarmManager;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,30 +12,21 @@ import android.transition.Visibility;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.alarm.AlarmModel;
 import com.sciencesquad.health.core.alarm.AlarmModule;
-import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
+import io.realm.RealmResults;
 
 import java.util.Calendar;
-
-import io.realm.RealmResults;
 
 /**
  * Created by andrew on 4/7/16.
@@ -259,8 +248,8 @@ public class PrescriptionFragment extends BaseFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		prescriptionModule = PrescriptionModule.getModule();
-		alarmModule = AlarmModule.getModule();
+		prescriptionModule = Module.of(PrescriptionModule.class);
+		alarmModule = Module.of(AlarmModule.class);
 
 		prescriptionModule.clearAllPrescriptions();
 

@@ -1,13 +1,10 @@
 package com.sciencesquad.health.prescriptions;
 
 import android.util.Log;
-import android.util.Pair;
-
-import com.sciencesquad.health.core.alarm.AlarmModule;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.BaseApp;
-
+import com.sciencesquad.health.core.alarm.AlarmModule;
 import io.realm.RealmResults;
 
 /**
@@ -19,8 +16,6 @@ import io.realm.RealmResults;
 public class PrescriptionModule extends Module {
 	private static final String TAG = PrescriptionModule.class.getSimpleName();
 
-	static { Module.registerModule(PrescriptionModule.class); }
-
 	private RealmContext<PrescriptionModel> prescriptionRealm;
 
 	private String name;
@@ -31,15 +26,16 @@ public class PrescriptionModule extends Module {
 	 * Constructs the module itself.
 	 * It also sets up a Realm Context for the Module.
 	 */
-
-	public PrescriptionModule() {
+	@Override
+	public void onStart() {
 		Log.d(TAG, "Constructing Prescription Module");
 		this.prescriptionRealm = new RealmContext<>();
 		this.prescriptionRealm.init(BaseApp.app(), PrescriptionModel.class, "prescription.realm");
 	}
 
-	public static PrescriptionModule getModule() {
-		return Module.moduleForClass(PrescriptionModule.class);
+	@Override
+	public void onStop() {
+
 	}
 
 	public PrescriptionModule setName(String name) {
@@ -104,15 +100,5 @@ public class PrescriptionModule extends Module {
 		}
 
 		prescriptionRealm.clear();
-	}
-
-	@Override
-	public void onStart() {
-
-	}
-
-	@Override
-	public void onStop() {
-
 	}
 }

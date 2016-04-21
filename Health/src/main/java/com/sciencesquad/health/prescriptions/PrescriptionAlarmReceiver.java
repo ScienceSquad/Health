@@ -22,8 +22,8 @@ public class PrescriptionAlarmReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		String name = intent.getStringExtra(PrescriptionAlarm.PRESCRIPTION_NAME);
-		int dosage = intent.getIntExtra(PrescriptionAlarm.PRESCRIPTION_DOSAGE, 0);
+		String name = "";//intent.getStringExtra(PrescriptionAlarm.PRESCRIPTION_NAME);
+		int dosage = 0;//intent.getIntExtra(PrescriptionAlarm.PRESCRIPTION_DOSAGE, 0);
 		Log.d("PAReceiver", "Name: " + name + " Dosage: " + String.valueOf(dosage));
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
