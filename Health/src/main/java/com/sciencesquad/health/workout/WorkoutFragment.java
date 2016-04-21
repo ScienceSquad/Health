@@ -30,6 +30,7 @@ import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
+import io.realm.RealmList;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +55,7 @@ public class WorkoutFragment extends BaseFragment {
     public static ArrayAdapter<String> routineModelAdapter;
     public static ArrayAdapter<String> exerciseTypeAdapter;
     public static ArrayAdapter<String> currentRoutineExerciseAdapter;
-    WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+    WorkoutModule mod = Module.of(WorkoutModule.class);
 
 
 
@@ -97,7 +98,7 @@ public class WorkoutFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        xml().setModule(Module.moduleForClass(WorkoutModule.class));
+        xml().setModule(Module.of(WorkoutModule.class));
 
         TabLayout tabLayout = xml().tabs;
         StaticPagerAdapter.install(xml().pager);
@@ -215,7 +216,7 @@ public class WorkoutFragment extends BaseFragment {
     }
 
     public void updateCurrentWorkout(RoutineModel currentRoutine){
-        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.of(WorkoutModule.class);
         xml().currentWorkoutHeader.setText("");
 
         currentRoutineExerciseAdapter.clear();                // first clear adapter
@@ -305,7 +306,7 @@ public class WorkoutFragment extends BaseFragment {
         builder.setTitle(name);
 
         // fill spinner with all different workout "targets" with which a user can filter exercises
-        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.of(WorkoutModule.class);
         List<ExerciseTargetModel> filters = mod.getAllTargets();
         Spinner filterSpinner = (Spinner) dialogLayout.findViewById(R.id.filter_spinner);
         ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getInflater().getContext(), android.R.layout.simple_list_item_1);
@@ -373,7 +374,7 @@ public class WorkoutFragment extends BaseFragment {
     }
 
     private RealmLineData createLineData(String exerciseName){
-        RealmLineDataSet<CompletedExerciseModel> dataSet = new RealmLineDataSet<CompletedExerciseModel>(
+        RealmLineDataSet<CompletedExerciseModel> dataSet = new RealmLineDataSet<>(
                 mod.getCompletedExercisesQuery(exerciseName), "oneRepMax");
         ArrayList<ILineDataSet> dataSetList = new ArrayList<ILineDataSet>();
         dataSetList.add(dataSet);
@@ -383,7 +384,7 @@ public class WorkoutFragment extends BaseFragment {
 
     void showExerciseHistoryDialog(String exerciseName){
         // Get Exercise History
-        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.of(WorkoutModule.class);
         ArrayList<CompletedExerciseModel> history =  mod.getCompletedExercises(exerciseName);
         Log.i(TAG, "Num Completed Exercises: " + history.size());
         int max = 0;
@@ -440,7 +441,7 @@ public class WorkoutFragment extends BaseFragment {
             ExerciseTypeModel newExercise = WorkoutModule.createNewExercise(name, category, target);
             //Add to Realm
             exerciseTypeModelList.add(newExercise);
-            //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+            //WorkoutModule mod = Module.of(WorkoutModule.class);
             mod.addExerciseTypeModel(newExercise);
 
 
@@ -512,7 +513,7 @@ public class WorkoutFragment extends BaseFragment {
         routineListView.setAdapter(routineListAdapter);
         routineListAdapter.clear();
 
-        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.of(WorkoutModule.class);
         for(RoutineModel m : mod.getAllRoutineModels())
             routineListAdapter.addAll(m.getName());
 
@@ -564,7 +565,7 @@ public class WorkoutFragment extends BaseFragment {
             Snackbar.make(getView(), "Not added: Routine name field blank!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
-            //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+            //WorkoutModule mod = Module.of(WorkoutModule.class);
             showRoutineBuilder(routineName);
 
             // Bind data to view (RoutineModels)
@@ -594,7 +595,7 @@ public class WorkoutFragment extends BaseFragment {
 
 
     public void saveCompletedExercise(CompletedExerciseModel newCompletedExercise) {
-        //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
+        //WorkoutModule mod = Module.of(WorkoutModule.class);
         mod.addCompletedExercise(newCompletedExercise);
     }
 

@@ -1,15 +1,15 @@
 package com.sciencesquad.health.prescriptions;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-
-import com.sciencesquad.health.core.util.AlarmSender;
+import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.alarm.AlarmModule;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
+import java.util.Calendar;
 
 /**
  * Created by andrew on 3/3/16.
@@ -19,12 +19,11 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 public class AlarmDialog implements TimePickerDialog.OnTimeSetListener,
 		DatePickerDialog.OnDateSetListener {
 
-	private AlarmSender alarm;
-	private Activity parentActivity;
-	private boolean alarmSet = false;
+	AlarmModule alarmModule;
 
-	/** A runnable action to be run after date and time are set by the dialog **/
-	private Runnable onDateTimeSet;
+	int alarmId;
+	Runnable onFinish;
+	Activity parentActivity;
 
 	class mListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
@@ -33,58 +32,50 @@ public class AlarmDialog implements TimePickerDialog.OnTimeSetListener,
 		}
 	}
 
-	public AlarmDialog(Context context) {
-		this.parentActivity = (Activity) context;
-		this.alarm = new AlarmSender();
-	}
-
-	public void setOnDateTimeSet(Runnable onDateTimeSet) {
-		this.onDateTimeSet = onDateTimeSet;
-	}
-
-	public boolean isSet() {
-		return this.alarmSet;
-	}
-
-	public void setAlarm(Context context, Intent intent) {
-		this.alarm.setAlarm(context, intent);
+	public AlarmDialog() {
+		alarmModule = Module.of(AlarmModule.class);
 	}
 
 	@Override
 	public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-		this.alarm.set(AlarmSender.HOUR_OF_DAY, hourOfDay);
-		this.alarm.set(AlarmSender.MINUTE, minute);
-		if (onDateTimeSet != null) {
-			onDateTimeSet.run();
-		}
-		this.alarmSet = true;
+		alarmModule.setAlarmById(this.alarmId);
+		alarmModule.set(Calendar.HOUR_OF_DAY, hourOfDay)
+				.set(Calendar.MINUTE, minute);
+		alarmModule.add();
+		this.onFinish.run();
 	}
 
 	@Override
 	public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-		this.alarm.set(AlarmSender.YEAR, year);
-		this.alarm.set(AlarmSender.MONTH, monthOfYear);
-		this.alarm.set(AlarmSender.DAY_OF_MONTH, dayOfMonth);
-		this.callTimePicker(false);
+		alarmModule.setAlarmById(this.alarmId);
+		alarmModule.set(Calendar.YEAR, year)
+				.set(Calendar.MONTH, monthOfYear)
+				.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+		alarmModule.add();
+		this.callTimePicker(this.alarmId, this.onFinish, this.parentActivity, false);
 	}
 
-	public void callDatePicker() {
+	public void callDatePicker(int alarmId, Runnable onFinish, Activity parentActivity) {
+		this.alarmId = alarmId;
+		this.onFinish = onFinish;
+		this.parentActivity = parentActivity;
+		alarmModule.setAlarmById(this.alarmId);
 		DatePickerDialog dpd = DatePickerDialog.newInstance(this,
-				this.alarm.get(AlarmSender.YEAR),
-				this.alarm.get(AlarmSender.MONTH),
-				this.alarm.get(AlarmSender.DAY_OF_MONTH));
-		dpd.show(this.parentActivity.getFragmentManager(), "Datepickerdialog");
+				alarmModule.get(Calendar.YEAR),
+				alarmModule.get(Calendar.MONTH),
+				alarmModule.get(Calendar.DAY_OF_MONTH));
+		dpd.show(parentActivity.getFragmentManager(), "Datepickerdialog");
 	}
 
-	public AlarmSender getAlarm() {
-		return this.alarm;
-	}
-
-	public void callTimePicker(boolean is24HourMode) {
+	public void callTimePicker(int alarmId, Runnable onFinish, Activity parentActivity, boolean is24HourMode) {
+		this.alarmId = alarmId;
+		this.onFinish = onFinish;
+		this.parentActivity = parentActivity;
+		alarmModule.setAlarmById(this.alarmId);
 		TimePickerDialog tpd = TimePickerDialog.newInstance(this,
-				this.alarm.get(AlarmSender.HOUR_OF_DAY),
-				this.alarm.get(AlarmSender.MINUTE),
+				alarmModule.get(Calendar.HOUR_OF_DAY),
+				alarmModule.get(Calendar.MINUTE),
 				is24HourMode);
-		tpd.show(this.parentActivity.getFragmentManager(), "Timepickerdialog");
+		tpd.show(parentActivity.getFragmentManager(), "Timepickerdialog");
 	}
 }

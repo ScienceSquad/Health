@@ -2,6 +2,7 @@ package com.sciencesquad.health.nutrition;
 
 import com.sciencesquad.health.core.util.DataGetter;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -9,6 +10,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -37,6 +39,31 @@ public class NutrientQuery {
 	private final String NUTRIENT_REPORT_URL = "http://api.nal.usda.gov/ndb/nutrients/";
 	private final String SEARCH_URL = "http://api.nal.usda.gov/ndb/search/";
 
+
+	static class NutrientIDs {
+		public final String ENERGY_KCAL = "208";
+		public final String CALORIES = ENERGY_KCAL;
+		public final String ENERGY_KJ = "268";
+		public final String WATER = "255";
+		public final String PROTEIN = "203";
+		public final String FAT = "204";
+		public final String CARBOHYDRATES = "205";
+		public final String SUGARS = "269";
+		public final String CALCIUM = "301";
+		public final String IRON = "303";
+		public final String MAGNESIUM = "304";
+
+		public final String ASH = "207";
+		public final String FIBER = "291";
+		public final String SUCROSE = "210";
+		public final String GLUCOSE = "211";
+		public final String FRUCTOSE = "212";
+		public final String LACTOSE = "213";
+		public final String MALTOSE = "214";
+		public final String GALACTOSE = "287";
+
+	}
+
 	public enum QueryType {
 		FOOD_REPORT,
 		LIST,
@@ -63,7 +90,7 @@ public class NutrientQuery {
 
 	// Food report parameters
 	// api_key
-	private int ndbno;
+	private String ndbno;
 	private ReportType reportType;
 	// format
 
@@ -100,7 +127,7 @@ public class NutrientQuery {
 		this.queryType = queryType;
 		this.xmlFormat = false;
 		this.nutrients = new ArrayList<Integer>();
-		this.ndbno = -1;
+		this.ndbno = null;
 		this.reportType = ReportType.BASIC;
 		this.listType = listType.FOOD;
 		this.max = -1;
@@ -125,7 +152,7 @@ public class NutrientQuery {
 		if (index > -1)
 			this.nutrients.remove(index);
 	}
-	public void setNbdNumber(int ndbNumber) { this.ndbno = ndbNumber; }
+	public void setNdbNumber(String ndbNumber) { this.ndbno = ndbNumber; }
 	public void setReportType(ReportType reportType) { this.reportType = reportType; }
 	public void setListType(ListType listType) { this.listType = listType; }
 	public void setMaxResults(int max) { this.max = max; }
@@ -155,8 +182,8 @@ public class NutrientQuery {
 		// TODO Add food report parameters
 		// 		api_key (CHECK) - required
 		// 		ndbno - required - no default
-		if (this.ndbno > -1) {
-			urlString = DataGetter.addURLParameter(urlString, "ndbno", String.valueOf(this.ndbno));
+		if (this.ndbno != null) {
+			urlString = DataGetter.addURLParameter(urlString, "ndbno", this.ndbno);
 		}
 		else {
 			// TODO complain
@@ -247,8 +274,8 @@ public class NutrientQuery {
 		}
 
 		// 		ndbno
-		if (this.ndbno > -1) {
-			urlString = DataGetter.addURLParameter(urlString, "ndbno", String.valueOf(this.ndbno));
+		if (this.ndbno != null) {
+			urlString = DataGetter.addURLParameter(urlString, "ndbno", this.ndbno);
 		}
 		// 		nutrients
 		if (this.nutrients.size() > 0) {
@@ -343,6 +370,32 @@ public class NutrientQuery {
 			e.printStackTrace();
 		}
 		return jsonObject;
+	}
+
+	public JSONArray getResultsArray() {
+		try {
+			switch (queryType) {
+				case FOOD_REPORT:
+					return this.getJSONResults()
+							.getJSONObject("report")
+							.getJSONObject("food")
+							.getJSONArray("nutrients");
+				case SEARCH:
+				case LIST:
+					return this.getJSONResults()
+							.getJSONObject("list")
+							.getJSONArray("item");
+				case NUTRIENT_REPORT:
+					return this.getJSONResults()
+							.getJSONObject("report")
+							.getJSONArray("foods");
+				default:
+					return null;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public Document getXMLResults() {

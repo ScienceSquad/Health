@@ -1,16 +1,13 @@
 package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
-import android.util.Pair;
-
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
+import io.realm.RealmResults;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import io.realm.RealmResults;
 
 /**
  * Created by andrew on 4/7/16.
@@ -70,14 +67,13 @@ public class ConditionModule extends Module {
 		conditionRealm.clear();
 	}
 
-
 	@Override
-	public Pair<String, Integer> identifier() {
-		return null;
+	public void onStart() {
+
 	}
 
 	@Override
-	public void init() {
+	public void onStop() {
 
 	}
 }

@@ -10,6 +10,7 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,8 +22,8 @@ public class NutritionRecycleAdapter extends RecyclerView.Adapter<NutritionRecyc
     private String name;
     private List<String> nutritionLog;
     public NutritionRecycleAdapter (List<String> nutritionLog, String name) {
-        this.nutritionLog = nutritionLog;
-        this.name = name;
+        this.nutritionLog = nutritionLog != null ? nutritionLog : new ArrayList<>();
+        this.name = name != null ? name : "";
     }
 
 
