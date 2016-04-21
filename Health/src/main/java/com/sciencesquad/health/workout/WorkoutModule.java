@@ -16,6 +16,7 @@ import org.threeten.bp.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import io.realm.Realm;
@@ -30,9 +31,9 @@ import io.realm.RealmResults;
 public class WorkoutModule extends Module {
     public static final String TAG = WorkoutModule.class.getSimpleName();
     static { Module.registerModule(WorkoutModule.class); }
-
+    private RealmContext<ExerciseTypeModel> workoutRealm;
     //Data context.
-    private RealmContext<ExerciseTypeModel> workoutRealm = new RealmContext<>();
+
 
     //private RealmContext<RoutineModel> workoutRealm;
 
@@ -43,6 +44,7 @@ public class WorkoutModule extends Module {
 
 
     public WorkoutModule()  {
+        this.workoutRealm = new RealmContext<>();
         this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
 
         //this.workoutRealm.getRealm().beginTransaction();
@@ -51,10 +53,15 @@ public class WorkoutModule extends Module {
         //this.workoutRealm.getRealm().refresh();
 
         if(getExerciseTypeModel("Abductor Machine") == null){
+            Log.i(TAG, "ADDING BASE EXERCISES");
+            /*
             Dispatcher.BACKGROUND.run(() -> {
                 addBaseExercises();
                 addRecommendedWorkouts();
             });
+               */
+            addBaseExercises();
+            addRecommendedWorkouts();
         }
 
         //addBaseExercises();
@@ -546,7 +553,7 @@ public class WorkoutModule extends Module {
             schedule = results.first();
             Log.i(TAG, "Found a schedule! First Routine: " + schedule.getRoutineRotation().first().getName());
         } catch (Exception e) {
-            Log.e(TAG, "Error getting WorkoutSchedule from Realm");
+            Log.e(TAG, "Found now workout schedule in Realm");
             schedule = null;
         }
 
@@ -578,7 +585,13 @@ public class WorkoutModule extends Module {
             //calculate number of workout days passed since startdate
             //long numDaysSinceStart = getDayCount(schedule.getStartDate(), rightNow.getTime());
             Log.i(TAG, "ATTEMPTING TO RETRIEVE ROUTINE: " + schedule.getRoutineRotation().first().getName());
-
+            String lastCompletedWorkout = schedule.getLastCompletedRoutine();
+            if(lastCompletedWorkout == null || lastCompletedWorkout.equals("")){
+                RoutineModel todaysRoutine;
+                RealmList<RealmString> routineRotation = schedule.getRoutineRotation();
+                int numRoutines = routineRotation.size();
+                // TODO: Make this work lol
+            }
             return getRoutineModel(schedule.getRoutineRotation().first().getName());
         }
 

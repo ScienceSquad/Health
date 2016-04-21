@@ -126,7 +126,7 @@ public class WorkoutFragment extends BaseFragment {
         // Bind data to currentWorkoutTab
 
         WorkoutScheduleModel schedule = mod.getWorkoutSchedule();
-        currentRoutineExerciseAdapter = new ArrayAdapter<String>(getActivity(),
+        currentRoutineExerciseAdapter = new ArrayAdapter<String>(getInflater().getContext(),
                 android.R.layout.simple_expandable_list_item_1);
         //RoutineModel todaysRoutine = mod.getTodaysRoutine();
         if(schedule == null){
@@ -140,7 +140,7 @@ public class WorkoutFragment extends BaseFragment {
 
         // Bind data to view (ExerciseTypeModels)
 
-        exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
+        exerciseTypeAdapter = new ArrayAdapter<>(getInflater().getContext(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
         exerciseTypeAdapter.clear();                // first clear adapter
         for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
@@ -175,7 +175,7 @@ public class WorkoutFragment extends BaseFragment {
 
 
         // Bind data to view (RoutineModels)
-        routineModelAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
+        routineModelAdapter = new ArrayAdapter<>(getInflater().getContext(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
         routineModelAdapter.clear();                // first clear adapter
         for (RoutineModel m : mod.getAllRoutineModels())
@@ -280,8 +280,8 @@ public class WorkoutFragment extends BaseFragment {
     void showCardioDialog(String exerciseName) {
 
         //Build Dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.cardio_set_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle(exerciseName);
@@ -298,8 +298,8 @@ public class WorkoutFragment extends BaseFragment {
     void showRoutineBuilder(String name) {
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.fragment_workout_build_routine_layout, null);
         builder.setView(dialogLayout);
         builder.setTitle(name);
@@ -308,7 +308,7 @@ public class WorkoutFragment extends BaseFragment {
         //WorkoutModule mod = Module.moduleForClass(WorkoutModule.class);
         List<ExerciseTargetModel> filters = mod.getAllTargets();
         Spinner filterSpinner = (Spinner) dialogLayout.findViewById(R.id.filter_spinner);
-        ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+        ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getInflater().getContext(), android.R.layout.simple_list_item_1);
         filterSpinner.setAdapter((filterAdapter));
         filterAdapter.clear();
         filterAdapter.add("None");
@@ -317,7 +317,7 @@ public class WorkoutFragment extends BaseFragment {
 
         // list all user-created exercises in Dialog
         ListView exerciseListView = (ListView) dialogLayout.findViewById(R.id.choose_exercises_view);
-        ArrayAdapter<String> exerciseListAdapter = new ArrayAdapter<>(getActivity(),
+        ArrayAdapter<String> exerciseListAdapter = new ArrayAdapter<>(getInflater().getContext(),
                 android.R.layout.select_dialog_multichoice);
         exerciseListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         exerciseListView.setAdapter(exerciseListAdapter);
@@ -398,8 +398,8 @@ public class WorkoutFragment extends BaseFragment {
         }
 
         //Build Dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.exercise_history_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle(exerciseName + " History");
@@ -464,15 +464,15 @@ public class WorkoutFragment extends BaseFragment {
      * @showDOWScheduleBuilder
      */
     public void showDOWScheduleBuilder(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.schedule_builder_dow_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle("Select Workout Days");
 
         // list days of week
         ListView dowListView = (ListView) dialogLayout.findViewById(R.id.dow_list);
-        ArrayAdapter<String> dowListAdapter = new ArrayAdapter<>(getActivity(),
+        ArrayAdapter<String> dowListAdapter = new ArrayAdapter<>(getInflater().getContext(),
                 android.R.layout.select_dialog_multichoice);
         dowListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         dowListView.setAdapter(dowListAdapter);
@@ -498,15 +498,15 @@ public class WorkoutFragment extends BaseFragment {
      * @showRoutineScheduleBuilder
      */
     public void showRoutineScheduleBuilder(Boolean[] workoutDays){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.schedule_builder_routine_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle("Select Routine Rotation");
 
         // list all user-created routines in Dialog
         ListView routineListView = (ListView) dialogLayout.findViewById(R.id.routine_schedule_list);
-        ArrayAdapter<String> routineListAdapter = new ArrayAdapter<>(getActivity(),
+        ArrayAdapter<String> routineListAdapter = new ArrayAdapter<>(getInflater().getContext(),
                 android.R.layout.select_dialog_multichoice);
         routineListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         routineListView.setAdapter(routineListAdapter);
