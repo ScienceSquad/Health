@@ -374,7 +374,7 @@ public class WorkoutFragment extends BaseFragment {
     }
 
     private RealmLineData createLineData(String exerciseName){
-        RealmLineDataSet<CompletedExerciseModel> dataSet = new RealmLineDataSet<CompletedExerciseModel>(
+        RealmLineDataSet<CompletedExerciseModel> dataSet = new RealmLineDataSet<>(
                 mod.getCompletedExercisesQuery(exerciseName), "oneRepMax");
         ArrayList<ILineDataSet> dataSetList = new ArrayList<ILineDataSet>();
         dataSetList.add(dataSet);
