@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +34,10 @@ public class DietDialogFragment extends DialogFragment {
 
         favoriteFoods =
                 ((NutritionFragment) getTargetFragment()).getNutritionModule().getFavoriteFoods();
+        if (favoriteFoods == null){
+            //defensive coding.
+            favoriteFoods = new ArrayList<>();
+        }
         recycleList = (RecyclerView) view.findViewById(R.id.diet_recycler_view);
         NutritionRecycleAdapter adapter = new NutritionRecycleAdapter(favoriteFoods, "Favorite Foods");
         recycleList.setAdapter(adapter);
