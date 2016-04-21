@@ -1,6 +1,8 @@
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
+import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.alarm.AlarmModule;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.nutrition.NutrientQuery;

@@ -71,6 +71,12 @@
             >Saturday</item>
     </string-array>
 
+    <string-array name="repeat_types">
+        <item>Once</item>
+        <item>Daily</item>
+        <item>Specific Days</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="prescription_module">Prescription</string>
