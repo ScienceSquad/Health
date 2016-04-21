@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -37,9 +38,11 @@ public class BuildRoutineDialogFragment extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		String title = this.getArguments().getString(KEY_TITLE);
 
+		Context themed = new ContextThemeWrapper(getActivity(), R.style.AppTheme_Workout);
+		LayoutInflater inflater = (LayoutInflater) themed.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 		// Inflate dialog
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		AlertDialog.Builder builder = new AlertDialog.Builder(themed);
 		View dialogLayout = inflater.inflate(R.layout.fragment_workout_build_routine_layout, null);
 		builder.setView(dialogLayout);
 		builder.setTitle(title);
@@ -47,7 +50,7 @@ public class BuildRoutineDialogFragment extends DialogFragment {
 		// fill spinner with all different workout "targets" with which a user can filter exercises
 		List<String> filter = new ArrayList<String>(WorkoutFragment.exerciseTargets);
 		Spinner filterSpinner = (Spinner) dialogLayout.findViewById(R.id.filter_spinner);
-		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+		ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(themed, android.R.layout.simple_list_item_1);
 		filterSpinner.setAdapter((filterAdapter));
 		filterAdapter.clear();
 		filterAdapter.addAll(filter);
@@ -55,7 +58,7 @@ public class BuildRoutineDialogFragment extends DialogFragment {
 		// list all user-created exercises in Dialog
 		// TODO: Make this a multiple selection list and add list of exercises selected to routine
 		ListView exerciseListView = (ListView) dialogLayout.findViewById(R.id.choose_exercises_view);
-		ArrayAdapter<ExerciseTypeModel> exerciseListAdapter = new ArrayAdapter<>(getActivity(),
+		ArrayAdapter<ExerciseTypeModel> exerciseListAdapter = new ArrayAdapter<>(themed,
 				android.R.layout.select_dialog_multichoice);
 		exerciseListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		exerciseListView.setAdapter(exerciseListAdapter);

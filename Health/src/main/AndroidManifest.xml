@@ -57,6 +57,9 @@
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_maps_key" />
 
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
+        <uses-permission android:name="android.permission.CAMERA" />
+
         <!-- Entry point for the app. -->
         <activity
             android:name=".core.HostActivity"
@@ -75,6 +78,11 @@
                 android:name="fragment"
                 android:value="com.sciencesquad.health.overview.OverviewFragment" />
         </activity>
+
+        <activity android:name=".nutrition.BarcodeCaptureActivity"
+            android:label="@string/barcode_header"
+
+            />
         <!-- For SleepModule to monitor data in the background. -->
         <service
                 android:name=".sleep.SleepMonitoringService"
