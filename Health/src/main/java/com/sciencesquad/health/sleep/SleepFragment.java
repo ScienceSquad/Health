@@ -116,9 +116,11 @@ public class SleepFragment extends BaseFragment {
 			}, 8, 30, false);
 			tpd.show(getFragmentManager(), "TPD");
 
+			/*
 			AlarmSender sender = new AlarmSender();
 			sender.setTimeInMillis(1000 * 3);
 			sender.setAlarm(this, new Intent(getActivity(), SleepWakeUpReceiver.class));
+			*/
 		});
 
 		// Set up a list of tiles for the ambience mixer.
