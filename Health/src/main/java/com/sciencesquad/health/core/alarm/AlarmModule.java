@@ -9,15 +9,13 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.prescriptions.AlarmReceiver;
 import io.realm.RealmResults;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Locale;
+import java.io.Serializable;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -35,6 +33,10 @@ public class AlarmModule extends Module {
 		this.alarmRealm.init(BaseApp.app(), AlarmModel.class, "alarm.realm");
 
 		resetData();
+		bus().subscribe("AlarmFiredEvent", null, ev -> {
+			int alarmId = (Integer) ev.get("alarmId");
+			sendAlarm(getAlarmById(alarmId), true);
+		});
 	}
 
 	@Override
@@ -552,7 +554,9 @@ public class AlarmModule extends Module {
 	 */
 	public PendingIntent getAlarmIntent(AlarmModel alarm) {
 		Context ctx = BaseApp.app().getApplicationContext();
-		Intent intent = new Intent(ctx, AlarmReceiver.class);
+		HashMap<String, Serializable> data = new HashMap<>();
+		data.put("alarmId", alarm.getAlarmId());
+		Intent intent = EventBus.intentForEvent(ctx, "AlarmFiredEvent", data);
 		intent.putExtra("alarmId", alarm.getAlarmId());
 		return PendingIntent.getBroadcast(BaseApp.app().getApplicationContext(), alarm.getAlarmId(), intent, 0);
 	}

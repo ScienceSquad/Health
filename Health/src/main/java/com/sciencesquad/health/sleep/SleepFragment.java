@@ -16,8 +16,8 @@ import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.alarm.AlarmModule;
 import com.sciencesquad.health.core.ui.RevealTransition;
-import com.sciencesquad.health.core.util.AlarmSender;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
 import java8.util.function.Function;
@@ -28,6 +28,8 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.temporal.ChronoUnit;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.sciencesquad.health.core.util.AnimationUtils.*;
 
@@ -140,7 +142,11 @@ public class SleepFragment extends BaseFragment {
 		// Set up the sleep now FAB.
 		// 15 min to fall asleep, 90 min cycles. FIXME
 		xml().fab.setOnClickListener(v -> {
-			AlarmSender sender = new AlarmSender();
+			AlarmModule alarmModule = Module.of(AlarmModule.class);
+			int alarmId = alarmModule.setTimeInMillis(System.currentTimeMillis()
+					+ TimeUnit.MINUTES.toMillis(1)).add().getAlarmId();
+
+			//AlarmSender sender = new AlarmSender();
 			//sender.setTimeInMillis(TimeUnit.MINUTES.toMillis(1));
 			//sender.setAlarm(this, EventBus.intentForEvent(app(), "SleepWakeAlarmEvent"));
 			SleepMonitoringService.startMonitoringService();

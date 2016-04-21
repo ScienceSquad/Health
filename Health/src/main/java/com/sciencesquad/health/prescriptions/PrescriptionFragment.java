@@ -26,8 +26,6 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
 import io.realm.RealmResults;
 
-import java.util.Calendar;
-
 /**
  * Created by andrew on 4/7/16.
  */
@@ -274,9 +272,9 @@ public class PrescriptionFragment extends BaseFragment {
 
 		// Set alarm data
 		// Send alarm 15 seconds from now
-		alarmModule.setTimeInMillis(System.currentTimeMillis() + (1000 * 15))
-				.setRepeatInterval(AlarmModule.RepeatInterval.DAY_SPECIFIC)
-				.addDayOfWeek(Calendar.TUESDAY);
+		alarmModule.setTimeInMillis(System.currentTimeMillis() + (1000 * 10))
+				.setRepeatInterval(AlarmModule.RepeatInterval.DAILY);
+
 
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
