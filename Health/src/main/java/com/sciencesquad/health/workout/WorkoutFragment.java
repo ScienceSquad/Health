@@ -14,7 +14,12 @@ import android.transition.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
@@ -29,8 +34,11 @@ import io.realm.RealmList;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+
+import io.realm.RealmList;
 
 public class WorkoutFragment extends BaseFragment {
     public static final String TAG = WorkoutFragment.class.getSimpleName();
@@ -68,7 +76,7 @@ public class WorkoutFragment extends BaseFragment {
 
     @Override
     protected Configuration getConfiguration() {
-        String ignore = WorkoutModule.TAG; // instantiates the Module...
+        String notAnUnderscore = WorkoutModule.TAG; // instantiates the Module...
         return new Configuration(
                 TAG, "Workout", R.drawable.ic_fitness_center_24dp,
                 R.style.AppTheme_Workout, R.layout.fragment_workout
@@ -119,7 +127,7 @@ public class WorkoutFragment extends BaseFragment {
         // Bind data to currentWorkoutTab
 
         WorkoutScheduleModel schedule = mod.getWorkoutSchedule();
-        currentRoutineExerciseAdapter = new ArrayAdapter<String>(getActivity(),
+        currentRoutineExerciseAdapter = new ArrayAdapter<String>(getInflater().getContext(),
                 android.R.layout.simple_expandable_list_item_1);
         //RoutineModel todaysRoutine = mod.getTodaysRoutine();
         if(schedule == null){
@@ -133,14 +141,32 @@ public class WorkoutFragment extends BaseFragment {
 
         // Bind data to view (ExerciseTypeModels)
 
-        exerciseTypeAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
+        exerciseTypeAdapter = new ArrayAdapter<>(getInflater().getContext(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
         exerciseTypeAdapter.clear();                // first clear adapter
         for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
             exerciseTypeAdapter.add(m.getName());
+        exerciseTypeAdapter.sort(new Comparator<String>() {
+           @Override
+           public int compare(String lhs, String rhs) {
+               return lhs.compareTo(rhs);   //or whatever your sorting algorithm
+           }
+        });
+        exerciseTypeAdapter.notifyDataSetChanged();
         xml().exerciseModelListView.setAdapter(exerciseTypeAdapter);
         xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {
-            this.showSetDialog(exerciseTypeAdapter.getItem(position));
+
+            ExerciseTypeModel exercise = mod.getExerciseTypeModel(exerciseTypeAdapter.getItem(position));
+
+            if(exercise == null){
+                Log.e(TAG, "Exercise retrieved from Realm was null!");
+            } else if( exercise.getCategory().equalsIgnoreCase("Cardio")){
+                // exercise is Cardio
+                showCardioDialog(exercise.getName());
+            } else {
+                showSetDialog(exercise.getName());
+            }
+
         }));
 
         xml().exerciseModelListView.setOnItemLongClickListener(((parent1, views1, position1, id1) -> {
@@ -150,11 +176,18 @@ public class WorkoutFragment extends BaseFragment {
 
 
         // Bind data to view (RoutineModels)
-        routineModelAdapter = new ArrayAdapter<>(getActivity(),             // create an adapter to fill array
+        routineModelAdapter = new ArrayAdapter<>(getInflater().getContext(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
         routineModelAdapter.clear();                // first clear adapter
         for (RoutineModel m : mod.getAllRoutineModels())
             routineModelAdapter.add(m.getName());
+
+        routineModelAdapter.sort(new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);   //or whatever your sorting algorithm
+            }
+        });
         xml().routineModelListView.setAdapter(routineModelAdapter);
         xml().routineModelListView.setOnItemClickListener(((parent, views, position, id) -> {
 
@@ -191,7 +224,15 @@ public class WorkoutFragment extends BaseFragment {
             currentRoutineExerciseAdapter.add(m.getName());
         xml().currentRoutineListView.setAdapter(currentRoutineExerciseAdapter);
         xml().currentRoutineListView.setOnItemClickListener(((parent, views, position, id) -> {
-            this.showSetDialog(currentRoutineExerciseAdapter.getItem(position));
+            ExerciseTypeModel exercise = mod.getExerciseTypeModel(currentRoutineExerciseAdapter.getItem(position));
+            if(exercise == null){
+                Log.e(TAG, "Exercise retrieved from Realm was null!");
+            } else if( exercise.getCategory().equalsIgnoreCase("Cardio")){
+                // exercise is Cardio
+                showCardioDialog(exercise.getName());
+            } else {
+                showSetDialog(exercise.getName());
+            }
         }));
     }
 
@@ -226,11 +267,27 @@ public class WorkoutFragment extends BaseFragment {
      * a user to log his or her selected exercise
      */
     void showSetDialog(String name) {
+        // check if exercise is strength or cardio
+
         SetDialogFragment newFragment = SetDialogFragment.newInstance(
                 R.string.title_new_exercise_dialog);
         newFragment.titleThing = name;
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");
+    }
+
+
+
+    void showCardioDialog(String exerciseName) {
+
+        //Build Dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogLayout = inflater.inflate(R.layout.cardio_set_dialog, null);
+        builder.setView(dialogLayout);
+        builder.setTitle(exerciseName);
+
+        builder.create().show();
     }
 
     /**
@@ -242,8 +299,8 @@ public class WorkoutFragment extends BaseFragment {
     void showRoutineBuilder(String name) {
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.fragment_workout_build_routine_layout, null);
         builder.setView(dialogLayout);
         builder.setTitle(name);
@@ -252,7 +309,7 @@ public class WorkoutFragment extends BaseFragment {
         //WorkoutModule mod = Module.of(WorkoutModule.class);
         List<ExerciseTargetModel> filters = mod.getAllTargets();
         Spinner filterSpinner = (Spinner) dialogLayout.findViewById(R.id.filter_spinner);
-        ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+        ArrayAdapter<String> filterAdapter = new ArrayAdapter<String>(getInflater().getContext(), android.R.layout.simple_list_item_1);
         filterSpinner.setAdapter((filterAdapter));
         filterAdapter.clear();
         filterAdapter.add("None");
@@ -261,7 +318,7 @@ public class WorkoutFragment extends BaseFragment {
 
         // list all user-created exercises in Dialog
         ListView exerciseListView = (ListView) dialogLayout.findViewById(R.id.choose_exercises_view);
-        ArrayAdapter<String> exerciseListAdapter = new ArrayAdapter<>(getActivity(),
+        ArrayAdapter<String> exerciseListAdapter = new ArrayAdapter<>(getInflater().getContext(),
                 android.R.layout.select_dialog_multichoice);
         exerciseListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         exerciseListView.setAdapter(exerciseListAdapter);
@@ -342,8 +399,8 @@ public class WorkoutFragment extends BaseFragment {
         }
 
         //Build Dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.exercise_history_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle(exerciseName + " History");
@@ -388,12 +445,18 @@ public class WorkoutFragment extends BaseFragment {
             mod.addExerciseTypeModel(newExercise);
 
 
-
-
             exerciseTypeAdapter.clear();
             //exerciseTypeModelAdapter.addAll(mod.getAllExerciseTypeModels());
             for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
                 exerciseTypeAdapter.add(m.getName());
+
+            exerciseTypeAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String lhs, String rhs) {
+                    return lhs.compareTo(rhs);   //or whatever your sorting algorithm
+                }
+            });
+            exerciseTypeAdapter.notifyDataSetChanged();
 
         }
     }
@@ -402,15 +465,15 @@ public class WorkoutFragment extends BaseFragment {
      * @showDOWScheduleBuilder
      */
     public void showDOWScheduleBuilder(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.schedule_builder_dow_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle("Select Workout Days");
 
         // list days of week
         ListView dowListView = (ListView) dialogLayout.findViewById(R.id.dow_list);
-        ArrayAdapter<String> dowListAdapter = new ArrayAdapter<>(getActivity(),
+        ArrayAdapter<String> dowListAdapter = new ArrayAdapter<>(getInflater().getContext(),
                 android.R.layout.select_dialog_multichoice);
         dowListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         dowListView.setAdapter(dowListAdapter);
@@ -436,15 +499,15 @@ public class WorkoutFragment extends BaseFragment {
      * @showRoutineScheduleBuilder
      */
     public void showRoutineScheduleBuilder(Boolean[] workoutDays){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
+        LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.schedule_builder_routine_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle("Select Routine Rotation");
 
         // list all user-created routines in Dialog
         ListView routineListView = (ListView) dialogLayout.findViewById(R.id.routine_schedule_list);
-        ArrayAdapter<String> routineListAdapter = new ArrayAdapter<>(getActivity(),
+        ArrayAdapter<String> routineListAdapter = new ArrayAdapter<>(getInflater().getContext(),
                 android.R.layout.select_dialog_multichoice);
         routineListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         routineListView.setAdapter(routineListAdapter);
@@ -510,6 +573,13 @@ public class WorkoutFragment extends BaseFragment {
             for (RoutineModel m : mod.getAllRoutineModels())
                 routineModelAdapter.add(m.getName());
             //xml().routineModelListView.setAdapter(routineModelAdapter);
+            routineModelAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String lhs, String rhs) {
+                    return lhs.compareTo(rhs);   //or whatever your sorting algorithm
+                }
+            });
+            routineModelAdapter.notifyDataSetChanged();
         }
     }
 

@@ -21,6 +21,7 @@ import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.Stopwatch;
 import com.sciencesquad.health.databinding.FragmentStepsBinding;
+
 import org.threeten.bp.Duration;
 
 /**

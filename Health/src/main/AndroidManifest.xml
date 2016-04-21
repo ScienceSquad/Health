@@ -66,7 +66,12 @@
                 android:name="fragment"
                 android:value="com.sciencesquad.health.overview.OverviewFragment" />
         </activity>
-
+		
+		
+		<activity
+		        android:name=".nutrition.BarcodeCaptureActivity"
+		        android:label="@string/barcode_header" />
+				
         <!-- Entry Service point for the app. -->
         <service
                 android:name=".core.HostService"
@@ -102,13 +107,19 @@
                 android:value="@string/google_maps_key" />
 
 
+        <!-- DEPRECATED -->
+        <!-- For SleepModule to receive a wake up alarm. -->
+        <receiver
+		        android:name=".sleep.SleepWakeUpReceiver"
+                android:enabled="true" />
+				
+		<!-- DEPRECATED -->
+        <!-- For PrescriptionsModule to trigger in a timely manner. -->
+        <receiver
+                android:name=".prescriptions.AlarmReceiver"
+                android:enabled="true" />
 
 
 
-        <!-- FIXME: DEPRECATED -->
-        <service
-                android:name=".sleep.SleepMonitoringService"
-                android:exported="false"/>
-        <!-- FIXME: DEPRECATED -->
-    </application>
+	</application>
 </manifest>
