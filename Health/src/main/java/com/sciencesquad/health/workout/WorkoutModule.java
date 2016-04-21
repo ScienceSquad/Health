@@ -1,26 +1,19 @@
 package com.sciencesquad.health.workout;
 
 import android.util.Log;
-import android.util.Pair;
-
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
-import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.util.Dispatcher;
 
-import org.threeten.bp.DateTimeUtils;
+import io.realm.RealmList;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneOffset;
-import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 
 /**
  * Created by mrjohnson on 3/1/16.
@@ -28,77 +21,251 @@ import io.realm.RealmResults;
 
 public class WorkoutModule extends Module {
     public static final String TAG = WorkoutModule.class.getSimpleName();
-    static { Module.registerModule(WorkoutModule.class); }
-
-    //Data context.
     private RealmContext<ExerciseTypeModel> workoutRealm;
-
+    //Data context.
     //private RealmContext<RoutineModel> workoutRealm;
+
+	public WorkoutModule() {
+		/*this.workoutRealm = new RealmContext<>();
+		this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
+
+		//this.workoutRealm.getRealm().beginTransaction();
+		//this.workoutRealm.getRealm().deleteAll();
+		//this.workoutRealm.getRealm().commitTransaction();
+		//this.workoutRealm.getRealm().refresh();
+
+		if(getExerciseTypeModel("Abductor Machine") == null){
+			Log.i(TAG, "ADDING BASE EXERCISES");
+            /*
+            Dispatcher.BACKGROUND.run(() -> {
+                addBaseExercises();
+                addRecommendedWorkouts();
+            });
+
+			addBaseExercises();
+			addRecommendedWorkouts();
+		} else Log.i(TAG, "We good!");
+
+		//addBaseExercises();
+		//addRecommendedWorkouts();*/
+	}
 
     /**
      * Constructs the module itself.
      * It also sets up a Realm Context for the Module.
      */
+	@Override
+	public void onStart() {
+        Log.d(TAG, "Starting Workout Module on UI");
+        Dispatcher.UI.run(() -> {
+            workoutRealm = new RealmContext<>();
+            workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
+            if(getExerciseTypeModel("Abductor Machine") == null){
+                Log.i(TAG, "ADDING BASE EXERCISES");
 
+                addBaseExercises();
+                addRecommendedWorkouts();
+            } else Log.i(TAG, "We good!");
+        });
+        //this.workoutRealm = new RealmContext<>();
+        //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
 
-    public WorkoutModule()  {
-        this.workoutRealm = new RealmContext<>();
-        this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
-
-        this.workoutRealm.getRealm().beginTransaction();
-        this.workoutRealm.getRealm().deleteAll();
-        this.workoutRealm.getRealm().commitTransaction();
+        //this.workoutRealm.getRealm().beginTransaction();
+        //this.workoutRealm.getRealm().deleteAll();
+        //this.workoutRealm.getRealm().commitTransaction();
         //this.workoutRealm.getRealm().refresh();
 
-        addRecommendedWorkouts();
-
-        bus(b -> {
-            b.subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
-            b.subscribe("DataFailureEvent", this, e -> {
-                Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
-
+        /*if(getExerciseTypeModel("Abductor Machine") == null){
+            Log.i(TAG, "ADDING BASE EXERCISES");
+            /*
+            Dispatcher.BACKGROUND.run(() -> {
+                addBaseExercises();
+                addRecommendedWorkouts();
             });
-            b.subscribe("DataFailureEvent", null, e -> {
-                Log.d(TAG, "Data failed somewhere.");
 
-            });
-            b.subscribe("DataUpdateEvent", null, e -> {
-                Log.d(TAG, "There was an update to a realm.");
+            addBaseExercises();
+            addRecommendedWorkouts();
+        } else Log.i(TAG, "We good!");*/
 
-                // maybe use the key as the realm name?
-                if (e.get("key").equals("WorkoutRealm")) {
-                    Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
-                } else {
-                    // do something about it.
-                }
-            });
-        });
-    }
+        //addBaseExercises();
+        //addRecommendedWorkouts();
+
+		bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
+		bus().subscribe("DataFailureEvent", this, e -> {
+			Log.d(TAG, "Nutrition realm failed in Realm Transaction!");
+
+		});
+		bus().subscribe("DataFailureEvent", null, e -> {
+			Log.d(TAG, "Data failed somewhere.");
+		});
+		bus().subscribe("DataUpdateEvent", null, e -> {
+			Log.d(TAG, "There was an update to a realm. " + e);
+
+			// maybe use the key as the realm name?
+			if ("WorkoutRealm".equals(e.get("key"))) {
+				Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
+			} else {
+				// do something about it.
+			}
+		});
+	}
+
+	@Override
+	public void onStop() {
+
+	}
 
     public ArrayList<ExerciseTypeModel> getAllExerciseTypeModels() {
         ArrayList<ExerciseTypeModel> exercises = new ArrayList<>();
-        RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).findAll();
-        exercises.addAll(results);
-
+		RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).findAll();
+		exercises.addAll(results);
         return exercises;
     }
 
     public ArrayList<ExerciseTypeModel> getFilteredExerciseTypeModels(String target) {
         ArrayList<ExerciseTypeModel> exercises = new ArrayList<>();
-        RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).equalTo("target", target).findAll();
-        exercises.addAll(results);
-
+		RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).equalTo("target", target).findAll();
+		exercises.addAll(results);
         return exercises;
     }
+
+    void addBaseExercises(){
+        ArrayList<ExerciseTypeModel> baseExercises = new ArrayList<>();
+        // Abs
+        baseExercises.add(createNewExercise("Cable Crunch", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Crunch", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Crunch Machine", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Decline Crunch", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Hanging Knee Raise", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Hanging Leg Raise", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Plank", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Decline Crunch", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Dragon Flag", "Strength", "Abs"));
+        baseExercises.add(createNewExercise("Side Plank", "Strength", "Abs"));
+        //baseExercises.add(createNewExercise("Timed Plank", "Strength", "Abs"));
+        //TODO: add functionality for timed "Strength" exercises
+
+        // Back
+        baseExercises.add(createNewExercise("Barbell Row", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Barbell Shrug", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Chin Up", "Strength", "Back"));
+        baseExercises.add(createNewExercise("DeadLift", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Dumbbell Row", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Fixed Machine Lat Pull Down", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Good Morning", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Hammer Strength Row", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Lat Pull Down", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Machine Shrug", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Pull Up", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Seated Cable Row", "Strength", "Back"));
+        baseExercises.add(createNewExercise("Straight-Arm Cable Pushdown", "Strength", "Back"));
+        baseExercises.add(createNewExercise("T-Bar Row", "Strength", "Back"));
+
+        // Biceps
+        baseExercises.add(createNewExercise("Barbell Curl", "Strength", "Biceps"));
+        baseExercises.add(createNewExercise("Cable Curl", "Strength", "Biceps"));
+        baseExercises.add(createNewExercise("Dumbbell Curl", "Strength", "Biceps"));
+        baseExercises.add(createNewExercise("Dumbbell Hammer Curl", "Strength", "Biceps"));
+        baseExercises.add(createNewExercise("Dumbbell Preacher Curl", "Strength", "Biceps"));
+        baseExercises.add(createNewExercise("EZ-Bar Curl", "Strength", "Biceps"));
+        baseExercises.add(createNewExercise("EZ-Bar Preacher Curl", "Strength", "Biceps"));
+        baseExercises.add(createNewExercise("Seated Incline Dumbbell Curl", "Strength", "Biceps"));
+        baseExercises.add(createNewExercise("Seated Machine Curl", "Strength", "Biceps"));
+
+        // Cardio
+        baseExercises.add(createNewExercise("Cycling", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Elliptical Training", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Rowing Machine", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Running (Outdoor)", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Running (Treadmill)", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Stair Machine", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Stationary Bike", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Swimming", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Variable Elliptical Machine", "Cardio", "Cardio"));
+        baseExercises.add(createNewExercise("Walking", "Cardio", "Cardio"));
+
+        // Sports
+        baseExercises.add(createNewExercise("Basketball", "Cardio", "Sports"));
+
+        // Chest
+        baseExercises.add(createNewExercise("Cable Crossover", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Decline Barbell Bench Press", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Decline Dumbbell Bench Press", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Decline Hammer Strength Chest Press", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Barbell Bench Press", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Flat Chest Cable Machine", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Dumbbell Bench Press", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Flat Dumbbell Fly", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Incline Barbell Bench Press", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Incline Dumbbell Bench Press", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Incline Barbell Fly", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Incline Hammer Strength Chest Press", "Strength", "Chest"));
+        baseExercises.add(createNewExercise("Seated Machine Fly", "Strength", "Chest"));
+
+        // Legs
+        baseExercises.add(createNewExercise("Abductor Machine", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Barbell Calf Raise", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Barbell Front Squat", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Barbell Glute Bridge", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Barbell Squat", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Leg Curl Machine", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Leg Extension Machine", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Leg Press", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Lying Leg Curl Machine", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Romanian Deadlift", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Seated Calf Raise Machine", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Seated Leg Curl Machine", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Standing Calf Raise Machine", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Stiff-Legged Deadlift", "Strength", "Legs"));
+        baseExercises.add(createNewExercise("Sumo Deadlift", "Strength", "Legs"));
+
+        // Shoulders
+        baseExercises.add(createNewExercise("Arnold Dumbbell Press", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Behind-the-Neck Barbell Press", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Cable Face Pull", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Dumbbell Shrug", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Front Dumbbell Raise", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Hammer Strength Shoulder Press", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Lateral Dumbbell Raise", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Lateral Machine Raise", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Log Press", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("One-Arm Standing Dumbbell Press", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Overhead Press", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Push Press", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Rear Delt Cable Fly", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Rear Delt Dumbbell Raise", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Rear Delt Machine Fly", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Seated Dumbbell Lateral Raise", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Seated Dumbbell Press", "Strength", "Shoulders"));
+        baseExercises.add(createNewExercise("Smith Machine Overhead Press", "Strength", "Shoulders"));
+
+        // Triceps
+        baseExercises.add(createNewExercise("Cable Overhead Triceps Extension", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("Close Grip Barbell Bench Press", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("Dumbbell Overhead Triceps Extension", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("EZ-Bar Skullcrusher", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("Lying Triceps Extension", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("Machine Triceps Extension", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("Parallel Bar Triceps Dip", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("Ring Dip", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("Rope Push Down", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("Smith Machine Close Grip Bench Press", "Strength", "Triceps"));
+        baseExercises.add(createNewExercise("V-Bar Push Down", "Strength", "Triceps"));
+
+        for (ExerciseTypeModel m : baseExercises)
+            addExerciseTypeModel(m);
+
+    }
+
 
     void addRecommendedWorkouts(){
 
         //StrongLifts 5x5
-        ExerciseTypeModel squat = createNewExercise("Squat", "Strength", "Legs");
-        ExerciseTypeModel benchPress = createNewExercise("Bench Press", "Strength", "Chest");
+        ExerciseTypeModel squat = createNewExercise("Barbell Squat", "Strength", "Legs");
+        ExerciseTypeModel benchPress = createNewExercise("Barbell Bench Press", "Strength", "Chest");
         ExerciseTypeModel barBellRow = createNewExercise("Barbell Row", "Strength", "Back");
         ExerciseTypeModel overHeadPress = createNewExercise("Overhead Press", "Strength", "Shoulders");
-        ExerciseTypeModel deadLift = createNewExercise("Deadlift", "Strength", "Core");
+        ExerciseTypeModel deadLift = createNewExercise("Romanian Deadlift", "Strength", "Core");
 
         //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
         RealmList<ExerciseTypeModel> sLAExercises = new RealmList<>();
@@ -140,17 +307,6 @@ public class WorkoutModule extends Module {
 
         RoutineModel strongLiftsB = createNewRoutine("StrongLifts 5x5: B", exerciseNamesB);
         addRoutineModel(strongLiftsB);
-
-    }
-
-
-    @Override
-    public Pair<String, Integer> identifier() {
-        return null;
-    }
-
-    @Override
-    public void init() {
 
     }
 
@@ -290,6 +446,20 @@ public class WorkoutModule extends Module {
         return null;
     }
 
+    public ExerciseTypeModel getExerciseTypeModel(String exerciseName) {
+        try {
+            RealmResults<ExerciseTypeModel> result = workoutRealm.query(ExerciseTypeModel.class).equalTo("name", exerciseName).findAll();
+            if(result.size() == 0){
+                return null;
+            } else {
+                return result.first();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error finding ExerciseTypeModel by name " + e.getMessage());
+        }
+        return null;
+    }
+
     /*
     public void updateRoutineExercises(String routineName, RealmList<RealmString> exercises){
         RoutineModel
@@ -324,6 +494,8 @@ public class WorkoutModule extends Module {
         }
 
     }
+
+
 
     public boolean addCompletedExercise(CompletedExerciseModel newCompletedExercise){
         float orm = newCompletedExercise.get1RMax().floatValue();
@@ -393,7 +565,7 @@ public class WorkoutModule extends Module {
             schedule = results.first();
             Log.i(TAG, "Found a schedule! First Routine: " + schedule.getRoutineRotation().first().getName());
         } catch (Exception e) {
-            Log.e(TAG, "Error getting WorkoutSchedule from Realm");
+            Log.e(TAG, "Found no workout schedule in Realm");
             schedule = null;
         }
 
@@ -425,7 +597,13 @@ public class WorkoutModule extends Module {
             //calculate number of workout days passed since startdate
             //long numDaysSinceStart = getDayCount(schedule.getStartDate(), rightNow.getTime());
             Log.i(TAG, "ATTEMPTING TO RETRIEVE ROUTINE: " + schedule.getRoutineRotation().first().getName());
-
+            String lastCompletedWorkout = schedule.getLastCompletedRoutine();
+            if(lastCompletedWorkout == null || lastCompletedWorkout.equals("")){
+                RoutineModel todaysRoutine;
+                RealmList<RealmString> routineRotation = schedule.getRoutineRotation();
+                int numRoutines = routineRotation.size();
+                // TODO: Make this work lol
+            }
             return getRoutineModel(schedule.getRoutineRotation().first().getName());
         }
 

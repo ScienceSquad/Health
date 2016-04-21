@@ -3,13 +3,15 @@ package com.sciencesquad.health.nutrition;
 import android.support.annotation.NonNull;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
+
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Realm Model for Nutrition database.
  * Things that are relevant to store for the Nutrition Module go here.
  */
-public class NutritionModel extends RealmObject {
+public class NutritionModel extends RealmObject implements Serializable {
 	/**
 	 * Data that is relevant to store for Nutrition Purposes.
 	 */

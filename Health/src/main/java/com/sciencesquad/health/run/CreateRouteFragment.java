@@ -257,6 +257,7 @@ public class CreateRouteFragment extends BaseFragment implements
 
     // Calculates distance and adds to the distances list
     public static double distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {
+        totalDistance = 0;
         for (int i = 1; i<pointsLatLng.size(); i++) {
             totalDistance = totalDistance + computeDistanceBetween(pointsLatLng.get(i-1),
                     pointsLatLng.get(i));
