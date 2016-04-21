@@ -161,6 +161,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
         }
 
     }
+        */
 
    /*
     @Test
