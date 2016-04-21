@@ -26,11 +26,15 @@ public class PrescriptionModule extends Module {
 	 * Constructs the module itself.
 	 * It also sets up a Realm Context for the Module.
 	 */
-	@Override
-	public void onStart() {
+	public PrescriptionModule() {
 		Log.d(TAG, "Constructing Prescription Module");
 		this.prescriptionRealm = new RealmContext<>();
 		this.prescriptionRealm.init(BaseApp.app(), PrescriptionModel.class, "prescription.realm");
+	}
+
+	@Override
+	public void onStart() {
+
 	}
 
 	@Override

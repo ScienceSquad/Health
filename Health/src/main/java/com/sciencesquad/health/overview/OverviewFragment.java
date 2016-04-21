@@ -28,7 +28,6 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.sciencesquad.health.R;
-import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.Dispatcher;
@@ -173,11 +172,11 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         addData();
 
         // Bind calendar view
-        calendarView = xml().calendarView;
+        //calendarView = xml().calendarView;
         dateDisplay = xml().dateDisplay;
         dateDisplay.setText("Date: ");
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        /*calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView calendarView, int i, int i1, int i2) {
                 dateDisplay.setText("Date: " + i2 + " / " + i1 + " / " + i);
@@ -185,7 +184,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				BaseApp.app().display("Selected Date:\n" + "Day = " + i2 + "\n" +
                         "Month = " + i1 + "\n" + "Year = " + i, false);
             }
-        });
+        });*/
 
 		// Animate fabs
         fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),

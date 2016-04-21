@@ -7,11 +7,8 @@ import android.databinding.PropertyChangeRegistry;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import java8.util.stream.StreamSupport;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The Module abstract class is the binding glue behind a modular architecture
@@ -30,7 +27,7 @@ public abstract class Module implements Observable {
 	 * A collection of all the registered modules; a module may not be
 	 * registered more than once.
 	 */
-	/*package*/ static Set<Module> _modules = new HashSet<>();
+	/*package*/ static HashMap<Class<? extends Module>, Module> _modules = new HashMap<>();
 
 	/**
 	 * The internal set of Subscriptions to auto-unsubscribe from.
@@ -60,11 +57,15 @@ public abstract class Module implements Observable {
 	 */
 	@Nullable
 	public static <T extends Module> T start(@NonNull Class<T> module) {
+		if (_modules.containsKey(module))
+			return null;
+
 		try {
 			Log.i(TAG, "Initializing " + module.getSimpleName() + "...");
 			T instance = module.newInstance();
 			instance.onStart();
-			return _modules.add(instance) ? instance : null;
+			_modules.put(module, instance);
+			return instance;
 		} catch (Exception e) {
 			Log.e(TAG, "Unable to start Module class! " + e.getLocalizedMessage());
 			return null;
@@ -78,9 +79,7 @@ public abstract class Module implements Observable {
 	 * @return true if unregistration successful, false otherwise
 	 */
 	public static <T extends Module> void stop(@NonNull Class<T> module) {
-		StreamSupport.stream(_modules)
-				.filter(a -> module.isAssignableFrom(a.getClass()))
-				.forEach(v -> _modules.remove(v));
+		_modules.remove(module);
 	}
 
 	/**
@@ -89,8 +88,8 @@ public abstract class Module implements Observable {
 	 * @return all registered Module subclasses
 	 */
 	@NonNull
-	public static Set<Module> all() {
-		return Collections.unmodifiableSet(_modules);
+	public static Collection<Module> all() {
+		return Collections.unmodifiableCollection(_modules.values());
 	}
 
 	/**
@@ -104,11 +103,9 @@ public abstract class Module implements Observable {
 	@NonNull
 	@SuppressWarnings("unchecked")
 	public static <T extends Module> T of(@NonNull Class<T> module) {
-		T item =  (T)StreamSupport.stream(_modules)
-				.filter(a -> module.isAssignableFrom(a.getClass()))
-				.findFirst()
-				.orElse(Module.start(module));
-		return item;
+		if (_modules.containsKey(module))
+			return (T)_modules.get(module);
+		else return start(module);
 	}
 
 	/**

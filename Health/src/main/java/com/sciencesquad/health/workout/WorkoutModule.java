@@ -23,12 +23,7 @@ public class WorkoutModule extends Module {
     //Data context.
     //private RealmContext<RoutineModel> workoutRealm;
 
-    /**
-     * Constructs the module itself.
-     * It also sets up a Realm Context for the Module.
-     */
-	@Override
-	public void onStart() {
+	public WorkoutModule() {
 		this.workoutRealm = new RealmContext<>();
 		this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
 
@@ -47,10 +42,18 @@ public class WorkoutModule extends Module {
                */
 			addBaseExercises();
 			addRecommendedWorkouts();
-		}
+		} else Log.i(TAG, "We good!");
 
 		//addBaseExercises();
 		//addRecommendedWorkouts();
+	}
+
+    /**
+     * Constructs the module itself.
+     * It also sets up a Realm Context for the Module.
+     */
+	@Override
+	public void onStart() {
 
 		bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
 		bus().subscribe("DataFailureEvent", this, e -> {
@@ -61,10 +64,10 @@ public class WorkoutModule extends Module {
 			Log.d(TAG, "Data failed somewhere.");
 		});
 		bus().subscribe("DataUpdateEvent", null, e -> {
-			Log.d(TAG, "There was an update to a realm.");
+			Log.d(TAG, "There was an update to a realm. " + e);
 
 			// maybe use the key as the realm name?
-			if (e.get("key").equals("WorkoutRealm")) {
+			if ("WorkoutRealm".equals(e.get("key"))) {
 				Log.d(TAG, "Ignoring " + this.getClass().getSimpleName() + "'s own data update");
 			} else {
 				// do something about it.
@@ -79,17 +82,15 @@ public class WorkoutModule extends Module {
 
     public ArrayList<ExerciseTypeModel> getAllExerciseTypeModels() {
         ArrayList<ExerciseTypeModel> exercises = new ArrayList<>();
-        RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).findAll();
-        exercises.addAll(results);
-
+		RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).findAll();
+		exercises.addAll(results);
         return exercises;
     }
 
     public ArrayList<ExerciseTypeModel> getFilteredExerciseTypeModels(String target) {
         ArrayList<ExerciseTypeModel> exercises = new ArrayList<>();
-        RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).equalTo("target", target).findAll();
-        exercises.addAll(results);
-
+		RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).equalTo("target", target).findAll();
+		exercises.addAll(results);
         return exercises;
     }
 
@@ -529,7 +530,7 @@ public class WorkoutModule extends Module {
             schedule = results.first();
             Log.i(TAG, "Found a schedule! First Routine: " + schedule.getRoutineRotation().first().getName());
         } catch (Exception e) {
-            Log.e(TAG, "Found now workout schedule in Realm");
+            Log.e(TAG, "Found no workout schedule in Realm");
             schedule = null;
         }
 

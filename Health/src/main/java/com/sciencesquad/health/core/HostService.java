@@ -59,8 +59,8 @@ public class HostService extends Service {
 
 			// If the class is prefixed with a . add the package to it.
 			for (String name : classes) {
-				if (name.startsWith("."))
-					name = getPackageName() + name;
+				if (name.startsWith(".")) // FIXME: getPackageName()
+					name = "com.sciencesquad.health" + name;
 
 				// Lookup the Class for this string, ensuring it is a Module.
 				Class clazz;
@@ -94,7 +94,7 @@ public class HostService extends Service {
 
 			// Iterate and remove all Modules when we're destroyed.
 			// Invokes onStop in a different thread priority.
-			for(Iterator<Module> i = Module._modules.iterator(); i.hasNext();) {
+			for(Iterator<Module> i = Module._modules.values().iterator(); i.hasNext();) {
 				Module m = i.next();
 				Dispatcher.DEFAULT.run(m::onStop);
 				i.remove();

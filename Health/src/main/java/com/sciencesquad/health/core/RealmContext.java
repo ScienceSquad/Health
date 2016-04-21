@@ -360,8 +360,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 * which is pertinent to that query.
 	 */
 	@Nullable
-    public RealmQuery query(Class realmClass) {
-
+    public <T extends RealmObject> RealmQuery<T> query(Class<T> realmClass) {
 		try {
 			return realm.where(realmClass);
 		} catch (Exception e) {

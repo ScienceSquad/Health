@@ -7,7 +7,6 @@ import com.sciencesquad.health.core.RealmContext;
 
 public class OverviewModule extends Module {
     public static final String TAG = OverviewModule.class.getSimpleName();
-    static { Module.start(OverviewModule.class); }
 
     private DataContext<OverviewModel> dataContext;
 

@@ -37,16 +37,18 @@ public class NutritionModule extends Module {
     //Data context.
     private RealmContext<NutritionModel> nutritionRealm;
 
+	public NutritionModule() {
+		this.nutritionRealm = new RealmContext<>();
+		this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
+		this.nutritionRealm.clear();
+	}
+
     /**
      * Constructs the module itself.
      * Subscribes to events necessary to maintaining its own model.
     */
 	@Override
 	public void onStart() {
-
-		this.nutritionRealm = new RealmContext<>();
-		this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
-		this.nutritionRealm.clear();
 
 		// default values
 		this.favoriteFoods = new ArrayList<>();
