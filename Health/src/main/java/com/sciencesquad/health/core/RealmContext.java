@@ -373,6 +373,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 				realm = Realm.getInstance(config);
 				return realm.where(realmClass);
 			} catch (Exception e1){
+				Log.e(TAG, e1.getLocalizedMessage());
 				BaseApp.app().eventBus().publish("DataFailureEvent", this,
 						new Entry("operation", Failures.COULD_NOT_PRODUCE_QUERY));
 				return null;

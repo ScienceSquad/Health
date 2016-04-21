@@ -5,6 +5,8 @@ import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.alarm.AlarmModule;
+import com.sciencesquad.health.core.util.Dispatcher;
+
 import io.realm.RealmResults;
 
 /**
@@ -28,13 +30,16 @@ public class PrescriptionModule extends Module {
 	 */
 	public PrescriptionModule() {
 		Log.d(TAG, "Constructing Prescription Module");
-		this.prescriptionRealm = new RealmContext<>();
-		this.prescriptionRealm.init(BaseApp.app(), PrescriptionModel.class, "prescription.realm");
+
 	}
 
 	@Override
 	public void onStart() {
-
+		Log.v(TAG, "Initing Realm: Prescriptions");
+		Dispatcher.UI.run(() -> {
+            prescriptionRealm = new RealmContext<>();
+            prescriptionRealm.init(BaseApp.app(), PrescriptionModel.class, "prescription.realm");
+        });
 	}
 
 	@Override

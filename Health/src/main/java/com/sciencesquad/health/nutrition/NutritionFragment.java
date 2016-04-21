@@ -93,6 +93,8 @@ public class NutritionFragment extends BaseFragment {
         StaticPagerAdapter.install(xml().pager);
         tabLayout.setupWithViewPager(xml().pager);
 
+        xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
+
         // create FABs.
         fab = xml().fabNutrition;
         fab2 = xml().fabDiet;

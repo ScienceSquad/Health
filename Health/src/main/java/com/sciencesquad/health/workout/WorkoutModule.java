@@ -4,6 +4,8 @@ import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
+import com.sciencesquad.health.core.util.Dispatcher;
+
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -24,7 +26,7 @@ public class WorkoutModule extends Module {
     //private RealmContext<RoutineModel> workoutRealm;
 
 	public WorkoutModule() {
-		this.workoutRealm = new RealmContext<>();
+		/*this.workoutRealm = new RealmContext<>();
 		this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
 
 		//this.workoutRealm.getRealm().beginTransaction();
@@ -39,13 +41,13 @@ public class WorkoutModule extends Module {
                 addBaseExercises();
                 addRecommendedWorkouts();
             });
-               */
+
 			addBaseExercises();
 			addRecommendedWorkouts();
 		} else Log.i(TAG, "We good!");
 
 		//addBaseExercises();
-		//addRecommendedWorkouts();
+		//addRecommendedWorkouts();*/
 	}
 
     /**
@@ -54,6 +56,39 @@ public class WorkoutModule extends Module {
      */
 	@Override
 	public void onStart() {
+        Log.d(TAG, "Starting Workout Module on UI");
+        Dispatcher.UI.run(() -> {
+            workoutRealm = new RealmContext<>();
+            workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
+            if(getExerciseTypeModel("Abductor Machine") == null){
+                Log.i(TAG, "ADDING BASE EXERCISES");
+
+                addBaseExercises();
+                addRecommendedWorkouts();
+            } else Log.i(TAG, "We good!");
+        });
+        //this.workoutRealm = new RealmContext<>();
+        //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
+
+        //this.workoutRealm.getRealm().beginTransaction();
+        //this.workoutRealm.getRealm().deleteAll();
+        //this.workoutRealm.getRealm().commitTransaction();
+        //this.workoutRealm.getRealm().refresh();
+
+        /*if(getExerciseTypeModel("Abductor Machine") == null){
+            Log.i(TAG, "ADDING BASE EXERCISES");
+            /*
+            Dispatcher.BACKGROUND.run(() -> {
+                addBaseExercises();
+                addRecommendedWorkouts();
+            });
+
+            addBaseExercises();
+            addRecommendedWorkouts();
+        } else Log.i(TAG, "We good!");*/
+
+        //addBaseExercises();
+        //addRecommendedWorkouts();
 
 		bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
 		bus().subscribe("DataFailureEvent", this, e -> {
