@@ -1,17 +1,17 @@
 package com.sciencesquad.health.run;
 
 import android.Manifest;
+import android.app.FragmentTransaction;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -32,16 +32,34 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.databinding.FragmentCreateRouteBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 
 
-public class CreateRouteFragment extends Fragment implements
+public class CreateRouteFragment extends BaseFragment implements
         ConnectionCallbacks,  OnConnectionFailedListener, OnMarkerDragListener, LocationListener {
     public static final String TAG = CreateRouteFragment.class.getSimpleName();
+
+    @Override
+    protected BaseFragment.Configuration getConfiguration() {
+        return new Configuration(
+                TAG, "CreateRouteFragment", R.drawable.ic_fitness_center_24dp,
+                R.style.AppTheme_Run, R.layout.fragment_create_route
+        );
+    }
+
+    // Our generated binding class is different...
+    @Override @SuppressWarnings("unchecked")
+    protected FragmentCreateRouteBinding xml() {
+        return super.xml();
+    }
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final static int REQUEST_LOCATION_PERMISSION = 8;
@@ -51,10 +69,16 @@ public class CreateRouteFragment extends Fragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    static TextView mTextViewDistance;
+    private Button newMarkerButton;
+    private FloatingActionButton fabSave;
+    private FloatingActionButton fabBack;
+    private static TextView textViewDistance;
+
+    private static double totalDistance = 0;
 
     private Polyline polyline;
 
+    Realm realm = Realm.getDefaultInstance();
 
     List<LatLng> pointsLatLng = new ArrayList<>();
     private static List<Double> distances = new ArrayList<>();
@@ -69,26 +93,32 @@ public class CreateRouteFragment extends Fragment implements
             .color(Color.BLUE);
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_route, container, false);
-        mTextViewDistance = (TextView) view.findViewById(R.id.textView_RouteDistance);
-        // Button
-        final Button button = (Button) view.findViewById(R.id.buttonNewMarker);
-        //Button Click
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                buttonClicked(v);
-            }
-        });
-        return view;
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Setup the Toolbar
+        xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
+        textViewDistance = xml().textViewRouteDistance;
+
+        newMarkerButton = xml().buttonNewMarker;
+        fabBack = xml().backRouteFab;
+        fabSave = xml().saveRouteFab;
+
+        newMarkerButton.setOnClickListener(v -> {
+            buttonClicked();
+        });
+
+        fabBack.setOnClickListener(v -> {
+            //Links to RunFragment
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            new RunFragment().open(transaction, R.id.drawer_layout).commit();
+        });
+
+        fabSave.setOnClickListener(v -> {
+            saveRouteToRealm();
+            //TODO: Saved to Realm Confirmation Dialog Box
+        });
 
         setUpMapIfNeeded();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -102,6 +132,14 @@ public class CreateRouteFragment extends Fragment implements
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(2000)        // 2 seconds, in milliseconds
                 .setFastestInterval(500); // Half second, in milliseconds
+    }
+
+    public void saveRouteToRealm() {
+        realm.beginTransaction();
+        CreatedRouteModel route = new CreatedRouteModel();
+        route.setDistance(totalDistance);
+        //TODO: Save route information
+        realm.commitTransaction();
     }
 
     @Override
@@ -177,9 +215,14 @@ public class CreateRouteFragment extends Fragment implements
     }
 
     // Button push triggers new marker (dragable)
-    public void buttonClicked(View view) {
-        newMarker(mMap, pointsLatLng.get(pointsLatLng.size() - 1));
-        distanceCalculate(latLng, pointsLatLng);
+    public void buttonClicked() {
+        try {
+            newMarker(mMap, pointsLatLng.get(pointsLatLng.size() - 1));
+            distanceCalculate(latLng, pointsLatLng);
+        } catch(ArrayIndexOutOfBoundsException e) {
+            //Log the error
+            Log.e(TAG, "No Location Data Received");
+        }
     }
 
     @Override
@@ -214,12 +257,11 @@ public class CreateRouteFragment extends Fragment implements
 
     // Calculates distance and adds to the distances list
     public static double distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {
-        double totalDistance = 0;
         for (int i = 1; i<pointsLatLng.size(); i++) {
             totalDistance = totalDistance + computeDistanceBetween(pointsLatLng.get(i-1),
                     pointsLatLng.get(i));
         }
-        mTextViewDistance.setText("Distance: " + String.format("%.1f", totalDistance) + " m");
+        textViewDistance.setText("Distance: " + String.format("%.1f", totalDistance) + " m");
         return totalDistance;
     }
 

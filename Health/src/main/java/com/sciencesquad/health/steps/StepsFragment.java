@@ -35,9 +35,7 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.Stopwatch;
-import com.sciencesquad.health.databinding.FragmentOverviewBinding;
 import com.sciencesquad.health.databinding.FragmentStepsBinding;
-import com.sciencesquad.health.overview.OverviewModule;
 
 import org.threeten.bp.Duration;
 
