@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.EventBus;
@@ -529,8 +531,9 @@ public class AlarmModule extends Module {
 			resetData();
 		}
 
-		Context ctx = BaseApp.app().getApplicationContext();
+		Context ctx = app().getApplicationContext();
 
+		/*
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(ctx)
 						.setSmallIcon(R.drawable.ic_alarm)
@@ -542,7 +545,11 @@ public class AlarmModule extends Module {
 		NotificationManager mNotificationManager =
 				(NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		mNotificationManager.notify(alarmId, mBuilder.build());
+		mNotificationManager.notify(alarmId, mBuilder.build()); */
+
+
+		Toast toast = Toast.makeText(ctx, "Next alarm: " + nextAlarm + ".", Toast.LENGTH_SHORT);
+		toast.show();
 	}
 
 	/**
