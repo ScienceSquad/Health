@@ -28,6 +28,7 @@ public class WorkoutScheduleModel extends RealmObject{
     private Boolean friday;
     private Boolean saturday;
     private RealmList<RealmString> routineRotation;
+    private String lastCompletedRoutine;
 
 
 
@@ -35,6 +36,14 @@ public class WorkoutScheduleModel extends RealmObject{
     // GENERATED METHODS FOLLOW
     // DO NOT MODIFY -- REALM ONLY
     //
+
+    public String getLastCompletedRoutine(){
+        return this.lastCompletedRoutine;
+    }
+
+    public void setLastCompletedRoutine(String routineName){
+        this.lastCompletedRoutine = routineName;
+    }
 
     public Boolean getSunday(){
         return this.sunday;

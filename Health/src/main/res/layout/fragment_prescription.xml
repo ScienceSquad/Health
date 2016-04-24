@@ -53,6 +53,11 @@
                     app:textColor="@color/white"
                     app:textHeight="50dp" />
 
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:showText="false"/>
+
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/fab_emergency"
                     android:layout_width="wrap_content"
