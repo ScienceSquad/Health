@@ -146,12 +146,12 @@ public class WorkoutFragment extends BaseFragment {
         exerciseTypeAdapter.clear();                // first clear adapter
         for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
             exerciseTypeAdapter.add(m.getName());
-        exerciseTypeAdapter.sort(new Comparator<String>() {
+        /*exerciseTypeAdapter.sort(new Comparator<String>() {
            @Override
            public int compare(String lhs, String rhs) {
                return lhs.compareTo(rhs);   //or whatever your sorting algorithm
            }
-        });
+        });*/
         exerciseTypeAdapter.notifyDataSetChanged();
         xml().exerciseModelListView.setAdapter(exerciseTypeAdapter);
         xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {

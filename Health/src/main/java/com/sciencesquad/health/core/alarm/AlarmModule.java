@@ -361,13 +361,25 @@ public class AlarmModule extends Module {
 	 * @return
 	 */
 	public AlarmModel getAlarmById(int alarmId) {
-		RealmResults<AlarmModel> results = this.alarmRealm.query(AlarmModel.class)
-				.equalTo(ALARM_ID_FIELD, alarmId)
-				.findAll();
+		// TODO Why does this throw NPE for a period of time then work... - DEM
+		try {
+			RealmResults<AlarmModel> results = this.alarmRealm.query(AlarmModel.class)
+					.equalTo(ALARM_ID_FIELD, alarmId)
+					.findAll();
 
-		if (results.size() > 0) return results.get(0);
 
-		return null;
+			if (results.size() > 0) {
+				Log.d(TAG, "Shit is working");
+				return results.get(0);
+			}
+
+			Log.w(TAG, "I'M GOING TO RETURN NULL BECAUSE I'M A BAD BOY");
+			return null;
+		} catch (Exception e){
+			Log.e(TAG, e.getLocalizedMessage());
+			Log.e(TAG, "Returning null because fuck me");
+			return null;
+		}
 	}
 
 	public AlarmModule setActive(AlarmModel alarm, boolean active) {
