@@ -42,7 +42,7 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.TTSManager;
 import com.sciencesquad.health.databinding.FragmentRunBinding;
 
-import org.json.JSONArray;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -125,8 +125,8 @@ public class RunFragment extends BaseFragment implements
             .width(8)
             .color(Color.BLUE);
 
-    //int split = 800; // split distance in meters (NORMAL SPLIT)
-    int split = 5; // TEST SPLIT
+    int split = 400; // split distance in meters (NORMAL SPLIT)
+    //int split = 5; // TEST SPLIT
     int splitNumber = 1; // number of times user has traveled split distance
 
     private TTSManager ttsManager;
@@ -190,25 +190,21 @@ public class RunFragment extends BaseFragment implements
         run.setCalories(totalCalories);
         run.setDistance(totalDistance);
         run.setDate(new Date());
-        setUpGeoJson();
+        run.setPath(createJson().toString());
         realm.commitTransaction();
     }
 
-    public void setUpGeoJson() {
-        /*
-        //TODO: Create a GeoJSON object from path.
-        GeoJSON geojson = new GeoJSON();
-        GeoJSONObject geojsonobject = new GeoJSONObject() {
-            @Override
-            public String getType() {
-                return GeoJSON.TYPE_MULTI_POINT;
-            }
-            MultiPoint multiPoint = new MultiPoint(pathArray);
-            JSONObject geoJSON = multiPoint.toJSON();
-        }; */
+    public JSONObject createJson() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("name", "foo");
+            obj.put("points", pointsLatLng);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "JSON EXCEPTION: " + e);
+        }
+        return obj;
     }
-
-
 
     public void stopRun() {
         isRunStarted = false;
@@ -298,8 +294,8 @@ public class RunFragment extends BaseFragment implements
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        //float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
-        float minDistResolution = currentAcc/8; //TEST RESOLUTION
+        float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
+        //float minDistResolution = currentAcc/8; //TEST RESOLUTION
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
