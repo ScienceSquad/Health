@@ -36,7 +36,6 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.TTSManager;
 import com.sciencesquad.health.databinding.FragmentRunBinding;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
