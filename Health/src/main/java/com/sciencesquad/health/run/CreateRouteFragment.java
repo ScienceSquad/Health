@@ -251,10 +251,6 @@ public class CreateRouteFragment extends BaseFragment implements
         */
     }
 
-    //TODO: Adds location information for marker to location list
-
-    //TODO: Calculate distance between new marker and previous
-
     // Calculates distance and adds to the distances list
     public static double distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {
         totalDistance = 0;

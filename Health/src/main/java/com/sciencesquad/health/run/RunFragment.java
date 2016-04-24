@@ -6,18 +6,12 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.cocoahero.android.geojson.Feature;
-import com.cocoahero.android.geojson.GeoJSON;
-import com.cocoahero.android.geojson.GeoJSONObject;
-import com.cocoahero.android.geojson.MultiPoint;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -83,9 +77,6 @@ public class RunFragment extends BaseFragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    private FloatingActionButton fabMarker;
-    private FloatingActionButton fabStop;
-    private Button runStartButton;
     private TextView textViewCalories;
     private TextView textViewDistance;
     private TextView textViewSpeed;
@@ -110,10 +101,6 @@ public class RunFragment extends BaseFragment implements
     boolean toClearOnStart = false;
 
     Realm realm = Realm.getDefaultInstance();
-
-    MarkerOptions currentPosOptions = new MarkerOptions()
-            .position(new LatLng(40, 40))
-            .title("Current Position");
 
     CircleOptions accuracyCircleOptions = new CircleOptions()
             .center(new LatLng(40, 40))
@@ -164,24 +151,18 @@ public class RunFragment extends BaseFragment implements
         textViewDistance = xml().textViewDistance;
         textViewSpeed = xml().textViewSpeed;
 
-        fabMarker = xml().runFab;
-        fabStop = xml().endRunFab;
-
-        runStartButton = xml().buttonStartRun;
-
-        fabMarker.setOnClickListener(v -> {
+        // Create marker FAB
+        xml().runFab.setOnClickListener(v -> {
             //Links to CreateRouteFragment
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             new CreateRouteFragment().open(transaction, R.id.drawer_layout).commit();
         });
 
-        fabStop.setOnClickListener(v -> {
-            stopRun();
-        });
+        // Stop FAB
+        xml().endRunFab.setOnClickListener(v -> stopRun());
 
-        runStartButton.setOnClickListener(v -> {
-            buttonStartRunClicked();
-        });
+        // Start Run FAB
+        xml().buttonStartRun.setOnClickListener(v -> buttonStartRunClicked());
     }
 
     public void saveRunToRealm() {
@@ -276,9 +257,7 @@ public class RunFragment extends BaseFragment implements
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
                 ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map))
-                    .getMapAsync(googleMap -> {
-                        mMap = googleMap;
-                    });
+                    .getMapAsync(googleMap -> mMap = googleMap);
 
         }
     }
@@ -435,6 +414,7 @@ public class RunFragment extends BaseFragment implements
                     // Do what you wanted to do with the permissions
                 } else {
                     // Do something for when permission is denied by the user
+                    Log.e(TAG, "Location Permissions Denied");
                 }
             }
             default:
@@ -463,7 +443,7 @@ public class RunFragment extends BaseFragment implements
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.e(TAG, "Connection Suspended");
     }
 
     @Override
