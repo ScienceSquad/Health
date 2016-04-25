@@ -1,7 +1,13 @@
 package com.sciencesquad.health.steps;
 
+import android.content.Context;
+import android.databinding.ObservableField;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
@@ -9,25 +15,14 @@ import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZoneOffset;
 
-
 /**
- * Steps Module itself.
- *
- * Note:
- * It must be expanded upon from this current baby state
+ * Steps Module
  */
-
-public class StepsModule extends Module {
+public class StepsModule extends Module implements SensorEventListener {
     public static final String TAG = StepsModule.class.getSimpleName();
     private static final String REALMNAME = "steps.realm";
 
     private RealmContext<StepsModel> stepsRealm;
-
-    // Display for steps
-    private TextView num_steps;
-
-    // Sensor manager
-    //private SensorManager sensorManager;
 
     // Values to calculate number of steps
     private float prevY;
@@ -36,96 +31,34 @@ public class StepsModule extends Module {
     private int maxDelay;
     private int counterSteps;
 
+    // The public bindings for the StepsFragment
+    public ObservableField<String> numberSteps = new ObservableField<>("");
+    public ObservableField<String> strideLength = new ObservableField<>("");
+    public ObservableField<String> averageSpeed = new ObservableField<>("");
+
     /**
      * Constructs the module itself.
      * Subscribes to events necessary to maintaining its own model.
      * Going to pretend it does not throw an exception for now.
      */
-    //public StepsModule() throws Exception {
-    public StepsModule() {
+    @Override
+    public void onStart() {
         this.stepsRealm = new RealmContext<>();
         this.stepsRealm.init(BaseApp.app(), StepsModel.class, REALMNAME);
 
         // Initial values
-        numSteps = 0;
-        counterSteps = 0;
-        maxDelay = 0;
+        this.numSteps = 0;
+        this.counterSteps = 0;
+        this.maxDelay = 0;
+
+        // Initiate step counter
+        registerEventListener(getMaxDelay());
     }
 
-    /**
-     * Registers a listener for the Sensor to pick up User's steps.
-     * @param maxdelay
-     */
-    /**
-    private void registerEventListener(int maxdelay) {
-        // BEGIN_INCLUDE(start)
+    @Override
+    public void onStop() {
 
-        // Keep track of state so that the correct sensor type and batch delay can be set up when
-        // the app is restored (for example on screen rotation).
-        maxDelay = maxdelay;
-        counterSteps = 0;
-
-        // Get the default sensor for the sensor type from the SenorManager
-        sensorManager = (SensorManager) BaseApplication.application().getSystemService(Context.SENSOR_SERVICE);
-
-        // sensorType is either Sensor.TYPE_STEP_COUNTER or Sensor.TYPE_STEP_DETECTOR
-        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-
-        // Register the listener for this sensor in batch mode.
-        // If the max delay is 0, events will be delivered in continuous mode without batching.
-        final boolean sensorWorking = sensorManager.registerListener(
-                sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL, maxDelay);
-        // END_INCLUDE(start)
-
-        if (!sensorWorking) {
-            // something fucked up
-            Log.e(TAG, "Sensor could not be initialized");
-        }
-        else {
-            Log.d(TAG, "Counting enabled");
-        }
     }
-    */
-
-    /**
-     * Event handler for StepCounter events.
-     * It will log the steps as it picks up events.
-     */
-    /**
-    private SensorEventListener sensorEventListener = new SensorEventListener() {
-        //
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            // Empty for now.
-            if (counterSteps < 1) {
-                // initial value
-                counterSteps = (int) event.values[0];
-            }
-
-            // Calculate steps taken based on first counter value received.
-            numSteps = (int) event.values[0] - counterSteps;
-            Log.d(TAG, "Sensor picked up steps. Current step count: " + numSteps);
-
-        }
-
-        //
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            // Empty for the rest of time.
-        }
-    };
-    */
-
-    // I'm sorry
-    /** public SensorEventListener getSensorEventListener() {
-        return sensorEventListener;
-    }*/
-
-    /**
-    public SensorManager getSensorManager() {
-        return sensorManager;
-    }
-    */
 
     public int getNumSteps() {
         return numSteps;
@@ -161,13 +94,60 @@ public class StepsModule extends Module {
         //writeStepsToRealm();
     }
 
-    @Override
-    public void onStart() {
+    /**
+     * Registers a listener for the Sensor to pick up User's steps.
+     * @param maxdelay
+     */
+    private void registerEventListener(int maxdelay) {
+        // Keep track of state so that the correct sensor type and batch delay can be set up when
+        // the app is restored (for example on screen rotation).
+        maxDelay = maxdelay;
+        counterSteps = 0;
 
+        // Get the default sensor for the sensor type from the SenorManager
+        // sensorType is either Sensor.TYPE_STEP_COUNTER or Sensor.TYPE_STEP_DETECTOR
+        SensorManager sensorManager = (SensorManager) BaseApp.app().getSystemService(Context.SENSOR_SERVICE);
+        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+        // Register the listener for this sensor in batch mode.
+        // If the max delay is 0, events will be delivered in continuous mode without batching.
+        boolean q = sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL, maxDelay);
+
+        // Error cases!
+        if (!q)
+            Log.e(TAG, "Sensor could not be initialized");
+        else Log.d(TAG, "Counting enabled");
     }
 
-    @Override
-    public void onStop() {
+    /**
+     * Update the visual bindings based on sensor data received.
+     */
+    private void updateBindings() {
+        this.numberSteps.set("" + numSteps);
+        this.strideLength.set((Math.round((0.415 * 1.8796)*100d)/100d) + "m");
+        this.averageSpeed.set(strideLength + "m/s");
+    }
 
+    /**
+     * @see SensorManager
+     */
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (counterSteps < 1) { // initial value
+            counterSteps = (int) event.values[0];
+            setCounterSteps(counterSteps);
+        }
+
+        // Calculate steps taken based on first counter value received.
+        numSteps = (int) event.values[0] - counterSteps;
+        this.updateBindings();
+    }
+
+    /**
+     * @see SensorManager
+     */
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Does nothing.
     }
 }
