@@ -13,13 +13,10 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
-import com.sciencesquad.health.core.WakeLockManager;
 import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.Point;
 import com.sciencesquad.health.core.util.X;
@@ -32,6 +29,7 @@ import java.text.DateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static android.os.PowerManager.*;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
@@ -239,7 +237,7 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 	public void onDestroy() {
 		((SensorManager)getSystemService(Context.SENSOR_SERVICE)).unregisterListener(this);
 
-		WakeLockManager.release("sleepMonitoring");
+		BaseApp.app().releaseWakelock("sleepMonitoring");
 		unregisterReceiver(serviceReceiver);
 		sendBroadcast(new Intent(SLEEP_STOPPED));
 		stopForeground(true);
@@ -282,8 +280,7 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 
 										Dispatcher.UI.run(() -> {
 											Log.i(TAG, "Update " + maxNetForce);
-											Toast.makeText(getApplicationContext(), "Update " +
-													maxNetForce, Toast.LENGTH_SHORT).show();
+											BaseApp.app().display("Update " + maxNetForce, false);
 										});
 										triggerAlarm(time, maxNetForce);
 										maxNetForce = 0;
@@ -339,10 +336,10 @@ public class SleepMonitoringService extends Service implements SensorEventListen
 		startForeground(NOTIFICATION_ID, createServiceNotification());
 
 		// Grab a WakeLock
-		final int wakeLockType = forceScreenOn ? (PowerManager.SCREEN_DIM_WAKE_LOCK
-				| PowerManager.ON_AFTER_RELEASE | PowerManager.ACQUIRE_CAUSES_WAKEUP)
-				: PowerManager.PARTIAL_WAKE_LOCK;
-		WakeLockManager.acquire(this, "sleepMonitoring", wakeLockType);
+		final int wakeLockType = forceScreenOn
+				? (SCREEN_DIM_WAKE_LOCK | ON_AFTER_RELEASE | ACQUIRE_CAUSES_WAKEUP)
+				: (PARTIAL_WAKE_LOCK);
+		BaseApp.app().acquireWakelock("sleepMonitoring", wakeLockType, 0);
 
 		Log.i(TAG, "Wakelock acquired!");
 

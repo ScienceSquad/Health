@@ -1,20 +1,23 @@
 package com.sciencesquad.health.run;
 
 import android.Manifest;
+import android.app.FragmentTransaction;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.cocoahero.android.geojson.Feature;
+import com.cocoahero.android.geojson.GeoJSON;
+import com.cocoahero.android.geojson.GeoJSONObject;
+import com.cocoahero.android.geojson.MultiPoint;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -25,25 +28,52 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.TTSManager;
+import com.sciencesquad.health.databinding.FragmentRunBinding;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import io.realm.Realm;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
 
 
-public class RunFragment extends Fragment implements
+public class RunFragment extends BaseFragment implements
         ConnectionCallbacks,  OnConnectionFailedListener, LocationListener {
     public static final String TAG = RunFragment.class.getSimpleName();
+
+    @Override
+    protected Configuration getConfiguration() {
+        return new Configuration(
+                TAG, "RunFragment", R.drawable.ic_fitness_center_24dp,
+                R.style.AppTheme_Run, R.layout.fragment_run
+        );
+    }
+
+    // Our generated binding class is different...
+    @Override
+    @SuppressWarnings("unchecked")
+    protected FragmentRunBinding xml() {
+        return super.xml();
+    }
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private final static int REQUEST_LOCATION_PERMISSION = 8;
@@ -53,29 +83,40 @@ public class RunFragment extends Fragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    private TextView myTextViewCalories = null;
-    private TextView myTextViewDistance = null;
-    private TextView myTextViewSpeed = null;
+    private FloatingActionButton fabMarker;
+    private FloatingActionButton fabStop;
+    private Button runStartButton;
+    private TextView textViewCalories;
+    private TextView textViewDistance;
+    private TextView textViewSpeed;
 
-	List<LatLng> pointsLatLng = new ArrayList<>();
-	List<Long> timeStamps = new ArrayList<>();
-	List<Double> distances = new ArrayList<>();
-	static double totalDistance = 0;
-	static double totalCalories = 0;
-	LatLng lastLoc = null;
+    List<LatLng> pointsLatLng = new ArrayList<>();
+    List<Long> timeStamps = new ArrayList<>();
+    List<Double> distances = new ArrayList<>();
+    static double totalDistance = 0;
+    static double totalCalories = 0;
+    double speed = 0;
+    LatLng lastLoc = null;
+    LatLng lastLocPersistent = null;
 
-	boolean firstLoc = true; // used to ensure that only one starting marker is created.
+    boolean firstLoc = true; // used to ensure that only one starting marker is created.
     boolean isRunStarted = false; // only starts on button press.
-	Marker currentPos = null; // used to display current position
-	Circle accuracyCircle = null;
+    boolean firstMarker = true;
+    Marker currentPos = null; // used to display current position
+    static Marker startingMarker = null;
+    Circle accuracyCircle = null;
     float currentAcc;
+    private Polyline polyline;
+    boolean toClearOnStart = false;
+
+    Realm realm = Realm.getDefaultInstance();
 
     MarkerOptions currentPosOptions = new MarkerOptions()
-            .position(new LatLng(40,40))
+            .position(new LatLng(40, 40))
             .title("Current Position");
 
     CircleOptions accuracyCircleOptions = new CircleOptions()
-            .center(new LatLng(40,40))
+            .center(new LatLng(40, 40))
             .radius((double) currentAcc)
             .strokeColor(0xaf00bfff)
             .fillColor(0x3f00bfff);
@@ -90,24 +131,6 @@ public class RunFragment extends Fragment implements
 
     private TTSManager ttsManager;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_run, container, false);
-
-        final Button buttonStartRun = (Button) view.findViewById(R.id.buttonStartRun);
-
-        buttonStartRun.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                buttonStartRunClicked(v);
-            }
-        });
-        return view;
-    }
-
-    public void buttonStartRunClicked(View view) {
-        isRunStarted = true;
-        startRun(lastLoc);
-    }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -116,9 +139,6 @@ public class RunFragment extends Fragment implements
         ttsManager = new TTSManager();
         ttsManager.init(getActivity());
 
-        this.myTextViewCalories = (TextView) view.findViewById(R.id.textView_Calories);
-        this.myTextViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
-        this.myTextViewSpeed = (TextView) view.findViewById(R.id.textView_Speed);
 
         setUpMapIfNeeded();
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -132,6 +152,112 @@ public class RunFragment extends Fragment implements
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(2000)        // 2 seconds, in milliseconds
                 .setFastestInterval(500); // Half second, in milliseconds
+
+        // Setup the Toolbar
+        xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
+
+        StaticPagerAdapter.install(xml().pager);
+        xml().tabs.setupWithViewPager(xml().pager);
+
+
+        textViewCalories = xml().textViewCalories;
+        textViewDistance = xml().textViewDistance;
+        textViewSpeed = xml().textViewSpeed;
+
+        fabMarker = xml().runFab;
+        fabStop = xml().endRunFab;
+
+        runStartButton = xml().buttonStartRun;
+
+        fabMarker.setOnClickListener(v -> {
+            //Links to CreateRouteFragment
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            new CreateRouteFragment().open(transaction, R.id.drawer_layout).commit();
+        });
+
+        fabStop.setOnClickListener(v -> {
+            stopRun();
+        });
+
+        runStartButton.setOnClickListener(v -> {
+            buttonStartRunClicked();
+        });
+    }
+
+    public void saveRunToRealm() {
+        realm.beginTransaction();
+        CompletedRunModel run = new CompletedRunModel();
+        run.setCalories(totalCalories);
+        run.setDistance(totalDistance);
+        run.setDate(new Date());
+        setUpGeoJson();
+        realm.commitTransaction();
+    }
+
+    public void setUpGeoJson() {
+        /*
+        //TODO: Create a GeoJSON object from path.
+        GeoJSON geojson = new GeoJSON();
+        GeoJSONObject geojsonobject = new GeoJSONObject() {
+            @Override
+            public String getType() {
+                return GeoJSON.TYPE_MULTI_POINT;
+            }
+            MultiPoint multiPoint = new MultiPoint(pathArray);
+            JSONObject geoJSON = multiPoint.toJSON();
+        }; */
+    }
+
+
+
+    public void stopRun() {
+        isRunStarted = false;
+        saveRunToRealm();
+        resetRunValues();
+        xml().buttonStartRun.setVisibility(View.VISIBLE);
+        toClearOnStart = true;
+    }
+
+    public void resetRunValues() {
+        pointsLatLng.clear();
+        timeStamps.clear();
+        distances.clear();
+        totalDistance = 0;
+        totalCalories = 0;
+        firstLoc = true; // used to ensure that only one starting marker is created.
+        splitNumber = 1;
+        speed = 0;
+        updateTextViews();
+        lastLoc = null;
+        firstMarker = true;
+    }
+
+    public void buttonStartRunClicked() {
+        try {
+            if(toClearOnStart) clearLastRun();
+            isRunStarted = true;
+            if(lastLoc!=null) {
+                startRun(lastLoc);
+            } else {
+                startRun(lastLocPersistent);
+            }
+            //Makes start button disappear on click
+            xml().buttonStartRun.setVisibility(View.GONE);
+        } catch(Exception e) {
+            //Log the error
+            Log.e(TAG, "No Location Data Received");
+        } catch(Error e2) {
+            Log.e(TAG, "Error: " + e2.toString());
+        }
+    }
+
+    public void clearLastRun() {
+        if (polyline!=null) polyline.remove();
+        polyline = null;
+        if (startingMarker!=null) startingMarker.remove();
+        startingMarker = null;
+        if (currentPos!=null) currentPos.remove();
+        currentPos = null;
     }
 
     @Override
@@ -175,11 +301,19 @@ public class RunFragment extends Fragment implements
         //float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
         float minDistResolution = currentAcc/8; //TEST RESOLUTION
 
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                .title("Current Position");
 
-        if (lastLoc==null) {
+
+        if (currentPos==null) {
             lastLoc = latLng;
-            currentPos = mMap.addMarker(currentPosOptions);
-            accuracyCircle = mMap.addCircle(accuracyCircleOptions);
+            lastLocPersistent = latLng;
+            currentPos = mMap.addMarker(options);
+            if (accuracyCircle==null) {
+                accuracyCircle = mMap.addCircle(accuracyCircleOptions);
+            }
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -195,8 +329,9 @@ public class RunFragment extends Fragment implements
             return; //stops running the method if distance is inconsequential.
 
         lastLoc = latLng;
+        lastLocPersistent = latLng;
 
-        double speed = 0;
+
         pointsLatLng.add(latLng);
         timeStamps.add(currentTimeMillis());
         if (timeStamps.size()>2) {
@@ -206,12 +341,7 @@ public class RunFragment extends Fragment implements
             double timeDiff = (timeStamps.get(timeStamps.size()-1)-timeStamps.get(timeStamps.size()-2))/1000; //time difference in seconds
             speed = distanceDiff/timeDiff; //calculates the speed since the last location update
             totalCalories = totalCalories + calorieBurn(speed,timeDiff,weightKG);
-            this.myTextViewCalories.setText("Cal. Burned: " +
-                    String.format("%.1f",totalCalories));
-            this.myTextViewDistance.setText("Distance: " +
-                    String.format("%.1f",totalDistance) + " m");
-            this.myTextViewSpeed.setText("Pace: " +
-                    String.format("%.1f", speed) + " m/s");
+            updateTextViews();
         }
 
         // TextToSpeech - Split Data
@@ -224,16 +354,26 @@ public class RunFragment extends Fragment implements
 
         currentPos.setPosition(latLng);
 
-        mMap.addPolyline((polylineoptions)
-                .addAll(pointsLatLng));
+        if (firstMarker) {
+            polyline = mMap.addPolyline(polylineoptions.addAll(pointsLatLng));
+            firstMarker = false;
+        } else {
+            polyline.setPoints(pointsLatLng);
+        }
+    }
+
+    public void updateTextViews() {
+        textViewCalories.setText("Cal. Burned: " +
+                String.format("%.1f",totalCalories));
+        textViewDistance.setText("Distance: " +
+                String.format("%.1f",totalDistance) + " m");
+        textViewSpeed.setText("Pace: " +
+                String.format("%.1f", speed) + " m/s");
     }
 
     public void startRun(LatLng latLng) {
         if (firstLoc && isRunStarted) {
             newStartingMarker(mMap, latLng);
-
-
-
 
             pointsLatLng.add(latLng);
             timeStamps.add(currentTimeMillis());
@@ -249,8 +389,13 @@ public class RunFragment extends Fragment implements
     public static void newStartingMarker(GoogleMap mMap, LatLng latLng) {
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 .title("Starting Place");
-        mMap.addMarker(options);
+        if (startingMarker==null) {
+            startingMarker = mMap.addMarker(options);
+        } else {
+            startingMarker.setPosition(latLng);
+        }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
     }
 

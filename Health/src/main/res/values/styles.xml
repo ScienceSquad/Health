@@ -26,6 +26,7 @@
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
         <item name="android:windowSharedElementReenterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementReturnTransition">@android:transition/move</item>
+        <item name="android:textColorPrimary">@color/accent_material_light</item>
     </style>
 
     <style name="AppTheme.Fullscreen" parent="AppTheme">
@@ -152,11 +153,14 @@
         <item name="colorPrimaryDark">@color/blue_grey_900</item>
     </style>
 
-
     <style name="AppTheme.Workout" parent="AppTheme">
         <item name="colorAccent">@color/amber_700</item>
         <item name="colorPrimary">@color/blue_grey_700</item>
         <item name="colorPrimaryDark">@color/blue_grey_900</item>
+    </style>
+
+    <style name="AppTheme.Run" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/accent_material_light</item>
     </style>
 
 
@@ -183,5 +187,12 @@
         <item name="colorPrimary">@color/purple_50</item>
         <item name="colorPrimaryDark">@color/purple_900</item>
     </style>
+
+    <!-- Testing some things -->
+    <style name="MyButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/red_700</item>
+        <item name="colorButtonNormal">@color/red_500</item>
+    </style>
+
 
 </resources>

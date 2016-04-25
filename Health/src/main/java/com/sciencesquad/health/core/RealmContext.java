@@ -22,6 +22,8 @@ import java.util.Iterator;
 public final class RealmContext<M extends RealmObject> implements DataContext<M> {
 	private static final String TAG = RealmContext.class.getSimpleName();
 
+	private RealmConfiguration config;
+
 	/**
 	 * List of Failure strings for Data Failure.
 	 */
@@ -43,7 +45,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 		public static final String OBJECT_CANNOT_CHECK_ISEMPTY = "OBJECT_CANNOT_CHECK_ISEMPTY";
 		public static final String OBJECT_HAS_NO_SIZE = "OBJECT_HAS_NO_SIZE";
 		public static final String COULD_NOT_PRODUCE_ARRAY = "COULD_NOT_PRODUCE_ARRAY";
-		public static final String COULD_NOT_SWITCH_REALM = "COULD_NOT_SWITCH_REALM";
+		public static final String COULD_NOT_UPDATE_SINGLE_MODEL = "COULD_NOT_UPDATE_SINGLE_MODEL ";
 	}
 
 	private Realm realm;
@@ -70,7 +72,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	@SuppressWarnings("unchecked")
 	public void init(Context context, Class realmClass, String identifier) {
 		try {
-			RealmConfiguration config = new RealmConfiguration.Builder(context)
+			config = new RealmConfiguration.Builder(context)
 					.name(identifier)
 					.deleteRealmIfMigrationNeeded() // DEBUG ONLY
 					.build();
@@ -347,7 +349,7 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	/**
 	 * @see AutoCloseable
 	 */
-	public void close() throws Exception {
+	public void close() {
 		realm.close();
 	}
 
@@ -360,14 +362,23 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 	 * which is pertinent to that query.
 	 */
 	@Nullable
-    public RealmQuery query(Class realmClass) {
-
+    public <T extends RealmObject> RealmQuery<T> query(Class<T> realmClass) {
 		try {
 			return realm.where(realmClass);
 		} catch (Exception e) {
-			BaseApp.app().eventBus().publish("DataFailureEvent", this,
-					new Entry("operation", Failures.COULD_NOT_PRODUCE_QUERY));
-			return null;
+			Log.e(TAG, e.getLocalizedMessage());
+			Log.d(TAG, "Trying to grab it again");
+			try{
+				realm = null;
+				realm = Realm.getInstance(config);
+				return realm.where(realmClass);
+			} catch (Exception e1){
+				Log.e(TAG, e1.getLocalizedMessage());
+				BaseApp.app().eventBus().publish("DataFailureEvent", this,
+						new Entry("operation", Failures.COULD_NOT_PRODUCE_QUERY));
+				return null;
+			}
+
 		}
 	}
 
@@ -387,6 +398,18 @@ public final class RealmContext<M extends RealmObject> implements DataContext<M>
 			realm.cancelTransaction();
 			BaseApp.app().eventBus().publish("DataFailureEvent", this,
 					new Entry("operation", Failures.COULD_NOT_UPDATE_REALM_AT_INDEX));
+		}
+	}
+
+	public void update(RealmObject model){
+		try {
+			realm.beginTransaction();
+			realm.copyToRealmOrUpdate(model);
+			realm.commitTransaction();
+		} catch (Exception e){
+			realm.cancelTransaction();
+			BaseApp.app().eventBus().publish("DataFailureEvent", this,
+					new Entry("operation", Failures.COULD_NOT_UPDATE_SINGLE_MODEL ));
 		}
 	}
 

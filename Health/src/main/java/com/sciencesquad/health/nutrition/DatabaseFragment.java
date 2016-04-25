@@ -52,6 +52,7 @@ public class DatabaseFragment extends BaseFragment {
 		public String title;
 		public String content;
 		public String url;
+		public View.OnClickListener listener;
 	}
 
 	public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
@@ -170,21 +171,46 @@ public class DatabaseFragment extends BaseFragment {
 		});
 	}
 
+	private String nutrientQueryByNDBNo(String ndbno) {
+		NutrientQuery query = new NutrientQuery(NutrientQuery.QueryType.FOOD_REPORT);
+		query.setNdbNumber(ndbno);
+		JSONArray resultsArray = query.getResultsArray();
+		if (resultsArray == null) return "Food not found";
+		try {
+			for (int i = 0; i < resultsArray.length(); i++) {
+				JSONObject nutrient = resultsArray.getJSONObject(i);
+				if (nutrient.getString("name").equals("Energy")) {
+					return String.valueOf(nutrient.getInt("value")) + " calories";
+				}
+			}
+		} catch (JSONException e){
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return "Got nothing";
+	}
+
+	private void showNutritionInformation(String content) {
+
+	}
+
 	private void getNutrientQueryResults(String queryString) {
 		Dispatcher.UTILITY.run(() -> {
 			NutrientQuery query = new NutrientQuery(NutrientQuery.QueryType.SEARCH);
 			query.setSearchQuery(queryString);
-			JSONObject results = query.getJSONResults();
-			if (results == null) return;
+			JSONArray resultsArray = query.getResultsArray();
+			if (resultsArray == null) return;
+			ArrayList<ItemContent> contentArray = new ArrayList<ItemContent>();
 			try {
-				JSONArray resultsArray = results.getJSONObject("list").getJSONArray("item");
-				if (resultsArray == null) return;
-				ArrayList<ItemContent> contentArray = new ArrayList<ItemContent>();
 				for (int i = 0; i < resultsArray.length(); i++) {
 					JSONObject object = resultsArray.getJSONObject(i);
 					ItemContent itemContent = new ItemContent();
 					itemContent.title = object.getString("name");
 					itemContent.url = object.getString("ndbno");
+					itemContent.url = nutrientQueryByNDBNo(itemContent.url);
+					itemContent.listener = (view) -> {
+						showNutritionInformation(itemContent.url);
+					};
 					itemContent.content = object.getString("name");
 					contentArray.add(itemContent);
 				}
