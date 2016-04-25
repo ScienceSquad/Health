@@ -5,7 +5,6 @@
     tools:context=".overview.OverviewFragment">
     <data>
         <variable name="fragment" type="com.sciencesquad.health.overview.OverviewFragment"/>
-        <variable name="module" type="com.sciencesquad.health.overview.OverviewModule"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout

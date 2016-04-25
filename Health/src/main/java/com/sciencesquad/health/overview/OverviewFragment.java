@@ -1,12 +1,12 @@
 package com.sciencesquad.health.overview;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.text.Layout;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -59,7 +58,6 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     private Animation rotate_backward;
 	private Animation rotation;
 
-    PieChart mPieChart;
     private float[] yData = {5, 10, 15, 20, 25};
     private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
     private Integer[] pieColor = {Color.GREEN, Color.MAGENTA, Color.YELLOW,
@@ -71,7 +69,6 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 
     @Override
     protected BaseFragment.Configuration getConfiguration() {
-        String overviewTag = OverviewModule.TAG; // instantiates the Module...
         return new BaseFragment.Configuration(
                 TAG, "Overview", R.drawable.ic_menu_overview,
                 R.style.AppTheme_Overview, R.layout.fragment_overview
@@ -119,11 +116,11 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         data.setValueTextSize(14f);
         data.setValueTextColor(Color.DKGRAY);
 
-        mPieChart.setData(data);
-        mPieChart.highlightValues(null);
-        Legend legend = mPieChart.getLegend();
+        xml().overviewChart.setData(data);
+        xml().overviewChart.highlightValues(null);
+        Legend legend = xml().overviewChart.getLegend();
 		legend.setEnabled(false);
-        mPieChart.invalidate();
+        xml().overviewChart.invalidate();
     }
 
     @Override
@@ -135,7 +132,6 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //xml().setModule(Module.of(OverviewModule.class));
 
 		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
 		plus.setTint(Color.DKGRAY);
@@ -148,26 +144,25 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         xml().tabs.setupWithViewPager(xml().pager);
 
         // This binds the pie chart
-        mPieChart = xml().overviewChart;
-        mPieChart.setDescription("Daily Overview"); 		// This is probably not needed
-        mPieChart.setDescriptionColor(R.color.amber_50); 	// because it is not entirely visible
+        xml().overviewChart.setDescription("Daily Overview"); 		// This is probably not needed
+        xml().overviewChart.setDescriptionColor(R.color.amber_50); 	// because it is not entirely visible
 
         // Enable hole & configure
-        mPieChart.setDrawHoleEnabled(true);
-        mPieChart.setHoleColor(Color.TRANSPARENT);
-        mPieChart.setHoleRadius(40);
-        mPieChart.setTransparentCircleRadius(45);
+        xml().overviewChart.setDrawHoleEnabled(true);
+        xml().overviewChart.setHoleColor(Color.TRANSPARENT);
+        xml().overviewChart.setHoleRadius(40);
+        xml().overviewChart.setTransparentCircleRadius(45);
 		overviewCoefficient = 75;
-        mPieChart.setCenterText(Double.toString(overviewCoefficient));
-        mPieChart.setCenterTextSize(35);
-		mPieChart.setCenterTextColor(Color.DKGRAY);
+        xml().overviewChart.setCenterText(Double.toString(overviewCoefficient));
+        xml().overviewChart.setCenterTextSize(35);
+		xml().overviewChart.setCenterTextColor(Color.DKGRAY);
 
         // Enable touch & rotation
-        mPieChart.setTouchEnabled(true);
-        mPieChart.setRotationAngle(0);
+        xml().overviewChart.setTouchEnabled(true);
+        xml().overviewChart.setRotationAngle(0);
 		currentAngle = 0;
-		mPieChart.setOnChartValueSelectedListener(this);
-		mPieChart.setOnChartGestureListener(this);
+		xml().overviewChart.setOnChartValueSelectedListener(this);
+		xml().overviewChart.setOnChartGestureListener(this);
 
 		// Populate chart with data
         addData();
@@ -275,8 +270,9 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 
 		int ll = 0;
 		long delay = 1000L;
-		float a = mPieChart.getRotationAngle();
+		float a = xml().overviewChart.getRotationAngle();
 		float c = 0;
+		String text = "Overview Health Share Text";
 		Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_overview);
 		Easing.EasingOption eo = Easing.EasingOption.EaseInOutCirc;
 		TimeUnit tu = TimeUnit.MILLISECONDS;
@@ -298,24 +294,28 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_nutrition);
 				drawable.setTint(Color.GREEN);
 				ll = R.layout.fragment_overview_nutrition;
+				text = "Nutrition Share";
 				break;
 			case 1:
 				c = rc1;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_run);
 				drawable.setTint(Color.MAGENTA);
 				ll = R.layout.fragment_overview_run;
+				text = "Run Share";
 				break;
 			case 2:
 				c = rc2;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
 				drawable.setTint(Color.YELLOW);
 				ll = R.layout.fragment_overview_sleep;
+				text = "Sleep Share";
 				break;
 			case 3:
 				c = rc3;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_steps);
 				drawable.setTint(Color.RED);
 				ll = R.layout.fragment_overview_steps;
+				text = "Steps Share";
 				break;
 			case 4:
 				c = rc4;
@@ -323,13 +323,15 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 						R.drawable.ic_fitness_center_24dp);
 				drawable.setTint(Color.BLUE);
 				ll = R.layout.fragment_overview_workout;
+				text = "Workout Share";
 				break;
 		}
 		final Drawable myDrawable = drawable;
 		final int l = ll;
 		rotateChart(eo, a, r, c);
+		final String _t = text;
 		Dispatcher.UI.run(() -> {
-			showDialog(myDrawable, l);
+			showDialog(myDrawable, l, _t);
 		}, delay, tu);
 	}
 
@@ -338,9 +340,9 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 */
 	@Override
 	public void onNothingSelected() {
-		float fangle = mPieChart.getRotationAngle();
+		float fangle = xml().overviewChart.getRotationAngle();
 		float tangle = 0;
-		mPieChart.spin(1000, fangle, tangle, Easing.EasingOption.EaseInOutCirc);
+		xml().overviewChart.spin(1000, fangle, tangle, Easing.EasingOption.EaseInOutCirc);
 	}
 
 	/**
@@ -353,7 +355,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		Drawable oval = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_overview);
 		oval.setTint(Color.WHITE);
 		int l = R.layout.fragment_overview_number;
-		showDialog(oval, l);
+		showDialog(oval, l, "Overview Health Share Text");
 	}
 
 	/**
@@ -443,7 +445,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 */
 	public void rotateChart(Easing.EasingOption eo, float fromAngle, float rotation, float correction) {
 		float toAngle = rotation - correction;
-		mPieChart.spin(1000, fromAngle, toAngle, eo);
+		xml().overviewChart.spin(1000, fromAngle, toAngle, eo);
 	}
 
 	/**
@@ -452,7 +454,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 * @param d
 	 * @param layout
 	 */
-	public void showDialog(Drawable d, int layout) {
+	public void showDialog(Drawable d, int layout, final String shareText) {
 
 		new MaterialStyledDialog(getActivity())
 				.setIcon(d)
@@ -463,6 +465,12 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 						(dialog, which) -> Log.d(TAG, "Accepted!"))
 				.setNegative(getResources().getString(R.string.decline),
 						(dialog, which) -> Log.d(TAG, "Declined!"))
+				.setNeutral("Share", (dialog, which) -> {
+					Intent i = new Intent(Intent.ACTION_SEND);
+					i.putExtra(Intent.EXTRA_TEXT, shareText);
+					i.setType("text/plain");
+					startActivity(Intent.createChooser(i, "Share"));
+				})
 				.show();
 	}
 }
