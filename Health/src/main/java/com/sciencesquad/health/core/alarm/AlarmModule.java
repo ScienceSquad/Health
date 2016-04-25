@@ -38,6 +38,7 @@ public class AlarmModule extends Module {
 		bus().subscribe("AlarmFiredEvent", null, ev -> {
 			int alarmId = (Integer) ev.get("alarmId");
 			sendAlarm(getAlarmById(alarmId), true);
+			handleAlarm(alarmId);
 		});
 	}
 
@@ -560,8 +561,7 @@ public class AlarmModule extends Module {
 		mNotificationManager.notify(alarmId, mBuilder.build()); */
 
 
-		Toast toast = Toast.makeText(ctx, "Next alarm: " + nextAlarm + ".", Toast.LENGTH_SHORT);
-		toast.show();
+		BaseApp.app().display("Next alarm: " + nextAlarm + ".", false);
 	}
 
 	/**
