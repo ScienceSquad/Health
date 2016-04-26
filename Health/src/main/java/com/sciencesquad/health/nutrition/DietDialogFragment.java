@@ -25,9 +25,10 @@ public class DietDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppTheme_Diet);
+
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.fragment_nutrition_diet_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(inflater.getContext(), R.style.AppTheme_Diet);
         builder.setView(view);
         builder.setTitle("Diet Menu");
 
@@ -51,6 +52,13 @@ public class DietDialogFragment extends DialogFragment {
             newFavoriteFood.setText("");
         });
 
+        Button setReminders = (Button) view.findViewById(R.id.reminders);
+        setReminders.setOnClickListener(v -> {
+            DialogFragment newFragment = setRemindersDialog.newInstance();
+            newFragment.setTargetFragment(this, 0);
+            newFragment.show(getFragmentManager(), "dialog");
+        });
+
         builder.setPositiveButton("Save",
                 (dialog, whichButton) -> {
                     if (!newFavoriteFood.getText().toString().equals("")){
@@ -70,5 +78,26 @@ public class DietDialogFragment extends DialogFragment {
 
         Dialog d = builder.create();
         return d;
+    }
+
+    public static class setRemindersDialog extends DialogFragment {
+
+        public static DialogFragment newInstance() {
+            return new setRemindersDialog();
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState){
+
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View dialogLayout = inflater.inflate(R.layout.add_food_fragment, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(inflater.getContext(), R.style.AppTheme_Diet);
+            builder.setView(dialogLayout);
+            builder.setTitle("Set Reminder");
+
+
+            return builder.create();
+        }
+
     }
 }
