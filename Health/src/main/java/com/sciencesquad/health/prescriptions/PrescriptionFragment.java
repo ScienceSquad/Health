@@ -22,8 +22,12 @@ import com.sciencesquad.health.core.alarm.AlarmModel;
 import com.sciencesquad.health.core.alarm.AlarmModule;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.core.ui.Stopwatch;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
+
+import java.util.concurrent.TimeUnit;
+
 import io.realm.RealmResults;
 
 /**
@@ -242,6 +246,25 @@ public class PrescriptionFragment extends BaseFragment {
 		xml().alarmList.setAdapter(listAdapter);
 	}
 
+	private void updateTime() {
+		String hours = xml().countdownHours.getText().toString();
+		String minutes = xml().countdownMinutes.getText().toString();
+		String seconds = xml().countdownSeconds.getText().toString();
+		Stopwatch stopwatch = xml().stopwatch.getStopwatch();
+		stopwatch.setMillis(0);
+		try {
+			if (hours.length() > 0)
+				stopwatch.addTime(Integer.parseInt(hours), TimeUnit.HOURS);
+			if (minutes.length() > 0)
+				stopwatch.addTime(Integer.parseInt(minutes), TimeUnit.MINUTES);
+			if (seconds.length() > 0)
+				stopwatch.addTime(Integer.parseInt(seconds), TimeUnit.SECONDS);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		xml().stopwatch.postInvalidate();
+	}
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
@@ -291,10 +314,12 @@ public class PrescriptionFragment extends BaseFragment {
 		Drawable alarms = ContextCompat.getDrawable(getActivity(), R.drawable.ic_alarm);
 		alarms.setTint(Color.WHITE);
 
+		/*
 		xml().fabEmergency.setImageDrawable(emergency);
 		xml().fabEmergency.setOnClickListener(view2 -> {
 			sendEmergencyNotification();
 		});
+		*/
 
 		StaticPagerAdapter.install(xml().pager);
 		xml().tabs.setupWithViewPager(xml().pager);
@@ -302,6 +327,44 @@ public class PrescriptionFragment extends BaseFragment {
 		xml().fabAlarms.setImageDrawable(alarms);
 		xml().fabAlarms.setOnClickListener(view2 -> {
 			setPrescriptionAlarm(view2);
+		});
+
+		Stopwatch stopwatch = xml().stopwatch.getStopwatch();
+		TextView typeText = xml().typeText;
+		if (stopwatch.getMode() == Stopwatch.WatchMode.DOWN)
+			typeText.setText("Down");
+		else
+			typeText.setText("Up");
+
+		xml().stopwatchType.setChecked(stopwatch.getMode() == Stopwatch.WatchMode.DOWN);
+
+		xml().stopwatchType.setOnClickListener((view2) -> {
+			Log.d(TAG, "STOPWATCH - pause");
+			stopwatch.pause();
+			CompoundButton button = xml().stopwatchType;
+			Log.d(TAG, "STOPWATCH - reset");
+			Log.d(TAG, "STOPWATCH - setmode");
+			if (button.isChecked()) {
+				stopwatch.setMode(Stopwatch.WatchMode.DOWN);
+				updateTime();
+				xml().typeText.setText("Down");
+			}
+			else {
+				stopwatch.setMode(Stopwatch.WatchMode.UP);
+				xml().typeText.setText("Up");
+			}
+			Log.d(TAG, "STOPWATCH - successful setMode");
+			stopwatch.reset();
+			stopwatch.resetTime();
+		});
+
+		xml().setTimeButton.setOnClickListener((view2) -> {
+			if (stopwatch.getMode() == Stopwatch.WatchMode.DOWN) {
+				stopwatch.pause();
+				stopwatch.reset();
+				stopwatch.resetTime();
+				updateTime();
+			}
 		});
 	}
 }
