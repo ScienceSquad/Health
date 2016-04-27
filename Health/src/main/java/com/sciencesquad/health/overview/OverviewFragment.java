@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 public class OverviewFragment extends BaseFragment implements OnChartValueSelectedListener,
 		OnChartGestureListener {
     public static final String TAG = OverviewFragment.class.getSimpleName();
+
 	private double overviewCoefficient;
 	private double nutritionCoefficient;
 	private double runCoefficient;
@@ -60,8 +61,8 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 
     private float[] yData = {5, 10, 15, 20, 25};
     private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
-    private Integer[] pieColor = {Color.GREEN, Color.MAGENTA, Color.YELLOW,
-            Color.RED, Color.BLUE};
+    private Integer[] pieColor = {R.color.light_green_900, Color.MAGENTA, R.color.amber_700,
+            R.color.purple_300, Color.BLUE};
 	private float currentAngle;
 
     CalendarView calendarView;
