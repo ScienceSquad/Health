@@ -2,6 +2,7 @@ package com.sciencesquad.health.workout;
 
 import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.util.Dispatcher;
@@ -19,9 +20,15 @@ import java.util.Date;
  * Created by mrjohnson on 3/1/16.
  */
 
-public class WorkoutModule extends Module {
+public class WorkoutModule extends Module implements Coefficient {
     public static final String TAG = WorkoutModule.class.getSimpleName();
     private RealmContext<ExerciseTypeModel> workoutRealm;
+
+	/**
+	 * Workout coefficient
+	 */
+	private double workoutCoefficient;
+
     //Data context.
     //private RealmContext<RoutineModel> workoutRealm;
 
@@ -51,6 +58,16 @@ public class WorkoutModule extends Module {
 	}
 
     /**
+     * Calculates steps coefficient
+     * TODO: Implement!
+     * @see Coefficient
+     */
+    @Override
+    public void calculateCoefficient() {
+
+    }
+
+    /**
      * Constructs the module itself.
      * It also sets up a Realm Context for the Module.
      */
@@ -67,6 +84,9 @@ public class WorkoutModule extends Module {
                 addRecommendedWorkouts();
             } else Log.i(TAG, "We good!");
         });
+
+		workoutCoefficient = 0;
+
         //this.workoutRealm = new RealmContext<>();
         //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
 

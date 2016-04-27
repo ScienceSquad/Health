@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.PowerManager;
 import android.util.Log;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
@@ -23,7 +24,7 @@ import java.util.*;
 /**
  * Sleep Module
  */
-public class SleepModule extends Module {
+public class SleepModule extends Module implements Coefficient {
 	public static final String TAG = SleepModule.class.getSimpleName();
 
 	/**
@@ -125,6 +126,21 @@ public class SleepModule extends Module {
 	private final Set<Alarm> _alarms = new HashSet<>();
 
 	/**
+	 * Sleep coefficient
+	 */
+	private double sleepCoefficient;
+
+	/**
+	 * Calculates sleep coefficient
+	 * TODO: Implement!
+	 * @see Coefficient
+	 */
+	@Override
+	public void calculateCoefficient() {
+
+	}
+
+	/**
 	 * @see Module
 	 */
 	@Override
@@ -135,6 +151,8 @@ public class SleepModule extends Module {
 		// Initialize and acquire the Sleep database.
 		this.dataContext = new RealmContext<>();
 		this.dataContext.init(app(), SleepDataModel.class, "sleep.realm");
+
+		sleepCoefficient = 0;
 
 		// Prepare to stop sleep sounds if needed.
 		track(bus().subscribe("StopSleepSoundsEvent", null, ev -> {

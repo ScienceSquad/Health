@@ -2,6 +2,7 @@ package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.EventBus.Entry;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
@@ -18,7 +19,7 @@ import java.util.TreeSet;
 /**
  * Nutrition Module. The big controller for Nutrition
  */
-public class NutritionModule extends Module {
+public class NutritionModule extends Module implements Coefficient {
     public static final String TAG = NutritionModule.class.getSimpleName();
 
     public static final String REALMNAME = "nutrition.realm";
@@ -34,6 +35,11 @@ public class NutritionModule extends Module {
     private VitaminModel vitamins;
     private ArrayList<String> favoriteFoods;
 
+	/**
+	 * Nutrition coefficient
+	 */
+	private double nutritionCoefficient;
+
     //Data context.
     private RealmContext<NutritionModel> nutritionRealm;
 
@@ -41,6 +47,16 @@ public class NutritionModule extends Module {
 		this.nutritionRealm = new RealmContext<>();
 		this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
 		this.nutritionRealm.clear();
+	}
+
+	/**
+	 * Calculates steps coefficient
+	 * TODO: Implement!
+	 * @see Coefficient
+	 */
+	@Override
+	public void calculateCoefficient() {
+
 	}
 
     /**
@@ -57,6 +73,7 @@ public class NutritionModule extends Module {
 		this.waterIntake = 0;
 		this.numCheatDays = 5;
 		this.cheated = false; // being positive and assuming no cheating :)
+		this.nutritionCoefficient = 0;
 
 		bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
 		bus().subscribe("DataFailureEvent", this, e -> {

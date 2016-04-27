@@ -29,6 +29,7 @@ import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
@@ -38,9 +39,12 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class OverviewFragment extends BaseFragment implements OnChartValueSelectedListener,
-		OnChartGestureListener {
+		OnChartGestureListener, Coefficient {
     public static final String TAG = OverviewFragment.class.getSimpleName();
 
+	/**
+	 *
+	 */
 	private double overviewCoefficient;
 	private double nutritionCoefficient;
 	private double runCoefficient;
@@ -48,6 +52,9 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	private double stepsCoefficient;
 	private double workoutCoefficient;
 
+	/**
+	 *
+	 */
     private FloatingActionButton fab;
     private FloatingActionButton fab2; // dummy
     private FloatingActionButton fab3; // dummy
@@ -59,6 +66,9 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     private Animation rotate_backward;
 	private Animation rotation;
 
+	/**
+	 *
+	 */
     private float[] yData = {5, 10, 15, 20, 25};
     private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
     private Integer[] pieColor = {R.color.light_green_900, Color.MAGENTA, R.color.amber_700,
@@ -68,6 +78,9 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     CalendarView calendarView;
     TextView dateDisplay;
 
+	/**
+	 * @see BaseFragment
+	 */
     @Override
     protected BaseFragment.Configuration getConfiguration() {
         return new BaseFragment.Configuration(
@@ -76,11 +89,25 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         );
     }
 
-    // Our generated binding class is different...
+	/**
+	 * Our generated binding class is different...
+	 * @see BaseFragment
+	 */
     @Override @SuppressWarnings("unchecked")
     protected FragmentOverviewBinding xml() {
         return super.xml();
     }
+
+	/**
+	 * Calculates health coefficient from separate modules
+	 * Currently just an average of the separate modules coefficients
+	 * TODO: Implement!
+	 * @see Coefficient
+	 */
+	@Override
+	public void calculateCoefficient() {
+
+	}
 
     /**
      * Populates the PieChart with data
@@ -124,12 +151,19 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         xml().overviewChart.invalidate();
     }
 
+	/**
+	 * To provide a Circular Reveal animation.
+	 * @see BaseFragment
+	 */
     @Override
     public void onSetupTransition() {
         this.setEnterTransition(new RevealTransition(Visibility.MODE_IN));
         this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
     }
 
+	/**
+	 * @see BaseFragment
+	 */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -144,9 +178,8 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         StaticPagerAdapter.install(xml().pager);
         xml().tabs.setupWithViewPager(xml().pager);
 
-        // This binds the pie chart
-        xml().overviewChart.setDescription("Daily Overview"); 		// This is probably not needed
-        xml().overviewChart.setDescriptionColor(R.color.amber_50); 	// because it is not entirely visible
+        // No description
+        xml().overviewChart.setDescription("");
 
         // Enable hole & configure
         xml().overviewChart.setDrawHoleEnabled(true);
