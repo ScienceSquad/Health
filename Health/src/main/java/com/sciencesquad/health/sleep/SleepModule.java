@@ -131,13 +131,31 @@ public class SleepModule extends Module implements Coefficient {
 	private double sleepCoefficient;
 
 	/**
-	 * Calculates sleep coefficient
+	 * Calculates sleep coefficient for use in overview module
+	 * @return calculated sleep coefficient
+	 */
+	public double calculateCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Retrieves sleep coefficient
+	 * @return sleep coefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.sleepCoefficient;
+	}
+
+	/**
+	 * Sets sleep coefficient
 	 * TODO: Implement!
+	 * @param coefficient
 	 * @see Coefficient
 	 */
 	@Override
-	public void calculateCoefficient() {
-
+	public void setCoefficient(double coefficient) {
+		this.sleepCoefficient = coefficient;
 	}
 
 	/**
@@ -152,7 +170,7 @@ public class SleepModule extends Module implements Coefficient {
 		this.dataContext = new RealmContext<>();
 		this.dataContext.init(app(), SleepDataModel.class, "sleep.realm");
 
-		sleepCoefficient = 0;
+		setCoefficient(0);
 
 		// Prepare to stop sleep sounds if needed.
 		track(bus().subscribe("StopSleepSoundsEvent", null, ev -> {

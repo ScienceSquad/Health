@@ -57,14 +57,32 @@ public class WorkoutModule extends Module implements Coefficient {
 		//addRecommendedWorkouts();*/
 	}
 
+	/**
+	 * Calculates workout coefficient for use in overview module
+	 * @return calculated workout coefficient
+	 */
+	public double calculateCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Retrieves workout coefficient
+	 * @return workoutCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.workoutCoefficient;
+	}
+
     /**
-     * Calculates steps coefficient
+     * Sets workout coefficient
      * TODO: Implement!
+	 * @param coefficient
      * @see Coefficient
      */
     @Override
-    public void calculateCoefficient() {
-
+    public void setCoefficient(double coefficient) {
+		this.workoutCoefficient = coefficient;
     }
 
     /**
@@ -85,7 +103,7 @@ public class WorkoutModule extends Module implements Coefficient {
             } else Log.i(TAG, "We good!");
         });
 
-		workoutCoefficient = 0;
+		setCoefficient(0);
 
         //this.workoutRealm = new RealmContext<>();
         //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");

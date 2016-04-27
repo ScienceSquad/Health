@@ -50,13 +50,32 @@ public class NutritionModule extends Module implements Coefficient {
 	}
 
 	/**
-	 * Calculates steps coefficient
+	 * Calculates nutrition coefficient for use in overview module
+	 * @return calculated nutrition coefficient
+	 */
+	@Override
+	public double calculateCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Retrieves nutrition coefficient
+	 * @return nutritionCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.nutritionCoefficient;
+	}
+
+	/**
+	 * Calculates and sets steps coefficient
 	 * TODO: Implement!
+	 * @param coefficient
 	 * @see Coefficient
 	 */
 	@Override
-	public void calculateCoefficient() {
-
+	public void setCoefficient(double coefficient) {
+		this.nutritionCoefficient = coefficient;
 	}
 
     /**
@@ -73,7 +92,7 @@ public class NutritionModule extends Module implements Coefficient {
 		this.waterIntake = 0;
 		this.numCheatDays = 5;
 		this.cheated = false; // being positive and assuming no cheating :)
-		this.nutritionCoefficient = 0;
+		setCoefficient(0);
 
 		bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
 		bus().subscribe("DataFailureEvent", this, e -> {

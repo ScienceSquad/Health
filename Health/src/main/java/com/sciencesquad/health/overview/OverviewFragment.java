@@ -105,7 +105,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 * @see Coefficient
 	 */
 	@Override
-	public void calculateCoefficient() {
+	public void setCoefficient() {
 
 	}
 

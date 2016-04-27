@@ -17,11 +17,15 @@ public class StepsModel extends RealmObject {
     /**
      * Date and step count. Date should always be Primary Key
      */
-    // we can set up the primary key to something else if need be.
 
     private Date date;
 
     private int stepCount;
+
+	/**
+	 * Steps coefficient for overview module
+	 */
+	private double stepsCoefficient;
 
     //
     // GENERATED METHODS FOLLOW
@@ -29,12 +33,17 @@ public class StepsModel extends RealmObject {
     //
 
     public int getStepCount() {
-        return stepCount;
+        return this.stepCount;
     }
 
     public void setStepCount(int stepCount) {
         this.stepCount = stepCount;
     }
+
+	public double getStepsCoefficient() { return this.stepsCoefficient; }
+
+	public void setStepsCoefficient(double stepsCoefficient) {
+		this.stepsCoefficient = stepsCoefficient; }
 
     @NonNull
     public Date getDate() {

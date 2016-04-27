@@ -58,14 +58,32 @@ public class StepsModule extends Module implements Coefficient {
         maxDelay = 0;
     }
 
+	/**
+	 * Calculates steps coefficient for use in overview module
+	 * @return calculated steps coefficient
+	 */
+	public double calculateCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Retrieves steps coefficient
+	 * @return stepsCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.stepsCoefficient;
+	}
+
     /**
      * Calculates steps coefficient
 	 * TODO: Implement!
+	 * @param coefficient
      * @see Coefficient
      */
     @Override
-    public void calculateCoefficient() {
-
+    public void setCoefficient(double coefficient) {
+		this.stepsCoefficient = coefficient;
     }
 
     public int getNumSteps() {
@@ -105,7 +123,7 @@ public class StepsModule extends Module implements Coefficient {
     @Override
     public void onStart() {
 
-		stepsCoefficient = 0;
+		setCoefficient(0);
 
     }
 

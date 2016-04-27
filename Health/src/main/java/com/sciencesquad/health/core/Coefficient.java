@@ -7,8 +7,20 @@ package com.sciencesquad.health.core;
 public interface Coefficient {
 
 	/**
-	 * Calculates module-dependent coefficient and stores in Realm
+	 * Calculates module-specific coefficient for use in overview module
+	 * @return calculated module coefficient
 	 */
-	public void calculateCoefficient();
+	public double calculateCoefficient();
 
+	/**
+	 * Sets module-specific coefficient and stores in Realm
+	 * @param coefficient specific to module
+	 */
+	public void setCoefficient(double coefficient);
+
+	/**
+	 * Retrieves module-specific coefficient
+	 * @return module-specific coefficient
+	 */
+	public double getCoefficient();
 }
