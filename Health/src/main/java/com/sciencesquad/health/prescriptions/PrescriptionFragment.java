@@ -13,13 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.github.javiersantos.materialstyleddialogs.enums.Duration;
+
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.alarm.AlarmModel;
 import com.sciencesquad.health.core.alarm.AlarmModule;
+import com.sciencesquad.health.core.ui.BottomSheet;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.ui.Stopwatch;
@@ -192,10 +192,8 @@ public class PrescriptionFragment extends BaseFragment {
 				.addTextInput("prescription_dosage", "Dosage", currentDosage)
 				.addAction("save", "Save", R.drawable.ic_done)
 				.setOnAction("save", () -> {
-					EditText nameInput = (EditText) dialog.getViewByTag("prescription_name");
-					EditText dosageInput = (EditText) dialog.getViewByTag("prescription_dosage");
-					String name = nameInput.getText().toString();
-					String dosageString = dosageInput.getText().toString();
+					String name = dialog.getTextInputValue("prescription_name");
+					String dosageString = dialog.getTextInputValue("prescription_dosage");
 					int dosage = 0;
 					if ((name.length() <= 0) || (dosageString.length() <= 0)) {
 						Snackbar.make(view, "Invalid input", Snackbar.LENGTH_LONG)

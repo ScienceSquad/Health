@@ -1,14 +1,10 @@
-package com.sciencesquad.health.prescriptions;
+package com.sciencesquad.health.core.ui;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.widget.ActionBarOverlayLayout;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.sciencesquad.health.R;
 
 import java.util.HashMap;
 
@@ -32,6 +26,7 @@ public class BottomSheet extends BottomSheetDialog {
 	private final int TEXT_SIZE = 20;
 
 	HashMap<String, Integer> views;
+	HashMap<String, Integer> textInputs;
 	HashMap<String, Runnable> listeners;
 
 	public BottomSheet(Context context) {
@@ -41,11 +36,20 @@ public class BottomSheet extends BottomSheetDialog {
 		mLinearLayout.setOrientation(LinearLayout.VERTICAL);
 
 		views = new HashMap<>();
+		textInputs = new HashMap<>();
 		listeners = new HashMap<>();
 	}
 
 	public View getViewByTag(String tag) {
 		return mLinearLayout.findViewById(views.get(tag));
+	}
+
+	public String getTextInputValue(String tag) {
+		if (textInputs.containsKey(tag)) {
+			EditText textInput = (EditText) mLinearLayout.findViewById(textInputs.get(tag));
+			return textInput.getText().toString();
+		}
+		return "";
 	}
 
 	public BottomSheet addTextInput(String tag, String hint, String value) {
@@ -58,6 +62,7 @@ public class BottomSheet extends BottomSheetDialog {
 		mLinearLayout.addView(editText);
 
 		views.put(tag, viewID);
+		textInputs.put(tag, viewID);
 
 		return this;
 
