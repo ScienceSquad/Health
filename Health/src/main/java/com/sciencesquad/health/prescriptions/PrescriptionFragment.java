@@ -179,50 +179,50 @@ public class PrescriptionFragment extends BaseFragment {
 	}
 
 	private void setPrescriptionAlarm(View view, PrescriptionModel prescription) {
-		View alarmDialog = getInflater().inflate(R.layout.fragment_prescription_alarm_dialog, null);
-		EditText nameInput = (EditText) alarmDialog.findViewById(R.id.prescription_name);
-		EditText dosageInput = (EditText) alarmDialog.findViewById(R.id.prescription_dosage);
+		String currentName = "";
+		String currentDosage = "";
 		if (prescription != null) {
-			nameInput.setText(prescription.getName());
-			dosageInput.setText(String.valueOf(prescription.getDosage()));
+			currentName = prescription.getName();
+			currentDosage = String.valueOf(prescription.getDosage());
 		}
-		new MaterialStyledDialog(getActivity())
-				.setCustomView(alarmDialog)
-				.withDialogAnimation(true, Duration.FAST)
-				.setCancelable(false)
-				.setPositive("Accept",
-						(dialog, which) -> {
-							Log.d(TAG,"Accepted!");
-							String name = nameInput.getText().toString();
-							String dosageString = dosageInput.getText().toString();
-							int dosage = 0;
-							if ((name.length() <= 0) || (dosageString.length() <= 0)) {
-								Snackbar.make(view, "Invalid input", Snackbar.LENGTH_LONG)
-										.setAction("Action", null).show();
-								return;
-							}
-							else {
-								dosage = Integer.parseInt(dosageString);
-							}
-							if (prescription == null) {
-								prescriptionModule.setName(name);
-								prescriptionModule.setDosage(dosage);
-								// Set alarm data
-								alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
-								// Tie alarm to prescription
-								prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
-								prescriptionModule.addPrescription();
-							}
-							else {
-								prescriptionModule.setName(prescription, name);
-								prescriptionModule.setDosage(prescription, dosage);
-							}
-							updateAlarmList();
-						})
-				.setNegative("Decline",
-						(dialog, which) -> Log.d(TAG,"Declined!"))
-				.show();
 
+		BottomSheet dialog = new BottomSheet(getActivity());
+
+		dialog.addTextInput("prescription_name", "Name", currentName)
+				.addTextInput("prescription_dosage", "Dosage", currentDosage)
+				.addAction("save", "Save", R.drawable.ic_done)
+				.setOnAction("save", () -> {
+					EditText nameInput = (EditText) dialog.getViewByTag("prescription_name");
+					EditText dosageInput = (EditText) dialog.getViewByTag("prescription_dosage");
+					String name = nameInput.getText().toString();
+					String dosageString = dosageInput.getText().toString();
+					int dosage = 0;
+					if ((name.length() <= 0) || (dosageString.length() <= 0)) {
+						Snackbar.make(view, "Invalid input", Snackbar.LENGTH_LONG)
+								.setAction("Action", null).show();
+						return;
+					}
+					else {
+						dosage = Integer.parseInt(dosageString);
+					}
+					if (prescription == null) {
+						prescriptionModule.setName(name);
+						prescriptionModule.setDosage(dosage);
+						// Set alarm data
+						alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
+						// Tie alarm to prescription
+						prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
+						prescriptionModule.addPrescription();
+					}
+					else {
+						prescriptionModule.setName(prescription, name);
+						prescriptionModule.setDosage(prescription, dosage);
+					}
+					updateAlarmList();
+				})
+				.addAction("cancel", "Cancel", R.drawable.places_ic_clear)
+				.setOnAction("cancel", () -> Log.d(TAG, "Prescription canceled!"))
+				.show();
 	}
 
 	private void setPrescriptionAlarm(View view) {
