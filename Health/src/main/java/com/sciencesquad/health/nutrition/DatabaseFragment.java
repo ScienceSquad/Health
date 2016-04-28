@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
@@ -37,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import io.realm.RealmResults;
 
@@ -47,6 +49,8 @@ public class DatabaseFragment extends BaseFragment {
 	public static final String TAG = DatabaseFragment.class.getSimpleName();
 
 	private ConditionModule conditionModule;
+
+	RecyclerView informationList;
 
 	public class ItemContent {
 		public String title;
@@ -76,15 +80,16 @@ public class DatabaseFragment extends BaseFragment {
 				TextView url = (TextView) mLinearLayout.findViewById(R.id.db_item_url);
 				title.setText(itemContent.title);
 				content.setText(itemContent.content);
-				if (URLUtil.isValidUrl(itemContent.url)) {
+				url.setText(itemContent.url);
+				if (itemContent.listener != null) {
+					mLinearLayout.setOnClickListener(itemContent.listener);
+				}
+				else if (URLUtil.isValidUrl(itemContent.url)) {
 					url.setVisibility(View.GONE);
 					mLinearLayout.setOnClickListener((view) -> {
 						Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(itemContent.url));
 						startActivity(browserIntent);
 					});
-				}
-				else {
-					url.setText(itemContent.url);
 				}
 			}
 		}
@@ -122,6 +127,60 @@ public class DatabaseFragment extends BaseFragment {
 		public int getItemCount() {
 			return mDataset.size();
 		}
+
+		public ItemContent getItem(int position) {
+			return mDataset.get(position);
+		}
+	}
+
+	class NutrientItem {
+		public String name;
+		public String value;
+		public String unit;
+	}
+
+	class InformationListAdapter
+			extends RecyclerView.Adapter<InformationListAdapter.ViewHolder> {
+
+		private ArrayList<NutrientItem> mDataSet;
+
+		public class ViewHolder extends RecyclerView.ViewHolder {
+
+			public LinearLayout mLinearLayout;
+
+			public ViewHolder(LinearLayout v) {
+				super(v);
+				mLinearLayout = v;
+			}
+
+			public void setContent(NutrientItem item) {
+				TextView nutrientName = (TextView) mLinearLayout.findViewById(R.id.nutrient_name);
+				TextView nutrientAmount = (TextView) mLinearLayout.findViewById(R.id.nutrient_amount);
+				nutrientName.setText(item.name);
+				nutrientAmount.setText(item.value + " " + item.unit);
+			}
+		}
+
+		public InformationListAdapter(ArrayList<NutrientItem> myDataset) {
+			mDataSet = myDataset;
+		}
+
+		@Override
+		public InformationListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+			LinearLayout v = (LinearLayout) getActivity().getLayoutInflater()
+					.inflate(R.layout.db_nutrition_information_item, parent, false);
+
+			return new ViewHolder(v);
+		}
+
+		@Override
+		public void onBindViewHolder(ViewHolder holder, int position) {
+			holder.setContent(mDataSet.get(position));
+		}
+
+		@Override
+		public int getItemCount() { return mDataSet.size(); }
 	}
 
 	@Override
@@ -159,6 +218,7 @@ public class DatabaseFragment extends BaseFragment {
 					itemContent.title = object.getString("title");
 					itemContent.url = object.getString("href");
 					itemContent.content = object.getString("ingredients");
+					itemContent.listener = null;
 					contentArray.add(itemContent);
 				}
 				Dispatcher.UI.run(() -> {
@@ -171,27 +231,47 @@ public class DatabaseFragment extends BaseFragment {
 		});
 	}
 
-	private String nutrientQueryByNDBNo(String ndbno) {
-		NutrientQuery query = new NutrientQuery(NutrientQuery.QueryType.FOOD_REPORT);
-		query.setNdbNumber(ndbno);
-		JSONArray resultsArray = query.getResultsArray();
-		if (resultsArray == null) return "Food not found";
+	public void loadNutritionInformation(String ndbno) {
 		try {
+			JSONArray resultsArray = Dispatcher.UTILITY.run(() -> NutrientQuery.queryByNDBNo(ndbno)).get();
+			if (resultsArray == null) {
+				Log.d(TAG, "No results found");
+				return;
+			}
+			ArrayList<NutrientItem> arrayList;
+			arrayList = new ArrayList<>();
 			for (int i = 0; i < resultsArray.length(); i++) {
 				JSONObject nutrient = resultsArray.getJSONObject(i);
-				if (nutrient.getString("name").equals("Energy")) {
-					return String.valueOf(nutrient.getInt("value")) + " calories";
-				}
+				NutrientItem item = new NutrientItem();
+				item.name = nutrient.getString("name");
+				item.unit = nutrient.getString("unit");
+				item.value = String.valueOf(nutrient.getDouble("value"));
+				arrayList.add(item);
 			}
-		} catch (JSONException e){
+			InformationListAdapter adapter = new InformationListAdapter(arrayList);
+			informationList.setAdapter(adapter);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
-			return e.getMessage();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-		return "Got nothing";
 	}
 
-	private void showNutritionInformation(String content) {
+	private void showNutritionInformation(String name, String ndbno) {
+		View view = getInflater().inflate(R.layout.fragment_nutrition_information_dialog, null);
 
+		informationList = (RecyclerView) view.findViewById(R.id.informationList);
+		informationList.setLayoutManager(new LinearLayoutManager(getActivity()));
+		loadNutritionInformation(ndbno);
+
+
+		new MaterialDialog.Builder(getActivity())
+				.title(name + "\nNutrition Information")
+				.customView(view, false)
+				.neutralText("Close")
+				.show();
 	}
 
 	private void getNutrientQueryResults(String queryString) {
@@ -207,9 +287,9 @@ public class DatabaseFragment extends BaseFragment {
 					ItemContent itemContent = new ItemContent();
 					itemContent.title = object.getString("name");
 					itemContent.url = object.getString("ndbno");
-					itemContent.url = nutrientQueryByNDBNo(itemContent.url);
 					itemContent.listener = (view) -> {
-						showNutritionInformation(itemContent.url);
+						Log.d(TAG, "Should open dialog " + itemContent.url);
+						showNutritionInformation(itemContent.title, itemContent.url);
 					};
 					itemContent.content = object.getString("name");
 					contentArray.add(itemContent);
@@ -233,6 +313,7 @@ public class DatabaseFragment extends BaseFragment {
 			itemContent.title = model.getName();
 			itemContent.content = model.getRestrictedFoods();
 			itemContent.url = "";
+			itemContent.listener = null;
 			contentArray.add(itemContent);
 		}
 		ListAdapter listAdapter = new ListAdapter(contentArray);
