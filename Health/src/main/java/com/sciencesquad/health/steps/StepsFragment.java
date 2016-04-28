@@ -73,7 +73,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 	private static final double strideFactor = 0.415; // men = 0.415 + women = 0.413
 	private static final double mi2cm = 160934.4;
 
-	private double getCaloriesBurned(int stepsCount) {
+	private static double getCaloriesBurned(int stepsCount) {
 		double perMile = walkingFactor * (weight * 2.2);
 		double strip = height * strideFactor;
 		double conversationFactor = perMile / (mi2cm / strip);
