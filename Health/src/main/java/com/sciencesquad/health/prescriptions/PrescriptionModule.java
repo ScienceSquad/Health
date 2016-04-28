@@ -1,6 +1,11 @@
 package com.sciencesquad.health.prescriptions;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
@@ -40,6 +45,12 @@ public class PrescriptionModule extends Module {
             prescriptionRealm = new RealmContext<>();
             prescriptionRealm.init(BaseApp.app(), PrescriptionModel.class, "prescription.realm");
         });
+
+
+		bus().subscribe("AlarmFiredEvent", null, ev -> {
+			int alarmId = (Integer) ev.get("alarmId");
+			notifyPrescription(alarmId);
+		});
 	}
 
 	@Override
@@ -109,5 +120,27 @@ public class PrescriptionModule extends Module {
 		}
 
 		prescriptionRealm.clear();
+	}
+
+	public void notifyPrescription(int alarmId) {
+		RealmResults<PrescriptionModel> results = prescriptionRealm
+				.query(PrescriptionModel.class)
+				.equalTo("alarmID", alarmId)
+				.findAll();
+		if (results.size() == 0) return;
+		PrescriptionModel prescription = results.get(0);
+		Context ctx = app().getApplicationContext();
+		NotificationCompat.Builder mBuilder =
+				new NotificationCompat.Builder(ctx)
+						.setSmallIcon(R.drawable.ic_alarm)
+						.setContentTitle("Prescription reminder")
+						.setContentText("Don't forget to take "
+								+ String.valueOf(prescription.getDosage())
+								+ " " + prescription.getName() + "!");
+
+		NotificationManager mNotificationManager =
+				(NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		mNotificationManager.notify(alarmId, mBuilder.build());
 	}
 }

@@ -398,6 +398,12 @@ public class NutrientQuery {
 		return null;
 	}
 
+	public static JSONArray queryByNDBNo(String ndbno) {
+		NutrientQuery query = new NutrientQuery(QueryType.FOOD_REPORT);
+		query.setNdbNumber(ndbno);
+		return query.getResultsArray();
+	}
+
 	public Document getXMLResults() {
 		this.xmlFormat = true;
 		Document xmlObject = null;

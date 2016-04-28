@@ -122,6 +122,10 @@ public class ClockView extends View {
 		}
     }
 
+	public Stopwatch getStopwatch() {
+		return this.stopwatch;
+	}
+
     private void init(Context context, AttributeSet attrs) {
         mDetector = new GestureDetector(context, new mListener());
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ClockView);
