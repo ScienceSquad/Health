@@ -26,6 +26,8 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
 import io.realm.RealmResults;
 
+import static java.lang.Math.*;
+
 /**
  * Created by andrew on 4/7/16.
  */
@@ -207,7 +209,7 @@ public class PrescriptionFragment extends BaseFragment {
 								alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
 								// Tie alarm to prescription
 								prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
-								prescriptionModule.addPrescription();
+								prescriptionModule.addPrescription((random() * 100) % 2 > 0); // random
 							}
 							else {
 								prescriptionModule.setName(prescription, name);
@@ -264,7 +266,7 @@ public class PrescriptionFragment extends BaseFragment {
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
 
-		prescriptionModule.addPrescription();
+		prescriptionModule.addPrescription(true);
 
 		// Set Prescription data
 		prescriptionModule.setName("barlisil");
@@ -279,7 +281,7 @@ public class PrescriptionFragment extends BaseFragment {
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
 
-		prescriptionModule.addPrescription();
+		prescriptionModule.addPrescription(false);
 
 		xml().alarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
 		updateAlarmList();

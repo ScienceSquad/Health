@@ -77,11 +77,12 @@ public class PrescriptionModule extends Module {
 	}
 	public int getAlarmID() { return this.alarmID; }
 
-	public PrescriptionModel addPrescription() {
+	public PrescriptionModel addPrescription(boolean affectsSleep) {
 		PrescriptionModel prescriptionModel = new PrescriptionModel();
 		prescriptionModel.setName(this.name);
 		prescriptionModel.setDosage(this.dosage);
 		prescriptionModel.setAlarmID(this.alarmID);
+		prescriptionModel.setAffectsSleeping(affectsSleep);
 		prescriptionRealm.add(prescriptionModel);
 		return prescriptionModel;
 	}
@@ -109,5 +110,16 @@ public class PrescriptionModule extends Module {
 		}
 
 		prescriptionRealm.clear();
+	}
+
+	/**
+	 * Returns whether the user has any sleep affecting prescriptions.
+	 *
+	 * @return true if any prescription affects sleep
+	 */
+	public boolean userHasSleepAffectingPrescription() {
+		return prescriptionRealm.query(PrescriptionModel.class)
+				.equalTo("affectsSleeping", true)
+				.count() > 0;
 	}
 }

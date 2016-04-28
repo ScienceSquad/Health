@@ -20,6 +20,7 @@ import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentSleepBinding;
+import com.sciencesquad.health.prescriptions.PrescriptionModule;
 import java8.util.function.Function;
 import java8.util.stream.Stream;
 import java8.util.stream.StreamSupport;
@@ -161,8 +162,12 @@ public class SleepFragment extends BaseFragment {
 			//app().display("min = " + min + " | diff = " + min % 90, false);
 			now = now.plus(min - min % 90, ChronoUnit.MINUTES);
 
+			PrescriptionModule mod = Module.of(PrescriptionModule.class);
+			boolean s = mod.userHasSleepAffectingPrescription();
+
 			String txt = now.format(DateTimeFormatter.ofPattern("h:mm a"));
-			Snackbar.make(v, "Good night! I'll wake you up at " + txt + "!", Snackbar.LENGTH_LONG).show();
+			String slp = !s ? "" : "You're taking medication that could alter your sleep.";
+			Snackbar.make(v, "Good night! I'll wake you up at " + txt + "!\n" + slp, Snackbar.LENGTH_LONG).show();
 		});
 
 		// For each tile, configure their behavior.
