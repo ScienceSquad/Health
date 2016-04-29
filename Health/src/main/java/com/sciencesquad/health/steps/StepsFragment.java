@@ -17,6 +17,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.github.mikephil.charting.data.LineData;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
@@ -174,7 +176,13 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 		xml().lineChart.setTouchEnabled(true);
 		xml().lineChart.setDragEnabled(true);
 		//xml().lineChart.setDrawGridEnabled(true);
-		
+		xml().lineChart.setPinchZoom(true);
+		xml().lineChart.setBackgroundColor(Color.LTGRAY);
+
+		//Data
+		LineData data = new LineData();
+		data.setValueTextColor(Color.WHITE);
+		xml().lineChart.setData(data);
 
 		// Begin stopwatch
         /*stopwatch.start();
