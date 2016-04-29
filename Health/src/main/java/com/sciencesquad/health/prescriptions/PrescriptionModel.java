@@ -10,6 +10,7 @@ public class PrescriptionModel extends RealmObject {
 	private String name;
 	private int dosage;
 	private int alarmID;
+	private boolean affectsSleeping;
 
 	public void setName(String name) {
 		this.name = name;
@@ -27,7 +28,19 @@ public class PrescriptionModel extends RealmObject {
 		return this.dosage;
 	}
 
-	public void setAlarmID(int alarmID) { this.alarmID = alarmID; }
+	public void setAlarmID(int alarmID) {
+		this.alarmID = alarmID;
+	}
 
-	public int getAlarmID() { return this.alarmID; }
+	public int getAlarmID() {
+		return this.alarmID;
+	}
+
+	public boolean affectsSleeping() {
+		return affectsSleeping;
+	}
+
+	public void setAffectsSleeping(boolean affectsSleeping) {
+		this.affectsSleeping = affectsSleeping;
+	}
 }

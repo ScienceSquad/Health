@@ -1,15 +1,14 @@
 package com.sciencesquad.health.core;
 
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.content.Context;
-
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
-import android.app.FragmentTransaction;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,23 +16,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
-
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.github.javiersantos.materialstyleddialogs.enums.Duration;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.util.AccountHelper;
+import com.sciencesquad.health.nutrition.DatabaseFragment;
+import com.sciencesquad.health.nutrition.NutritionFragment;
 import com.sciencesquad.health.overview.OverviewFragment;
+import com.sciencesquad.health.prescriptions.PrescriptionFragment;
 import com.sciencesquad.health.prescriptions.UserModel;
 import com.sciencesquad.health.run.RunFragment;
-import com.sciencesquad.health.nutrition.DatabaseFragment;
-import com.sciencesquad.health.prescriptions.PrescriptionFragment;
-
-import com.sciencesquad.health.nutrition.NutritionFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
@@ -70,6 +63,17 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+
+		startActivityForResult(AccountHelper.chooserIntent("Pick an account to login with."), 3);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 3) {
+			AccountHelper.handleResult(resultCode, data);
+			return;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
