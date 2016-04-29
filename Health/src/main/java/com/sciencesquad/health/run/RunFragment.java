@@ -41,6 +41,7 @@ import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.TTSManager;
 import com.sciencesquad.health.databinding.FragmentRunBinding;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -192,6 +193,8 @@ public class RunFragment extends BaseFragment implements
         runHistoryListView.setOnItemClickListener((parent, view1, position, id) -> {
             //TODO: display path
             Log.e(TAG, "Clicked: " + position);
+            Log.e(TAG, "Path in String Format: " + pathArray[position]);
+            Log.e(TAG, "Path in LatLng Format: " + getPathFromJson(pathArray[position]));
         });
     }
 
@@ -232,6 +235,37 @@ public class RunFragment extends BaseFragment implements
             Log.e(TAG, "JSON EXCEPTION: " + e);
         }
         return obj;
+    }
+
+    public JSONObject createJsonFromString(String string) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj = new JSONObject(string);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
+    public List<LatLng> getPathFromJson(String path) {
+        JSONObject obj = createJsonFromString(path);
+        List<String> list = new ArrayList<String>();
+        List<LatLng> latLngList = new ArrayList<LatLng>();
+        try {
+            //FIXME: This part isn't working
+            JSONArray array = obj.getJSONArray("points");
+            for (int i = 0; i < array.length(); i++) {
+                String pointsString = array.getJSONObject(i).getString("points");
+                String[] stringToParse = pointsString.split(",");
+                list.add(pointsString);
+                double latitude = Double.parseDouble(stringToParse[0]);
+                double longitude = Double.parseDouble(stringToParse[1]);
+                latLngList.add(new LatLng(latitude,longitude));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return latLngList;
     }
 
     public void stopRun() {
