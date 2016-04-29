@@ -13,6 +13,7 @@ public class CompletedRunModel extends RealmObject{
     private Date date;
     private double calories;
     private double distance;
+    private String path;
     //TODO: GoogleMap object
 
     //GETTERS AND SETTERS
@@ -39,6 +40,10 @@ public class CompletedRunModel extends RealmObject{
     public void setDistance(double distance) {
         this.distance = distance;
     }
+
+    public String getPath() {return path;}
+
+    public void setPath(String path) { this.path = path; }
 
     //TODO: GoogleMap Getter
 
