@@ -134,6 +134,7 @@ public class PrescriptionModule extends Module {
 	}
 
 	public RealmResults<PrescriptionModel> getPrescriptions() {
+
 		return prescriptionRealm.query(PrescriptionModel.class).findAll();
 	}
 
