@@ -165,8 +165,19 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
         strideLength = Math.round((strideFactor * 1.8796) * 100.0) / 100.0;
         stride_length.setText(String.valueOf(strideLength) + "m");
 
+		// This binds the pie chart
+		xml().lineChart.setDescription(""); 		// This is probably not needed
+		xml().lineChart.setDescriptionColor(R.color.amber_50); 	// because it is not entirely visible
+		xml().lineChart.setNoDataTextDescription("No data yet");
+
+		// Enable touch & rotation
+		xml().lineChart.setTouchEnabled(true);
+		xml().lineChart.setDragEnabled(true);
+		//xml().lineChart.setDrawGridEnabled(true);
+		
+
 		// Begin stopwatch
-        stopwatch.start();
+        /*stopwatch.start();
         stopwatch.setInterval(51);
         stopwatch.setOnTimeChange(new Runnable() {
             public void run() {
@@ -175,7 +186,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
                 elapsed_time.setText(stopwatch.getPrettyTime(duration, false) + "."
                         + stopwatch.getMilliString(duration) + "s");
             }
-        });
+        }); */
 
 		avg_speed.setText(getCaloriesBurned(numSteps) + " Cal");
         //avg_speed.setText(String.valueOf(strideLength) + "m/s");

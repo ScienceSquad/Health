@@ -45,39 +45,36 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:context="com.sciencesquad.health.steps.StepsModule">
 
-        <TextView
-            android:id="@+id/num_steps"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:gravity="left"
-            android:text="@string/dash"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/num_steps"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="left"
+                android:text="@string/dash"
+                android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/stride_length"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:text="@string/dash"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/stride_length"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:text="@string/dash"
+                android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/avg_speed"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:text="@string/dash"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/avg_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:text="@string/dash"
+                android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/elapsed_time"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:text="@string/dash"
-            android:textSize="20sp" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/lineChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
 
