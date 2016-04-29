@@ -225,7 +225,11 @@ public class NutritionModule extends Module {
     public ArrayList<String> getFavoriteFoods() {
         RealmResults<FavoriteFoodModel> results = nutritionRealm.query(FavoriteFoodModel.class).findAll();
         if (results.size() != 0){
-            favoriteFoods.clear();
+            if (favoriteFoods != null)
+                favoriteFoods.clear();
+            else
+                favoriteFoods = new ArrayList<>();
+
             for (int i = 0 ; i < results.size(); i++){
                 FavoriteFoodModel model = results.get(i);
                 favoriteFoods.add(model.getName());

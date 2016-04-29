@@ -161,6 +161,30 @@ public class Stopwatch {
         this.total = this.remaining;
     }
 
+    public void resetTime() {
+        this.remaining = Duration.ZERO;
+    }
+
+    public void setMillis(long millis) {
+        this.resetTime();
+        this.remaining.plusMillis(millis);
+    }
+
+    public void setSeconds(long seconds) {
+        this.resetTime();
+        this.remaining.plusSeconds(seconds);
+    }
+
+    public void setMinutes(long minutes) {
+        this.resetTime();
+        this.remaining.plusMinutes(minutes);
+    }
+
+    public void setHours(long hours) {
+        this.resetTime();
+        this.remaining.plusHours(hours);
+    }
+
     /** get[Unit]Remaining
      * If total == true,
      *  return total time
@@ -177,6 +201,9 @@ public class Stopwatch {
      *      getMinutesRemaining(true) returns 5
      */
     public long getMillis(Duration duration, boolean total) {
+        if (duration == null) {
+            return 0;
+        }
         long totalMillis = duration.toMillis();
         if (total) {
             return totalMillis;
@@ -273,6 +300,7 @@ public class Stopwatch {
             return this.getAngle(seconds, MAX_SECONDS);
         }
         float totalMillis = this.getMillis(this.total, true);
+        if (totalMillis == 0) return this.getAngle(0, 1);
         float remainingMillis = this.getMillis(this.remaining, true);
         return this.getAngle(remainingMillis, totalMillis);
     }
@@ -445,6 +473,8 @@ public class Stopwatch {
             this.remaining = this.remaining.plusMillis(this.elapsed.toMillis());
         }
         this.elapsed = Duration.ZERO;
+        this.finished = false;
+        this.running = false;
     }
 
     public void setInterval(int interval) {

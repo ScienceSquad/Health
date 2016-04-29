@@ -13,17 +13,21 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.github.javiersantos.materialstyleddialogs.enums.Duration;
+
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.alarm.AlarmModel;
 import com.sciencesquad.health.core.alarm.AlarmModule;
+import com.sciencesquad.health.core.ui.BottomSheet;
 import com.sciencesquad.health.core.ui.EmergencyNotification;
 import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.core.ui.Stopwatch;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
+
+import java.util.concurrent.TimeUnit;
+
 import io.realm.RealmResults;
 
 /**
@@ -175,50 +179,48 @@ public class PrescriptionFragment extends BaseFragment {
 	}
 
 	private void setPrescriptionAlarm(View view, PrescriptionModel prescription) {
-		View alarmDialog = getInflater().inflate(R.layout.fragment_prescription_alarm_dialog, null);
-		EditText nameInput = (EditText) alarmDialog.findViewById(R.id.prescription_name);
-		EditText dosageInput = (EditText) alarmDialog.findViewById(R.id.prescription_dosage);
+		String currentName = "";
+		String currentDosage = "";
 		if (prescription != null) {
-			nameInput.setText(prescription.getName());
-			dosageInput.setText(String.valueOf(prescription.getDosage()));
+			currentName = prescription.getName();
+			currentDosage = String.valueOf(prescription.getDosage());
 		}
-		new MaterialStyledDialog(getActivity())
-				.setCustomView(alarmDialog)
-				.withDialogAnimation(true, Duration.FAST)
-				.setCancelable(false)
-				.setPositive("Accept",
-						(dialog, which) -> {
-							Log.d(TAG,"Accepted!");
-							String name = nameInput.getText().toString();
-							String dosageString = dosageInput.getText().toString();
-							int dosage = 0;
-							if ((name.length() <= 0) || (dosageString.length() <= 0)) {
-								Snackbar.make(view, "Invalid input", Snackbar.LENGTH_LONG)
-										.setAction("Action", null).show();
-								return;
-							}
-							else {
-								dosage = Integer.parseInt(dosageString);
-							}
-							if (prescription == null) {
-								prescriptionModule.setName(name);
-								prescriptionModule.setDosage(dosage);
-								// Set alarm data
-								alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
-								// Tie alarm to prescription
-								prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
-								prescriptionModule.addPrescription();
-							}
-							else {
-								prescriptionModule.setName(prescription, name);
-								prescriptionModule.setDosage(prescription, dosage);
-							}
-							updateAlarmList();
-						})
-				.setNegative("Decline",
-						(dialog, which) -> Log.d(TAG,"Declined!"))
-				.show();
 
+		BottomSheet dialog = new BottomSheet(getActivity());
+
+		dialog.addTextInput("prescription_name", "Name", currentName)
+				.addTextInput("prescription_dosage", "Dosage", currentDosage)
+				.addAction("save", "Save", R.drawable.ic_done)
+				.setOnAction("save", () -> {
+					String name = dialog.getTextInputValue("prescription_name");
+					String dosageString = dialog.getTextInputValue("prescription_dosage");
+					int dosage = 0;
+					if ((name.length() <= 0) || (dosageString.length() <= 0)) {
+						Snackbar.make(view, "Invalid input", Snackbar.LENGTH_LONG)
+								.setAction("Action", null).show();
+						return;
+					}
+					else {
+						dosage = Integer.parseInt(dosageString);
+					}
+					if (prescription == null) {
+						prescriptionModule.setName(name);
+						prescriptionModule.setDosage(dosage);
+						// Set alarm data
+						alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
+						// Tie alarm to prescription
+						prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
+						prescriptionModule.addPrescription();
+					}
+					else {
+						prescriptionModule.setName(prescription, name);
+						prescriptionModule.setDosage(prescription, dosage);
+					}
+					updateAlarmList();
+				})
+				.addAction("cancel", "Cancel", R.drawable.places_ic_clear)
+				.setOnAction("cancel", () -> Log.d(TAG, "Prescription canceled!"))
+				.show();
 	}
 
 	private void setPrescriptionAlarm(View view) {
@@ -240,6 +242,25 @@ public class PrescriptionFragment extends BaseFragment {
 		RealmResults<PrescriptionModel> prescriptions = prescriptionModule.getPrescriptions();
 		ListAdapter listAdapter = new ListAdapter(prescriptions);
 		xml().alarmList.setAdapter(listAdapter);
+	}
+
+	private void updateTime() {
+		String hours = xml().countdownHours.getText().toString();
+		String minutes = xml().countdownMinutes.getText().toString();
+		String seconds = xml().countdownSeconds.getText().toString();
+		Stopwatch stopwatch = xml().stopwatch.getStopwatch();
+		stopwatch.setMillis(0);
+		try {
+			if (hours.length() > 0)
+				stopwatch.addTime(Integer.parseInt(hours), TimeUnit.HOURS);
+			if (minutes.length() > 0)
+				stopwatch.addTime(Integer.parseInt(minutes), TimeUnit.MINUTES);
+			if (seconds.length() > 0)
+				stopwatch.addTime(Integer.parseInt(seconds), TimeUnit.SECONDS);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		xml().stopwatch.postInvalidate();
 	}
 
 	@Override
@@ -291,10 +312,12 @@ public class PrescriptionFragment extends BaseFragment {
 		Drawable alarms = ContextCompat.getDrawable(getActivity(), R.drawable.ic_alarm);
 		alarms.setTint(Color.WHITE);
 
+		/*
 		xml().fabEmergency.setImageDrawable(emergency);
 		xml().fabEmergency.setOnClickListener(view2 -> {
 			sendEmergencyNotification();
 		});
+		*/
 
 		StaticPagerAdapter.install(xml().pager);
 		xml().tabs.setupWithViewPager(xml().pager);
@@ -302,6 +325,44 @@ public class PrescriptionFragment extends BaseFragment {
 		xml().fabAlarms.setImageDrawable(alarms);
 		xml().fabAlarms.setOnClickListener(view2 -> {
 			setPrescriptionAlarm(view2);
+		});
+
+		Stopwatch stopwatch = xml().stopwatch.getStopwatch();
+		TextView typeText = xml().typeText;
+		if (stopwatch.getMode() == Stopwatch.WatchMode.DOWN)
+			typeText.setText("Down");
+		else
+			typeText.setText("Up");
+
+		xml().stopwatchType.setChecked(stopwatch.getMode() == Stopwatch.WatchMode.DOWN);
+
+		xml().stopwatchType.setOnClickListener((view2) -> {
+			Log.d(TAG, "STOPWATCH - pause");
+			stopwatch.pause();
+			CompoundButton button = xml().stopwatchType;
+			Log.d(TAG, "STOPWATCH - reset");
+			Log.d(TAG, "STOPWATCH - setmode");
+			if (button.isChecked()) {
+				stopwatch.setMode(Stopwatch.WatchMode.DOWN);
+				updateTime();
+				xml().typeText.setText("Down");
+			}
+			else {
+				stopwatch.setMode(Stopwatch.WatchMode.UP);
+				xml().typeText.setText("Up");
+			}
+			Log.d(TAG, "STOPWATCH - successful setMode");
+			stopwatch.reset();
+			stopwatch.resetTime();
+		});
+
+		xml().setTimeButton.setOnClickListener((view2) -> {
+			if (stopwatch.getMode() == Stopwatch.WatchMode.DOWN) {
+				stopwatch.pause();
+				stopwatch.reset();
+				stopwatch.resetTime();
+				updateTime();
+			}
 		});
 	}
 }
