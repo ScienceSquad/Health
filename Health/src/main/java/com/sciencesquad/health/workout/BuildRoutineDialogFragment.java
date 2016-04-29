@@ -38,7 +38,7 @@ public class BuildRoutineDialogFragment extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		String title = this.getArguments().getString(KEY_TITLE);
 
-		Context themed = new ContextThemeWrapper(getActivity(), R.style.AppTheme_Workout);
+		Context themed = new ContextThemeWrapper(getActivity(), R.style.WorkoutDialogCustom);
 		LayoutInflater inflater = (LayoutInflater) themed.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		// Inflate dialog

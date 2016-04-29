@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Sleep Overview"
+        android:textAppearance="@android:style/TextAppearance.Material.Large"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:text="You haven't been getting much sleep lately. Perhaps you've been working too much, or perhaps you procrastinated a little too much. Either way, your sleep is important to being well-rounded healthy individual."
+        android:id="@+id/nutrition_overview"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@android:style/TextAppearance.Material.Small" >
+    </TextView>
+</LinearLayout>

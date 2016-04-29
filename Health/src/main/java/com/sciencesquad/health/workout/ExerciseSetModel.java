@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class ExerciseSetModel extends RealmObject{
 
-    private int reps;               // number of repetitions
+    private Integer reps;               // number of repetitions
     private Integer weight;         // amount of weight
     private Long duration;          // length of time
     private Double distance;        // distance in miles
@@ -28,7 +28,7 @@ public class ExerciseSetModel extends RealmObject{
 
     public void setDistance(Double distance) { this.distance = distance; }
 
-    public int getReps() { return reps; }
+    public Integer getReps() { return reps; }
 
     public Integer getWeight() {
         return weight;

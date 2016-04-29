@@ -2,6 +2,7 @@ package com.sciencesquad.health.workout;
 
 import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.util.Dispatcher;
@@ -9,6 +10,8 @@ import com.sciencesquad.health.core.util.Dispatcher;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
+
 import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
@@ -19,9 +22,21 @@ import java.util.Date;
  * Created by mrjohnson on 3/1/16.
  */
 
-public class WorkoutModule extends Module {
+public class WorkoutModule extends Module implements Coefficient {
     public static final String TAG = WorkoutModule.class.getSimpleName();
     private RealmContext<ExerciseTypeModel> workoutRealm;
+
+	/**
+	 * Stuff for overview module
+	 */
+	private double workoutTotal;
+	private double workoutGoal;
+
+	/**
+	 * Workout coefficient
+	 */
+	private double workoutCoefficient;
+
     //Data context.
     //private RealmContext<RoutineModel> workoutRealm;
 
@@ -50,6 +65,35 @@ public class WorkoutModule extends Module {
 		//addRecommendedWorkouts();*/
 	}
 
+	/**
+	 * Calculates workout coefficient for use in overview module
+	 * @return calculated workout coefficient
+	 */
+	public double calculateCoefficient() {
+		double coefficient = (workoutTotal / workoutGoal) * 100;
+		return Math.round(coefficient * 10) / 10;
+	}
+
+	/**
+	 * Retrieves workout coefficient
+	 * @return workoutCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.workoutCoefficient;
+	}
+
+    /**
+     * Sets workout coefficient
+     * TODO: Implement!
+	 * @param coefficient
+     * @see Coefficient
+     */
+    @Override
+    public void setCoefficient(double coefficient) {
+		this.workoutCoefficient = coefficient;
+    }
+
     /**
      * Constructs the module itself.
      * It also sets up a Realm Context for the Module.
@@ -67,6 +111,13 @@ public class WorkoutModule extends Module {
                 addRecommendedWorkouts();
             } else Log.i(TAG, "We good!");
         });
+
+        // Overview stuff
+		workoutTotal = 100;
+		workoutGoal = 235;
+		setCoefficient(calculateCoefficient());
+		//setCoefficient(0);
+
         //this.workoutRealm = new RealmContext<>();
         //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
 
@@ -343,6 +394,24 @@ public class WorkoutModule extends Module {
         }
     }
 
+    public CompletedExerciseModel getMostRecentCompletedExerciseModel(String exerciseName){
+        CompletedExerciseModel mostRecent = null;
+        try {
+            RealmQuery<CompletedExerciseModel> query = this.workoutRealm.query(CompletedExerciseModel.class).equalTo("exerciseName", exerciseName);
+            RealmResults<CompletedExerciseModel> results = query.findAll();
+            if(results.size() == 0){
+                Log.i(TAG, "Didn't find any completed exercises of type " + exerciseName);
+                return null;
+            }
+            Date date = results.maxDate("date");
+            mostRecent = query.equalTo("date", date).findFirst();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return mostRecent;
+    }
+
+
 
     public ArrayList<CompletedExerciseModel> getCompletedExercises(String exerciseName){
         ArrayList<CompletedExerciseModel> completed = new ArrayList<>();
@@ -411,7 +480,7 @@ public class WorkoutModule extends Module {
     public ArrayList<ExerciseTargetModel> getAllTargets() {
         ArrayList<ExerciseTargetModel> targets = new ArrayList<>();
         try {
-            RealmResults<ExerciseTargetModel> results = workoutRealm.query(ExerciseTargetModel.class).findAll();
+            RealmResults<ExerciseTargetModel> results = workoutRealm.query(ExerciseTargetModel.class).findAllSorted("target", Sort.ASCENDING);
             targets.addAll(results);
         } catch (Exception e) {
             Log.e(TAG, "Error retrieving targets from Realm");
@@ -475,6 +544,18 @@ public class WorkoutModule extends Module {
         });
     }
     */
+    public String[] getAllExercisesByTarget(String target){
+        ArrayList<String> exercises = new ArrayList<>();
+        try {
+            RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).equalTo("target", target).findAll();
+            for(ExerciseTypeModel e : results){
+                exercises.add(e.getName());
+            }
+        } catch (Exception e) {
+        }
+
+        return exercises.toArray(new String[exercises.size()]);
+    }
 
 
     public boolean isDuplicateRoutineType(RoutineModel newRoutine){
@@ -703,6 +784,36 @@ public class WorkoutModule extends Module {
         return newSchedule;
     }
 
+    public String[] getAllCategories(){
+        ArrayList<ExerciseTargetModel> targets = getAllTargets();
+        ArrayList<String> categories = new ArrayList<>();
+        for(ExerciseTargetModel t : targets){
+            categories.add(t.getTarget());
+        }
+        return categories.toArray(new String[categories.size()]);
+    }
+
+    public String[][] groupExercisesByTargetAlpha(String[] categories){
+        String[][] groupedExercises = new String[categories.length][];
+        int i;
+        for(i = 0; i < categories.length; i++){
+            groupedExercises[i] = getAllExercisesByTarget(categories[i]);
+        }
+
+        return groupedExercises;
+    }
+
+
+    public Double calculateCaloriesBurned(CompletedExerciseModel exercise, double age, String sex, double height, double weight, double heartrate){
+        double calories = 0;
+        if(sex.equals("Male")){
+            calories = ((age * 0.2017) - (weight * 0.08036) + (heartrate * 0.6309) - 55.0969);
+        } else {
+            // Female
+            calories = ((age * 0.074) - (weight * 0.05741) + (heartrate * 0.4472) - 20.4022);
+        }
+        return calories;
+    }
 
     public RealmContext<ExerciseTypeModel> getWorkoutRealm(){
         return this.workoutRealm;

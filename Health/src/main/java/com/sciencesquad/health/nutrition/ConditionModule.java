@@ -2,6 +2,7 @@ package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import io.realm.RealmResults;
@@ -19,6 +20,40 @@ public class ConditionModule extends Module {
 
 	private String name;
 	private String restrictedFoods = "";
+
+	/**
+	 * Condition Coefficient
+	 * TODO: I AM DOING SOME UNNECESSARY THINGS HERE, WILL FIX LATER
+	 */
+	private double conditionCoefficient;
+
+	/**
+	 * Calculates condition coefficient for use in overview module
+	 * @return calculated condition coefficient
+	 */
+	public double calculateCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Retrieves condition coefficient
+	 * @return conditionCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this. conditionCoefficient;
+	}
+
+	/**
+	 * Calculates condition coefficient
+	 * TODO: Implement!
+	 * @param coefficient
+	 * @see Coefficient
+	 */
+	@Override
+	public void setCoefficient(double coefficient) {
+		this. conditionCoefficient = coefficient;
+	}
 
 	/**
 	 * Constructs the module itself.

@@ -21,7 +21,6 @@ import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.ui.Stopwatch;
 import com.sciencesquad.health.databinding.FragmentStepsBinding;
-
 import org.threeten.bp.Duration;
 
 /**
@@ -66,6 +65,29 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 	private Animation rotation;
 	private Animation pause_morph;
 	private Animation play_morph;
+
+	private static final double weight = 67.0; // kg
+	private static final double height = 178.0; // cm
+
+	private static final double walkingFactor = 0.57;
+	private static final double strideFactor = 0.415; // men = 0.415 + women = 0.413
+	private static final double mi2cm = 160934.4;
+
+	private static double getCaloriesBurned(int stepsCount) {
+		double perMile = walkingFactor * (weight * 2.2);
+		double strip = height * strideFactor;
+		double conversationFactor = perMile / (mi2cm / strip);
+		double calories = stepsCount * conversationFactor;
+		double distance = (stepsCount * strip) / 100000.0;
+
+
+		String l = String.format("%.03f", calories);
+		BaseApp.app().display(stepsCount + " steps -> " + l + " Cal", false);
+
+		//Log.i(TAG, "Calories burned: " + calories + " cal");
+		//Log.i(TAG, "Distance: " + distance + " km");
+		return calories;
+	}
 
 	@Override
 	protected BaseFragment.Configuration getConfiguration() {
@@ -113,7 +135,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 
 		// Populate
         num_steps.setText(String.valueOf(numSteps));
-        strideLength = Math.round((0.415 * 1.8796)*100d)/100d;
+        strideLength = Math.round((strideFactor * 1.8796) * 100.0) / 100.0;
         stride_length.setText(String.valueOf(strideLength) + "m");
 
 		// Begin stopwatch
@@ -128,7 +150,8 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
             }
         });
 
-        avg_speed.setText(String.valueOf(strideLength) + "m/s");
+		avg_speed.setText(String.format("%.03f", getCaloriesBurned(numSteps)) + " Cal");
+        //avg_speed.setText(String.valueOf(strideLength) + "m/s");
 
 		// Animate fabs
 		fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
@@ -214,6 +237,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
             numSteps = (int) event.values[0] - counterSteps;
             num_steps.setText(String.valueOf(numSteps));
             stepsModule.setNumSteps(numSteps);
+			avg_speed.setText(String.format("%.03f", getCaloriesBurned(numSteps)) + " Cal");
             Log.d(TAG, "Sensor picked up steps. Current step count: " + numSteps);
         }
 
@@ -255,6 +279,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
         stopwatch.reset();
         stopwatch.start();
         num_steps.setText(String.valueOf(numSteps));
+		avg_speed.setText(String.format("%.03f", getCaloriesBurned(numSteps)) + " Cal");
     }
 
 	/**
@@ -272,6 +297,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
         numSteps = (int) event.values[0] - counterSteps;
         num_steps.setText(String.valueOf(numSteps));
         stepsModule.setNumSteps(numSteps);
+		avg_speed.setText(String.format("%.03f", getCaloriesBurned(numSteps)) + " Cal");
         Log.d(TAG, "Sensor picked up steps. Current step count: " + numSteps);
     }
 

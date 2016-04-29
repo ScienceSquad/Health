@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
@@ -33,10 +32,11 @@ import com.sciencesquad.health.run.RunFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
+import io.realm.RealmResults;
 
 import java.util.concurrent.TimeUnit;
 
-import io.realm.RealmResults;
+import static java.lang.Math.random;
 
 /**
  * Created by andrew on 4/7/16.
@@ -218,7 +218,7 @@ public class PrescriptionFragment extends BaseFragment {
 						alarmModule.setTimeInMillis(System.currentTimeMillis() + AlarmManager.INTERVAL_HOUR);
 						// Tie alarm to prescription
 						prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
-						prescriptionModule.addPrescription();
+						prescriptionModule.addPrescription((random() * 100) % 2 > 0); // random
 					}
 					else {
 						prescriptionModule.setName(prescription, name);
@@ -328,7 +328,7 @@ public class PrescriptionFragment extends BaseFragment {
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
 
-		prescriptionModule.addPrescription();
+		prescriptionModule.addPrescription(true);
 
 		// Set Prescription data
 		prescriptionModule.setName("barlisil");
@@ -343,7 +343,7 @@ public class PrescriptionFragment extends BaseFragment {
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
 
-		prescriptionModule.addPrescription();
+		prescriptionModule.addPrescription(false);
 
 		xml().alarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
 		updateAlarmList();

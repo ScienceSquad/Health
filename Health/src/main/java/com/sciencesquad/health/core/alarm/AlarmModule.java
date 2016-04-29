@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
@@ -28,6 +29,40 @@ public class AlarmModule extends Module {
 	static final String ALARM_ID_FIELD = "alarmId";
 
 	private RealmContext<AlarmModel> alarmRealm;
+
+	/**
+	 * Alarm Coefficient
+	 * TODO: GET RID OF THIS HOPEFULLY
+	 */
+	private double alarmCoefficient;
+
+	/**
+	 * Calculates alarm coefficient for use in overview module
+	 * @return calculated alarm coefficient
+	 */
+	public double calculateCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Retrieves alarm coefficient
+	 * @return alarmCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.alarmCoefficient;
+	}
+
+	/**
+	 * Calculates run coefficient
+	 * TODO: Implement!
+	 * @param coefficient
+	 * @see Coefficient
+	 */
+	@Override
+	public void setCoefficient(double coefficient) {
+		this.alarmCoefficient = coefficient;
+	}
 
 	@Override
 	public void onStart() {
