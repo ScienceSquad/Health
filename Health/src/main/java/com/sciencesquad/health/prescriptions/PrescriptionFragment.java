@@ -1,6 +1,7 @@
 package com.sciencesquad.health.prescriptions;
 
 import android.app.AlarmManager;
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -25,6 +26,13 @@ import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.ui.Stopwatch;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentPrescriptionBinding;
+import com.sciencesquad.health.nutrition.NutritionFragment;
+import com.sciencesquad.health.overview.OverviewFragment;
+import com.sciencesquad.health.overview.SuggestionModule;
+import com.sciencesquad.health.run.RunFragment;
+import com.sciencesquad.health.sleep.SleepFragment;
+import com.sciencesquad.health.steps.StepsFragment;
+import com.sciencesquad.health.workout.WorkoutFragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -263,6 +271,41 @@ public class PrescriptionFragment extends BaseFragment {
 		xml().stopwatch.postInvalidate();
 	}
 
+	public void openAssociatedModule(SuggestionModule.AssociatedModule module) {
+		FragmentTransaction transaction;
+		switch (module) {
+			case NUTRITION:
+				transaction = getFragmentManager().beginTransaction();
+				new NutritionFragment().open(transaction, R.id.drawer_layout).commit();
+				return;
+			case OVERVIEW:
+				transaction = getFragmentManager().beginTransaction();
+				new OverviewFragment().open(transaction, R.id.drawer_layout).commit();
+				return;
+			case PRESCRIPTIONS:
+				transaction = getFragmentManager().beginTransaction();
+				new PrescriptionFragment().open(transaction, R.id.drawer_layout).commit();
+				return;
+			case RUN:
+				transaction = getFragmentManager().beginTransaction();
+				new RunFragment().open(transaction, R.id.drawer_layout).commit();
+				return;
+			case SLEEP:
+				transaction = getFragmentManager().beginTransaction();
+				new SleepFragment().open(transaction, R.id.drawer_layout).commit();
+				return;
+			case STEPS:
+				transaction = getFragmentManager().beginTransaction();
+				new StepsFragment().open(transaction, R.id.drawer_layout).commit();
+				return;
+			case WORKOUT:
+				transaction = getFragmentManager().beginTransaction();
+				new WorkoutFragment().open(transaction, R.id.drawer_layout).commit();
+				return;
+			default:
+		}
+	}
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
@@ -363,6 +406,16 @@ public class PrescriptionFragment extends BaseFragment {
 				stopwatch.resetTime();
 				updateTime();
 			}
+		});
+
+		xml().lapButton.setOnClickListener((view2) -> {
+			stopwatch.addLap();
+		});
+
+		xml().page3.setOnItemSelectedListener((item) -> {
+			SuggestionModule suggestionModule = Module.of(SuggestionModule.class);
+			SuggestionModule.AssociatedModule associatedModule = suggestionModule.stringToModule(item.getModule());
+			openAssociatedModule(associatedModule);
 		});
 	}
 }
