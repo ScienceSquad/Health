@@ -76,13 +76,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical">
-                <ListView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/exercise_model_list_view"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true" />
+                <com.sciencesquad.health.core.util.AnimatedExpandableListView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/category_expandable_view"
+                    android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft">
+                </com.sciencesquad.health.core.util.AnimatedExpandableListView>
             </RelativeLayout>
+
         </android.support.v4.view.ViewPager>
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

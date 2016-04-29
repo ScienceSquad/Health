@@ -19,6 +19,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,6 +34,9 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.RevealTransition;
+import com.sciencesquad.health.core.ui.Stopwatch;
+import com.sciencesquad.health.core.util.SimpleExpandableListAdapter;
+import com.sciencesquad.health.core.util.AnimatedExpandableListView;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentWorkoutBinding;
 import io.realm.RealmList;
@@ -57,9 +63,11 @@ public class WorkoutFragment extends BaseFragment {
     public static CompletedExerciseModel completedExercise;
     public static ArrayAdapter<String> routineModelAdapter;
     public static ArrayAdapter<String> exerciseTypeAdapter;
+    public static SimpleExpandableListAdapter categoryAdapter;
     public static ArrayAdapter<String> currentRoutineExerciseAdapter;
+    public static String[] categories;
+    public static String[][] groupedExercises;
     WorkoutModule mod = Module.of(WorkoutModule.class);
-
 
 
     /**
@@ -131,6 +139,8 @@ public class WorkoutFragment extends BaseFragment {
         xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
         // Bind data to currentWorkoutTab
+        categories = mod.getAllCategories();
+
 
         WorkoutScheduleModel schedule = mod.getWorkoutSchedule();
         currentRoutineExerciseAdapter = new ArrayAdapter<String>(getInflater().getContext(),
@@ -145,8 +155,55 @@ public class WorkoutFragment extends BaseFragment {
             updateCurrentWorkout(todaysRoutine);
         }
 
-        // Bind data to view (ExerciseTypeModels)
+        // Bind data to expandable list of categories
+        categories = mod.getAllCategories();
+        groupedExercises = mod.groupExercisesByTargetAlpha(categories);
+        categoryAdapter = new SimpleExpandableListAdapter(getInflater().getContext(), categories, groupedExercises);
+        xml().categoryExpandableView.setAdapter(categoryAdapter);
+        xml().categoryExpandableView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
 
+
+                ExerciseTypeModel exercise = mod.getExerciseTypeModel(categoryAdapter.getChild(groupPosition, childPosition));
+
+                if(exercise == null){
+                    Log.e(TAG, "Exercise retrieved from Realm was null!");
+                } else if( exercise.getCategory().equalsIgnoreCase("Cardio")){
+                    // exercise is Cardio
+                    showCardioDialog(exercise.getName());
+                } else {
+                    showSetDialog(exercise.getName());
+                }
+
+
+                return false;
+            }
+        });
+
+        xml().categoryExpandableView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                // We call collapseGroupWithAnimation(int) and
+                // expandGroupWithAnimation(int) to animate group
+                // expansion/collapse.
+                if (xml().categoryExpandableView.isGroupExpanded(groupPosition)) {
+                    xml().categoryExpandableView.collapseGroupWithAnimation(groupPosition);
+                } else {
+                    xml().categoryExpandableView.expandGroupWithAnimation(groupPosition);
+                }
+                return true;
+            }
+
+        });
+
+
+        //xml().categoryExpandableView.setAdapter(new SimpleExpandableListAdapter(getInflater().getContext(), categories, groupedExercises));
+
+        // Bind data to view (ExerciseTypeModels)
+/*
         exerciseTypeAdapter = new ArrayAdapter<>(getInflater().getContext(),             // create an adapter to fill array
                 android.R.layout.simple_list_item_1);
         exerciseTypeAdapter.clear();                // first clear adapter
@@ -158,6 +215,7 @@ public class WorkoutFragment extends BaseFragment {
                return lhs.compareTo(rhs);   //or whatever your sorting algorithm
            }
         });*/
+        /*
         exerciseTypeAdapter.notifyDataSetChanged();
         xml().exerciseModelListView.setAdapter(exerciseTypeAdapter);
         xml().exerciseModelListView.setOnItemClickListener(((parent, views, position, id) -> {
@@ -179,7 +237,7 @@ public class WorkoutFragment extends BaseFragment {
             this.showExerciseHistoryDialog(exerciseTypeAdapter.getItem(position1));
             return true;
         }));
-
+*/
 
         // Bind data to view (RoutineModels)
         routineModelAdapter = new ArrayAdapter<>(getInflater().getContext(),             // create an adapter to fill array
@@ -288,13 +346,78 @@ public class WorkoutFragment extends BaseFragment {
 
 
     void showCardioDialog(String exerciseName) {
-
+        RealmList<ExerciseSetModel> set = new RealmList<>();
         //Build Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getInflater().getContext());
         LayoutInflater inflater = (LayoutInflater) getInflater().getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogLayout = inflater.inflate(R.layout.cardio_set_dialog, null);
         builder.setView(dialogLayout);
         builder.setTitle(exerciseName);
+        TextView timerText = (TextView) dialogLayout.findViewById(R.id.cardio_stopwatch_text);
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.setMode(Stopwatch.WatchMode.UP);
+        stopwatch.setOnTimeChange(() -> {
+            timerText.setText(stopwatch.getPrettyElapsed(false).replaceAll(" ", ":") + stopwatch.getMilliString(stopwatch.getElapsedDuration()));
+        });
+
+        ListView completedSetListView = (ListView) dialogLayout.findViewById(R.id.list_complete_cardio_reps);
+        ArrayAdapter<ExerciseSetModel> completedSetAdapter = new ArrayAdapter<>(getInflater().getContext(),
+                android.R.layout.simple_list_item_1);
+        completedSetListView.setAdapter(completedSetAdapter);        // When sets are completed, they are listed in the dialog
+
+        Button timerButton = (Button) dialogLayout.findViewById(R.id.cardio_timer_button);
+
+        timerButton.setOnClickListener( butt -> {
+            if(stopwatch.isRunning()){
+                stopwatch.pause();
+                timerButton.setText("Resume");
+            } else {
+                stopwatch.resume();
+                timerButton.setText("Pause");
+            }
+        });
+
+        Button resetTimerButton = (Button) dialogLayout.findViewById(R.id.reset_cardio_timer_button);
+
+        resetTimerButton.setOnClickListener( butts -> {
+            if(!(stopwatch.isRunning())){
+                stopwatch.reset();
+                timerText.setText(stopwatch.getPrettyElapsed(false).replaceAll(" ", ":") + stopwatch.getMilliString(stopwatch.getElapsedDuration()));
+            }
+        });
+
+        Button button = (Button) dialogLayout.findViewById(R.id.complete_cardio_set_button);
+        button.setOnClickListener(butt -> {
+            if(stopwatch.getMillisElapsed(true) == 0){
+                // set timerfield error
+                ;
+            } else {
+
+                long duration = stopwatch.getMillisElapsed(true);
+                ExerciseSetModel newSet = new ExerciseSetModel();
+                newSet.setDuration(duration);
+                newSet.setDate(Calendar.getInstance().getTime());
+                set.add(newSet);        // add set to the list of sets
+
+                completedSetAdapter.clear();
+                completedSetAdapter.addAll(set);        //repopulate the adapter
+            }
+        });
+
+        // Add Dialog buttons
+        builder.setPositiveButton("Save", (dialog, whichButton) -> {
+            // Get items selected and update Routine Model
+            CompletedExerciseModel completedExercise = new CompletedExerciseModel();
+            completedExercise.setExerciseName(exerciseName);
+            completedExercise.setSets(set);
+            Calendar rightNow = Calendar.getInstance();
+            completedExercise.setDate(rightNow.getTime());
+            ((WorkoutFragment)getTargetFragment()).saveCompletedExercise(completedExercise);
+
+        });
+        builder.setNegativeButton("Cancel", (dialog, whichButton) -> {
+        });
+
 
         builder.create().show();
     }
@@ -453,9 +576,14 @@ public class WorkoutFragment extends BaseFragment {
             //WorkoutModule mod = Module.of(WorkoutModule.class);
             mod.addExerciseTypeModel(newExercise);
 
-
-            exerciseTypeAdapter.clear();
+            categories = null;
+            categories = mod.getAllCategories();
+            groupedExercises = null;
+            groupedExercises = mod.groupExercisesByTargetAlpha(categories);
+            categoryAdapter = new SimpleExpandableListAdapter(getInflater().getContext(), categories, groupedExercises);
+            xml().categoryExpandableView.setAdapter(categoryAdapter);
             //exerciseTypeModelAdapter.addAll(mod.getAllExerciseTypeModels());
+            /*
             for (ExerciseTypeModel m : mod.getAllExerciseTypeModels())
                 exerciseTypeAdapter.add(m.getName());
 
@@ -466,7 +594,7 @@ public class WorkoutFragment extends BaseFragment {
                 }
             });
             exerciseTypeAdapter.notifyDataSetChanged();
-
+            */
         }
     }
 

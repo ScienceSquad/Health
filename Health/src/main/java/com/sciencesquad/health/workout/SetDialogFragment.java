@@ -194,7 +194,7 @@ public class SetDialogFragment extends DialogFragment {
                     completedExercise.setSets(set);
                     Calendar rightNow = Calendar.getInstance();
                     completedExercise.setDate(rightNow.getTime());
-                    ((WorkoutFragment)getTargetFragment()).saveCompletedExercise(completedExercise);
+                    ((WorkoutFragment)getTargetFragment()). saveCompletedExercise(completedExercise);
 				}
 		);
 		builder.setNegativeButton("Cancel",
