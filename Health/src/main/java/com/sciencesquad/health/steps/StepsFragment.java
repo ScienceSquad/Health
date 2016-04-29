@@ -10,6 +10,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.transition.Visibility;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.Module;
+import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.ui.Stopwatch;
 import com.sciencesquad.health.databinding.FragmentStepsBinding;
 
@@ -40,7 +43,14 @@ import org.threeten.bp.Duration;
 public class StepsFragment extends BaseFragment implements SensorEventListener {
 	public static final String TAG = StepsFragment.class.getSimpleName();
 
+	/**
+	 * StepsModule Reference
+	 */
     private StepsModule stepsModule;
+
+	/**
+	 * Stopwatch Reference
+	 */
     private Stopwatch stopwatch;
     private SensorManager sensorManager;
     //private SensorEventListener sensorEventListener;
@@ -67,25 +77,46 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 	private Animation pause_morph;
 	private Animation play_morph;
 
+	/**
+	 * @see BaseFragment
+	 */
 	@Override
 	protected BaseFragment.Configuration getConfiguration() {
-		String stepsTag = StepsModule.TAG; // instantiates the Module...
 		return new BaseFragment.Configuration(
 				TAG, "Steps", R.drawable.ic_menu_steps,
 				R.style.AppTheme_Steps, R.layout.fragment_steps
 		);
 	}
 
-	// Our generated binding class is different...
+	/**
+	 * Our generated binding class is different...
+	 * @see BaseFragment
+	 */
 	@Override @SuppressWarnings("unchecked")
 	protected FragmentStepsBinding xml() {
 		return super.xml();
 	}
 
+	/**
+	 * To provide a Circular Reveal animation.
+	 * @see BaseFragment
+	 */
+	@Override
+	public void onSetupTransition() {
+		this.setEnterTransition(new RevealTransition(Visibility.MODE_IN));
+		this.setExitTransition(new RevealTransition(Visibility.MODE_OUT));
+	}
+
+	/**
+	 * @see BaseFragment
+	 */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+		xml().setModule((stepsModule = Module.of(StepsModule.class)));
+		xml().setFragment(this);
 
+		// Set up drawables for fabs
 		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
 		plus.setTint(Color.DKGRAY);
 		Drawable reset = ContextCompat.getDrawable(getActivity(), R.drawable.ic_reset);
@@ -182,6 +213,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 
         // sensorType is either Sensor.TYPE_STEP_COUNTER or Sensor.TYPE_STEP_DETECTOR
         Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+		Sensor sensor2 = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
         // Register the listener for this sensor in batch mode.
         // If the max delay is 0, events will be delivered in continuous mode without batching.
@@ -286,7 +318,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
     }
 
 	/**
-	 * Animations for when the overviewFab is pressed
+	 * Animations for when the stepsFab is pressed
 	 */
 	public void animateFab() {
 		if (!isFabOpen) {

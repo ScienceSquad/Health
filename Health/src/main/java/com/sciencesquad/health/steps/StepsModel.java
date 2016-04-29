@@ -25,7 +25,6 @@ public class StepsModel extends RealmObject {
 
     //
     // GENERATED METHODS FOLLOW
-    // DO NOT MODIFY -- REALM ONLY
     //
 
     public int getStepCount() {

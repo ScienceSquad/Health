@@ -21,6 +21,9 @@ public class StepsModule extends Module {
     public static final String TAG = StepsModule.class.getSimpleName();
     private static final String REALMNAME = "steps.realm";
 
+    /**
+     * The StepsModule-specific RealmContext for storing sleep info.
+     */
     private RealmContext<StepsModel> stepsRealm;
 
     // Display for steps

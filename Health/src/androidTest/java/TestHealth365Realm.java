@@ -166,7 +166,7 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
         */
 
 
-    @Test
+    /*@Test
     public void testPrescriptionRealm() {
         createApplication();
         try {
@@ -220,8 +220,6 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             e.printStackTrace();
             Assert.fail("An Exception Occurred.");
         }
-    }
-
-    */
+    }*/
 
 }
