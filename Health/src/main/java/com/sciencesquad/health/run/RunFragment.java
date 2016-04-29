@@ -6,18 +6,15 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.cocoahero.android.geojson.Feature;
-import com.cocoahero.android.geojson.GeoJSON;
-import com.cocoahero.android.geojson.GeoJSONObject;
-import com.cocoahero.android.geojson.MultiPoint;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -37,7 +34,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.TTSManager;
 import com.sciencesquad.health.databinding.FragmentRunBinding;
@@ -46,11 +45,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
@@ -59,6 +61,7 @@ import static java.lang.System.currentTimeMillis;
 public class RunFragment extends BaseFragment implements
         ConnectionCallbacks,  OnConnectionFailedListener, LocationListener {
     public static final String TAG = RunFragment.class.getSimpleName();
+    private RealmContext<CompletedRunModel> runRealm;
 
     @Override
     protected Configuration getConfiguration() {
@@ -83,9 +86,11 @@ public class RunFragment extends BaseFragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    private FloatingActionButton fabMarker;
-    private FloatingActionButton fabStop;
-    private Button runStartButton;
+    private ListView runHistoryListView;
+    private ListView runTrainingListView;
+    private ArrayAdapter arrayAdapter;
+    private ArrayAdapter arrayAdapterTraining;
+
     private TextView textViewCalories;
     private TextView textViewDistance;
     private TextView textViewSpeed;
@@ -99,6 +104,10 @@ public class RunFragment extends BaseFragment implements
     LatLng lastLoc = null;
     LatLng lastLocPersistent = null;
 
+    String[] dateArray = null;
+    String[] pathArray = null;
+    String[] trainingArray = null;
+
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
     boolean isRunStarted = false; // only starts on button press.
     boolean firstMarker = true;
@@ -111,10 +120,6 @@ public class RunFragment extends BaseFragment implements
 
     Realm realm = Realm.getDefaultInstance();
 
-    MarkerOptions currentPosOptions = new MarkerOptions()
-            .position(new LatLng(40, 40))
-            .title("Current Position");
-
     CircleOptions accuracyCircleOptions = new CircleOptions()
             .center(new LatLng(40, 40))
             .radius((double) currentAcc)
@@ -125,8 +130,8 @@ public class RunFragment extends BaseFragment implements
             .width(8)
             .color(Color.BLUE);
 
-    //int split = 800; // split distance in meters (NORMAL SPLIT)
-    int split = 5; // TEST SPLIT
+    int split = 400; // split distance in meters (NORMAL SPLIT)
+    //int split = 5; // TEST SPLIT
     int splitNumber = 1; // number of times user has traveled split distance
 
     private TTSManager ttsManager;
@@ -134,6 +139,10 @@ public class RunFragment extends BaseFragment implements
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Realm Set Up
+        runRealm = new RealmContext<>();
+        runRealm.init(BaseApp.app(), CompletedRunModel.class, "RunRealm");
 
         // TextToSpeech Initialization
         ttsManager = new TTSManager();
@@ -147,6 +156,9 @@ public class RunFragment extends BaseFragment implements
                 .addApi(LocationServices.API)
                 .build();
 
+        makeArraysFromRealm();
+        makeTrainingArray();
+
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -159,56 +171,124 @@ public class RunFragment extends BaseFragment implements
         StaticPagerAdapter.install(xml().pager);
         xml().tabs.setupWithViewPager(xml().pager);
 
+        runHistoryListView = xml().listViewRunHistory;
+        runTrainingListView = xml().listViewRunTraining;
+        arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, dateArray);
+        arrayAdapterTraining = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, trainingArray);
+        runHistoryListView.setAdapter(arrayAdapter);
+        runTrainingListView.setAdapter(arrayAdapterTraining);
+
 
         textViewCalories = xml().textViewCalories;
         textViewDistance = xml().textViewDistance;
         textViewSpeed = xml().textViewSpeed;
 
-        fabMarker = xml().runFab;
-        fabStop = xml().endRunFab;
-
-        runStartButton = xml().buttonStartRun;
-
-        fabMarker.setOnClickListener(v -> {
+        // Create marker FAB
+        xml().runFab.setOnClickListener(v -> {
             //Links to CreateRouteFragment
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             new CreateRouteFragment().open(transaction, R.id.drawer_layout).commit();
         });
 
-        fabStop.setOnClickListener(v -> {
-            stopRun();
+        // Stop FAB
+        xml().endRunFab.setOnClickListener(v -> stopRun());
+
+        // Start Run FAB
+        xml().buttonStartRun.setOnClickListener(v -> buttonStartRunClicked());
+
+        // Training: Half Marathon Button
+        xml().buttonTrainingHalfMarathon.setOnClickListener(v -> buttonTrainingHalfMarathonClicked());
+
+        // ListView
+        runHistoryListView.setOnItemClickListener((parent, view1, position, id) -> {
+            //TODO: display path
+            Log.e(TAG, "Clicked: " + position);
+            Log.e(TAG, "Path in String Format: " + pathArray[position]);
+            Log.e(TAG, "Path in LatLng Format: " + getPathFromJson(pathArray[position]));
         });
 
-        runStartButton.setOnClickListener(v -> {
-            buttonStartRunClicked();
-        });
+
     }
 
     public void saveRunToRealm() {
         realm.beginTransaction();
-        CompletedRunModel run = new CompletedRunModel();
+        CompletedRunModel run = realm.createObject(CompletedRunModel.class);
         run.setCalories(totalCalories);
         run.setDistance(totalDistance);
         run.setDate(new Date());
-        setUpGeoJson();
+        run.setPath(createJson().toString());
         realm.commitTransaction();
+        //TESTING
+        Log.e(TAG, getRealmObjects().get(0).getDate().toString());
     }
 
-    public void setUpGeoJson() {
-        /*
-        //TODO: Create a GeoJSON object from path.
-        GeoJSON geojson = new GeoJSON();
-        GeoJSONObject geojsonobject = new GeoJSONObject() {
-            @Override
-            public String getType() {
-                return GeoJSON.TYPE_MULTI_POINT;
+    public void makeArraysFromRealm() {
+        int realmSize = getRealmObjects().size();
+        Log.e(TAG, "realmSize = " + realmSize);
+        dateArray = new String[realmSize];
+        pathArray = new String[realmSize];
+        for (int i = 0; i < realmSize; i++) {
+            dateArray[i] = getRealmObjects().get(i).getDate().toString();
+            pathArray[i] = getRealmObjects().get(i).getPath();
+        }
+    }
+
+    public void makeTrainingArray() {
+        int numDays = 10;
+        trainingArray = new String[numDays];
+        int[] milesNum = {3, 3, 4, 6, 7, 6, 9, 8, 12, 10};
+        for (int i = 0; i < numDays; i++) {
+            trainingArray[i] = "Day " + (i+1) + ": Run " + milesNum[i] + " miles.";
+        }
+
+    }
+
+    public RealmResults<CompletedRunModel> getRealmObjects() {
+        return realm.allObjectsSorted(CompletedRunModel.class, "date", Sort.ASCENDING);
+    }
+
+    public JSONObject createJson() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("name", "foo");
+            obj.put("points", pointsLatLng);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "JSON EXCEPTION: " + e);
+        }
+        return obj;
+    }
+
+    public JSONObject createJsonFromString(String string) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj = new JSONObject(string);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
+    public List<LatLng> getPathFromJson(String path) {
+        JSONObject obj = createJsonFromString(path);
+        List<String> list = new ArrayList<String>();
+        List<LatLng> latLngList = new ArrayList<LatLng>();
+        try {
+            //FIXME: This part isn't working
+            JSONArray array = obj.getJSONArray("points");
+            for (int i = 0; i < array.length(); i++) {
+                String pointsString = array.getJSONObject(i).getString("points");
+                String[] stringToParse = pointsString.split(",");
+                list.add(pointsString);
+                double latitude = Double.parseDouble(stringToParse[0]);
+                double longitude = Double.parseDouble(stringToParse[1]);
+                latLngList.add(new LatLng(latitude,longitude));
             }
-            MultiPoint multiPoint = new MultiPoint(pathArray);
-            JSONObject geoJSON = multiPoint.toJSON();
-        }; */
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return latLngList;
     }
-
-
 
     public void stopRun() {
         isRunStarted = false;
@@ -251,6 +331,11 @@ public class RunFragment extends BaseFragment implements
         }
     }
 
+    public void buttonTrainingHalfMarathonClicked() {
+        xml().buttonTrainingHalfMarathon.setVisibility(View.GONE);
+        xml().listViewRunTraining.setVisibility(View.VISIBLE);
+    }
+
     public void clearLastRun() {
         if (polyline!=null) polyline.remove();
         polyline = null;
@@ -280,9 +365,7 @@ public class RunFragment extends BaseFragment implements
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
                 ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map))
-                    .getMapAsync(googleMap -> {
-                        mMap = googleMap;
-                    });
+                    .getMapAsync(googleMap -> mMap = googleMap);
 
         }
     }
@@ -298,8 +381,8 @@ public class RunFragment extends BaseFragment implements
 
         // Sets the minimum distance needed to trigger a change in location
         // Based on GPS accuracy: the returned value from getAccuracy() is the 1sigma value of radius.
-        //float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
-        float minDistResolution = currentAcc/8; //TEST RESOLUTION
+        float minDistResolution = currentAcc/2; //NORMAL RESOLUTION
+        //float minDistResolution = currentAcc/8; //TEST RESOLUTION
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
@@ -439,6 +522,7 @@ public class RunFragment extends BaseFragment implements
                     // Do what you wanted to do with the permissions
                 } else {
                     // Do something for when permission is denied by the user
+                    Log.e(TAG, "Location Permissions Denied");
                 }
             }
             default:
@@ -467,7 +551,7 @@ public class RunFragment extends BaseFragment implements
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.e(TAG, "Connection Suspended");
     }
 
     @Override
