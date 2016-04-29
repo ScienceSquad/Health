@@ -452,7 +452,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 * @param d
 	 * @param layout
 	 */
-	public void showDialog(Drawable d, int layout, final String shareText) {
+	public void showDialog(Drawable d, int layout) {
 
 		new MaterialStyledDialog(getActivity())
 				.setIcon(d)
