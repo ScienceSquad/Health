@@ -160,7 +160,7 @@ public class SleepFragment extends BaseFragment {
 			LocalTime now = LocalTime.now();
 			long min = now.until(alarm, ChronoUnit.MINUTES);
 			//app().display("min = " + min + " | diff = " + min % 90, false);
-			now = now.plus(min - min % 90, ChronoUnit.MINUTES);
+			now = now.plus(min - (min % 90), ChronoUnit.MINUTES);
 
 			PrescriptionModule mod = Module.of(PrescriptionModule.class);
 			boolean s = mod.userHasSleepAffectingPrescription();

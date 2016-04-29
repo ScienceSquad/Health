@@ -10,6 +10,7 @@
     <!-- For the Activity Module to read GPS data. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- For SoundService to play audio with the screen off. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- For Nutrition to scan barcodes. -->
     <uses-permission android:name="android.permission.CAMERA" />
