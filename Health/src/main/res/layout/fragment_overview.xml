@@ -18,7 +18,7 @@
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.LightBlue">
+            android:theme="@style/AppTheme.Overview">
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:tag="@string/overview_module"
@@ -39,11 +39,12 @@
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?colorPrimary"
+            android:theme="@style/AppTheme.Overview"
+            android:background="?colorAccent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" >
             <RelativeLayout
                 android:id="@+id/page1"
-                android:tag="Overview"
+                android:tag="@string/overview_module"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -52,6 +53,7 @@
                     android:id="@+id/overviewChart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    app:elevation="6dp"
                     app:pressedTranslationZ="6dp" />
 
             </RelativeLayout>
@@ -92,6 +94,8 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_plus"
+        android:tint="?attr/colorAccent"
+        app:backgroundTint="?attr/colorPrimary"
         app:pressedTranslationZ="12dp" />
 
     <android.support.design.widget.FloatingActionButton
@@ -106,6 +110,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:src="@drawable/ic_plus"
+        android:tint="?attr/colorAccent"
         app:layout_anchor="@id/overviewFab"
         app:fabSize="mini"
         app:backgroundTint="@color/green_400"
@@ -125,6 +130,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:src="@drawable/ic_plus"
+        android:tint="?attr/colorAccent"
         app:layout_anchor="@id/overviewFab"
         app:fabSize="mini"
         app:backgroundTint="@color/purple_400"
@@ -144,6 +150,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:src="@drawable/ic_plus"
+        android:tint="?attr/colorAccent"
         app:layout_anchor="@id/overviewFab"
         app:fabSize="mini"
         app:backgroundTint="@color/red_400"

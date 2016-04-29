@@ -2,6 +2,7 @@ package com.sciencesquad.health.overview;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -33,10 +34,16 @@ import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Coefficient;
+import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentOverviewBinding;
+import com.sciencesquad.health.nutrition.NutritionModel;
+import com.sciencesquad.health.nutrition.NutritionModule;
+import com.sciencesquad.health.sleep.SleepModule;
+import com.sciencesquad.health.steps.StepsModule;
+import com.sciencesquad.health.workout.WorkoutModule;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -60,10 +67,6 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	/**
 	 * Floating Action Buttons and their animations
 	 */
-    private FloatingActionButton fab;
-    private FloatingActionButton fab2; // dummy
-    private FloatingActionButton fab3; // dummy
-    private FloatingActionButton fab4; // dummy
     private Boolean isFabOpen = false;
     private Animation fab_open;
     private Animation fab_close;
@@ -135,6 +138,13 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	}
 
 	/**
+	 *
+	 */
+	private void getModuleCoefficients() {
+
+	}
+	
+	/**
 	 * Obtains colors from modules
 	 */
 	private void getModuleColors() {
@@ -179,12 +189,12 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         this.pds.setColors(pieColors);
 
         PieData data = new PieData(xVals, this.pds);
-        data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(14f);
         data.setValueTextColor(Color.DKGRAY);
 
         xml().overviewChart.setData(data);
         xml().overviewChart.highlightValues(null);
+		xml().overviewChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
         Legend legend = xml().overviewChart.getLegend();
 		legend.setEnabled(false);
         xml().overviewChart.invalidate();
@@ -206,7 +216,15 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+		xml().setFragment(this);
+		NutritionModule nutritionModule = Module.of(NutritionModule.class);
+		//RunModule runModule = Module.of(SleepModule.class);
+		SleepModule sleepModule = Module.of(SleepModule.class);
+		StepsModule stepsModule = Module.of(StepsModule.class);
+		WorkoutModule workoutModule = Module.of(WorkoutModule.class);
 
+		Drawable menu = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu);
+		menu.setTint(Color.WHITE);
 		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
 		plus.setTint(Color.DKGRAY);
 
@@ -272,29 +290,26 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				R.anim.rotation);
 
         // FABulous!!!
-        fab = xml().overviewFab;
 		xml().overviewFab.setImageDrawable(plus);
-        fab2 = xml().overviewFab2;
-        fab2.hide();
-        fab3 = xml().overviewFab3;
-        fab3.hide();
-        fab4 = xml().overviewFab4;
-        fab4.hide();
+		//xml().overviewFab.setBackgroundTintList(ColorStateList.valueOf(1));
+		xml().overviewFab2.hide();
+		xml().overviewFab3.hide();
+		xml().overviewFab4.hide();
 
-        fab.setOnClickListener(v -> {
+		xml().overviewFab.setOnClickListener(v -> {
             animateFab();
         });
 
-		fab2.setOnClickListener(v -> {
-			fab2.startAnimation(rotation);
+		xml().overviewFab2.setOnClickListener(v -> {
+			xml().overviewFab2.startAnimation(rotation);
 		});
 
-		fab3.setOnClickListener(v -> {
-			fab3.startAnimation(rotation);
+		xml().overviewFab3.setOnClickListener(v -> {
+			xml().overviewFab3.startAnimation(rotation);
 		});
 
-		fab4.setOnClickListener(v -> {
-			fab4.startAnimation(rotation);
+		xml().overviewFab4.setOnClickListener(v -> {
+			xml().overviewFab4.startAnimation(rotation);
 		});
 
     }
@@ -304,28 +319,28 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
      */
     public void animateFab() {
         if (!isFabOpen) {
-            fab.startAnimation(rotate_forward);
-            fab2.startAnimation(fab_open);
-            fab3.startAnimation(fab_open);
-            fab4.startAnimation(fab_open);
-            fab2.show();
-            fab3.show();
-            fab4.show();
-            fab2.setClickable(true);
-            fab3.setClickable(true);
-            fab4.setClickable(true);
+			xml().overviewFab.startAnimation(rotate_forward);
+			xml().overviewFab2.startAnimation(fab_open);
+			xml().overviewFab3.startAnimation(fab_open);
+			xml().overviewFab4.startAnimation(fab_open);
+			xml().overviewFab2.show();
+			xml().overviewFab3.show();
+			xml().overviewFab4.show();
+			xml().overviewFab2.setClickable(true);
+			xml().overviewFab3.setClickable(true);
+			xml().overviewFab4.setClickable(true);
             isFabOpen = true;
         } else {
-            fab.startAnimation(rotate_backward);
-            fab2.startAnimation(fab_close);
-            fab3.startAnimation(fab_close);
-            fab4.startAnimation(fab_close);
-            fab2.hide();
-            fab3.hide();
-            fab4.hide();
-            fab2.setClickable(false);
-            fab3.setClickable(false);
-            fab4.setClickable(false);
+			xml().overviewFab.startAnimation(rotate_backward);
+			xml().overviewFab2.startAnimation(fab_close);
+			xml().overviewFab3.startAnimation(fab_close);
+			xml().overviewFab4.startAnimation(fab_close);
+			xml().overviewFab2.hide();
+			xml().overviewFab3.hide();
+			xml().overviewFab4.hide();
+			xml().overviewFab2.setClickable(false);
+			xml().overviewFab3.setClickable(false);
+			xml().overviewFab4.setClickable(false);
             isFabOpen = false;
         }
     }
