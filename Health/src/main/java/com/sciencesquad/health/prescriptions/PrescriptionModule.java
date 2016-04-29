@@ -158,6 +158,17 @@ public class PrescriptionModule extends Module {
 		prescriptionRealm.clear();
 	}
 
+	/**
+	 * Returns whether the user has any sleep affecting prescriptions.
+	 *
+	 * @return true if any prescription affects sleep
+	 */
+	public boolean userHasSleepAffectingPrescription() {
+		return prescriptionRealm.query(PrescriptionModel.class)
+				.equalTo("affectsSleeping", true)
+				.count() > 0;
+	}
+
 	public void notifyPrescription(int alarmId) {
 		RealmResults<PrescriptionModel> results = prescriptionRealm
 				.query(PrescriptionModel.class)
