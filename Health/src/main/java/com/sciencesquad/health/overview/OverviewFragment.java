@@ -320,16 +320,17 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         // Bind calendar view
         //calendarView = xml().calendarView;
         xml().dateDisplay.setText("Date: ");
+		long currDate = xml().calendarView.getDate();
+		xml().calendarView.setMinDate(xml().calendarView.getDate());
 
-        /*calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        xml().calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView calendarView, int i, int i1, int i2) {
-                dateDisplay.setText("Date: " + i2 + " / " + i1 + " / " + i);
-
+                xml().dateDisplay.setText("Date: " + i2 + " / " + i1 + " / " + i);
 				BaseApp.app().display("Selected Date:\n" + "Day = " + i2 + "\n" +
                         "Month = " + i1 + "\n" + "Year = " + i, false);
             }
-        });*/
+        });
 
 		// Initialize animations for fabs
         fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
