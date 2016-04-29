@@ -9,4 +9,9 @@
         android:inputType="time"
         android:ems="10"
         android:id="@+id/editText4" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cardio_stopwatch_text"/>
 </LinearLayout>

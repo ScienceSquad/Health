@@ -9,8 +9,11 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,8 +35,16 @@ import io.realm.RealmList;
 public class SetDialogFragment extends DialogFragment {
 
 	public String titleThing;
+	public CompletedExerciseModel mostRecent;
 	public RealmList<ExerciseSetModel> set = new RealmList<>();
 	private Context context;
+	private TextInputEditText numRepsField;
+	private TextInputEditText weightField;
+	private TextInputLayout repLayout;
+	private TextInputLayout weightLayout;
+	private View dialogLayout;
+
+
 
 	public static SetDialogFragment newInstance(int title) {
 		SetDialogFragment frag = new SetDialogFragment();
@@ -53,23 +64,21 @@ public class SetDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		String title = this.titleThing;
+		CompletedExerciseModel mostRecent = this.mostRecent;
+
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.WorkoutDialogCustom);
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View dialogLayout = inflater.inflate(R.layout.set_dialog_fragment_layout, null);
+		dialogLayout = inflater.inflate(R.layout.set_dialog_fragment_layout, null);
 		builder.setView(dialogLayout);
 		builder.setTitle(title);
 
-		/*
-		final TextInputLayout repLayout = (TextInputLayout) dialogLayout.findViewById(R.id.num_rep_field_layout);
-		repLayout.setHint("Number of reps");
-		repLayout.setHintEnabled(true);
-		repLayout.setHintAnimationEnabled(true);
-*/
 
-		TextInputEditText numRepsField = (TextInputEditText) dialogLayout.findViewById(R.id.num_rep_field);
+		repLayout = (TextInputLayout) dialogLayout.findViewById(R.id.num_rep_field_layout);
+		numRepsField = (TextInputEditText) dialogLayout.findViewById(R.id.num_rep_field);
 		numRepsField.setInputType(InputType.TYPE_CLASS_NUMBER);
-		TextInputEditText weightField = (TextInputEditText) dialogLayout.findViewById(R.id.amount_weight_field);
+		weightLayout = (TextInputLayout) dialogLayout.findViewById(R.id.num_rep_field_layout);
+		weightField = (TextInputEditText) dialogLayout.findViewById(R.id.amount_weight_field);
 		weightField.setInputType(InputType.TYPE_CLASS_NUMBER);
 
 		ListView completedSetListView = (ListView) dialogLayout.findViewById(R.id.list_complete_reps);
@@ -126,31 +135,53 @@ public class SetDialogFragment extends DialogFragment {
 		weightDecButt.setOnClickListener(repDec -> {
 			Integer weight = 0;
 			try{
-				weight = new Integer(numRepsField.getText().toString());
+				weight = new Integer(weightField.getText().toString());
 			} catch(NumberFormatException e){
 				weight = 0;
 			}
 
 			if( weight > 0){
 				weight--;
-				numRepsField.setText(weight.toString());
+				weightField.setText(weight.toString());
 			}
+
 		});
+
+		// Populate input fields with the values from the last time user completed this exercise
+		if(mostRecent != null){
+			Log.i("SETDIALOG", "SUCCESSFULLY FOUND A COMPLETEDEXERCISE OF SPECIFIED TYPE");
+			ExerciseSetModel set = mostRecent.getSets().first();
+			numRepsField.setText(set.getReps().toString());
+			weightField.setText(set.getWeight().toString());
+			hideKeyboard();
+		} else {
+			Log.i("SETDIALOG", "Didn't find any previous completedExercises of this type");
+		}
+
 
 
 		// When a user choose to "Complete Set" a new ExerciseSetModel is created based on input
 		Button button = (Button) dialogLayout.findViewById(R.id.complete_rep_button);
 		button.setOnClickListener(butt -> {
-			int numReps = new Integer(numRepsField.getText().toString());
-			int weight = new Integer(weightField.getText().toString());
-			ExerciseSetModel newSet = new ExerciseSetModel();
-			newSet.setReps(numReps);
-			newSet.setWeight(weight);
-			newSet.setDate(Calendar.getInstance().getTime());
-			set.add(newSet);        // add set to the list of sets
+			if(weightField.getText().toString().equals("")){
+				// set weightField error
+				;
+			} else if(numRepsField.getText().toString().equals("")){
+				// set repsField error
+				;
+			} else {
+				hideKeyboard();
+				int numReps = new Integer(numRepsField.getText().toString());
+				int weight = new Integer(weightField.getText().toString());
+				ExerciseSetModel newSet = new ExerciseSetModel();
+				newSet.setReps(numReps);
+				newSet.setWeight(weight);
+				newSet.setDate(Calendar.getInstance().getTime());
+				set.add(newSet);        // add set to the list of sets
 
-			completedSetAdapter.clear();
-			completedSetAdapter.addAll(set);        //repopulate the adapter
+				completedSetAdapter.clear();
+				completedSetAdapter.addAll(set);        //repopulate the adapter
+			}
 		});
 
 
@@ -175,4 +206,15 @@ public class SetDialogFragment extends DialogFragment {
 		Dialog d = builder.create();
 		return d;
 	}
+
+	private void hideKeyboard() {
+		InputMethodManager inputManager = (InputMethodManager)
+				context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		inputManager.hideSoftInputFromWindow(dialogLayout.getWindowToken(),
+				InputMethodManager.HIDE_NOT_ALWAYS);
+	}
+
+
+
 }

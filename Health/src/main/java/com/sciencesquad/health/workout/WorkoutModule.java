@@ -9,6 +9,8 @@ import com.sciencesquad.health.core.util.Dispatcher;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
+
 import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
@@ -342,6 +344,24 @@ public class WorkoutModule extends Module {
             return false;
         }
     }
+
+    public CompletedExerciseModel getMostRecentCompletedExerciseModel(String exerciseName){
+        CompletedExerciseModel mostRecent = null;
+        try {
+            RealmQuery<CompletedExerciseModel> query = this.workoutRealm.query(CompletedExerciseModel.class).equalTo("exerciseName", exerciseName);
+            RealmResults<CompletedExerciseModel> results = query.findAll();
+            if(results.size() == 0){
+                Log.i(TAG, "Didn't find any completed exercises of type " + exerciseName);
+                return null;
+            }
+            Date date = results.maxDate("date");
+            mostRecent = query.equalTo("date", date).findFirst();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return mostRecent;
+    }
+
 
 
     public ArrayList<CompletedExerciseModel> getCompletedExercises(String exerciseName){

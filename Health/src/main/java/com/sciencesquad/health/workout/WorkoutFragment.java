@@ -274,11 +274,13 @@ public class WorkoutFragment extends BaseFragment {
      * a user to log his or her selected exercise
      */
     void showSetDialog(String name) {
-        // check if exercise is strength or cardio
+        CompletedExerciseModel mostRecent = mod.getMostRecentCompletedExerciseModel(name);
+
 
         SetDialogFragment newFragment = SetDialogFragment.newInstance(
                 R.string.title_new_exercise_dialog);
         newFragment.titleThing = name;
+        newFragment.mostRecent = mostRecent;
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
