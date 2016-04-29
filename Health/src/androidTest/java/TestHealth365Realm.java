@@ -162,8 +162,8 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
             Assert.fail("An Exception Occurred.");
         }
 
-    }
-        */
+    } */
+    
     /*
     @Test
     public void testPrescriptionRealm() {

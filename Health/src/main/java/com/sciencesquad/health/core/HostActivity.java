@@ -34,7 +34,6 @@ import com.sciencesquad.health.nutrition.DatabaseFragment;
 import com.sciencesquad.health.prescriptions.PrescriptionFragment;
 
 import com.sciencesquad.health.nutrition.NutritionFragment;
-import com.sciencesquad.health.run.RunLandingFragment;
 import com.sciencesquad.health.sleep.SleepFragment;
 import com.sciencesquad.health.steps.StepsFragment;
 import com.sciencesquad.health.workout.WorkoutFragment;
