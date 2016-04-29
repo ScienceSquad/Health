@@ -87,7 +87,9 @@ public class RunFragment extends BaseFragment implements
     private LocationRequest mLocationRequest;
 
     private ListView runHistoryListView;
+    private ListView runTrainingListView;
     private ArrayAdapter arrayAdapter;
+    private ArrayAdapter arrayAdapterTraining;
 
     private TextView textViewCalories;
     private TextView textViewDistance;
@@ -104,6 +106,7 @@ public class RunFragment extends BaseFragment implements
 
     String[] dateArray = null;
     String[] pathArray = null;
+    String[] trainingArray = null;
 
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
     boolean isRunStarted = false; // only starts on button press.
@@ -154,6 +157,7 @@ public class RunFragment extends BaseFragment implements
                 .build();
 
         makeArraysFromRealm();
+        makeTrainingArray();
 
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
@@ -168,8 +172,11 @@ public class RunFragment extends BaseFragment implements
         xml().tabs.setupWithViewPager(xml().pager);
 
         runHistoryListView = xml().listViewRunHistory;
+        runTrainingListView = xml().listViewRunTraining;
         arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, dateArray);
+        arrayAdapterTraining = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, trainingArray);
         runHistoryListView.setAdapter(arrayAdapter);
+        runTrainingListView.setAdapter(arrayAdapterTraining);
 
 
         textViewCalories = xml().textViewCalories;
@@ -189,6 +196,9 @@ public class RunFragment extends BaseFragment implements
         // Start Run FAB
         xml().buttonStartRun.setOnClickListener(v -> buttonStartRunClicked());
 
+        // Training: Half Marathon Button
+        xml().buttonTrainingHalfMarathon.setOnClickListener(v -> buttonTrainingHalfMarathonClicked());
+
         // ListView
         runHistoryListView.setOnItemClickListener((parent, view1, position, id) -> {
             //TODO: display path
@@ -196,6 +206,8 @@ public class RunFragment extends BaseFragment implements
             Log.e(TAG, "Path in String Format: " + pathArray[position]);
             Log.e(TAG, "Path in LatLng Format: " + getPathFromJson(pathArray[position]));
         });
+
+
     }
 
     public void saveRunToRealm() {
@@ -219,6 +231,16 @@ public class RunFragment extends BaseFragment implements
             dateArray[i] = getRealmObjects().get(i).getDate().toString();
             pathArray[i] = getRealmObjects().get(i).getPath();
         }
+    }
+
+    public void makeTrainingArray() {
+        int numDays = 10;
+        trainingArray = new String[numDays];
+        int[] milesNum = {3, 3, 4, 6, 7, 6, 9, 8, 12, 10};
+        for (int i = 0; i < numDays; i++) {
+            trainingArray[i] = "Day " + (i+1) + ": Run " + milesNum[i] + " miles.";
+        }
+
     }
 
     public RealmResults<CompletedRunModel> getRealmObjects() {
@@ -307,6 +329,11 @@ public class RunFragment extends BaseFragment implements
         } catch(Error e2) {
             Log.e(TAG, "Error: " + e2.toString());
         }
+    }
+
+    public void buttonTrainingHalfMarathonClicked() {
+        xml().buttonTrainingHalfMarathon.setVisibility(View.GONE);
+        xml().listViewRunTraining.setVisibility(View.VISIBLE);
     }
 
     public void clearLastRun() {
