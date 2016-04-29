@@ -269,10 +269,12 @@ public abstract class BaseFragment extends Fragment {
 
 		// Change the Navigation Bar color.
 		this._previousNavigation = getActivity().getWindow().getNavigationBarColor();
+		//getActivity().getWindow().setNavigationBarColor(getResources().getColor(R.color.material_black));
 		getActivity().getWindow().setNavigationBarColor(colors[1]);
 
 		// Set the current Overview Task Description.
 		Bitmap b = drawableToBitmap(theme.getDrawable(config.icon));
+
 		getActivity().setTaskDescription(new ActivityManager.TaskDescription(config.name, b, colors[0]));
 
 		// Return the inflated view and grab our binding.

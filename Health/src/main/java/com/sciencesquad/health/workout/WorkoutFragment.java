@@ -3,6 +3,9 @@ package com.sciencesquad.health.workout;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -105,6 +108,10 @@ public class WorkoutFragment extends BaseFragment {
         xml().tabs.setupWithViewPager(xml().pager);
 
         FloatingActionButton fab = xml().fab; //(FloatingActionButton)view.findViewById(R.id.workoutFab);
+        //Drawable plus = getResources().getDrawable(android.R.drawable.ic_input_add);
+        //Drawable whitePlus = plus.getConstantState().newDrawable();
+        //whitePlus.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        //xml().fab.setImageDrawable(whitePlus);
         fab.setOnClickListener(view1 -> {
             //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             //      .setAction("Action", null).show();
@@ -113,12 +120,11 @@ public class WorkoutFragment extends BaseFragment {
                 // in current workout tab
                 showDOWScheduleBuilder();
             } else if (selectedTab == 1) {
-                // in exercise tab
-                showNewExerciseDialog();
-            } else if (selectedTab == 2) {
                 // in routine tab
                 showNewRoutineDialog();
-
+            } else if (selectedTab == 2) {
+                // in exercise tab
+                showNewExerciseDialog();
             }
         });
 
@@ -258,6 +264,7 @@ public class WorkoutFragment extends BaseFragment {
         DialogFragment newFragment = NameRoutineFragment.newInstance();
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "dialog");
+
     }
 
     /**

@@ -154,9 +154,17 @@
     </style>
 
     <style name="AppTheme.Workout" parent="AppTheme">
-        <item name="colorAccent">@color/amber_700</item>
-        <item name="colorPrimary">@color/blue_grey_700</item>
-        <item name="colorPrimaryDark">@color/blue_grey_900</item>
+        <item name="colorAccent">@color/blue_grey_400</item>
+        <item name="colorPrimary">@color/deep_orange_700</item>
+        <item name="colorPrimaryDark">@color/deep_orange_900</item>
+        <item name="android:textColor">@color/material_black</item>
+        <item name="android:colorBackground">@color/deep_orange_200</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+    </style>
+
+    <style name="WorkoutDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
+        <item name="android:colorPrimary">@color/material_black</item>
+        <item name="android:colorAccent">@color/deep_orange_500</item>
     </style>
 
     <style name="AppTheme.Run" parent="AppTheme">
