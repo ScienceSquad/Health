@@ -458,28 +458,28 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				c = 0;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_nutrition);
 				drawable.setTint(moduleColors[0]);
-				ll = R.layout.fragment_overview_nutrition_low;
+				ll = analyzeCoefficients(e.getXIndex(), moduleCoefficients[e.getXIndex()]);
 				text = "Nutrition Share";
 				break;
 			case 1:
 				c = rc1;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_run);
 				drawable.setTint(moduleColors[1]);
-				ll = R.layout.fragment_overview_run_low;
+				ll = analyzeCoefficients(e.getXIndex(), moduleCoefficients[e.getXIndex()]);
 				text = "Run Share";
 				break;
 			case 2:
 				c = rc2;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
 				drawable.setTint(moduleColors[2]);
-				ll = R.layout.fragment_overview_sleep_high;
+				ll = analyzeCoefficients(e.getXIndex(), moduleCoefficients[e.getXIndex()]);
 				text = "Sleep Share";
 				break;
 			case 3:
 				c = rc3;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_steps);
 				drawable.setTint(moduleColors[3]);
-				ll = R.layout.fragment_overview_steps_high;
+				ll = analyzeCoefficients(e.getXIndex(), moduleCoefficients[e.getXIndex()]);
 				text = "Steps Share";
 				break;
 			case 4:
@@ -487,8 +487,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				drawable = ContextCompat.getDrawable(getActivity(),
 						R.drawable.ic_fitness_center_24dp);
 				drawable.setTint(moduleColors[4]);
-				ll = R.layout.fragment_overview_workout_high;
-
+				ll = analyzeCoefficients(e.getXIndex(), moduleCoefficients[e.getXIndex()]);
 				text = "Workout Share";
 				break;
 		}

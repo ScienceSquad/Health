@@ -81,8 +81,21 @@
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
             </RelativeLayout>
-        </android.support.v4.view.ViewPager>
+            <RelativeLayout
+                android:id="@+id/page3"
+                android:tag="Graphs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/demoChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="6dp"
+                    app:pressedTranslationZ="6dp" />
 
+            </RelativeLayout>
+        </android.support.v4.view.ViewPager>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/overviewFab"
