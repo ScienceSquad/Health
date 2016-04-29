@@ -9,6 +9,8 @@ import com.sciencesquad.health.core.util.Dispatcher;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
+
 import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
@@ -343,6 +345,24 @@ public class WorkoutModule extends Module {
         }
     }
 
+    public CompletedExerciseModel getMostRecentCompletedExerciseModel(String exerciseName){
+        CompletedExerciseModel mostRecent = null;
+        try {
+            RealmQuery<CompletedExerciseModel> query = this.workoutRealm.query(CompletedExerciseModel.class).equalTo("exerciseName", exerciseName);
+            RealmResults<CompletedExerciseModel> results = query.findAll();
+            if(results.size() == 0){
+                Log.i(TAG, "Didn't find any completed exercises of type " + exerciseName);
+                return null;
+            }
+            Date date = results.maxDate("date");
+            mostRecent = query.equalTo("date", date).findFirst();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return mostRecent;
+    }
+
+
 
     public ArrayList<CompletedExerciseModel> getCompletedExercises(String exerciseName){
         ArrayList<CompletedExerciseModel> completed = new ArrayList<>();
@@ -411,7 +431,7 @@ public class WorkoutModule extends Module {
     public ArrayList<ExerciseTargetModel> getAllTargets() {
         ArrayList<ExerciseTargetModel> targets = new ArrayList<>();
         try {
-            RealmResults<ExerciseTargetModel> results = workoutRealm.query(ExerciseTargetModel.class).findAll();
+            RealmResults<ExerciseTargetModel> results = workoutRealm.query(ExerciseTargetModel.class).findAllSorted("target", Sort.ASCENDING);
             targets.addAll(results);
         } catch (Exception e) {
             Log.e(TAG, "Error retrieving targets from Realm");
@@ -475,6 +495,18 @@ public class WorkoutModule extends Module {
         });
     }
     */
+    public String[] getAllExercisesByTarget(String target){
+        ArrayList<String> exercises = new ArrayList<>();
+        try {
+            RealmResults<ExerciseTypeModel> results = workoutRealm.query(ExerciseTypeModel.class).equalTo("target", target).findAll();
+            for(ExerciseTypeModel e : results){
+                exercises.add(e.getName());
+            }
+        } catch (Exception e) {
+        }
+
+        return exercises.toArray(new String[exercises.size()]);
+    }
 
 
     public boolean isDuplicateRoutineType(RoutineModel newRoutine){
@@ -703,6 +735,36 @@ public class WorkoutModule extends Module {
         return newSchedule;
     }
 
+    public String[] getAllCategories(){
+        ArrayList<ExerciseTargetModel> targets = getAllTargets();
+        ArrayList<String> categories = new ArrayList<>();
+        for(ExerciseTargetModel t : targets){
+            categories.add(t.getTarget());
+        }
+        return categories.toArray(new String[categories.size()]);
+    }
+
+    public String[][] groupExercisesByTargetAlpha(String[] categories){
+        String[][] groupedExercises = new String[categories.length][];
+        int i;
+        for(i = 0; i < categories.length; i++){
+            groupedExercises[i] = getAllExercisesByTarget(categories[i]);
+        }
+
+        return groupedExercises;
+    }
+
+
+    public Double calculateCaloriesBurned(CompletedExerciseModel exercise, double age, String sex, double height, double weight, double heartrate){
+        double calories = 0;
+        if(sex.equals("Male")){
+            calories = ((age * 0.2017) - (weight * 0.08036) + (heartrate * 0.6309) - 55.0969);
+        } else {
+            // Female
+            calories = ((age * 0.074) - (weight * 0.05741) + (heartrate * 0.4472) - 20.4022);
+        }
+        return calories;
+    }
 
     public RealmContext<ExerciseTypeModel> getWorkoutRealm(){
         return this.workoutRealm;

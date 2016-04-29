@@ -35,7 +35,7 @@ public class NewExerciseDialogFragment extends DialogFragment {
 		String title = this.getArguments().getString(KEY_TITLE);
 
 		// Inflate dialog
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.WorkoutDialogCustom);
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View dialogLayout = inflater.inflate(R.layout.new_exercise_dialog_layout, null);
 		builder.setView(dialogLayout);
@@ -58,6 +58,9 @@ public class NewExerciseDialogFragment extends DialogFragment {
 		builder.setNegativeButton("Cancel", (dialog, whichButton) -> {
 			((WorkoutFragment)getTargetFragment()).cancelNewExerciseType();
 		});
+
+
+
 		return builder.create();
 	}
 }

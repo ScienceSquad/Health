@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                app:navigationIcon="@drawable/ic_menu"
+                app:navigationIcon="@drawable/ic_menu_white"
                 app:title="Workouts"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
                 <android.support.design.widget.TabLayout
@@ -35,7 +35,6 @@
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?colorPrimary"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                             android:id="@+id/current_routine_view"
@@ -49,6 +48,7 @@
                     android:id="@+id/current_workout_header"
                     android:textAlignment="center"
                     android:textStyle="bold"
+                    android:alpha="0.75"
                     android:textSize="@dimen/md_styled_text_title"/>
                 <ListView
                     android:layout_width="wrap_content"
@@ -58,24 +58,11 @@
                     android:layout_alignParentStart="true" />
             </RelativeLayout>
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                            android:id="@+id/exercise_type_view"
-                            android:tag="Exercises"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
-                <ListView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/exercise_model_list_view"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true" />
-            </RelativeLayout>
-            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                            android:id="@+id/routine_list_view"
-                            android:tag="Routines"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
+                android:id="@+id/routine_list_view"
+                android:tag="Routines"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
                 <ListView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,7 +70,19 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true" />
             </RelativeLayout>
-
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:id="@+id/exercise_type_view"
+                            android:tag="Exercises"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                <com.sciencesquad.health.core.util.AnimatedExpandableListView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/category_expandable_view"
+                    android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft">
+                </com.sciencesquad.health.core.util.AnimatedExpandableListView>
+            </RelativeLayout>
 
         </android.support.v4.view.ViewPager>
         <android.support.design.widget.FloatingActionButton
@@ -92,6 +91,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_plus" />
+            android:src="@drawable/ic_plus"
+            android:tint="@android:color/white"/>
+
     </android.support.design.widget.CoordinatorLayout>
 </layout>
