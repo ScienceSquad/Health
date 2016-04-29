@@ -485,6 +485,7 @@ public class Stopwatch {
         this.elapsed = Duration.ZERO;
         this.finished = false;
         this.running = false;
+        this.onTimeChange.run();
     }
 
     public void setInterval(int interval) {
