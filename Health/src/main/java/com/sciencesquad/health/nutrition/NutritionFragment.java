@@ -293,6 +293,11 @@ public class NutritionFragment extends BaseFragment {
         return nutritionModule;
     }
 
+    public void updateFood(FoodModel model){
+        foodLog.add(model.getName());
+        foodList.getAdapter().notifyDataSetChanged();
+    }
+
     /**
      * Before we destroy the Nutrition Activity, we should save first.
      *
