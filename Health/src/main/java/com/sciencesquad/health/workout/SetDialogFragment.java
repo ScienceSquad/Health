@@ -5,12 +5,16 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import com.sciencesquad.health.R;
 
@@ -29,6 +33,7 @@ public class SetDialogFragment extends DialogFragment {
 
 	public String titleThing;
 	public RealmList<ExerciseSetModel> set = new RealmList<>();
+	private Context context;
 
 	public static SetDialogFragment newInstance(int title) {
 		SetDialogFragment frag = new SetDialogFragment();
@@ -39,24 +44,99 @@ public class SetDialogFragment extends DialogFragment {
 	}
 
 	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		context.setTheme(R.style.WorkoutDialogCustom);
+		this.context = context;
+	}
+
+	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		String title = this.titleThing;
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.WorkoutDialogCustom);
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View dialogLayout = inflater.inflate(R.layout.set_dialog_fragment_layout, null);
 		builder.setView(dialogLayout);
 		builder.setTitle(title);
 
-		EditText numRepsField = (EditText) dialogLayout.findViewById(R.id.num_rep_field);
+		/*
+		final TextInputLayout repLayout = (TextInputLayout) dialogLayout.findViewById(R.id.num_rep_field_layout);
+		repLayout.setHint("Number of reps");
+		repLayout.setHintEnabled(true);
+		repLayout.setHintAnimationEnabled(true);
+*/
+
+		TextInputEditText numRepsField = (TextInputEditText) dialogLayout.findViewById(R.id.num_rep_field);
 		numRepsField.setInputType(InputType.TYPE_CLASS_NUMBER);
-		EditText weightField = (EditText) dialogLayout.findViewById(R.id.amount_weight_field);
+		TextInputEditText weightField = (TextInputEditText) dialogLayout.findViewById(R.id.amount_weight_field);
 		weightField.setInputType(InputType.TYPE_CLASS_NUMBER);
 
 		ListView completedSetListView = (ListView) dialogLayout.findViewById(R.id.list_complete_reps);
 		ArrayAdapter<ExerciseSetModel> completedSetAdapter = new ArrayAdapter<>(getActivity(),
 				android.R.layout.simple_list_item_1);
 	   completedSetListView.setAdapter(completedSetAdapter);        // When sets are completed, they are listed in the dialog
+
+
+		// Set up increment/decrement buttons
+		ImageView repIncButt = (ImageView) dialogLayout.findViewById(R.id.rep_increment_button);
+		repIncButt.setOnClickListener(repInc -> {
+			Integer numReps = 0;
+			try{
+				numReps = new Integer(numRepsField.getText().toString());
+			} catch(NumberFormatException e){
+				numReps = 0;
+			}
+
+			if( numReps < 9999){
+				numReps++;
+				numRepsField.setText(numReps.toString());
+			}
+		});
+		ImageView repDecButt = (ImageView) dialogLayout.findViewById(R.id.rep_decrement_button);
+		repDecButt.setOnClickListener(repDec -> {
+			Integer numReps = 0;
+			try{
+				numReps = new Integer(numRepsField.getText().toString());
+			} catch(NumberFormatException e){
+				numReps = 0;
+			}
+
+			if( numReps > 0){
+				numReps--;
+				numRepsField.setText(numReps.toString());
+			}
+		});
+
+		ImageView weightIncButt = (ImageView) dialogLayout.findViewById(R.id.weight_increment_button);
+		weightIncButt.setOnClickListener(repInc -> {
+			Integer weight = 0;
+			try{
+				weight = new Integer(weightField.getText().toString());
+			} catch(NumberFormatException e){
+				weight = 0;
+			}
+
+			if( weight < 9999){
+				weight++;
+				weightField.setText(weight.toString());
+			}
+		});
+		ImageView weightDecButt = (ImageView) dialogLayout.findViewById(R.id.weight_decrement_button);
+		weightDecButt.setOnClickListener(repDec -> {
+			Integer weight = 0;
+			try{
+				weight = new Integer(numRepsField.getText().toString());
+			} catch(NumberFormatException e){
+				weight = 0;
+			}
+
+			if( weight > 0){
+				weight--;
+				numRepsField.setText(weight.toString());
+			}
+		});
+
 
 		// When a user choose to "Complete Set" a new ExerciseSetModel is created based on input
 		Button button = (Button) dialogLayout.findViewById(R.id.complete_rep_button);
