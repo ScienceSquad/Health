@@ -3,6 +3,7 @@ package com.sciencesquad.health.core.ui;
 
 import android.os.SystemClock;
 import android.os.Handler;
+import android.util.Log;
 
 import org.threeten.bp.*;
 
@@ -13,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  * Created by andrew on 2/21/16.
  */
 public class Stopwatch {
+
+    private static final String TAG = Stopwatch.class.getSimpleName();
 
     public final long MAX_MILLIS = 1000;
     public final long MAX_SECONDS = 60;
@@ -29,7 +32,12 @@ public class Stopwatch {
 
     private long prevTime = 0;
 
-    private ArrayList<Duration> laps;
+    private class Lap {
+        public Duration elapsed;
+        public Duration elapsedTotal;
+    }
+
+    private ArrayList<Lap> laps;
 
     private Handler handler = null;
 
@@ -71,6 +79,7 @@ public class Stopwatch {
     public Stopwatch() {
         remaining = Duration.ZERO;
         elapsed = Duration.ZERO;
+        this.laps = new ArrayList<>();
     }
 
 
@@ -161,6 +170,30 @@ public class Stopwatch {
         this.total = this.remaining;
     }
 
+    public void resetTime() {
+        this.remaining = Duration.ZERO;
+    }
+
+    public void setMillis(long millis) {
+        this.resetTime();
+        this.remaining.plusMillis(millis);
+    }
+
+    public void setSeconds(long seconds) {
+        this.resetTime();
+        this.remaining.plusSeconds(seconds);
+    }
+
+    public void setMinutes(long minutes) {
+        this.resetTime();
+        this.remaining.plusMinutes(minutes);
+    }
+
+    public void setHours(long hours) {
+        this.resetTime();
+        this.remaining.plusHours(hours);
+    }
+
     /** get[Unit]Remaining
      * If total == true,
      *  return total time
@@ -177,6 +210,9 @@ public class Stopwatch {
      *      getMinutesRemaining(true) returns 5
      */
     public long getMillis(Duration duration, boolean total) {
+        if (duration == null) {
+            return 0;
+        }
         long totalMillis = duration.toMillis();
         if (total) {
             return totalMillis;
@@ -273,6 +309,7 @@ public class Stopwatch {
             return this.getAngle(seconds, MAX_SECONDS);
         }
         float totalMillis = this.getMillis(this.total, true);
+        if (totalMillis == 0) return this.getAngle(0, 1);
         float remainingMillis = this.getMillis(this.remaining, true);
         return this.getAngle(remainingMillis, totalMillis);
     }
@@ -444,11 +481,42 @@ public class Stopwatch {
         if (this.mode == WatchMode.DOWN) {
             this.remaining = this.remaining.plusMillis(this.elapsed.toMillis());
         }
+        this.clearLaps();
         this.elapsed = Duration.ZERO;
+        this.finished = false;
+        this.running = false;
     }
 
     public void setInterval(int interval) {
         this.interval = interval;
+    }
+
+    public int getNumLaps() {
+        return this.laps.size();
+    }
+
+    public Lap getLap(int num) {
+        return this.laps.get(num);
+    }
+
+    public Duration getLapElapsed(int num) {
+        return getLap(num).elapsed;
+    }
+
+    public Duration getLapElapsedTotal(int num) {
+        return getLap(num).elapsed;
+    }
+
+    public Lap getLastLap() {
+        return getLap(getNumLaps() - 1);
+    }
+
+    public Duration getCurrentLapElapsed() {
+        Duration elapsed = this.elapsed;
+        if (getNumLaps() > 0) {
+            elapsed = elapsed.minus(getLastLap().elapsedTotal);
+        }
+        return elapsed;
     }
 
     /** Add a lap
@@ -457,7 +525,27 @@ public class Stopwatch {
      * Once I write it, it'll probably add the elapsed time to a list and restart the stopwatch
      */
     public void addLap() {
-		// TODO in Sprint 2, toodaloo
+        Log.d(TAG, "Attempting to add lap");
+        // Only work when counting up
+        if ((mode == WatchMode.DOWN) || (!isRunning())) {
+            return;
+        }
+        Lap lap = new Lap();
+        lap.elapsedTotal = this.elapsed;
+        lap.elapsed = getCurrentLapElapsed();
+        laps.add(lap);
+
+        Log.d(TAG, "Lap successfully added");
+
+        for (int i = 0; i < getNumLaps(); i++) {
+            Log.d(TAG, String.valueOf(i) + ": "
+                    + getPrettyTime(getLap(i).elapsed, false) + " | "
+                    + getPrettyTime(getLap(i).elapsedTotal, false));
+        }
+    }
+
+    public void clearLaps() {
+        this.laps = new ArrayList<>();
     }
 
     public boolean isRunning() {

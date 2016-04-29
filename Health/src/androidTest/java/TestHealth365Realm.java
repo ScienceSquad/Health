@@ -163,9 +163,10 @@ public class TestHealth365Realm extends ApplicationTestCase<BaseApp>{
         }
 
     }
-        */
 
 
+
+    /*
     @Test
     public void testPrescriptionRealm() {
         createApplication();

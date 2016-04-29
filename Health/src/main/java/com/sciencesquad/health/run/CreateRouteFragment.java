@@ -9,7 +9,6 @@ import android.location.Location;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -250,10 +249,6 @@ public class CreateRouteFragment extends BaseFragment implements
         if (!firstMarker) polyline.setPoints(pointsLatLng);
         */
     }
-
-    //TODO: Adds location information for marker to location list
-
-    //TODO: Calculate distance between new marker and previous
 
     // Calculates distance and adds to the distances list
     public static double distanceCalculate(LatLng latLng, List<LatLng> pointsLatLng) {

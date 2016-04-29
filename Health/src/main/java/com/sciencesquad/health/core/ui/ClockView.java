@@ -122,6 +122,10 @@ public class ClockView extends View {
 		}
     }
 
+	public Stopwatch getStopwatch() {
+		return this.stopwatch;
+	}
+
     private void init(Context context, AttributeSet attrs) {
         mDetector = new GestureDetector(context, new mListener());
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ClockView);
@@ -203,6 +207,7 @@ public class ClockView extends View {
         Rect bounds = new Rect();
         mTimePaint.getTextBounds(timeText, 0, timeText.length(), bounds);
         int textWidth = bounds.width();
+		int textHeight = bounds.height();
 
         bounds = new Rect();
         mMsPaint.getTextBounds(milliText, 0, milliText.length(), bounds);
@@ -224,6 +229,12 @@ public class ClockView extends View {
 				this.PADDING + radius + (mTextHeight / 2), mTimePaint);
 		canvas.drawText(milliText, (2 * this.PADDING) + radius - (totalTextWidth / 2) + textWidth,
 				this.PADDING + radius + (mTextHeight / 2), mMsPaint);
-    }
+		String lapText = "#" + this.stopwatch.getNumLaps() + ": "
+				+ this.stopwatch.getPrettyTime(this.stopwatch.getCurrentLapElapsed(), false)
+				+ this.stopwatch.getMilliString(this.stopwatch.getCurrentLapElapsed());
+		if (this.stopwatch.getNumLaps() > 0) {
+			canvas.drawText(lapText, this.PADDING + radius - (totalTextWidth / 2), (2 * this.PADDING) + radius + (mTextHeight / 2) + textHeight, mMsPaint);
+		}
+	}
 
 }

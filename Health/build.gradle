@@ -5,7 +5,7 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0-beta1'
+        classpath 'com.android.tools.build:gradle:2.1.0'
         classpath 'me.tatarka:gradle-retrolambda:3.1.0'
         classpath 'com.android.databinding:dataBinder:1.0-rc1'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
@@ -87,6 +87,8 @@ dependencies {
     androidTestCompile 'com.android.support:support-annotations:23.2.1'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
+
+    // MPAndroid Chart compiling
     compile 'net.sourceforge.streamsupport:streamsupport:1.1.4'
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
     compile 'com.android.support:palette-v7:23.2.1'
@@ -106,11 +108,8 @@ dependencies {
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.google.maps.android:android-maps-utils:0.3.+'
     compile 'com.cocoahero.android:geojson:1.0.1@jar'
-
     compile 'junit:junit:4.12'
     compile 'com.wdullaer:materialdatetimepicker:2.2.0'
     compile 'com.roughike:bottom-bar:1.2.7'
-
-    // MPAndroid Chart compiling
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 }
