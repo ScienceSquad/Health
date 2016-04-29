@@ -95,6 +95,10 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 		double calories = stepsCount * conversationFactor;
 		double distance = (stepsCount * strip) / 100000.0;
 
+
+		String l = String.format("%.03f", calories);
+		BaseApp.app().display(stepsCount + " steps -> " + l + " Cal", false);
+
 		//Log.i(TAG, "Calories burned: " + calories + " cal");
 		//Log.i(TAG, "Distance: " + distance + " km");
 		return calories;
@@ -196,7 +200,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
             }
         }); */
 
-		avg_speed.setText(getCaloriesBurned(numSteps) + " Cal");
+		avg_speed.setText(String.format("%.03f", getCaloriesBurned(numSteps)) + " Cal");
         //avg_speed.setText(String.valueOf(strideLength) + "m/s");
 
 		// Animate fabs
@@ -284,7 +288,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
             numSteps = (int) event.values[0] - counterSteps;
             num_steps.setText(String.valueOf(numSteps));
             stepsModule.setNumSteps(numSteps);
-			avg_speed.setText(getCaloriesBurned(numSteps) + " Cal");
+			avg_speed.setText(String.format("%.03f", getCaloriesBurned(numSteps)) + " Cal");
             Log.d(TAG, "Sensor picked up steps. Current step count: " + numSteps);
         }
 
@@ -326,7 +330,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
         stopwatch.reset();
         stopwatch.start();
         num_steps.setText(String.valueOf(numSteps));
-		avg_speed.setText(getCaloriesBurned(numSteps) + " Cal");
+		avg_speed.setText(String.format("%.03f", getCaloriesBurned(numSteps)) + " Cal");
     }
 
 	/**
@@ -344,7 +348,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
         numSteps = (int) event.values[0] - counterSteps;
         num_steps.setText(String.valueOf(numSteps));
         stepsModule.setNumSteps(numSteps);
-		avg_speed.setText(getCaloriesBurned(numSteps) + " Cal");
+		avg_speed.setText(String.format("%.03f", getCaloriesBurned(numSteps)) + " Cal");
         Log.d(TAG, "Sensor picked up steps. Current step count: " + numSteps);
     }
 

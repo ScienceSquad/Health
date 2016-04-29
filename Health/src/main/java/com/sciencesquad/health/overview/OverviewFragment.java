@@ -1,12 +1,12 @@
 package com.sciencesquad.health.overview;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.text.Layout;
 import android.transition.Visibility;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -463,6 +463,12 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 						(dialog, which) -> Log.d(TAG, "Accepted!"))
 				.setNegative(getResources().getString(R.string.decline),
 						(dialog, which) -> Log.d(TAG, "Declined!"))
+				.setNeutral("Share", (dialog, which) -> {
+					Intent i = new Intent(Intent.ACTION_SEND);
+					i.putExtra(Intent.EXTRA_TEXT, "Your progress in Health365 is 0.75!");
+					i.setType("text/plain");
+					startActivity(Intent.createChooser(i, "Share"));
+				})
 				.show();
 	}
 }
