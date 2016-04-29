@@ -92,6 +92,10 @@ public class SleepDataModel extends RealmObject {
 	 */
 	public String otherDescription;
 
+	/**
+	 * Sleep coefficient for overview module
+	 */
+	private double sleepCoefficient;
 
 	//
 	// GENERATED METHODS FOLLOW:
@@ -154,6 +158,11 @@ public class SleepDataModel extends RealmObject {
 		this.discomfortType = discomfortType;
 	}
 
+	public double getSleepCoefficient() { return this.sleepCoefficient; }
+
+	public void setSleepCoefficient(double sleepCoefficient) {
+		this.sleepCoefficient = sleepCoefficient;
+	}
 	/*
 	public List<Pair<LocalTime, Duration>> getNoises() {
 		return noises;

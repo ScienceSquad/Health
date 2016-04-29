@@ -2,6 +2,7 @@ package com.sciencesquad.health.nutrition;
 
 import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.EventBus.Entry;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
@@ -18,21 +19,36 @@ import java.util.TreeSet;
 /**
  * Nutrition Module. The big controller for Nutrition
  */
-public class NutritionModule extends Module {
+public class NutritionModule extends Module implements Coefficient {
     public static final String TAG = NutritionModule.class.getSimpleName();
 
     public static final String REALMNAME = "nutrition.realm";
 
     //Important Data.
     private float calorieIntake;
+	private double calorieGoal;
     private boolean hadCaffeine;
     private int numCheatDays;
     private boolean cheated;
     private float waterIntake;
+	private double waterGoal;
     private NutrientModel nutrients;
     private MineralModel minerals;
     private VitaminModel vitamins;
     private ArrayList<String> favoriteFoods;
+
+	// Misc. data for calc coefficient, will improve later
+	double nutrient;
+	double nutrientGoal;
+	double mineral;
+	double mineralGoal;
+	double vitamin;
+	double vitaminGoal;
+
+	/**
+	 * Nutrition coefficient
+	 */
+	private double nutritionCoefficient;
 
     //Data context.
     private RealmContext<NutritionModel> nutritionRealm;
@@ -41,6 +57,49 @@ public class NutritionModule extends Module {
 		this.nutritionRealm = new RealmContext<>();
 		this.nutritionRealm.init(BaseApp.app(), NutritionModel.class, REALMNAME);
 		this.nutritionRealm.clear();
+	}
+
+	/**
+	 * Calculates nutrition coefficient for use in overview module
+	 * @return calculated nutrition coefficient
+	 */
+	@Override
+	public double calculateCoefficient() {
+		double cheat = 0;
+		if (cheated)
+			cheat = cheat - (15 - numCheatDays);
+		double water = (waterIntake / waterGoal) * 35;
+		double calorie = (calorieIntake / calorieGoal) * 35;
+		double diet = (nutrient / nutrientGoal) * 10 +
+				(mineral / mineralGoal) * 10 +
+				(vitamin / vitaminGoal) * 10;
+		double coefficient = cheat + water + calorie + diet;
+		if (coefficient > 100)
+			return 100;
+		else if (coefficient < 0)
+			return 0;
+		else
+			return Math.round(coefficient * 10) / 10;
+	}
+
+	/**
+	 * Retrieves nutrition coefficient
+	 * @return nutritionCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.nutritionCoefficient;
+	}
+
+	/**
+	 * Calculates and sets nutrition coefficient
+	 * TODO: Implement!
+	 * @param coefficient
+	 * @see Coefficient
+	 */
+	@Override
+	public void setCoefficient(double coefficient) {
+		this.nutritionCoefficient = coefficient;
 	}
 
     /**
@@ -54,9 +113,21 @@ public class NutritionModule extends Module {
 		this.favoriteFoods = new ArrayList<>();
 		this.hadCaffeine = false;
 		this.calorieIntake = 0;
-		this.waterIntake = 0;
+		this.waterIntake = 0; // in mL? in oz?
 		this.numCheatDays = 5;
 		this.cheated = false; // being positive and assuming no cheating :)
+
+		// stuff for overview; goals to be
+		waterGoal = 2.8;
+		calorieGoal = 2000;
+		nutrient = 5;
+		nutrientGoal = 10;
+		mineral = 5;
+		mineralGoal = 10;
+		vitamin = 5;
+		vitaminGoal = 10;
+		//setCoefficient(0);
+		setCoefficient(calculateCoefficient());
 
 		bus().subscribe("DataEmptyEvent", null, e -> Log.d(TAG, "Some realm was empty."));
 		bus().subscribe("DataFailureEvent", this, e -> {

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.util.Dispatcher;
@@ -24,7 +25,7 @@ import io.realm.RealmResults;
 /**
  * Created by andrew on 4/28/16.
  */
-public class SuggestionModule extends Module {
+public class SuggestionModule extends Module implements Coefficient {
 	private static final String TAG = SuggestionModule.class.getSimpleName();
 
 	private RealmContext<SuggestionModel> suggestionRealm;
@@ -41,6 +42,33 @@ public class SuggestionModule extends Module {
 
 	private String suggestionText;
 	private AssociatedModule module;
+
+	/**
+	 * Calculates overview coefficient by averaging coefficients from other modules
+	 * @return calculated overview coefficient
+	 */
+	@Override
+	public double calculateCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Retrieves overview coefficient
+	 * @return overviewCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Sets overview coefficient
+	 * TODO: Implement!
+	 * @see Coefficient
+	 */
+	@Override
+	public void setCoefficient(double coefficient) {
+	}
 
 	public SuggestionModule() {
 		Log.d(TAG, "Initiating Suggestion Module");

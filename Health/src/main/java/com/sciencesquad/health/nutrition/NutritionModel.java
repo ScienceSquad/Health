@@ -21,6 +21,11 @@ public class NutritionModel extends RealmObject implements Serializable {
 	private int numCheatDays;
 	private float waterIntake; // in Liters
 
+	/**
+	 * Nutrtition coefficient for overview module
+	 */
+	private double nutritionCoefficient;
+
 	private NutrientModel nutrientModel;
 	private VitaminModel vitaminModel;
 	private MineralModel mineralModel;
@@ -52,6 +57,12 @@ public class NutritionModel extends RealmObject implements Serializable {
 
 	public void setDate(@NonNull Date date) {
 		this.date = date;
+	}
+
+	public double getNutritionCoefficient() { return this.nutritionCoefficient; }
+
+	public void setNutritionCoefficient(double nutritionCoefficient) {
+		this.nutritionCoefficient = nutritionCoefficient;
 	}
 
 	public boolean isHadCaffeine() {

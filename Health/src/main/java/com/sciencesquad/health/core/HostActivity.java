@@ -45,6 +45,7 @@ public class HostActivity extends AppCompatActivity implements OnNavigationItemS
 		this.drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+		navigationView.getMenu().getItem(0).setChecked(true);
 
 		// Try to auto-launch a BaseFragment if provided in the AndroidManifest.
 		// i.e. <meta-data android:name="fragment" android:value="CLASS" />

@@ -20,7 +20,7 @@ import java.util.*;
  * then request resources like a SensorContext or DataContext to support a data
  * back-end. It is its own ViewModel, so it may also request a
  */
-public abstract class Module implements Observable {
+public abstract class Module implements Observable, Coefficient {
 	private static final String TAG = "Module";
 
 	/**

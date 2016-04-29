@@ -154,7 +154,7 @@ public class StepsFragment extends BaseFragment implements SensorEventListener {
 		// Create text views
         num_steps = (TextView) view.findViewById(R.id.num_steps);
         stride_length = (TextView) view.findViewById(R.id.stride_length);
-        elapsed_time = (TextView) view.findViewById(R.id.elapsed_time);
+        //elapsed_time = (TextView) view.findViewById(R.id.elapsed_time);
         avg_speed = (TextView) view.findViewById(R.id.avg_speed);
 
 		// Create stuff needed to count steps

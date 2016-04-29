@@ -1,10 +1,15 @@
 package com.sciencesquad.health.nutrition;
 
 import android.content.Intent;
+
+import android.graphics.drawable.Drawable;
+
 import android.os.Bundle;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -40,14 +45,11 @@ public class NutritionFragment extends BaseFragment {
     private ArrayList<String> nutritionLog;
     private ArrayList<String> foodLog;
 
-    private FloatingActionButton fab; // overall
-    private FloatingActionButton fab2; // diet
-    private FloatingActionButton fab3; // nutrient
-    private FloatingActionButton fab4; // submit
-    private FloatingActionButton fab5; // ZXing.
-
+    private boolean isFabOpen = false;
     private Animation fab_open;
     private Animation fab_close;
+	private Animation rotate_forward;
+	private Animation rotate_backward;
 
     @Override
     protected Configuration getConfiguration() {
@@ -63,6 +65,7 @@ public class NutritionFragment extends BaseFragment {
     protected FragmentNutritionBinding xml() {
         return super.xml();
     }
+
     /**
      * Further creating the UI and setting up buttons and their listeners.
      * @param savedInstanceState
@@ -76,10 +79,18 @@ public class NutritionFragment extends BaseFragment {
 
         nutritionModule.generateData();
 
+		// Get drawables and manipulate
+		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
+
+		// Initialize animations for fabs
         fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
                 R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
                 R.anim.fab_close);
+		rotate_forward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.rotate_forward);
+		rotate_backward = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),
+				R.anim.rotate_backward);
 
         TabLayout tabLayout = xml().tabs;
         StaticPagerAdapter.install(xml().pager);
@@ -88,67 +99,34 @@ public class NutritionFragment extends BaseFragment {
         xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
 
         // create FABs.
-        fab = xml().fabNutrition;
-        fab2 = xml().fabDiet;
-        fab2.hide();
-        fab3 = xml().fabNutrient;
-        fab3.hide();
-        fab4 = xml().fabSubmit;
-        fab4.hide();
-        fab5 = xml().fabZxing;
-        fab5.hide();
+        xml().fabNutrition.setBackgroundDrawable(plus);
+        xml().fabDiet.hide();
+        xml().fabNutrient.hide();
+        xml().fabSubmit.hide();
+        xml().fabZxing.hide();
 
         // set FABs listeners.
-        fab.setOnClickListener(v -> {
-            fab.startAnimation(fab_close);
-            fab2.startAnimation(fab_open);
-            fab3.startAnimation(fab_open);
-            fab4.startAnimation(fab_open);
-            fab5.startAnimation(fab_open);
-            fab.hide();
-            fab2.show();
-            fab3.show();
-            fab4.show();
-            fab5.show();
+        xml().fabNutrition.setOnClickListener(v -> {
+            animateFab();
         });
 
-        fab2.setOnClickListener(v -> {
-            fab.startAnimation(fab_open);
-            fab.show();
-            fab2.hide();
-            fab3.hide();
-            fab4.hide();
-            fab5.hide();
+        xml().fabDiet.setOnClickListener(v -> {
+			animateFab();
             createDietDialog();
         });
 
-        fab3.setOnClickListener(v -> {
-            fab.startAnimation(fab_open);
-            fab.show();
-            fab2.hide();
-            fab3.hide();
-            fab4.hide();
-            fab5.hide();
+        xml().fabNutrient.setOnClickListener(v -> {
+			animateFab();
             createCalorieDialog();
         });
 
-        fab4.setOnClickListener(v -> {
-            fab.startAnimation(fab_open);
-            fab.show();
-            fab2.hide();
-            fab3.hide();
-            fab4.hide();
-            fab5.hide();
+        xml().fabSubmit.setOnClickListener(v -> {
+			animateFab();
             saveNutritionProgress(v);
         });
 
-        fab5.setOnClickListener(v -> {
-            fab.startAnimation(fab_open);
-            fab.show();
-            fab2.hide();
-            fab3.hide();
-            fab4.hide();
-            fab5.hide();
+        xml().fabZxing.setOnClickListener(v -> {
+			animateFab();
             useZxing();
         });
 
@@ -301,5 +279,42 @@ public class NutritionFragment extends BaseFragment {
         nutritionModule.addNutritionRecord();
         super.onDestroy();
     }
+
+	/**
+	 * Animations for when the overviewFab is pressed
+	 */
+	public void animateFab() {
+		if (!isFabOpen) {
+			xml().fabNutrition.startAnimation(rotate_forward);
+			xml().fabDiet.startAnimation(fab_open);
+			xml().fabNutrient.startAnimation(fab_open);
+			xml().fabSubmit.startAnimation(fab_open);
+			xml().fabZxing.startAnimation(fab_open);
+			xml().fabDiet.show();
+			xml().fabNutrient.show();
+			xml().fabSubmit.show();
+			xml().fabZxing.show();
+			xml().fabDiet.setClickable(true);
+			xml().fabNutrient.setClickable(true);
+			xml().fabSubmit.setClickable(true);
+			xml().fabZxing.setClickable(true);
+			isFabOpen = true;
+		} else {
+			xml().fabNutrition.startAnimation(rotate_backward);
+			xml().fabDiet.startAnimation(fab_close);
+			xml().fabNutrient.startAnimation(fab_close);
+			xml().fabSubmit.startAnimation(fab_close);
+			xml().fabZxing.startAnimation(fab_close);
+			xml().fabDiet.hide();
+			xml().fabNutrient.hide();
+			xml().fabSubmit.hide();
+			xml().fabZxing.hide();
+			xml().fabDiet.setClickable(false);
+			xml().fabNutrient.setClickable(false);
+			xml().fabSubmit.setClickable(false);
+			xml().fabZxing.setClickable(false);
+			isFabOpen = false;
+		}
+	}
 
 }

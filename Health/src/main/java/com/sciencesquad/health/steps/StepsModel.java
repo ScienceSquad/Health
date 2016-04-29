@@ -1,6 +1,9 @@
 package com.sciencesquad.health.steps;
 
 import android.support.annotation.NonNull;
+
+import org.threeten.bp.LocalDate;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -15,25 +18,62 @@ import java.util.Date;
 public class StepsModel extends RealmObject {
 
     /**
-     * Date and step count. Date should always be Primary Key
+     * Date this event occured
      */
-    // we can set up the primary key to something else if need be.
-
     private Date date;
 
+	/**
+	 * When the steps interval began
+	 */
+	private Date start; // LocalTime
+
+	/**
+	 * When the steps interval ended
+	 */
+	private Date end; // LocalTime
+
+	/**
+	 * Number of steps recorded in event
+	 */
     private int stepCount;
+
+	/**
+	 * Steps coefficient for overview module
+	 */
+	private double stepsCoefficient;
 
     //
     // GENERATED METHODS FOLLOW
     //
 
     public int getStepCount() {
-        return stepCount;
+        return this.stepCount;
     }
 
     public void setStepCount(int stepCount) {
         this.stepCount = stepCount;
     }
+
+	public Date getStart() {
+		return start;
+	}
+
+	public void setStart(Date start) {
+		this.start = start;
+	}
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
+	}
+
+	public double getStepsCoefficient() { return this.stepsCoefficient; }
+
+	public void setStepsCoefficient(double stepsCoefficient) {
+		this.stepsCoefficient = stepsCoefficient; }
 
     @NonNull
     public Date getDate() {

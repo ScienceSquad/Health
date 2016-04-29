@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.alarm.AlarmModule;
@@ -28,6 +29,40 @@ public class PrescriptionModule extends Module {
 	private String name;
 	private int dosage;
 	private int alarmID;
+
+	/**
+	 * Prescription Coefficient
+	 * TODO: FIND A BETTER WAY TO DO THIS
+	 */
+	private double prescriptionCoefficient;
+
+	/**
+	 * Calculates prescription coefficient for use in overview module
+	 * @return calculated prescription coefficient
+	 */
+	public double calculateCoefficient() {
+		return 0;
+	}
+
+	/**
+	 * Retrieves prescription coefficient
+	 * @return prescriptionCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.prescriptionCoefficient;
+	}
+
+	/**
+	 * Calculates prescription coefficient
+	 * TODO: Implement!
+	 * @param coefficient
+	 * @see Coefficient
+	 */
+	@Override
+	public void setCoefficient(double coefficient) {
+		this.prescriptionCoefficient = coefficient;
+	}
 
 	/**
 	 * Constructs the module itself.
