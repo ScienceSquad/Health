@@ -313,7 +313,12 @@ public class PrescriptionFragment extends BaseFragment {
 		prescriptionModule = Module.of(PrescriptionModule.class);
 		alarmModule = Module.of(AlarmModule.class);
 
-		prescriptionModule.clearAllPrescriptions();
+		try {
+			prescriptionModule.clearAllPrescriptions();
+		} catch (Exception e) {
+			Log.e(TAG, e.toString());
+		}
+
 
 		// Set Prescription data
 		prescriptionModule.setName("foolenol")
