@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.transition.Visibility;
 import android.util.Log;
@@ -320,8 +319,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 
         // Bind calendar view
         //calendarView = xml().calendarView;
-        dateDisplay = xml().dateDisplay;
-        dateDisplay.setText("Date: ");
+        xml().dateDisplay.setText("Date: ");
 
         /*calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -437,17 +435,18 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		long delay = 1000L;
 		float a = xml().overviewChart.getRotationAngle();
 		float c = 0;
+		float f = (float) getCoefficient() * 5;
 		String text = "Overview Health Share Text";
 		Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_overview);
 		Easing.EasingOption eo = Easing.EasingOption.EaseInOutCirc;
 		TimeUnit tu = TimeUnit.MILLISECONDS;
 
-		float rotateBy = (float) (yData[e.getXIndex()] / overviewCoefficient * 180);
-		float rc0 = (float) (yData[0] / overviewCoefficient * 180);
-		float rc1 = (float) (yData[1] / overviewCoefficient * 180);
-		float rc2 = (float) (yData[2] / overviewCoefficient * 180);
-		float rc3 = (float) (yData[3] / overviewCoefficient * 180);
-		float rc4 = (float) (yData[4] / overviewCoefficient * 180);
+		float rotateBy = (float) (yData[e.getXIndex()] / f * 180);
+		float rc0 = (float) (yData[0] / f * 180);
+		float rc1 = (float) (yData[1] / f * 180);
+		float rc2 = (float) (yData[2] / f * 180);
+		float rc3 = (float) (yData[3] / f * 180);
+		float rc4 = (float) (yData[4] / f * 180);
 		rc2 = rc0 + rc1 + rc2;
 		rc3 = rc1 + rc2 + rc3;
 		rc4 = rc0 + rc1 + rc3 + rc4;
@@ -458,28 +457,28 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				c = 0;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_nutrition);
 				drawable.setTint(moduleColors[0]);
-				ll = R.layout.fragment_overview_nutrition;
+				ll = R.layout.fragment_overview_nutrition_low;
 				text = "Nutrition Share";
 				break;
 			case 1:
 				c = rc1;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_run);
 				drawable.setTint(moduleColors[1]);
-				ll = R.layout.fragment_overview_run;
+				ll = R.layout.fragment_overview_run_low;
 				text = "Run Share";
 				break;
 			case 2:
 				c = rc2;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
 				drawable.setTint(moduleColors[2]);
-				ll = R.layout.fragment_overview_sleep;
+				ll = R.layout.fragment_overview_sleep_high;
 				text = "Sleep Share";
 				break;
 			case 3:
 				c = rc3;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_steps);
 				drawable.setTint(moduleColors[3]);
-				ll = R.layout.fragment_overview_steps;
+				ll = R.layout.fragment_overview_steps_high;
 				text = "Steps Share";
 				break;
 			case 4:
@@ -487,7 +486,8 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				drawable = ContextCompat.getDrawable(getActivity(),
 						R.drawable.ic_fitness_center_24dp);
 				drawable.setTint(moduleColors[4]);
-				ll = R.layout.fragment_overview_workout;
+				ll = R.layout.fragment_overview_workout_high;
+
 				text = "Workout Share";
 				break;
 		}
@@ -603,7 +603,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	}
 
 	/**
-	 *
+	 * This method is intended to make the above code less wordy
 	 * @param eo
 	 * @param rotation
 	 * @param correction
@@ -637,5 +637,58 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 					startActivity(Intent.createChooser(i, "Share"));
 				})
 				.show();
+	}
+
+	/**
+	 * Lousy method to analyze individual coefficients
+	 * @param index of the module being analyzed
+	 * @param coefficient of module being passed
+	 * @return relevant dialog
+	 */
+	public int analyzeCoefficients(int index, double coefficient) {
+		int layout = 0;
+		switch (index) {
+			case 0:
+				if (coefficient < 33)
+					layout = R.layout.fragment_overview_nutrition_low;
+				else if (coefficient > 66)
+					layout = R.layout.fragment_overview_nutrition_high;
+				else
+					layout = R.layout.fragment_overview_nutrition_medium;
+				break;
+			case 1:
+				if (coefficient < 33)
+					layout = R.layout.fragment_overview_run_low;
+				else if (coefficient > 66)
+					layout = R.layout.fragment_overview_run_high;
+				else
+					layout = R.layout.fragment_overview_run_medium;
+				break;
+			case 2:
+				if (coefficient < 33)
+					layout = R.layout.fragment_overview_sleep_low;
+				else if (coefficient > 66)
+					layout = R.layout.fragment_overview_sleep_high;
+				else
+					layout = R.layout.fragment_overview_sleep_medium;
+				break;
+			case 3:
+				if (coefficient < 33)
+					layout = R.layout.fragment_overview_steps_low;
+				else if (coefficient > 66)
+					layout = R.layout.fragment_overview_steps_high;
+				else
+					layout = R.layout.fragment_overview_steps_medium;
+				break;
+			case 4:
+				if (coefficient < 33)
+					layout = R.layout.fragment_overview_workout_low;
+				else if (coefficient > 66)
+					layout = R.layout.fragment_overview_workout_high;
+				else
+					layout = R.layout.fragment_overview_workout_medium;
+				break;
+		}
+		return layout;
 	}
 }
