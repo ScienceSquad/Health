@@ -314,5 +314,6 @@ public class CalorieDialogFragment extends DialogFragment {
 
     private void addFood(FoodModel newFood) {
         ((NutritionFragment) getTargetFragment()).getNutritionModule().addFood(newFood);
+        ((NutritionFragment) getTargetFragment()).updateFood(newFood);
     }
 }
