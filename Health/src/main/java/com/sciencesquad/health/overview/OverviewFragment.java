@@ -1,5 +1,6 @@
 package com.sciencesquad.health.overview;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -9,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.transition.Visibility;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -28,6 +30,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.ui.RevealTransition;
@@ -44,6 +47,8 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 
 	/**
 	 *
+	 * Keep in mind the Harris-Benedict equation for basal metabolic rate
+	 * (check out other possibilities too)
 	 */
 	private double overviewCoefficient;
 	private double nutritionCoefficient;
@@ -53,7 +58,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	private double workoutCoefficient;
 
 	/**
-	 *
+	 * Floating Action Buttons and their animations
 	 */
     private FloatingActionButton fab;
     private FloatingActionButton fab2; // dummy
@@ -67,12 +72,12 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	private Animation rotation;
 
 	/**
-	 *
+	 * Stuff for pie graph
 	 */
-    private float[] yData = {5, 10, 15, 20, 25};
+    private float[] yData = {5, 10, 15, 20, 25}; // Health Coefficients go here
     private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
-    private Integer[] pieColor = {R.color.light_green_900, Color.MAGENTA, R.color.amber_700,
-            R.color.purple_300, Color.BLUE};
+	private ArrayList<Integer> pieColors;
+	private PieDataSet pds;
 	private float currentAngle;
 
     CalendarView calendarView;
@@ -99,14 +104,56 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     }
 
 	/**
-	 * Calculates health coefficient from separate modules
-	 * Currently just an average of the separate modules coefficients
+	 * Calculates overview coefficient by averaging coefficients from other modules
+	 * @return calculated overview coefficient
+	 */
+	@Override
+	public double calculateCoefficient() {
+		double sum = this.nutritionCoefficient + this.runCoefficient + this.sleepCoefficient +
+				this.stepsCoefficient + this.workoutCoefficient;
+		double average = sum / 5;
+		return average;
+	}
+
+	/**
+	 * Retrieves overview coefficient
+	 * @return overviewCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.overviewCoefficient;
+	}
+
+	/**
+	 * Sets overview coefficient
 	 * TODO: Implement!
 	 * @see Coefficient
 	 */
 	@Override
-	public void setCoefficient() {
+	public void setCoefficient(double coefficient) {
+		this.overviewCoefficient = coefficient;
+	}
 
+	/**
+	 * Obtains colors from modules
+	 */
+	private void getModuleColors() {
+		pieColors = new ArrayList<>();
+		Context theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Nutrition);
+		int nutritionColor = BaseFragment.getThemeColors(theme)[2];
+		pieColors.add(nutritionColor);
+		theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Run);
+		int runColor = BaseFragment.getThemeColors(theme)[2];
+		pieColors.add(runColor);
+		theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Sleep);
+		int sleepColor = BaseFragment.getThemeColors(theme)[2];
+		pieColors.add(sleepColor);
+		theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Steps);
+		int stepsColor = BaseFragment.getThemeColors(theme)[2];
+		pieColors.add(stepsColor);
+		theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Workout);
+		int workoutColor = BaseFragment.getThemeColors(theme)[2 /* colorAccent */];
+		pieColors.add(workoutColor);
 	}
 
     /**
@@ -126,20 +173,12 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         }
 
         // create pie data set
-        PieDataSet pds = new PieDataSet(yVals1, "Module Coefficients");
-        pds.setSliceSpace(3f);
-        pds.setSelectionShift(7f);
+        this.pds = new PieDataSet(yVals1, "Module Coefficients");
+        this.pds.setSliceSpace(0); // messing with this
+        this.pds.setSelectionShift(7f);
+        this.pds.setColors(pieColors);
 
-        // taste the rainbow
-        ArrayList<Integer> colors = new ArrayList<>();
-
-        for (int i = 0; i < pieColor.length; i++) {
-            colors.add(pieColor[i]);
-        }
-
-        pds.setColors(colors);
-
-        PieData data = new PieData(xVals, pds);
+        PieData data = new PieData(xVals, this.pds);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(14f);
         data.setValueTextColor(Color.DKGRAY);
@@ -170,6 +209,10 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 
 		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
 		plus.setTint(Color.DKGRAY);
+
+		// Grab colors on first start up
+		if (pieColors == null || pieColors.isEmpty())
+			getModuleColors();
 
 		// Setup the Toolbar
 		xml().toolbar.setNavigationOnClickListener(this.drawerToggleListener());
@@ -286,6 +329,21 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
             isFabOpen = false;
         }
     }
+
+	/**
+	 *
+	 */
+	/*@Override
+	public void onResume() {
+		super.onResume();
+		double currCo = getCoefficient();
+		double upCo = calculateCoefficient();
+		if (Double.compare(currCo, upCo) == 0) {
+			
+		} else {
+			setCoefficient(upCo);
+		}
+	}*/
 
 	/**
 	 * Called when a value has been selected inside the chart.
