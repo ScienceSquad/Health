@@ -42,7 +42,8 @@
                 android:id="@+id/page1"
                 android:tag="Stopwatch"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <com.sciencesquad.health.core.ui.ClockView
                     android:id="@+id/stopwatch"
@@ -53,22 +54,88 @@
                     app:textColor="@color/white"
                     app:textHeight="50dp" />
 
-                <Switch
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
-                    android:showText="false"/>
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_emergency"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_alert"
-                    app:backgroundTint="@color/green_900"
-                    android:layout_marginLeft="@dimen/fab_margin"
-                    android:layout_marginRight="@dimen/fab_margin"
-                    android:layout_marginBottom="84dp"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="right"
                     android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true" />
+                    android:layout_alignParentRight="false">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="right">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Medium Text"
+                            android:id="@+id/type_text"/>
+
+                        <Switch
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:showText="false"
+                            android:id="@+id/stopwatch_type"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/countdown_hours"
+                            android:inputType="number"
+                            android:maxLength="2"
+                            android:hint="HH"/>
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/countdown_minutes"
+                            android:inputType="number"
+                            android:maxLength="2"
+                            android:hint="MM"/>
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/countdown_seconds"
+                            android:inputType="number"
+                            android:maxLength="2"
+                            android:hint="SS"/>
+                    </LinearLayout>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Set Time"
+                        android:id="@+id/set_time_button"
+                        />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reset"
+                        android:id="@+id/reset_button"
+                        />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add Lap"
+                        android:id="@+id/lap_button"
+                        />
+
+                </LinearLayout>
 
             </RelativeLayout>
             <RelativeLayout
@@ -97,6 +164,11 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true" />
             </RelativeLayout>
+            <com.sciencesquad.health.overview.SuggestionsView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/page3"
+                android:tag="Suggestions"></com.sciencesquad.health.overview.SuggestionsView>
         </android.support.v4.view.ViewPager>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

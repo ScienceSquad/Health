@@ -1,9 +1,9 @@
 package com.sciencesquad.health.nutrition;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,27 +11,19 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-
-
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineData;
 import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.common.api.CommonStatusCodes;
-
+import com.google.android.gms.vision.barcode.Barcode;
 import com.sciencesquad.health.R;
 import com.sciencesquad.health.core.BaseFragment;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentNutritionBinding;
-
-
 import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
-
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 
 /**
@@ -291,6 +283,11 @@ public class NutritionFragment extends BaseFragment {
 
     public NutritionModule getNutritionModule(){
         return nutritionModule;
+    }
+
+    public void updateFood(FoodModel model){
+        foodLog.add(model.getName());
+        foodList.getAdapter().notifyDataSetChanged();
     }
 
     /**
