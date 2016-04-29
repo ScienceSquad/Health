@@ -17,6 +17,12 @@ public class RunModule extends Module implements Coefficient {
 	private RealmContext<RunModel> realmContext;
 
 	/**
+	 * Stuff for overview
+	 */
+	private double mileage;
+	private double mileageGoal;
+
+	/**
 	 * Run Coefficients
 	 */
 	private double runCoefficient;
@@ -26,7 +32,8 @@ public class RunModule extends Module implements Coefficient {
 	 * @return calculated run coefficient
 	 */
 	public double calculateCoefficient() {
-		return 0;
+		double coefficient = (mileage / mileageGoal) * 100;
+		return coefficient;
 	}
 
 	/**
@@ -52,11 +59,15 @@ public class RunModule extends Module implements Coefficient {
 	@Override
 	public void onStart() {
 
-		// Initialize and acquire the Sleep database.
+		// Initialize and acquire the Run database.
 		this.realmContext = new RealmContext<>();
 		this.realmContext.init(app(), RunModel.class, REALMNAME);
 
-		setCoefficient(0);
+		// Overview stuff
+		//setCoefficient(0);
+		mileage = 4.5; // miles
+		mileageGoal = 7; // miles
+		setCoefficient(calculateCoefficient());
 
 	}
 

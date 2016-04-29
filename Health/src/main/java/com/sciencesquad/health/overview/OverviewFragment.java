@@ -167,13 +167,15 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 * Obtain module coefficients and populate moduleCoefficients in alphabetical order
 	 *
 	 * Need to determine if I should return double[] moduleCoefficients or not
+	 *
+	 * TODO: Fix line 178; I made Module implement Coefficient, I do not want to do this
 	 */
 	private void getModuleCoefficients() {
 		if (moduleCoefficients == null)
 			moduleCoefficients = new double[5];
 		Iterator<Module> iterator = modules.iterator();
 		for (int i = 0; i < modules.size() || iterator.hasNext(); i++) {
-			Module m = iterator.next();
+			Module m = iterator.next(); //
 			moduleCoefficients[i] = m.getCoefficient();
 		}
 	}
@@ -182,8 +184,8 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 * Obtains colors from modules
 	 */
 	private void getModuleColors() {
-		pieColors = new ArrayList<>();
-		moduleColors = new int[5];
+		pieColors = new ArrayList<>();	// for use in PieChart; sorted alphabetically
+		moduleColors = new int[5]; 		// for use elsewhere; sorted alphabetically
 		Context theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Nutrition);
 		int nutritionColor = BaseFragment.getThemeColors(theme)[2];
 		pieColors.add(nutritionColor);
@@ -234,7 +236,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 
         PieData data = new PieData(xVals, this.pds);
         data.setValueTextSize(14f);
-        data.setValueTextColor(Color.DKGRAY);
+        data.setValueTextColor(Color.BLACK);
 
         xml().overviewChart.setData(data);
         xml().overviewChart.highlightValues(null);
@@ -293,8 +295,8 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         xml().overviewChart.setHoleColor(Color.TRANSPARENT);
         xml().overviewChart.setHoleRadius(40);
         xml().overviewChart.setTransparentCircleRadius(45);
-		overviewCoefficient = 75;
-        xml().overviewChart.setCenterText(Double.toString(overviewCoefficient));
+		setCoefficient(calculateCoefficient());
+        xml().overviewChart.setCenterText(Double.toString(getCoefficient()));
         xml().overviewChart.setCenterTextSize(35);
 		xml().overviewChart.setCenterTextColor(Color.DKGRAY);
 
@@ -508,7 +510,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	@Override
 	public void onChartLongPressed(MotionEvent me) {
 		Drawable oval = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_overview);
-		oval.setTint(Color.WHITE);
+		oval.setTint(overviewColors[2]);
 		int l = R.layout.fragment_overview_number;
 		showDialog(oval, l, "Overview Health Share Text");
 	}

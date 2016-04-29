@@ -25,6 +25,12 @@ public class WorkoutModule extends Module implements Coefficient {
     private RealmContext<ExerciseTypeModel> workoutRealm;
 
 	/**
+	 * Stuff for overview module
+	 */
+	private double workoutTotal;
+	private double workoutGoal;
+
+	/**
 	 * Workout coefficient
 	 */
 	private double workoutCoefficient;
@@ -62,7 +68,8 @@ public class WorkoutModule extends Module implements Coefficient {
 	 * @return calculated workout coefficient
 	 */
 	public double calculateCoefficient() {
-		return 0;
+		double coefficient = (workoutTotal / workoutGoal) * 100;
+		return coefficient;
 	}
 
 	/**
@@ -103,7 +110,11 @@ public class WorkoutModule extends Module implements Coefficient {
             } else Log.i(TAG, "We good!");
         });
 
-		setCoefficient(0);
+        // Overview stuff
+		workoutTotal = 100;
+		workoutGoal = 235;
+		setCoefficient(calculateCoefficient());
+		//setCoefficient(0);
 
         //this.workoutRealm = new RealmContext<>();
         //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");

@@ -6,13 +6,9 @@
             android:icon="@drawable/ic_menu_overview"
             android:title="@string/overview_module" />
         <item
-            android:id="@+id/nav_workout"
-            android:icon="@drawable/ic_fitness_center_24dp"
-            android:title="@string/workout_module" />
-        <item
-            android:id="@+id/nav_steps"
-            android:icon="@drawable/ic_menu_steps"
-            android:title="@string/steps_module" />
+            android:id="@+id/nav_nutrition"
+            android:icon="@drawable/ic_menu_nutrition"
+            android:title="@string/nutrition_module" />
         <item
             android:id="@+id/nav_run"
             android:icon="@drawable/ic_menu_run"
@@ -22,17 +18,21 @@
             android:icon="@drawable/ic_menu_sleep"
             android:title="@string/sleep_module" />
         <item
-            android:id="@+id/nav_nutrition"
-            android:icon="@drawable/ic_menu_nutrition"
-            android:title="@string/nutrition_module" />
+            android:id="@+id/nav_steps"
+            android:icon="@drawable/ic_menu_steps"
+            android:title="@string/steps_module" />
         <item
-            android:id="@+id/nav_prescription"
-            android:icon="@drawable/ic_alarm"
-            android:title="@string/prescription_module" />
+            android:id="@+id/nav_workout"
+            android:icon="@drawable/ic_fitness_center_24dp"
+            android:title="@string/workout_module" />
         <item
             android:id="@+id/nav_databases"
             android:icon="@drawable/ic_menu_nutrition"
             android:title="@string/database_module" />
+        <item
+            android:id="@+id/nav_prescription"
+            android:icon="@drawable/ic_alarm"
+            android:title="@string/prescription_module" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

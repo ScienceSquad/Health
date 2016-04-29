@@ -126,6 +126,12 @@ public class SleepModule extends Module implements Coefficient {
 	private final Set<Alarm> _alarms = new HashSet<>();
 
 	/**
+	 * Stuff for overview module
+	 */
+	private double amountOfSleep;
+	private double sleepGoal;
+
+	/**
 	 * Sleep coefficient for overview module
 	 */
 	private double sleepCoefficient;
@@ -135,7 +141,8 @@ public class SleepModule extends Module implements Coefficient {
 	 * @return calculated sleep coefficient
 	 */
 	public double calculateCoefficient() {
-		return 0;
+		double coefficient = (amountOfSleep / sleepGoal) * 100;
+		return coefficient;
 	}
 
 	/**
@@ -170,7 +177,11 @@ public class SleepModule extends Module implements Coefficient {
 		this.dataContext = new RealmContext<>();
 		this.dataContext.init(app(), SleepDataModel.class, "sleep.realm");
 
-		setCoefficient(0);
+		// Overview stuff
+		amountOfSleep = 3; // hours
+		sleepGoal = 7.5;
+		setCoefficient(calculateCoefficient());
+		//setCoefficient(0);
 
 		// Prepare to stop sleep sounds if needed.
 		track(bus().subscribe("StopSleepSoundsEvent", null, ev -> {

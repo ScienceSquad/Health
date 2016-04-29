@@ -42,6 +42,10 @@ public class StepsModule extends Module implements Coefficient {
     private int maxDelay;
     private int counterSteps;
 
+	// Overview stuff
+	private int stepsTaken;
+	private int stepsGoal;
+
     /**
      * Constructs the module itself.
      * Subscribes to events necessary to maintaining its own model.
@@ -56,7 +60,9 @@ public class StepsModule extends Module implements Coefficient {
 	 * @return calculated steps coefficient
 	 */
 	public double calculateCoefficient() {
-		return 0;
+		double coefficient = (double) (stepsTaken / stepsGoal);
+		coefficient = coefficient * 100; // unnecessary i know
+		return coefficient;
 	}
 
 	/**
@@ -123,7 +129,11 @@ public class StepsModule extends Module implements Coefficient {
 		counterSteps = 0;
 		maxDelay = 0;
 
-		setCoefficient(0);
+		// Overview stuff
+		stepsTaken = 3974;
+		stepsGoal = 8430;
+		setCoefficient(calculateCoefficient());
+		//setCoefficient(0);
 
     }
 
