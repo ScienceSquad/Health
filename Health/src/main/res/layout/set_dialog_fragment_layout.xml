@@ -6,23 +6,97 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:id="@+id/exercise_name_view" />
 
-    <EditText
+    
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Number of reps"
-        android:ems="10"
-        android:id="@+id/num_rep_field" />
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
-    <EditText
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/num_rep_field_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/WorkoutTextLabel"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Reps"
+                android:id="@+id/num_rep_field"
+                android:maxLength="4"
+                android:ems="5"
+                />
+
+        </android.support.design.widget.TextInputLayout>
+        
+        <ImageView
+            android:id="@+id/rep_increment_button"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/arrow_up_drop_circle"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
+        <ImageView
+            android:id="@+id/rep_decrement_button"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/arrow_down_drop_circle"
+            android:layout_gravity="center_vertical"/>
+        
+        
+    </LinearLayout>
+    
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberSigned"
-        android:hint="Weight (lbs)"
-        android:ems="10"
-        android:id="@+id/amount_weight_field" />
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/amount_weight_field_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/WorkoutTextLabel">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberSigned"
+                android:hint="Weight (lbs)"
+                android:id="@+id/amount_weight_field"
+                android:maxLength="4"
+                android:ems="5" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/weight_increment_button"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/arrow_up_drop_circle"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
+        <ImageView
+            android:id="@+id/weight_decrement_button"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/arrow_down_drop_circle"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+        
+
+
+
+
 
     <Button
         android:layout_width="wrap_content"
