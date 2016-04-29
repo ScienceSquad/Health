@@ -80,7 +80,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	/**
 	 * Stuff for pie graph; module-related information always in alphabetical order
 	 */
-    private float[] yData = {5, 10, 15, 20, 25}; // Health Coefficients go here
+    private float[] yData; // Health Coefficients go here
     private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
 	private ArrayList<Integer> pieColors;
 	private int[] moduleColors;
@@ -120,7 +120,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		for (int i = 0; i < moduleCoefficients.length; i++)
 			sum += moduleCoefficients[i];
 		double average = sum / 5;
-		return average;
+		return Math.round(average * 10) / 10;
 	}
 
 	/**
@@ -217,8 +217,10 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
      */
     private void addData() {
         ArrayList<Entry> yVals1 = new ArrayList<>();
+		yData = new float[5];
 
-        for (int i = 0; i < yData.length; i++) {
+        for (int i = 0; i < moduleCoefficients.length; i++) {
+			yData[i] = (float) moduleCoefficients[i];
             yVals1.add(new Entry(yData[i], i));
         }
 
@@ -275,6 +277,12 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		// Get drawables and manipulate
 		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
 		plus.setTint(overviewColors[2]);
+		Drawable arc = ContextCompat.getDrawable(getActivity(), R.drawable.ic_arc);
+		arc.setTint(overviewColors[2]);
+		Drawable pie = ContextCompat.getDrawable(getActivity(), R.drawable.ic_pie);
+		pie.setTint(overviewColors[2]);
+		Drawable radar = ContextCompat.getDrawable(getActivity(), R.drawable.ic_radar);
+		radar.setTint(overviewColors[2]);
 
 		// Grab colors on first start up
 		if (pieColors == null || pieColors.isEmpty())
@@ -340,11 +348,11 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         // FABulous!!!
 		xml().overviewFab.setImageDrawable(plus);
 		xml().overviewFab.setBackgroundTintList(ColorStateList.valueOf(overviewColors[0]));
-		xml().overviewFab2.setImageDrawable(plus);
+		xml().overviewFab2.setImageDrawable(arc);
 		xml().overviewFab2.hide();
-		xml().overviewFab3.setImageDrawable(plus);
+		xml().overviewFab3.setImageDrawable(pie);
 		xml().overviewFab3.hide();
-		xml().overviewFab4.setImageDrawable(plus);
+		xml().overviewFab4.setImageDrawable(radar);
 		xml().overviewFab4.hide();
 
 		xml().overviewFab.setOnClickListener(v -> {

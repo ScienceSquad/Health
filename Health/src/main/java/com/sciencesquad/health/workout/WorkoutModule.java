@@ -69,7 +69,7 @@ public class WorkoutModule extends Module implements Coefficient {
 	 */
 	public double calculateCoefficient() {
 		double coefficient = (workoutTotal / workoutGoal) * 100;
-		return coefficient;
+		return Math.round(coefficient * 10) / 10;
 	}
 
 	/**

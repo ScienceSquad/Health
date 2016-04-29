@@ -53,7 +53,7 @@
                     android:id="@+id/overviewChart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:elevation="6dp"
+                    android:elevation="6dp"
                     app:pressedTranslationZ="6dp" />
 
             </RelativeLayout>

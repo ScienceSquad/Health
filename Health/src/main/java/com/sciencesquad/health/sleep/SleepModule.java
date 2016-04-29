@@ -142,7 +142,7 @@ public class SleepModule extends Module implements Coefficient {
 	 */
 	public double calculateCoefficient() {
 		double coefficient = (amountOfSleep / sleepGoal) * 100;
-		return coefficient;
+		return Math.round(coefficient * 10) / 10;
 	}
 
 	/**

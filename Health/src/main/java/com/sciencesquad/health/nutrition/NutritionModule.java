@@ -79,7 +79,7 @@ public class NutritionModule extends Module implements Coefficient {
 		else if (coefficient < 0)
 			return 0;
 		else
-			return coefficient;
+			return Math.round(coefficient * 10) / 10;
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class NutritionModule extends Module implements Coefficient {
 		this.cheated = false; // being positive and assuming no cheating :)
 
 		// stuff for overview; goals to be
-		waterGoal = 2;
+		waterGoal = 2.8;
 		calorieGoal = 2000;
 		nutrient = 5;
 		nutrientGoal = 10;
