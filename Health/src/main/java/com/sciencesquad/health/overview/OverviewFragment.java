@@ -25,7 +25,6 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
@@ -39,13 +38,14 @@ import com.sciencesquad.health.core.ui.RevealTransition;
 import com.sciencesquad.health.core.util.Dispatcher;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.databinding.FragmentOverviewBinding;
-import com.sciencesquad.health.nutrition.NutritionModel;
 import com.sciencesquad.health.nutrition.NutritionModule;
+import com.sciencesquad.health.run.RunModule;
 import com.sciencesquad.health.sleep.SleepModule;
 import com.sciencesquad.health.steps.StepsModule;
 import com.sciencesquad.health.workout.WorkoutModule;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 public class OverviewFragment extends BaseFragment implements OnChartValueSelectedListener,
@@ -53,19 +53,22 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     public static final String TAG = OverviewFragment.class.getSimpleName();
 
 	/**
+	 * Instances of modules, organized in alphabetical order
+	 */
+	private ArrayList<Module> modules;
+
+	/**
+	 * Overview coefficient, overview colors and module coefficients sorted in alphabetical order
 	 *
-	 * Keep in mind the Harris-Benedict equation for basal metabolic rate
+	 * TODO: Keep in mind the Harris-Benedict equation for basal metabolic rate
 	 * (check out other possibilities too)
 	 */
 	private double overviewCoefficient;
-	private double nutritionCoefficient;
-	private double runCoefficient;
-	private double sleepCoefficient;
-	private double stepsCoefficient;
-	private double workoutCoefficient;
+	private int[] overviewColors;
+	private double[] moduleCoefficients; // I figured an array made sense here
 
 	/**
-	 * Floating Action Buttons and their animations
+	 * Floating Action Button animations
 	 */
     private Boolean isFabOpen = false;
     private Animation fab_open;
@@ -75,16 +78,17 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	private Animation rotation;
 
 	/**
-	 * Stuff for pie graph
+	 * Stuff for pie graph; module-related information always in alphabetical order
 	 */
     private float[] yData = {5, 10, 15, 20, 25}; // Health Coefficients go here
     private String[] xData = {"Nutrition", "Run & Cycle", "Sleep", "Steps", "Workout"};
 	private ArrayList<Integer> pieColors;
+	private int[] moduleColors;
 	private PieDataSet pds;
 	private float currentAngle;
 
-    CalendarView calendarView;
-    TextView dateDisplay;
+    private CalendarView calendarView;
+    private TextView dateDisplay;
 
 	/**
 	 * @see BaseFragment
@@ -112,8 +116,9 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 */
 	@Override
 	public double calculateCoefficient() {
-		double sum = this.nutritionCoefficient + this.runCoefficient + this.sleepCoefficient +
-				this.stepsCoefficient + this.workoutCoefficient;
+		double sum = 0;
+		for (int i = 0; i < moduleCoefficients.length; i++)
+			sum += moduleCoefficients[i];
 		double average = sum / 5;
 		return average;
 	}
@@ -124,6 +129,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	 */
 	@Override
 	public double getCoefficient() {
+
 		return this.overviewCoefficient;
 	}
 
@@ -138,32 +144,70 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 	}
 
 	/**
+	 * Get module instances and add to modules ArrayList in alphabetical order
+	 * (not sure if I should return ArrayList modules or not, TBD)
 	 *
+	 * Need to determine if I should return ArrayList modules or not
+	 */
+	private void getModuleInstances() {
+		modules = new ArrayList<>();
+		NutritionModule nutritionModule = Module.of(NutritionModule.class);
+		modules.add(nutritionModule);
+		RunModule runModule = Module.of(RunModule.class);
+		modules.add(runModule);
+		SleepModule sleepModule = Module.of(SleepModule.class);
+		modules.add(sleepModule);
+		StepsModule stepsModule = Module.of(StepsModule.class);
+		modules.add(stepsModule);
+		WorkoutModule workoutModule = Module.of(WorkoutModule.class);
+		modules.add(workoutModule);
+	}
+
+	/**
+	 * Obtain module coefficients and populate moduleCoefficients in alphabetical order
+	 *
+	 * Need to determine if I should return double[] moduleCoefficients or not
 	 */
 	private void getModuleCoefficients() {
-
+		if (moduleCoefficients == null)
+			moduleCoefficients = new double[5];
+		Iterator<Module> iterator = modules.iterator();
+		for (int i = 0; i < modules.size() || iterator.hasNext(); i++) {
+			Module m = iterator.next();
+			moduleCoefficients[i] = m.getCoefficient();
+		}
 	}
-	
+
 	/**
 	 * Obtains colors from modules
 	 */
 	private void getModuleColors() {
 		pieColors = new ArrayList<>();
+		moduleColors = new int[5];
 		Context theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Nutrition);
 		int nutritionColor = BaseFragment.getThemeColors(theme)[2];
 		pieColors.add(nutritionColor);
+		moduleColors[0] = nutritionColor;
+
 		theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Run);
 		int runColor = BaseFragment.getThemeColors(theme)[2];
 		pieColors.add(runColor);
+		moduleColors[1] = runColor;
+
 		theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Sleep);
 		int sleepColor = BaseFragment.getThemeColors(theme)[2];
 		pieColors.add(sleepColor);
+		moduleColors[2] = sleepColor;
+
 		theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Steps);
 		int stepsColor = BaseFragment.getThemeColors(theme)[2];
 		pieColors.add(stepsColor);
+		moduleColors[3] = stepsColor;
+
 		theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Workout);
 		int workoutColor = BaseFragment.getThemeColors(theme)[2 /* colorAccent */];
 		pieColors.add(workoutColor);
+		moduleColors[4] = workoutColor;
 	}
 
     /**
@@ -217,16 +261,18 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 		xml().setFragment(this);
-		NutritionModule nutritionModule = Module.of(NutritionModule.class);
-		//RunModule runModule = Module.of(SleepModule.class);
-		SleepModule sleepModule = Module.of(SleepModule.class);
-		StepsModule stepsModule = Module.of(StepsModule.class);
-		WorkoutModule workoutModule = Module.of(WorkoutModule.class);
 
-		Drawable menu = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu);
-		menu.setTint(Color.WHITE);
+		// Get modules and their coefficients
+		getModuleInstances();
+		getModuleCoefficients();
+
+		// Get overview colors
+		Context theme = new ContextThemeWrapper(BaseApp.app(), R.style.AppTheme_Overview);
+		overviewColors = BaseFragment.getThemeColors(theme);
+
+		// Get drawables and manipulate
 		Drawable plus = ContextCompat.getDrawable(getActivity(), R.drawable.ic_plus);
-		plus.setTint(Color.DKGRAY);
+		plus.setTint(overviewColors[2]);
 
 		// Grab colors on first start up
 		if (pieColors == null || pieColors.isEmpty())
@@ -255,7 +301,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
         // Enable touch & rotation
         xml().overviewChart.setTouchEnabled(true);
         xml().overviewChart.setRotationAngle(0);
-		currentAngle = 0;
+		//currentAngle = 0;
 		xml().overviewChart.setOnChartValueSelectedListener(this);
 		xml().overviewChart.setOnChartGestureListener(this);
 
@@ -291,9 +337,12 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 
         // FABulous!!!
 		xml().overviewFab.setImageDrawable(plus);
-		//xml().overviewFab.setBackgroundTintList(ColorStateList.valueOf(1));
+		xml().overviewFab.setBackgroundTintList(ColorStateList.valueOf(overviewColors[0]));
+		xml().overviewFab2.setImageDrawable(plus);
 		xml().overviewFab2.hide();
+		xml().overviewFab3.setImageDrawable(plus);
 		xml().overviewFab3.hide();
+		xml().overviewFab4.setImageDrawable(plus);
 		xml().overviewFab4.hide();
 
 		xml().overviewFab.setOnClickListener(v -> {
@@ -311,7 +360,6 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 		xml().overviewFab4.setOnClickListener(v -> {
 			xml().overviewFab4.startAnimation(rotation);
 		});
-
     }
 
     /**
@@ -399,28 +447,28 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 			case 0:
 				c = 0;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_nutrition);
-				drawable.setTint(Color.GREEN);
+				drawable.setTint(moduleColors[0]);
 				ll = R.layout.fragment_overview_nutrition;
 				text = "Nutrition Share";
 				break;
 			case 1:
 				c = rc1;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_run);
-				drawable.setTint(Color.MAGENTA);
+				drawable.setTint(moduleColors[1]);
 				ll = R.layout.fragment_overview_run;
 				text = "Run Share";
 				break;
 			case 2:
 				c = rc2;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_sleep);
-				drawable.setTint(Color.YELLOW);
+				drawable.setTint(moduleColors[2]);
 				ll = R.layout.fragment_overview_sleep;
 				text = "Sleep Share";
 				break;
 			case 3:
 				c = rc3;
 				drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_steps);
-				drawable.setTint(Color.RED);
+				drawable.setTint(moduleColors[3]);
 				ll = R.layout.fragment_overview_steps;
 				text = "Steps Share";
 				break;
@@ -428,7 +476,7 @@ public class OverviewFragment extends BaseFragment implements OnChartValueSelect
 				c = rc4;
 				drawable = ContextCompat.getDrawable(getActivity(),
 						R.drawable.ic_fitness_center_24dp);
-				drawable.setTint(Color.BLUE);
+				drawable.setTint(moduleColors[4]);
 				ll = R.layout.fragment_overview_workout;
 				text = "Workout Share";
 				break;

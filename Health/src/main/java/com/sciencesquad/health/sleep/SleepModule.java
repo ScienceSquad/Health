@@ -126,7 +126,7 @@ public class SleepModule extends Module implements Coefficient {
 	private final Set<Alarm> _alarms = new HashSet<>();
 
 	/**
-	 * Sleep coefficient
+	 * Sleep coefficient for overview module
 	 */
 	private double sleepCoefficient;
 

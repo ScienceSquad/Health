@@ -49,13 +49,6 @@ public class StepsModule extends Module implements Coefficient {
      */
     //public StepsModule() throws Exception {
     public StepsModule() {
-        this.stepsRealm = new RealmContext<>();
-        this.stepsRealm.init(BaseApp.app(), StepsModel.class, REALMNAME);
-
-        // Initial values
-        numSteps = 0;
-        counterSteps = 0;
-        maxDelay = 0;
     }
 
 	/**
@@ -122,6 +115,13 @@ public class StepsModule extends Module implements Coefficient {
 
     @Override
     public void onStart() {
+		this.stepsRealm = new RealmContext<>();
+		this.stepsRealm.init(BaseApp.app(), StepsModel.class, REALMNAME);
+
+		// Initial values
+		numSteps = 0;
+		counterSteps = 0;
+		maxDelay = 0;
 
 		setCoefficient(0);
 
