@@ -88,11 +88,12 @@ public class PrescriptionModule extends Module {
 	}
 	public int getAlarmID() { return this.alarmID; }
 
-	public PrescriptionModel addPrescription() {
+	public PrescriptionModel addPrescription(boolean affectsSleep) {
 		PrescriptionModel prescriptionModel = new PrescriptionModel();
 		prescriptionModel.setName(this.name);
 		prescriptionModel.setDosage(this.dosage);
 		prescriptionModel.setAlarmID(this.alarmID);
+		prescriptionModel.setAffectsSleeping(affectsSleep);
 		prescriptionRealm.add(prescriptionModel);
 		return prescriptionModel;
 	}

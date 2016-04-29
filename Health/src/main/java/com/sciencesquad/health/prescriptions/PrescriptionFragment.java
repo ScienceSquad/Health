@@ -38,6 +38,8 @@ import java.util.concurrent.TimeUnit;
 
 import io.realm.RealmResults;
 
+import static java.lang.Math.*;
+
 /**
  * Created by andrew on 4/7/16.
  */
@@ -328,7 +330,7 @@ public class PrescriptionFragment extends BaseFragment {
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
 
-		prescriptionModule.addPrescription();
+		prescriptionModule.addPrescription(true);
 
 		// Set Prescription data
 		prescriptionModule.setName("barlisil");
@@ -343,7 +345,7 @@ public class PrescriptionFragment extends BaseFragment {
 		// Tie alarm to prescription
 		prescriptionModule.setAlarmID(alarmModule.add().getAlarmId());
 
-		prescriptionModule.addPrescription();
+		prescriptionModule.addPrescription(false);
 
 		xml().alarmList.setLayoutManager(new LinearLayoutManager(getActivity()));
 		updateAlarmList();
