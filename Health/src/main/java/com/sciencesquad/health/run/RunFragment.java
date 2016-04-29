@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -100,6 +101,9 @@ public class RunFragment extends BaseFragment implements
     LatLng lastLoc = null;
     LatLng lastLocPersistent = null;
 
+    String[] dateArray = null;
+    String[] pathArray = null;
+
     boolean firstLoc = true; // used to ensure that only one starting marker is created.
     boolean isRunStarted = false; // only starts on button press.
     boolean firstMarker = true;
@@ -148,8 +152,7 @@ public class RunFragment extends BaseFragment implements
                 .addApi(LocationServices.API)
                 .build();
 
-        //TODO: Create list of dates from Realm Objects
-        String[] dateArray = {"date 1", "date 2"};
+        makeArraysFromRealm();
 
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
@@ -184,6 +187,12 @@ public class RunFragment extends BaseFragment implements
 
         // Start Run FAB
         xml().buttonStartRun.setOnClickListener(v -> buttonStartRunClicked());
+
+        // ListView
+        runHistoryListView.setOnItemClickListener((parent, view1, position, id) -> {
+            //TODO: display path
+            Log.e(TAG, "Clicked: " + position);
+        });
     }
 
     public void saveRunToRealm() {
@@ -196,6 +205,17 @@ public class RunFragment extends BaseFragment implements
         realm.commitTransaction();
         //TESTING
         Log.e(TAG, getRealmObjects().get(0).getDate().toString());
+    }
+
+    public void makeArraysFromRealm() {
+        int realmSize = getRealmObjects().size();
+        Log.e(TAG, "realmSize = " + realmSize);
+        dateArray = new String[realmSize];
+        pathArray = new String[realmSize];
+        for (int i = 0; i < realmSize; i++) {
+            dateArray[i] = getRealmObjects().get(i).getDate().toString();
+            pathArray[i] = getRealmObjects().get(i).getPath();
+        }
     }
 
     public RealmResults<CompletedRunModel> getRealmObjects() {
