@@ -32,7 +32,7 @@ public class NameRoutineFragment extends DialogFragment {
 		//String title = this.getArguments().getString(KEY_TITLE);
 
 		// Inflate dialog
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.WorkoutDialogCustom);
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View dialogLayout = inflater.inflate(R.layout.name_routine_dialog_fragment, null);
 		builder.setView(dialogLayout);

@@ -13,7 +13,9 @@
         android:id="@+id/exercise_name_field"
         android:editable="true"
         android:textSize="18dp"
-        android:hint="Exercise name" />
+        android:hint="Exercise name"
+        android:focusable="true"
+        android:textCursorDrawable="@null"/>
 
     <Spinner
         android:layout_width="match_parent"
@@ -26,7 +28,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/exercise_target_field"
-        android:hint="Exercise target (optional)"/>
+        android:hint="Exercise target (optional)"
+        android:focusable="true"
+        android:textCursorDrawable="@null"/>
 
 
 </LinearLayout>
