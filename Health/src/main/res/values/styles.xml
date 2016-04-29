@@ -142,9 +142,9 @@
     <!-- The following are Module-specific themes. -->
 
     <style name="AppTheme.Overview" parent="AppTheme">
-        <item name="colorAccent">@color/light_blue_700</item>
-        <item name="colorPrimary">@color/light_blue_50</item>
-        <item name="colorPrimaryDark">@color/blue_900</item>
+        <item name="colorAccent">@color/light_blue_50</item>
+        <item name="colorPrimary">@color/light_blue_700</item>
+        <item name="colorPrimaryDark">@color/light_blue_900</item>
     </style>
 
     <style name="AppTheme.Sleep" parent="AppTheme">

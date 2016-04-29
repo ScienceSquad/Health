@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.PowerManager;
 import android.util.Log;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.DataContext;
 import com.sciencesquad.health.core.EventBus;
 import com.sciencesquad.health.core.Module;
@@ -23,7 +24,7 @@ import java.util.*;
 /**
  * Sleep Module
  */
-public class SleepModule extends Module {
+public class SleepModule extends Module implements Coefficient {
 	public static final String TAG = SleepModule.class.getSimpleName();
 
 	/**
@@ -125,6 +126,46 @@ public class SleepModule extends Module {
 	private final Set<Alarm> _alarms = new HashSet<>();
 
 	/**
+	 * Stuff for overview module
+	 */
+	private double amountOfSleep;
+	private double sleepGoal;
+
+	/**
+	 * Sleep coefficient for overview module
+	 */
+	private double sleepCoefficient;
+
+	/**
+	 * Calculates sleep coefficient for use in overview module
+	 * @return calculated sleep coefficient
+	 */
+	public double calculateCoefficient() {
+		double coefficient = (amountOfSleep / sleepGoal) * 100;
+		return Math.round(coefficient * 10) / 10;
+	}
+
+	/**
+	 * Retrieves sleep coefficient
+	 * @return sleep coefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.sleepCoefficient;
+	}
+
+	/**
+	 * Sets sleep coefficient
+	 * TODO: Implement!
+	 * @param coefficient
+	 * @see Coefficient
+	 */
+	@Override
+	public void setCoefficient(double coefficient) {
+		this.sleepCoefficient = coefficient;
+	}
+
+	/**
 	 * @see Module
 	 */
 	@Override
@@ -135,6 +176,12 @@ public class SleepModule extends Module {
 		// Initialize and acquire the Sleep database.
 		this.dataContext = new RealmContext<>();
 		this.dataContext.init(app(), SleepDataModel.class, "sleep.realm");
+
+		// Overview stuff
+		amountOfSleep = 3; // hours
+		sleepGoal = 7.5;
+		setCoefficient(calculateCoefficient());
+		//setCoefficient(0);
 
 		// Prepare to stop sleep sounds if needed.
 		track(bus().subscribe("StopSleepSoundsEvent", null, ev -> {

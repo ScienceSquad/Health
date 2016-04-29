@@ -2,6 +2,7 @@ package com.sciencesquad.health.workout;
 
 import android.util.Log;
 import com.sciencesquad.health.core.BaseApp;
+import com.sciencesquad.health.core.Coefficient;
 import com.sciencesquad.health.core.Module;
 import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.util.Dispatcher;
@@ -21,9 +22,21 @@ import java.util.Date;
  * Created by mrjohnson on 3/1/16.
  */
 
-public class WorkoutModule extends Module {
+public class WorkoutModule extends Module implements Coefficient {
     public static final String TAG = WorkoutModule.class.getSimpleName();
     private RealmContext<ExerciseTypeModel> workoutRealm;
+
+	/**
+	 * Stuff for overview module
+	 */
+	private double workoutTotal;
+	private double workoutGoal;
+
+	/**
+	 * Workout coefficient
+	 */
+	private double workoutCoefficient;
+
     //Data context.
     //private RealmContext<RoutineModel> workoutRealm;
 
@@ -52,6 +65,35 @@ public class WorkoutModule extends Module {
 		//addRecommendedWorkouts();*/
 	}
 
+	/**
+	 * Calculates workout coefficient for use in overview module
+	 * @return calculated workout coefficient
+	 */
+	public double calculateCoefficient() {
+		double coefficient = (workoutTotal / workoutGoal) * 100;
+		return Math.round(coefficient * 10) / 10;
+	}
+
+	/**
+	 * Retrieves workout coefficient
+	 * @return workoutCoefficient
+	 */
+	@Override
+	public double getCoefficient() {
+		return this.workoutCoefficient;
+	}
+
+    /**
+     * Sets workout coefficient
+     * TODO: Implement!
+	 * @param coefficient
+     * @see Coefficient
+     */
+    @Override
+    public void setCoefficient(double coefficient) {
+		this.workoutCoefficient = coefficient;
+    }
+
     /**
      * Constructs the module itself.
      * It also sets up a Realm Context for the Module.
@@ -69,6 +111,13 @@ public class WorkoutModule extends Module {
                 addRecommendedWorkouts();
             } else Log.i(TAG, "We good!");
         });
+
+        // Overview stuff
+		workoutTotal = 100;
+		workoutGoal = 235;
+		setCoefficient(calculateCoefficient());
+		//setCoefficient(0);
+
         //this.workoutRealm = new RealmContext<>();
         //this.workoutRealm.init(BaseApp.app(), ExerciseTypeModel.class, "WorkoutRealm");
 
