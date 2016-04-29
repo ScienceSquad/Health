@@ -364,5 +364,9 @@ public class PrescriptionFragment extends BaseFragment {
 				updateTime();
 			}
 		});
+
+		xml().lapButton.setOnClickListener((view2) -> {
+			stopwatch.addLap();
+		});
 	}
 }
