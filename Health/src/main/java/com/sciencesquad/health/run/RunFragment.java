@@ -10,6 +10,8 @@ import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -82,6 +84,9 @@ public class RunFragment extends BaseFragment implements
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
+    private ListView runHistoryListView;
+    private ArrayAdapter arrayAdapter;
+
     private TextView textViewCalories;
     private TextView textViewDistance;
     private TextView textViewSpeed;
@@ -143,6 +148,9 @@ public class RunFragment extends BaseFragment implements
                 .addApi(LocationServices.API)
                 .build();
 
+        //TODO: Create list of dates from Realm Objects
+        String[] dateArray = {"date 1", "date 2"};
+
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -154,6 +162,10 @@ public class RunFragment extends BaseFragment implements
 
         StaticPagerAdapter.install(xml().pager);
         xml().tabs.setupWithViewPager(xml().pager);
+
+        runHistoryListView = xml().listViewRunHistory;
+        arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, dateArray);
+        runHistoryListView.setAdapter(arrayAdapter);
 
 
         textViewCalories = xml().textViewCalories;
