@@ -31,7 +31,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sciencesquad.health.R;
+import com.sciencesquad.health.core.BaseApp;
 import com.sciencesquad.health.core.BaseFragment;
+import com.sciencesquad.health.core.RealmContext;
 import com.sciencesquad.health.core.util.StaticPagerAdapter;
 import com.sciencesquad.health.core.util.TTSManager;
 import com.sciencesquad.health.databinding.FragmentRunBinding;
@@ -39,11 +41,14 @@ import com.sciencesquad.health.databinding.FragmentRunBinding;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 import static com.google.maps.android.SphericalUtil.computeDistanceBetween;
 import static java.lang.System.currentTimeMillis;
@@ -52,6 +57,7 @@ import static java.lang.System.currentTimeMillis;
 public class RunFragment extends BaseFragment implements
         ConnectionCallbacks,  OnConnectionFailedListener, LocationListener {
     public static final String TAG = RunFragment.class.getSimpleName();
+    private RealmContext<CompletedRunModel> runRealm;
 
     @Override
     protected Configuration getConfiguration() {
@@ -121,6 +127,10 @@ public class RunFragment extends BaseFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Realm Set Up
+        runRealm = new RealmContext<>();
+        runRealm.init(BaseApp.app(), CompletedRunModel.class, "RunRealm");
+
         // TextToSpeech Initialization
         ttsManager = new TTSManager();
         ttsManager.init(getActivity());
@@ -166,12 +176,18 @@ public class RunFragment extends BaseFragment implements
 
     public void saveRunToRealm() {
         realm.beginTransaction();
-        CompletedRunModel run = new CompletedRunModel();
+        CompletedRunModel run = realm.createObject(CompletedRunModel.class);
         run.setCalories(totalCalories);
         run.setDistance(totalDistance);
         run.setDate(new Date());
         run.setPath(createJson().toString());
         realm.commitTransaction();
+        //TESTING
+        Log.e(TAG, getRealmObjects().get(0).getDate().toString());
+    }
+
+    public RealmResults<CompletedRunModel> getRealmObjects() {
+        return realm.allObjectsSorted(CompletedRunModel.class, "date", Sort.ASCENDING);
     }
 
     public JSONObject createJson() {
